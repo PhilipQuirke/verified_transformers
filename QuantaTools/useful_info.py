@@ -1,47 +1,47 @@
-class UsefulNodes():
+class UsefulInfo():
   # sparce ordered list of useful token positions e.g. 0,1,8,9,10,11
-  useful_positions = []
+  positions = []
 
   # sparce ordered list of useful e.g. 0,1,4 representing L0H0, L0H1 and L0MLP
-  useful_rows = []
+  rows = []
 
   # list of useful nodes
-  useful_nodes = []
+  nodes = []
 
 
   def min_useful_position(self):
-    return min(self.useful_positions)
+    return min(self.positions)
 
 
   def max_useful_position(self):
-    return max(self.useful_positions)
+    return max(self.positions)
 
 
   # Add a token position that we know is used in calculations
   def add_useful_position(self, position):
-    if not (position in self.useful_positions):
-      self.useful_positions += [position]
+    if not (position in self.positions):
+      self.positions += [position]
 
 
   # Add a quanta row that we know is used in calculations
   def add_useful_row(self, row):
-    if not (row in self.useful_rows):
-      self.useful_rows += [row]
+    if not (row in self.rows):
+      self.rows += [row]
 
 
   def print_node_tags(self):
-    for node in self.useful_nodes:
+    for node in self.nodes:
       print( node.name(), node.tags )
 
 
 
   def reset_tags( self, major_tag = "" ):
-    for node in self.useful_nodes:
+    for node in self.nodes:
       node.reset_tags(major_tag)
 
 
   def get_node( self, the_row, the_position ):
-    for node in self.useful_nodes:
+    for node in self.nodes:
       if node.position == the_position and node.node_row() == the_row:
         return node
 
@@ -55,17 +55,17 @@ class UsefulNodes():
 
       the_node = UsefulNode(the_position, the_layer, the_head, [])
 
-      self.useful_nodes += [the_node]
+      self.nodes += [the_node]
 
     the_node.add_tag(major_tag, minor_tag)
 
 
   def sort_nodes(self):
-    self.useful_nodes = sorted(self.useful_nodes, key=lambda obj: (obj.position, obj.layer, obj.head))
+    self.nodes = sorted(self.nodes, key=lambda obj: (obj.position, obj.layer, obj.head))
 
 
   def save_nodes(self, filename):
-    dict_list = [node.to_dict() for node in self.useful_nodes]
+    dict_list = [node.to_dict() for node in self.nodes]
     with open(filename, 'w') as file:
         json.dump(dict_list, file, default=lambda o: o.__dict__)
 
@@ -74,7 +74,7 @@ class UsefulNodes():
   # filter_heads(self, [[MUST, POSITION_MAJOR_TAG, P14], [MUST, IMPACT_MAJOR_TAG, A543], [NOT, ALGO_MAJOR_TAG, D2.BA] ])
   def filter_heads(self, filters):
     answer = []
-    for node in self.useful_nodes:
+    for node in self.nodes:
       if node.is_head():
         include = True
         for filter in filters:
@@ -102,4 +102,4 @@ class UsefulNodes():
     return answer
 
 
-useful_nodes = UsefulNodes()
+useful_info = UsefulInfo()
