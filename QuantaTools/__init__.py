@@ -1,1 +1,1 @@
-from .filter import Filter
+from .quanta_filter import QuantaFilter
