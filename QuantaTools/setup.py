@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 setup(
     name='QuantaTools',
     version='0.1',
-    packages=['QuantaTools'],
+    packages=find_packages(),
     description='Tools for use with the quanta framework annd transformer models',
     author='Philip Quirke',
     author_email='philipquirkenzgmail.com',
