@@ -7,7 +7,6 @@ setup(
     description='Tools for use with the quanta framework annd transformer models',
     author='Philip Quirke',
     author_email='philipquirkenzgmail.com',
-    url='https://github.com/PhilipQuirke/verified_transformers/QuantaTools',
     install_requires=[
         'numpy>=1.18.1',  # Example dependency, specify your package's dependencies here
         # Add other dependencies as needed
