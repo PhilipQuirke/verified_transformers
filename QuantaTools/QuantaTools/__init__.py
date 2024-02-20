@@ -1,3 +1,3 @@
-#from .filter_enum.py
+from .filter_enum import Filter
 
-from . import filter_enum
+__all__ = ['Filter']
