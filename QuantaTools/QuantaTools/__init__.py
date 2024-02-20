@@ -1,1 +1,3 @@
-from .filter_enum.py
+# from .filter_enum.py
+
+from . import filter_enum
