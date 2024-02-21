@@ -3,6 +3,9 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import textwrap
 
+from .useful_node import UsefulNode
+from .useful_info import UsefulInfo
+
 
 # Results to display in a quanta cell
 class QuantaResult:
