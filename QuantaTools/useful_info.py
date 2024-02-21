@@ -5,9 +5,6 @@ class UsefulInfo():
   # sparce ordered list of useful token positions e.g. 0,1,8,9,10,11
   positions = []
 
-  # sparce ordered list of useful rows e.g. 0,1,4 representing L0H0, L0H1 and L0MLP
-  rows = []
-
   # list of useful nodes
   nodes = []
 
@@ -24,12 +21,6 @@ class UsefulInfo():
   def add_useful_position(self, position):
     if not (position in self.positions):
       self.positions += [position]
-
-
-  # Add a quanta row that we know is used in calculations
-  def add_useful_row(self, row):
-    if not (row in self.rows):
-      self.rows += [row]
 
 
   def print__tags(self):
