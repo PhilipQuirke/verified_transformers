@@ -30,8 +30,8 @@ def calc_quanta_results( n_heads, major_tag, minor_tag, get_node_details, shades
   for raw_col in useful_info.positions:
     for raw_row in useful_info.rows:
 
-      head = r % (n_heads + 1)
-      layer = r // (n_heads + 1)
+      head = raw_row % (n_heads + 1)
+      layer = raw_row // (n_heads + 1)
       is_head = head < n_heads
       
       node = useful_info.get_node(raw_col, layer, is_head, head if is_head else 0 )
