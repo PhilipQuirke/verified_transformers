@@ -1,4 +1,4 @@
-import useful_node
+from useful_node import UsefulNode
 
 
 class UsefulInfo():
