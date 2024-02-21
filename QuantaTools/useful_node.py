@@ -29,6 +29,16 @@ class UsefulNode():
     return location_name(self.position,self.layer,self.is_head,self.node)
 
 
+  def head(self):
+    assert self.is_head
+    return self.node
+
+
+  def neuron(self):
+    assert ! self.is_head
+    return self.node
+    
+  
   # Remove some/all tags from this node
   def reset_tags(self, major_tag):
     if major_tag == "":
