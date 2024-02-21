@@ -3,52 +3,40 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import textwrap
 
-from .useful_node import UsefulNode
+from .useful_node import UsefulNode, row_location_name
 from .useful_info import UsefulInfo, useful_info
 
 
 # Results to display in a quanta cell
 class QuantaResult:
-  model_row : int = 0
-  model_col : int = 0
+  position : int = 0
+  layer : int = 0
+  is_head : bool = True
+  num : int = 0
   cell_text : str = ""
   color_index :int = -1
 
 
-  def __init__(self, model_row, model_col, cell_text, color_index):
-    self.model_row = model_row
-    self.model_col = model_col
-    self.cell_text = cell_text
+  def __init__(self, node, cell_text, color_index):
+    self.position = node.position
+    self.layer = node.layer
+    self.is_head = node.is_head
+    self.num = node.num
+    self.cell_text = cell_text    
     self.color_index = color_index
 
 
 # Calculate the results to display in all the quanta cell
-def calc_quanta_results( n_heads, major_tag, minor_tag, get_node_details, shades ):
+def calc_quanta_results( major_tag, minor_tag, get_node_details, shades ):
 
   quanta_results = []
 
-  for raw_col in useful_info.positions:
-    for raw_row in useful_info.rows:
-
-      head = raw_row % (n_heads + 1)
-      layer = raw_row // (n_heads + 1)
-      is_head = head < n_heads
-      
-      node = useful_info.get_node(raw_col, layer, is_head, head if is_head else 0 )
-      if node != None:
-        cell_text, color_index = get_node_details(node, major_tag, minor_tag, shades)
-        if cell_text != "" :
-          quanta_results +=[QuantaResult(model_row=raw_row, model_col=raw_col, cell_text=cell_text, color_index=color_index )]
+  for node in useful_info.nodes:
+    cell_text, color_index = get_node_details(node, major_tag, minor_tag, shades)
+    if cell_text != "" :
+      quanta_results +=[QuantaResult(node, cell_text, color_index)]
 
   return quanta_results
-
-
-# Find the quanta result for the specified cell
-def find_quanta_result_by_row_col(row, col, quanta_results):
-    for result in quanta_results:
-        if result.model_row == row and result.model_col == col:
-            return result
-    return None
 
 
 # Define a colormap for use with graphing
@@ -62,7 +50,21 @@ def pale_color(color, factor=0.5):
     color_array = np.array(color)
     white = np.array([1, 1, 1, 1])
     return white * factor + color_array * (1 - factor)
+
+
+# Row in the quanta map (covering L0H0 .. L0Hn L0MLP L1H0 .. L1Hn L1MLP ...):
+def quanta_row(n_heads, the_layer, is_head, num):
+    return the_layer * (n_heads+1) + ( num if is_head else n_heads)
   
+
+# Find the quanta result for the specified cell
+def find_quanta_result_by_row_col(n_heads, row, col, quanta_results):
+    for result in quanta_results:
+      result_row = quanta_row(n_heads, result.layer, result.is_head, result.num)
+        if result_row == row and result.position == col:
+            return result
+    return None
+
 
 # Get the row heading e.g. L1H2 or L2MLP
 def get_quanta_row_heading(n_heads, r):
@@ -88,7 +90,8 @@ def calc_quanta_map( n_heads, token_position_meanings, custom_cmap, shades, majo
   distinct_cols = set()
 
   for result in quanta_results:
-      distinct_rows.add(result.model_row)
+      result_row = quanta_row(n_heads, result.layer, result.is_head, result.num)    
+      distinct_rows.add(result_row)
       distinct_cols.add(result.model_col)
 
   distinct_rows = sorted(distinct_rows)
@@ -109,7 +112,7 @@ def calc_quanta_map( n_heads, token_position_meanings, custom_cmap, shades, majo
 
   show_row = len(distinct_rows)-1
   for raw_row in distinct_rows:
-    vertical_labels += [get_quanta_row_heading(n_heads, raw_row)]
+    vertical_labels += [get__heading(n_heads, raw_row)]
 
     show_col = 0
     for raw_col in distinct_cols:
@@ -118,7 +121,7 @@ def calc_quanta_map( n_heads, token_position_meanings, custom_cmap, shades, majo
       if show_row == 0:
         horizontal_labels += [token_position_meanings[raw_col] + "/" + position_name(raw_col)]
 
-      result = find_quanta_result_by_row_col(raw_row, raw_col, quanta_results)
+      result = find_quanta_result_by_row_col(n_heads, raw_row, raw_col, quanta_results)
       if result != None:
         cell_color = colors[result.color_index] if result.color_index >= 0 else 'lightgrey'
         the_fontsize = base_fontsize if len(result.cell_text) < 4 else base_fontsize-1 if len(result.cell_text) < 5 else base_fontsize-2
