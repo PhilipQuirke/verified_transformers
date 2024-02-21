@@ -1,11 +1,8 @@
-#from useful_node import UsefulNode
-
-
 class UsefulInfo():
   # sparce ordered list of useful token positions e.g. 0,1,8,9,10,11
   positions = []
 
-  # sparce ordered list of useful e.g. 0,1,4 representing L0H0, L0H1 and L0MLP
+  # sparce ordered list of useful rows e.g. 0,1,4 representing L0H0, L0H1 and L0MLP
   rows = []
 
   # list of useful nodes
@@ -43,20 +40,20 @@ class UsefulInfo():
       node.reset_tags(major_tag)
 
 
-  def get_node( self, the_row, the_position ):
+  def get_node( self, the_position, the_layer, is_head, the_node ):
     for node in self.nodes:
-      if node.position == the_position and node.node_row() == the_row:
+      if node.position == the_position and node.is_head == is_head and node.layer == the_layer and node.node == the_node:
         return node
 
     return None
 
 
-  def add_node_tag( self, the_row, the_position, the_layer, the_head, major_tag, minor_tag ):
+  def add_node_tag( self, the_position, the_layer, is_head, the_node, major_tag, minor_tag ):
 
-    the_node = self.get_node( the_row, the_position )
+    the_node = self.get_node( the_position, the_layer, is_head, the_node )
     if the_node == None:
 
-      the_node = UsefulNode(the_position, the_layer, the_head, [])
+      the_node = UsefulNode(the_position, the_layer, is_head, the_node, [])
 
       self.nodes += [the_node]
 
@@ -78,7 +75,7 @@ class UsefulInfo():
   def filter_heads(self, filters):
     answer = []
     for node in self.nodes:
-      if node.is_head():
+      if node.is_head:
         include = True
         for filter in filters:
           quanta_filter = filter[0]
