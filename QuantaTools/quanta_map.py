@@ -4,7 +4,7 @@ import matplotlib.colors as mcolors
 import textwrap
 
 from .useful_node import UsefulNode
-from .useful_info import UsefulInfo
+from .useful_info import UsefulInfo, useful_info
 
 
 # Results to display in a quanta cell
