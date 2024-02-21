@@ -119,3 +119,5 @@ def calc_quanta_map( custom_cmap, shades, major_tag, minor_tag, get_node_details
   for label in ax1.get_yticklabels():
     label.set_horizontalalignment('left')
     label.set_position((-0.1, 0))  # Adjust the horizontal position
+
+  return ax1, quanta_results
