@@ -1,4 +1,4 @@
-from QuantaTools import UsefulNode
+from .useful_node import UsefulNode
 
 
 class UsefulInfo():
