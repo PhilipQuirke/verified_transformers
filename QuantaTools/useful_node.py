@@ -35,7 +35,7 @@ class UsefulNode():
 
 
   def neuron(self):
-    assert ! self.is_head
+    assert not self.is_head
     return self.node
     
   
