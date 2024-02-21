@@ -7,13 +7,13 @@ def location_name(position, layer, is_head, node):
 
 
 class UsefulNode():
-  # Position.Layer.Head of the node
-  position: int  # token-position. Zero to cfg.n_ctx - 1
+  # Position.Layer.AttentionHead/MlpNeuron of the node
+  position: int  # Token position 
   layer: int
   is_head : bool
-  node: int # Either head or MLP neuron number
+  node: int # Either attention head or MLP neuron number
 
-  # Tags related to the node of form "MajorVersion.MinorVersion"
+  # Tags related to the node of form "MajorVersion:MinorVersion"
   tags: list
 
 
