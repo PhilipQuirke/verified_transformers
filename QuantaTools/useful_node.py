@@ -1,45 +1,45 @@
-def row_location_name(layer, is_head, node):
-  return "L" + str(layer) + ("H" + str(node) if is_head else "MLP")
+def row_location_name(layer, is_head, num):
+  return "L" + str(layer) + ("H" + str(num) if is_head else "MLP")
 
 
-def location_name(position, layer, is_head, node):
-  return "P" + str(position) + row_location_name(layer, is_head, node)
+def location_name(position, layer, is_head, num):
+  return "P" + str(position) + row_location_name(layer, is_head, num)
 
 
 class UsefulNode():
   # Position.Layer.AttentionHead/MlpNeuron of the node
-  position: int  # Token position 
-  layer: int
+  position : int  # Token position 
+  layer : int
   is_head : bool
-  node: int # Either attention head or MLP neuron number
+  num: int # Either attention head or MLP neuron number
 
   # Tags related to the node of form "MajorVersion:MinorVersion"
-  tags: list
+  tags : list
 
 
   def reset(self):
     self.position = -1
     self.layer = -1
     self.is_head = True
-    self.node = -1
+    self.num = -1
     self.tags = []
 
 
   def name(self):
-    return location_name(self.position,self.layer,self.is_head,self.node)
+    return location_name(self.position,self.layer,self.is_head,self.num)
 
 
   def head(self):
     assert self.is_head
-    return self.node
+    return self.num
 
 
   def neuron(self):
     assert not self.is_head
-    return self.node
+    return self.num
     
   
-  # Remove some/all tags from this node
+  # Remove some/all tags from this 
   def reset_tags(self, major_tag):
     if major_tag == "":
       self.tags = []
@@ -47,7 +47,7 @@ class UsefulNode():
       self.tags = [s for s in self.tags if not s.startswith(major_tag)]
 
 
-  # Add a tag to this node (if not already present)
+  # Add a tag to this  (if not already present)
   def add_tag(self, major_tag, minor_tag):
     tag = major_tag + ":" + minor_tag
     if tag != "" and (not (tag in self.tags)):
@@ -94,7 +94,7 @@ class UsefulNode():
     return filtered_strings[0].split(":")[1] if num_strings == 1 else ""
 
 
-  # Return whether this node contains a tag with the matching major_tag or major+minor_tag
+  # Return whether this  contains a tag with the matching major_tag or major+minor_tag
   def contains_tag(self, major_tag, minor_tag):
     assert major_tag != ""
 
@@ -111,14 +111,14 @@ class UsefulNode():
       "position": self.position,
       "layer": self.layer,
       "is_head": self.is_head,
-      "node": self.node,
+      "num": self.num,
       "tags": self.tags
     }
 
 
-  def __init__(self, position, layer, is_head, node, tags):
+  def __init__(self, position, layer, is_head, num, tags):
     self.position = position
     self.layer = layer
     self.is_head = is_head
-    self.node = node
+    self.num = num
     self.tags = tags
