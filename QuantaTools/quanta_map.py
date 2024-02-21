@@ -42,12 +42,28 @@ def find_quanta_result_by_row_col(row, col, quanta_results):
     return None
 
 
+# Define a colormap for use with graphing
+def create_custom_colormap():
+    colors = ["green", "yellow"]
+    return mcolors.LinearSegmentedColormap.from_list("custom_colormap", colors)
+
+
+# Blend the color with white to make it paler
+def pale_color(color, factor=0.5):
+    color_array = np.array(color)
+    white = np.array([1, 1, 1, 1])
+    return white * factor + color_array * (1 - factor)
+  
+
 def show_quanta_add_patch(ax, j, row, cell_color):
   ax.add_patch(plt.Rectangle((j, row), 1, 1, fill=True, color=cell_color))
 
 
 def calc_quanta_map( custom_cmap, shades, major_tag, minor_tag, get_node_details, base_fontsize = 10, max_width = 10):
 
+  if shades == None:
+    shades = create_custom_colormap()
+  
   quanta_results = calc_quanta_results(major_tag, minor_tag, get_node_details, shades)
 
   distinct_rows = set()
