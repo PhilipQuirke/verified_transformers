@@ -1,27 +1,32 @@
+def row_location_name(layer, is_head, node):
+  return "L" + str(layer) + ("H" + str(node) if is_head else "MLP")
+
+
+def location_name(position, layer, is_head, node):
+  return "P" + str(position) + row_location_name(layer, is_head, node)
+
+
 class UsefulNode():
   # Position.Layer.Head of the node
   position: int  # token-position. Zero to cfg.n_ctx - 1
   layer: int
-  head: int
+  is_head : bool
+  node: int # Either head or MLP neuron number
 
   # Tags related to the node of form "MajorVersion.MinorVersion"
   tags: list
 
 
-  # Is this node an attention head? If not, it must be an MLP layer
-  def is_head(self):
-    return self.head != cfg.n_heads
-
-
   def reset(self):
     self.position = -1
     self.layer = -1
-    self.head = -1
+    self.is_head = True
+    self.node = -1
     self.tags = []
 
 
   def name(self):
-    return location_name(self.position,self.layer,self.head)
+    return location_name(self.position,self.layer,self.is_head,self.node)
 
 
   # Remove some/all tags from this node
@@ -30,11 +35,6 @@ class UsefulNode():
       self.tags = []
     else:
       self.tags = [s for s in self.tags if not s.startswith(major_tag)]
-
-
-  # Row in a table that this node is drawn
-  def node_row(self):
-    return quanta_row(self.layer, self.head)
 
 
   # Add a tag to this node (if not already present)
@@ -100,13 +100,15 @@ class UsefulNode():
     return {
       "position": self.position,
       "layer": self.layer,
-      "head": self.head,
+      "is_head": self.is_head,
+      "node": self.node,
       "tags": self.tags
     }
 
 
-  def __init__(self, position, layer, head, tags):
+  def __init__(self, position, layer, is_head, node, tags):
     self.position = position
     self.layer = layer
-    self.head = head
+    self.is_head = is_head
+    self.node = node
     self.tags = tags
