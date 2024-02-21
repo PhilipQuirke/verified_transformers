@@ -77,7 +77,7 @@ def show_quanta_add_patch(ax, j, row, cell_color):
 
 
 # Calculate (but do not draw) the quanta map with cell contents provided by get_node_details 
-def calc_quanta_map( n_heads, custom_cmap, shades, major_tag, minor_tag, get_node_details, base_fontsize = 10, max_width = 10):
+def calc_quanta_map( n_heads, token_position_meanings, custom_cmap, shades, major_tag, minor_tag, get_node_details, base_fontsize = 10, max_width = 10):
     
   if shades == None:
     shades = create_custom_colormap()
@@ -93,9 +93,6 @@ def calc_quanta_map( n_heads, custom_cmap, shades, major_tag, minor_tag, get_nod
 
   distinct_rows = sorted(distinct_rows)
   distinct_cols = sorted(distinct_cols)
-
-  print_config()
-  print()
 
   # Create figure and axes
   fig1, ax1 = plt.subplots(figsize=(2*len(distinct_cols)/3, 2*len(distinct_rows)/3))  # Adjust the figure size as needed
