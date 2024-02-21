@@ -22,8 +22,8 @@ def calc_quanta_results( major_tag, minor_tag, get_node_details, shades ):
 
   quanta_results = []
 
-  for raw_row in useful_info.useful_rows:
-    for raw_col in useful_info.useful_positions:
+  for raw_row in useful_info.rows:
+    for raw_col in useful_info.positions:
       node = useful_info.get_node(raw_row, raw_col)
       if node != None:
         cell_text, color_index = get_node_details(node, major_tag, minor_tag, shades)
