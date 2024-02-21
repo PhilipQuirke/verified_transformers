@@ -60,7 +60,7 @@ def quanta_row(n_heads, the_layer, is_head, num):
 # Find the quanta result for the specified cell
 def find_quanta_result_by_row_col(n_heads, row, col, quanta_results):
     for result in quanta_results:
-      result_row = quanta_row(n_heads, result.layer, result.is_head, result.num)
+        result_row = quanta_row(n_heads, result.layer, result.is_head, result.num)
         if result_row == row and result.position == col:
             return result
     return None
