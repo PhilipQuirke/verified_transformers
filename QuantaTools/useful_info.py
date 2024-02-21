@@ -64,7 +64,7 @@ class UsefulInfo():
 
 
   def sort_nodes(self):
-    self.nodes = sorted(self.nodes, key=lambda obj: (obj.position, obj.layer, obj.head))
+    self.nodes = sorted(self.nodes, key=lambda obj: (obj.position, obj.layer, obj.is_head, obj.node))
 
 
   def save_nodes(self, filename):
