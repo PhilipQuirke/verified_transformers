@@ -1,3 +1,6 @@
+import useful_node
+
+
 class UsefulInfo():
   # sparce ordered list of useful token positions e.g. 0,1,8,9,10,11
   positions = []
