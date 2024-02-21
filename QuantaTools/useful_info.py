@@ -32,7 +32,7 @@ class UsefulInfo():
       self.rows += [row]
 
 
-  def print_node_tags(self):
+  def print__tags(self):
     for node in self.nodes:
       print( node.name(), node.tags )
 
@@ -43,20 +43,20 @@ class UsefulInfo():
       node.reset_tags(major_tag)
 
 
-  def get_node( self, the_position, the_layer, is_head, the_node ):
+  def get_node( self, the_position, the_layer, is_head, the_num ):
     for node in self.nodes:
-      if node.position == the_position and node.is_head == is_head and node.layer == the_layer and node.node == the_node:
+      if node.position == the_position and node.is_head == is_head and node.layer == the_layer and node.num == the_num:
         return node
 
     return None
 
 
-  def add_node_tag( self, the_position, the_layer, is_head, the_node, major_tag, minor_tag ):
+  def add_node_tag( self, the_position, the_layer, is_head, the_num, major_tag, minor_tag ):
 
-    the_node = self.get_node( the_position, the_layer, is_head, the_node )
+    the_node = self.get_node( the_position, the_layer, is_head, the_num )
     if the_node == None:
 
-      the_node = UsefulNode(the_position, the_layer, is_head, the_node, [])
+      the_node = UsefulNode(the_position, the_layer, is_head, the_num, [])
 
       self.nodes += [the_node]
 
@@ -64,7 +64,7 @@ class UsefulInfo():
 
 
   def sort_nodes(self):
-    self.nodes = sorted(self.nodes, key=lambda obj: (obj.position, obj.layer, obj.is_head, obj.node))
+    self.nodes = sorted(self.nodes, key=lambda obj: (obj.position, obj.layer, obj.is_head, obj.num))
 
 
   def save_nodes(self, filename):
