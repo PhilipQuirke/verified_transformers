@@ -20,13 +20,18 @@ class QuantaResult:
 
 
 # Calculate the results to display in all the quanta cell
-def calc_quanta_results( major_tag, minor_tag, get_node_details, shades ):
+def calc_quanta_results( n_heads, major_tag, minor_tag, get_node_details, shades ):
 
   quanta_results = []
 
-  for raw_row in useful_info.rows:
-    for raw_col in useful_info.positions:
-      node = useful_info.get_node(raw_row, raw_col)
+  for raw_col in useful_info.positions:
+    for raw_row in useful_info.rows:
+
+      head = r % (n_heads + 1)
+      layer = r // (n_heads + 1)
+      is_head = head < n_heads
+      
+      node = useful_info.get_node(raw_col, layer, is_head, head if is_head else 0 )
       if node != None:
         cell_text, color_index = get_node_details(node, major_tag, minor_tag, shades)
         if cell_text != "" :
@@ -56,18 +61,25 @@ def pale_color(color, factor=0.5):
     return white * factor + color_array * (1 - factor)
   
 
+# Get the row heading e.g. L1H2 or L2MLP
+def get_quanta_row_heading(n_heads, r):
+  head = r % (n_heads + 1)
+  layer = r // (n_heads + 1)
+  return row_location_name(layer, head)
+  
+
 # Draw a cell in the specified color
 def show_quanta_add_patch(ax, j, row, cell_color):
   ax.add_patch(plt.Rectangle((j, row), 1, 1, fill=True, color=cell_color))
 
 
 # Calculate (but do not draw) the quanta map with cell contents provided by get_node_details 
-def calc_quanta_map( custom_cmap, shades, major_tag, minor_tag, get_node_details, base_fontsize = 10, max_width = 10):
-
+def calc_quanta_map( n_heads, custom_cmap, shades, major_tag, minor_tag, get_node_details, base_fontsize = 10, max_width = 10):
+    
   if shades == None:
     shades = create_custom_colormap()
   
-  quanta_results = calc_quanta_results(major_tag, minor_tag, get_node_details, shades)
+  quanta_results = calc_quanta_results(n_heads, major_tag, minor_tag, get_node_details, shades)
 
   distinct_rows = set()
   distinct_cols = set()
@@ -97,7 +109,7 @@ def calc_quanta_map( custom_cmap, shades, major_tag, minor_tag, get_node_details
 
   show_row = len(distinct_rows)-1
   for raw_row in distinct_rows:
-    vertical_labels += [get_quanta_row_heading(raw_row)]
+    vertical_labels += [get_quanta_row_heading(n_heads, raw_row)]
 
     show_col = 0
     for raw_col in distinct_cols:
