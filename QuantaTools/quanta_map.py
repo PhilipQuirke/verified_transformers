@@ -1,4 +1,3 @@
-import plotly.io as pio
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import textwrap
