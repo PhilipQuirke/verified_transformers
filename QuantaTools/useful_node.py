@@ -6,38 +6,39 @@ def location_name(position, layer, is_head, num):
   return "P" + str(position) + row_location_name(layer, is_head, num)
 
 
-class UsefulNode():
-  # Position.Layer.AttentionHead/MlpNeuron of the node
+# The unique location of a node (attention head or MLP neuron) in a model 
+class NodeLocation():
   position : int  # Token position 
   layer : int
-  is_head : bool
+  is_head : bool # Else is MLP neuron
   num: int # Either attention head or MLP neuron number
+
+   def __init__(self, position, layer, is_head, num):
+    self.position = position
+    self.layer = layer
+    self.is_head = is_head
+    self.num = num
+
+
+  # Node name e.g. P14L2H3
+  def name(self):
+    return location_name(self.position,self.layer,self.is_head,self.num)
+
+
+  def row_name(self):
+    return row_location_name(self.position,self.layer,self.is_head,self.num)
+    
+
+class UsefulNode(NodeLocation):
 
   # Tags related to the node of form "MajorVersion:MinorVersion"
   tags : list
 
 
-  def reset(self):
-    self.position = -1
-    self.layer = -1
-    self.is_head = True
-    self.num = -1
+  def __init__(self, position, layer, is_head, num):
+    super().__init__(position, layer, is_head, num)  # Call the parent class's constructor    
     self.tags = []
 
-
-  def name(self):
-    return location_name(self.position,self.layer,self.is_head,self.num)
-
-
-  def head(self):
-    assert self.is_head
-    return self.num
-
-
-  def neuron(self):
-    assert not self.is_head
-    return self.num
-    
   
   # Remove some/all tags from this 
   def reset_tags(self, major_tag):
@@ -114,11 +115,3 @@ class UsefulNode():
       "num": self.num,
       "tags": self.tags
     }
-
-
-  def __init__(self, position, layer, is_head, num, tags):
-    self.position = position
-    self.layer = layer
-    self.is_head = is_head
-    self.num = num
-    self.tags = tags
