@@ -1,4 +1,5 @@
-from .useful_node import UsefulNode
+from .useful_node import position_name, position_name_to_int, row_location_name, location_name, NodeLocation, UsefulNode 
+from .quanta_filter import QuantaFilter
 
 
 class UsefulInfo():
@@ -23,13 +24,13 @@ class UsefulInfo():
       self.positions += [position]
 
 
-  def print__tags(self):
+  def print_node_tags(self):
     for node in self.nodes:
       print( node.name(), node.tags )
 
 
 
-  def reset_tags( self, major_tag = "" ):
+  def reset_node_tags( self, major_tag = "" ):
     for node in self.nodes:
       node.reset_tags(major_tag)
 
