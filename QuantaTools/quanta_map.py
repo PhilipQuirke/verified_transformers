@@ -3,25 +3,18 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import textwrap
 
-from .useful_node import UsefulNode, row_location_name
+from .useful_node import NodeLocation, UsefulNode, row_location_name
 from .useful_info import UsefulInfo, useful_info
 
 
 # Results to display in a quanta cell
-class QuantaResult:
-  position : int = 0
-  layer : int = 0
-  is_head : bool = True
-  num : int = 0
+class QuantaResult(NodeLocation):
   cell_text : str = ""
-  color_index :int = -1
+  color_index : int = -1
 
 
   def __init__(self, node, cell_text, color_index):
-    self.position = node.position
-    self.layer = node.layer
-    self.is_head = node.is_head
-    self.num = node.num
+    super().__init__(node.position, node.layer, node.is_head, node.num)  # Call the parent class's constructor    
     self.cell_text = cell_text    
     self.color_index = color_index
 
@@ -84,7 +77,7 @@ def calc_quanta_map( n_heads, token_position_meanings, custom_cmap, shades, majo
   if shades == None:
     shades = create_custom_colormap()
   
-  quanta_results = calc_quanta_results(n_heads, major_tag, minor_tag, get_node_details, shades)
+  quanta_results = calc_quanta_results(major_tag, minor_tag, get_node_details, shades)
 
   distinct_rows = set()
   distinct_cols = set()
