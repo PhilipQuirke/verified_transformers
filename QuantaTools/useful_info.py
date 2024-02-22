@@ -1,7 +1,8 @@
 import json
 
-from .useful_node import position_name, position_name_to_int, row_location_name, location_name, NodeLocation, UsefulNode 
 from .quanta_filter import QuantaFilter
+from .quanta_type import QuantaType
+from .useful_node import position_name, position_name_to_int, row_location_name, location_name, NodeLocation, UsefulNode 
 
 
 class UsefulInfo():
@@ -67,8 +68,8 @@ class UsefulInfo():
         json.dump(dict_list, file, default=lambda o: o.__dict__)
 
 
-  # Filter by a set of [QuantaTools.Filter, major_tag, minor_tag ]
-  # filter_heads(self, [[MUST, POSITION_MAJOR_TAG, P14], [MUST, IMPACT_MAJOR_TAG, A543], [NOT, ALGO_MAJOR_TAG, D2.BA] ])
+  # Filter by a set of [QuantaFilter, QuantaType, minor_tag ]
+  # filter_heads(self, [[MUST, QuantaType.POSITION, P14], [MUST, QuantaType.IMPACT, A543], [NOT, QuantaType.ALGO, D2.BA] ])
   def filter_heads(self, filters):
     answer = []
     for node in self.nodes:
@@ -79,12 +80,12 @@ class UsefulInfo():
           assert isinstance(quanta_filter, QuantaFilter)
           major_tag = filter[1]
           minor_tag = filter[2]
-          if major_tag == POSITION_MAJOR_TAG:
+          if major_tag == QuantaType.POSITION:
             if quanta_filter == QuantaFilter.MUST:
               include &= (position_name(node.position) == minor_tag)
             elif quanta_filter == QuantaFilter.NOT:
               include &= (not position_name(node.position) == minor_tag)
-            elif quanta_filter == QuantaFilter.MUSTMAY:
+            elif quanta_filter == QuantaFilter.MAY:
               include &= True     # No effect
           else:
             if quanta_filter == QuantaFilter.MUST or quanta_filter == QuantaFilter.CONTAINS:
