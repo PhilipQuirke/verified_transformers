@@ -1,7 +1,19 @@
+# convert 14 to "P14"
+def position_name(position):
+  return "P" + str(position)
+
+
+# Convert P14 to 14
+def position_name_to_int(s):
+  return int(s.lstrip('P'))
+
+
+# Return L1H2 or L1MLP
 def row_location_name(layer, is_head, num):
   return "L" + str(layer) + ("H" + str(num) if is_head else "MLP")
 
 
+# Return P19L1H2 or P19L1MLP
 def location_name(position, layer, is_head, num):
   return "P" + str(position) + row_location_name(layer, is_head, num)
 
