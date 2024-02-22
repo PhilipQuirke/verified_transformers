@@ -13,7 +13,7 @@ class NodeLocation():
   is_head : bool # Else is MLP neuron
   num: int # Either attention head or MLP neuron number
 
-   def __init__(self, position, layer, is_head, num):
+  def __init__(self, position, layer, is_head, num):
     self.position = position
     self.layer = layer
     self.is_head = is_head
