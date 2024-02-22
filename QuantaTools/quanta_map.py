@@ -74,10 +74,6 @@ def show_quanta_add_patch(ax, j, row, cell_color):
 
 # Calculate (but do not draw) the quanta map with cell contents provided by get_node_details 
 def calc_quanta_map( n_heads, token_position_meanings, custom_cmap, raw_shades, major_tag, minor_tag, get_node_details, base_fontsize = 10, max_width = 10):
-
-  shades = raw_shades
-  if shades == None or len(shades) == 0:
-    shades = create_custom_colormap()
   
   quanta_results = calc_quanta_results(major_tag, minor_tag, get_node_details, shades)
 
