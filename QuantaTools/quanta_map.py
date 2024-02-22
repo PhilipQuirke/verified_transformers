@@ -61,9 +61,10 @@ def find_quanta_result_by_row_col(n_heads, row, col, quanta_results):
 
 # Get the row heading e.g. L1H2 or L2MLP
 def get_quanta_row_heading(n_heads, r):
-  head = r % (n_heads + 1)
   layer = r // (n_heads + 1)
-  return row_location_name(layer, head)
+  num = r % (n_heads + 1)
+  is_head = num < n_heads
+  return row_location_name(layer, is_head, num if is_head else 0)
   
 
 # Draw a cell in the specified color
