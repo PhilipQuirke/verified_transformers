@@ -105,7 +105,7 @@ def calc_quanta_map( n_heads, token_position_meanings, custom_cmap, shades, majo
 
   show_row = len(distinct_rows)-1
   for raw_row in distinct_rows:
-    vertical_labels += [get__heading(n_heads, raw_row)]
+    vertical_labels += [get_quanta_row_heading(n_heads, raw_row)]
 
     show_col = 0
     for raw_col in distinct_cols:
