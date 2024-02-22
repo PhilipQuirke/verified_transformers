@@ -47,7 +47,7 @@ class UsefulInfo():
     the_node = self.get_node( the_position, the_layer, is_head, the_num )
     if the_node == None:
 
-      the_node = UsefulNode(the_position, the_layer, is_head, the_num, [])
+      the_node = UsefulNode(the_position, the_layer, is_head, the_num)
 
       self.nodes += [the_node]
 
