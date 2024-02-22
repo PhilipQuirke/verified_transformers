@@ -1,29 +1,29 @@
-# convert 14 to "P14"
+# Convert int 14 to "P14"
 def position_name(position):
   return "P" + str(position)
 
 
-# Convert P14 to 14
+# Convert "P14" to int 14
 def position_name_to_int(s):
   return int(s.lstrip('P'))
 
 
-# Return L1H2 or L1MLP
+# Return "L1H2" or "L1M0"
 def row_location_name(layer, is_head, num):
-  return "L" + str(layer) + ("H" + str(num) if is_head else "MLP")
+  return "L" + str(layer) + ("H" if is_head else "M") + str(num) 
 
 
-# Return P19L1H2 or P19L1MLP
+# Return "P19L1H2" or "P19L1M0"
 def location_name(position, layer, is_head, num):
   return "P" + str(position) + row_location_name(layer, is_head, num)
 
 
 # The unique location of a node (attention head or MLP neuron) in a model 
 class NodeLocation():
-  position : int  # Token position 
-  layer : int
+  position : int  # Token position. Zero-based
+  layer : int # Layer. Zero-based
   is_head : bool # Else is MLP neuron
-  num: int # Either attention head or MLP neuron number
+  num: int # Either attention head or MLP neuron number. Zero-based
 
   def __init__(self, position, layer, is_head, num):
     self.position = position
@@ -32,11 +32,12 @@ class NodeLocation():
     self.num = num
 
 
-  # Node name e.g. P14L2H3
+  # Node name e.g. "P14L2H3" or "P14L2M0"
   def name(self):
     return location_name(self.position,self.layer,self.is_head,self.num)
 
 
+  # Node row name e.g. "L2H3" or "L2M0"
   def row_name(self):
     return row_location_name(self.layer,self.is_head,self.num)
 
@@ -48,9 +49,10 @@ class NodeLocation():
     self.num = other.num
     
 
+# A UsefulNode contains a NodeLocation and a list of tags representing its behaviour and purpose
 class UsefulNode(NodeLocation):
 
-  # Tags related to the node of form "MajorVersion:MinorVersion"
+  # Tags related to the node of form "MajorVersion:MinorVersion"  containing behaviour and purpose data
   tags : list
 
 
@@ -69,6 +71,8 @@ class UsefulNode(NodeLocation):
 
   # Add a tag to this  (if not already present)
   def add_tag(self, major_tag, minor_tag):
+    assert major_tag != ""
+    
     tag = major_tag + ":" + minor_tag
     if tag != "" and (not (tag in self.tags)):
       self.tags += [tag]
