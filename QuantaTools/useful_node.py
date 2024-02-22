@@ -26,7 +26,7 @@ class NodeLocation():
 
 
   def row_name(self):
-    return row_location_name(self.position,self.layer,self.is_head,self.num)
+    return row_location_name(self.layer,self.is_head,self.num)
     
 
 class UsefulNode(NodeLocation):
