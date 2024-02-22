@@ -85,7 +85,7 @@ def calc_quanta_map( n_heads, token_position_meanings, custom_cmap, shades, majo
   for result in quanta_results:
       result_row = quanta_row(n_heads, result.layer, result.is_head, result.num)    
       distinct_rows.add(result_row)
-      distinct_cols.add(result.model_col)
+      distinct_cols.add(result.position)
 
   distinct_rows = sorted(distinct_rows)
   distinct_cols = sorted(distinct_cols)
