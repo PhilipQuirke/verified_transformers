@@ -34,20 +34,20 @@ class UsefulInfo():
       node.reset_tags(major_tag)
 
 
-  def get_node( self, the_position, the_layer, is_head, the_num ):
+  def get_node( self, nodelocation ):
     for node in self.nodes:
-      if node.position == the_position and node.is_head == is_head and node.layer == the_layer and node.num == the_num:
+      if node.position == nodelocation.position and node.is_head == nodelocation.is_head and node.layer == nodelocation.layer and node.num == nodelocation.num:
         return node
 
     return None
 
 
-  def add_node_tag( self, the_position, the_layer, is_head, the_num, major_tag, minor_tag ):
+  def add_node_tag( self, nodelocation, major_tag, minor_tag ):
 
-    the_node = self.get_node( the_position, the_layer, is_head, the_num )
+    the_node = self.get_node( nodelocation )
     if the_node == None:
 
-      the_node = UsefulNode(the_position, the_layer, is_head, the_num)
+      the_node = UsefulNode(nodelocation.position, nodelocation.layer, nodelocation.head, nodelocation.num)
 
       self.nodes += [the_node]
 
