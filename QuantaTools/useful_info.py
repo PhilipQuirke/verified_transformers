@@ -93,7 +93,7 @@ class UsefulInfo():
             elif quanta_filter == QuantaFilter.NOT:
               include &= (not position_name(node.position) == minor_tag)
             elif quanta_filter == QuantaFilter.MAY:
-              include &= True     # No effect
+              pass
               
           elif major_tag == QuantaType.ATTENTION:
             # A node can pay attention to several tokens. The filters can name multiple input tokens which are treated as an OR statement
@@ -103,7 +103,7 @@ class UsefulInfo():
             elif quanta_filter == QuantaFilter.NOT:
               attention_match_found = attention_match_found or not node.contains_tag(major_tag,minor_tag)
             elif quanta_filter == QuantaFilter.MAY:
-              include &= True     # No effect      
+              pass     
               
           else:
             if quanta_filter == QuantaFilter.MUST or quanta_filter == QuantaFilter.CONTAINS:
@@ -111,7 +111,7 @@ class UsefulInfo():
             elif quanta_filter == QuantaFilter.NOT:
               include &= not node.contains_tag(major_tag,minor_tag)
             elif quanta_filter == QuantaFilter.MAY:
-              include &= True     # No effect
+              pass
 
         if attention_clause_found and not attention_match_found:
           include = False
