@@ -116,3 +116,14 @@ class FilterPCA(FilterContains):
 class FilterAlgo(FilterContains):
     def __init__(self, minor_tag, filter_strength = QuantaFilter.MUST):
       super().__init__(QuantaType.ALGO, minor_tag, filter_strength)
+
+
+
+def filter_nodes( the_nodes, the_filters):
+  answer = []
+
+  for test_node in the_nodes:
+    if the_filters.evaluate(test_node):
+      answer += [test_node]
+
+  return answer
