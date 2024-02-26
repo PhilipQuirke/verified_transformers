@@ -71,17 +71,17 @@ class UsefulInfo():
 
 
   # Filter by a set of [QuantaFilter, QuantaType, minor_tag ]
-  # filter_heads(self, [[MUST, QuantaType.POSITION, P14], [MUST, QuantaType.IMPACT, A543], [NOT, QuantaType.ALGO, D2.BA] ])
-  def filter_heads(self, filters):
+  # filter_heads(self, [[QuantaFilter.MUST, QuantaType.POSITION, "P14"], [QuantaFilter.MUST, QuantaType.IMPACT, "A543"], [QuantaFilter.NOT, QuantaType.ALGO, "D2.BA"] ])
+  def filter_heads(self, the_filters):
     answer = []
     for node in self.nodes:
       if node.is_head:
         include = True
-        for filter in filters:
-          quanta_filter = filter[0]
+        for a_filter in the_filters:
+          quanta_filter = a_filter[0]
           assert isinstance(quanta_filter, QuantaFilter)
-          major_tag = filter[1]
-          minor_tag = filter[2]
+          major_tag = a_filter[1]
+          minor_tag = a_filter[2]
           if major_tag == QuantaType.POSITION:
             if quanta_filter == QuantaFilter.MUST:
               include &= (position_name(node.position) == minor_tag)
