@@ -99,9 +99,9 @@ class UsefulInfo():
             # A node can pay attention to several tokens. The filters can name multiple input tokens which are treated as an OR statement
             attention_clause_found = True
             if quanta_filter == QuantaFilter.MUST or quanta_filter == QuantaFilter.CONTAINS:
-              attention_match_found = attention_match_found OR node.contains_tag(major_tag,minor_tag)
+              attention_match_found = attention_match_found or node.contains_tag(major_tag,minor_tag)
             elif quanta_filter == QuantaFilter.NOT:
-              attention_match_found = attention_match_found OR not node.contains_tag(major_tag,minor_tag)
+              attention_match_found = attention_match_found or not node.contains_tag(major_tag,minor_tag)
             elif quanta_filter == QuantaFilter.MAY:
               include &= True     # No effect      
               
