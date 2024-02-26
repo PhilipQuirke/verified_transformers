@@ -92,7 +92,7 @@ def calc_quanta_map( token_position_meanings, custom_cmap, shades, major_tag, mi
       cell_color = 'lightgrey'  # Color for empty cells
 
       if show_row == 0:
-        horizontal_labels += [token_position_meanings[the_position] + "/" + position_name(the_position)]
+        horizontal_labels += [token_position_meanings[the_position]]
 
       result = find_quanta_result_by_row_col(the_row_name, the_position, quanta_results)
       if result != None:
