@@ -6,4 +6,4 @@ from .useful_info import UsefulInfo, useful_info
 
 from .quanta_map import create_custom_colormap, calc_quanta_map
 
-from .filter_node import FilterNode, FilterAnd, FilterOr, FilterHead, FilterNeuron, FilterPosition, FilterContains, FilterAttention, FilterImpact, FilterPCA, FilterAlgo, filter_nodes
+from .filter_node import FilterAnd, FilterOr, FilterHead, FilterNeuron, FilterPosition, FilterAttention, FilterImpact, FilterPCA, FilterAlgo, filter_nodes
