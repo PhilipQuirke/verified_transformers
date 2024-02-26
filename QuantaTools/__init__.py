@@ -5,3 +5,5 @@ from .useful_node import position_name, position_name_to_int, row_location_name,
 from .useful_info import UsefulInfo, useful_info
 
 from .quanta_map import create_custom_colormap, calc_quanta_map
+
+from .filter_node import FilterNode, FilterAnd, FilterOr, FilterHead, FilterNeuron, FilterPosition, FilterContains, FilterAttention, FilterImpact, FilterPCA, FilterAlgo, filter_nodes
