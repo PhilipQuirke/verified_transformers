@@ -70,18 +70,23 @@ class UsefulInfo():
         json.dump(dict_list, file, default=lambda o: o.__dict__)
 
 
-  # Filter by a set of [QuantaFilter, QuantaType, minor_tag ]
+  # Filter by a list of [QuantaFilter, QuantaType, minor_tag] clauses
+  # If there are multiple QuantaType.ATTENTION clauses, the head only has to satisft one clause. That is these clauses are OR'ed.
   # filter_heads(self, [[QuantaFilter.MUST, QuantaType.POSITION, "P14"], [QuantaFilter.MUST, QuantaType.IMPACT, "A543"], [QuantaFilter.NOT, QuantaType.ALGO, "D2.BA"] ])
   def filter_heads(self, the_filters):
     answer = []
     for node in self.nodes:
       if node.is_head:
         include = True
+        attention_clause_found = False
+        attention_match_found = False   
+        
         for a_filter in the_filters:
           quanta_filter = a_filter[0]
           assert isinstance(quanta_filter, QuantaFilter)
           major_tag = a_filter[1]
           minor_tag = a_filter[2]
+          
           if major_tag == QuantaType.POSITION:
             if quanta_filter == QuantaFilter.MUST:
               include &= (position_name(node.position) == minor_tag)
@@ -89,6 +94,17 @@ class UsefulInfo():
               include &= (not position_name(node.position) == minor_tag)
             elif quanta_filter == QuantaFilter.MAY:
               include &= True     # No effect
+              
+          elif major_tag == QuantaType.ATTENTION:
+            # A node can pay attention to several tokens. The filters can name multiple input tokens which are treated as an OR statement
+            attention_clause_found = True
+            if quanta_filter == QuantaFilter.MUST or quanta_filter == QuantaFilter.CONTAINS:
+              attention_match_found = attention_match_found OR node.contains_tag(major_tag,minor_tag)
+            elif quanta_filter == QuantaFilter.NOT:
+              attention_match_found = attention_match_found OR not node.contains_tag(major_tag,minor_tag)
+            elif quanta_filter == QuantaFilter.MAY:
+              include &= True     # No effect      
+              
           else:
             if quanta_filter == QuantaFilter.MUST or quanta_filter == QuantaFilter.CONTAINS:
               include &= node.contains_tag(major_tag,minor_tag)
@@ -96,6 +112,10 @@ class UsefulInfo():
               include &= not node.contains_tag(major_tag,minor_tag)
             elif quanta_filter == QuantaFilter.MAY:
               include &= True     # No effect
+
+        if attention_clause_found and not attention_match_found:
+          include = False
+        
         if include:
           answer += [node]
 
