@@ -27,10 +27,12 @@ class UsefulInfo():
       self.positions += [position]
 
 
-  def print_node_tags(self):
+  def print_node_tags(self, major_tag = ""):
     for node in self.nodes:
-      print( node.name(), node.tags )
-
+      if major_tag == "":
+        print( node.name(), node.tags )
+      else:
+        print( node.name(), node.filter_tags(major_tag) )       
 
 
   def reset_node_tags( self, major_tag = "" ):
