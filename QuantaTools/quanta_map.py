@@ -45,26 +45,12 @@ def pale_color(color, factor=0.5):
     return white * factor + color_array * (1 - factor)
 
 
-# Row in the quanta map (covering L0H0 .. L0Hn L0MLP L1H0 .. L1Hn L1MLP ...):
-def quanta_row(n_heads, the_layer, is_head, num):
-    return the_layer * (n_heads+1) + ( num if is_head else n_heads)
-  
-
 # Find the quanta result for the specified cell
-def find_quanta_result_by_row_col(n_heads, row, col, quanta_results):
+def find_quanta_result_by_row_col(the_row_name, the_position, quanta_results):
     for result in quanta_results:
-        result_row = quanta_row(n_heads, result.layer, result.is_head, result.num)
-        if result_row == row and result.position == col:
+        if result.row_name() == the_row_name and result.position == the_position:
             return result
     return None
-
-
-# Get the row heading e.g. L1H2 or L2MLP
-def get_quanta_row_heading(n_heads, r):
-  layer = r // (n_heads + 1)
-  num = r % (n_heads + 1)
-  is_head = num < n_heads
-  return row_location_name(layer, is_head, num if is_head else 0)
   
 
 # Draw a cell in the specified color
@@ -73,46 +59,42 @@ def show_quanta_add_patch(ax, j, row, cell_color):
 
 
 # Calculate (but do not draw) the quanta map with cell contents provided by get_node_details 
-def calc_quanta_map( n_heads, token_position_meanings, custom_cmap, shades, major_tag, minor_tag, get_node_details, base_fontsize = 10, max_width = 10):
+def calc_quanta_map( token_position_meanings, custom_cmap, shades, major_tag, minor_tag, get_node_details, base_fontsize = 10, max_width = 10):
   
   quanta_results = calc_quanta_results(major_tag, minor_tag, get_node_details, shades)
 
-  distinct_rows = set()
-  distinct_cols = set()
+  distinct_row_names = set()
+  distinct_positions = set()
 
   for result in quanta_results:
-      result_row = quanta_row(n_heads, result.layer, result.is_head, result.num)    
-      distinct_rows.add(result_row)
-      distinct_cols.add(result.position)
+      distinct_row_names.add(result.row_name())
+      distinct_positions.add(result.position)
 
-  distinct_rows = sorted(distinct_rows)
-  distinct_cols = sorted(distinct_cols)
+  distinct_row_names = sorted(distinct_row_names)
+  distinct_positions = sorted(distinct_positions)
 
   # Create figure and axes
-  fig1, ax1 = plt.subplots(figsize=(2*len(distinct_cols)/3, 2*len(distinct_rows)/3))  # Adjust the figure size as needed
+  fig1, ax1 = plt.subplots(figsize=(2*len(distinct_positions)/3, 2*len(distinct_row_names)/3))  # Adjust the figure size as needed
 
   # Ensure cells are square
   ax1.set_aspect('equal', adjustable='box')
   ax1.yaxis.set_tick_params(labelleft=True, labelright=False)
 
   colors = [pale_color(custom_cmap(i/shades)) for i in range(shades)]
-  vertical_labels = []
   horizontal_labels = []
   wrapper = textwrap.TextWrapper(width=max_width)
 
 
-  show_row = len(distinct_rows)-1
-  for raw_row in distinct_rows:
-    vertical_labels += [get_quanta_row_heading(n_heads, raw_row)]
-
+  show_row = len(distinct_row_names)-1
+  for the_row_name in distinct_row_names:
     show_col = 0
-    for raw_col in distinct_cols:
+    for the_position in distinct_positions:
       cell_color = 'lightgrey'  # Color for empty cells
 
       if show_row == 0:
-        horizontal_labels += [token_position_meanings[raw_col] + "/" + position_name(raw_col)]
+        horizontal_labels += [token_position_meanings[the_position] + "/" + position_name(the_position)]
 
-      result = find_quanta_result_by_row_col(n_heads, raw_row, raw_col, quanta_results)
+      result = find_quanta_result_by_row_col(the_row_name, the_position, quanta_results)
       if result != None:
         cell_color = colors[result.color_index] if result.color_index >= 0 else 'lightgrey'
         the_fontsize = base_fontsize if len(result.cell_text) < 4 else base_fontsize-1 if len(result.cell_text) < 5 else base_fontsize-2
@@ -136,10 +118,10 @@ def calc_quanta_map( n_heads, token_position_meanings, custom_cmap, shades, majo
     label.set_fontsize(9)
 
   # Configure y axis
-  vertical_labels = vertical_labels[::-1] # Reverse the order
-  ax1.set_ylim(0, len(vertical_labels))
-  ax1.set_yticks(np.arange(0.5, len(vertical_labels), 1))
-  ax1.set_yticklabels(vertical_labels)
+  distinct_row_names = distinct_row_names[::-1] # Reverse the order
+  ax1.set_ylim(0, len(distinct_row_names))
+  ax1.set_yticks(np.arange(0.5, len(distinct_row_names), 1))
+  ax1.set_yticklabels(distinct_row_names)
   ax1.tick_params(axis='y', length=0)
   for label in ax1.get_yticklabels():
     label.set_horizontalalignment('left')
