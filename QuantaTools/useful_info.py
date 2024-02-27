@@ -12,7 +12,20 @@ class UsefulInfo():
   # list of useful nodes
   nodes = []
 
+  # list of strings representing the meaning of each token position.
+  # Used in the column headings of quanta-maps.
+  # Use default_token_position_meanings() to default list to P0, P1, etc. 
+  # Or set list to say D5, D4, D3, D2, D1, D0, +, D'5, D'4, D'3, D'2, D'1, D'0, =, A6, A5, A4, A3, A2, A1, A0
+  token_position_meanings = []
 
+
+  # Default list of strings used to in the column headings of quanta-maps
+  def default_token_position_meanings(num_positions):
+    token_position_meanings = []
+    for i in range(num_positions):
+      token_position_meanings += ["P"+str(i)]
+  
+  
   def min_useful_position(self):
     return min(self.positions)
 
