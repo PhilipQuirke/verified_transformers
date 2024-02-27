@@ -42,11 +42,11 @@ class NodeLocation():
     return row_location_name(self.layer,self.is_head,self.num)
 
 
-  def set_node_location(self, other):
-    self.position = other.position
-    self.layer = other.layer
-    self.is_head = other.is_head
-    self.num = other.num
+  def reset_node_location(self):
+    self.position = 0
+    self.layer = 0
+    self.is_head = True
+    self.num = 0
     
 
 # A UsefulNode contains a NodeLocation and a list of tags representing its behaviour and purpose
