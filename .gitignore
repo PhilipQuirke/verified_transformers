@@ -1,0 +1,8 @@
+# Ignore all files in the notebook directory
+notebooks/*
+
+# Ignore all Jupyter Notebook files
+*.ipynb
+
+# Ignore .ipynb_checkpoints directories created by Jupyter
+.ipynb_checkpoints/
