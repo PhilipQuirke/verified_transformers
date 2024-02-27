@@ -32,6 +32,13 @@ class NodeLocation():
     self.num = num
 
 
+  def reset_node_location(self):
+    self.position = 0
+    self.layer = 0
+    self.is_head = True
+    self.num = 0
+    
+
   # Node name e.g. "P14L2H3" or "P14L2M0"
   def name(self):
     return location_name(self.position,self.layer,self.is_head,self.num)
@@ -40,13 +47,6 @@ class NodeLocation():
   # Node row name e.g. "L2H3" or "L2M0"
   def row_name(self):
     return row_location_name(self.layer,self.is_head,self.num)
-
-
-  def reset_node_location(self):
-    self.position = 0
-    self.layer = 0
-    self.is_head = True
-    self.num = 0
     
 
 # A UsefulNode contains a NodeLocation and a list of tags representing its behaviour and purpose
