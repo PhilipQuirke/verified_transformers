@@ -2,7 +2,6 @@ from .quanta_filter import QuantaFilter
 from .quanta_type import QuantaType
 from .useful_node import position_name, position_name_to_int, row_location_name, location_name, NodeLocation, UsefulNode 
 from .useful_info import UsefulInfo, useful_info
-from .quanta_map import create_custom_colormap, show_quanta_map
 
 
 # For each node, we store at most 5 input attention facts (as tags)
@@ -36,8 +35,3 @@ def get_quanta_attention(node, major_tag, minor_tag, shades):
       color_index = shades-1
 
   return cell_text, color_index
-
-
-# Only maps attention heads, not MLP layers
-def show_attention_quanta_map():
-  show_quanta_map( "Attention per node", create_custom_colormap(), 10, QuantaType.ATTENTION, "", get_quanta_attention, 10, 6)
