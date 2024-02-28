@@ -4,7 +4,8 @@ from .useful_node import position_name, position_name_to_int, row_location_name,
 from .useful_info import UsefulInfo, useful_info
 
 
-def get_binary_category(node, major_tag, minor_tag, shades):
+# Either the node has or doesnt have matching tag(s). Show the tag(s) or show "??"
+def get_quanta_binary(node, major_tag, minor_tag, shades):
 
   cell_text = ""
   color_index = 0
