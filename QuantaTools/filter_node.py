@@ -24,6 +24,7 @@ class FilterAnd(FilterNode):
         answer = " and( "
         for child in self.children:
           answer += child.describe() + ", "
+        answer = answer[:-2]  # Remove the last two characters            
         answer += ")"
         return answer
 
@@ -39,6 +40,7 @@ class FilterOr(FilterNode):
         answer = " or( "
         for child in self.children:
           answer += child.describe() + ", "
+        answer = answer[:-2]  # Remove the last two characters
         answer += ")"
         return answer    
 
