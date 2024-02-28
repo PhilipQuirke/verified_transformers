@@ -11,7 +11,7 @@ MAX_ATTENTION_TAGS = 5
 MIN_ATTENTION_PERC = 10
 
 
-# Only maps attention heads, not MLP layers
+# Return the token_position_meanings that this node (attention head) pays attention to
 def get_quanta_attention(node, major_tag, minor_tag, shades):
   cell_text = ""
   color_index = 0
