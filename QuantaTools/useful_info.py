@@ -6,21 +6,24 @@ from .useful_node import position_name, position_name_to_int, row_location_name,
 
 
 class UsefulInfo():
+  # The number of "question" (input) token positions 
+  num_question_positions : int = 12
   
-  num_question_positions : int
-  num_answer_positions : int
-  answer_positions_ascend : bool
+  # The number of "answer" (output) token positions 
+  num_answer_positions : int = 6
   
-  # list of strings representing the meaning of each token position.
-  # Used in the column headings of quanta-maps.
-  # Use default_token_position_meanings() to default list to P0, P1, etc. 
-  # Or set list to say D5, D4, D3, D2, D1, D0, +, D'5, D'4, D'3, D'2, D'1, D'0, =, A6, A5, A4, A3, A2, A1, A0
+  # Do we name the answer tokens as A5, A4, A3, A2, A1, A0 or A0, A1, A2, A3, A4, A5?
+  answer_positions_ascend : bool = True
+  
+  # List of (short) strings representing the meaning of each token position.
+  # For example D5, D4, D3, D2, D1, D0, +, D'5, D'4, D'3, D'2, D'1, D'0, =, A6, A5, A4, A3, A2, A1, A0
+  # Used in node tag, in the column headings of quanta-maps, etc. 
   token_position_meanings = []
 
-  # sparce ordered list of useful token positions e.g. 0,1,8,9,10,11
+  # sparce ordered list of useful (question and answer) token positions e.g. 0,1,8,9,10,11
   positions = []
 
-  # list of useful nodes
+  # list of useful (attention head and MLP neuron) nodes
   nodes = []
 
   
@@ -31,7 +34,7 @@ class UsefulInfo():
     default_token_position_meanings()
 
   
-  # Default list of strings used to in the column headings of quanta-maps
+  # Default list of strings representing the token positions meanings
   def default_token_position_meanings():
     token_position_meanings = []
     for i in range(num_question_positions):
