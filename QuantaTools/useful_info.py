@@ -13,7 +13,7 @@ class UsefulInfo():
   num_answer_positions : int = 6
   
   # Do we name the answer tokens as A5, A4, A3, A2, A1, A0 or A0, A1, A2, A3, A4, A5?
-  answer_positions_ascend : bool = True
+  answer_meanings_ascend : bool = True
   
   # List of (short) strings representing the meaning of each token position.
   # For example D5, D4, D3, D2, D1, D0, +, D'5, D'4, D'3, D'2, D'1, D'0, =, A6, A5, A4, A3, A2, A1, A0
@@ -27,20 +27,20 @@ class UsefulInfo():
   nodes = []
 
   
-  def initialize_token_positions( num_question_positions, num_answer_positions, answer_positions_ascend ):
+  def initialize_token_positions(self, num_question_positions, num_answer_positions, answer_meanings_ascend ):
     self.num_question_positions = num_question_positions
     self.num_answer_positions = num_answer_positions
-    self.answer_positions_ascend = answer_positions_ascend   
-    default_token_position_meanings()
+    self.answer_meanings_ascend = answer_meanings_ascend   
+    self.default_token_position_meanings()
 
   
   # Default list of strings representing the token positions meanings
-  def default_token_position_meanings():
-    token_position_meanings = []
-    for i in range(num_question_positions):
-      token_position_meanings += ["P"+str(i)]
-    for i in range(num_answer_positions):
-      token_position_meanings += ["A"+str(i if answer_positions_ascend else num_answer_positions - i - 1 )]
+  def default_token_position_meanings(self):
+    self.token_position_meanings = []
+    for i in range(self.num_question_positions):
+      self.token_position_meanings += ["P"+str(i)]
+    for i in range(self.num_answer_positions):
+      self.token_position_meanings += ["A"+str(i if self.answer_positions_ascend else self.num_answer_positions - i - 1 )]
       
   
   def min_useful_position(self):
