@@ -2,6 +2,7 @@ import json
 
 from .quanta_filter import QuantaFilter
 from .quanta_type import QuantaType
+from .quanta_map_impact import answer_name 
 from .useful_node import position_name, position_name_to_int, row_location_name, location_name, NodeLocation, UsefulNode 
 
 
@@ -40,7 +41,7 @@ class UsefulInfo():
     for i in range(self.num_question_positions):
       self.token_position_meanings += ["P"+str(i)]
     for i in range(self.num_answer_positions):
-      self.token_position_meanings += ["A"+str(i if self.answer_positions_ascend else self.num_answer_positions - i - 1 )]
+      self.token_position_meanings += [answer_name(i if self.answer_meanings_ascend else self.num_answer_positions - i - 1 )]
       
   
   def min_useful_position(self):
