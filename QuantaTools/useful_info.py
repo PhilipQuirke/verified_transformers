@@ -6,25 +6,39 @@ from .useful_node import position_name, position_name_to_int, row_location_name,
 
 
 class UsefulInfo():
-  # sparce ordered list of useful token positions e.g. 0,1,8,9,10,11
-  positions = []
-
-  # list of useful nodes
-  nodes = []
-
+  
+  num_question_positions : int
+  num_answer_positions : int
+  answer_positions_ascend : bool
+  
   # list of strings representing the meaning of each token position.
   # Used in the column headings of quanta-maps.
   # Use default_token_position_meanings() to default list to P0, P1, etc. 
   # Or set list to say D5, D4, D3, D2, D1, D0, +, D'5, D'4, D'3, D'2, D'1, D'0, =, A6, A5, A4, A3, A2, A1, A0
   token_position_meanings = []
 
+  # sparce ordered list of useful token positions e.g. 0,1,8,9,10,11
+  positions = []
 
-  # Default list of strings used to in the column headings of quanta-maps
-  def default_token_position_meanings(num_positions):
-    token_position_meanings = []
-    for i in range(num_positions):
-      token_position_meanings += ["P"+str(i)]
+  # list of useful nodes
+  nodes = []
+
   
+  def initialize_token_positions( num_question_positions, num_answer_positions, answer_positions_ascend ):
+    self.num_question_positions = num_question_positions
+    self.num_answer_positions = num_answer_positions
+    self.answer_positions_ascend = answer_positions_ascend   
+    default_token_position_meanings()
+
+  
+  # Default list of strings used to in the column headings of quanta-maps
+  def default_token_position_meanings():
+    token_position_meanings = []
+    for i in range(num_question_positions):
+      token_position_meanings += ["P"+str(i)]
+    for i in range(num_answer_positions):
+      token_position_meanings += ["A"+str(i if answer_positions_ascend else num_answer_positions - i - 1 )]
+      
   
   def min_useful_position(self):
     return min(self.positions)
