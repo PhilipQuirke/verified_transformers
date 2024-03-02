@@ -4,11 +4,6 @@ from .useful_node import position_name, position_name_to_int, row_location_name,
 from .useful_info import UsefulInfo, useful_info
 
 
-# convert 3 to "A3"
-def answer_name(n):
-  return "A" + str(n)
-
-
 # Compare each digit in the answer. Returns a A645 pattern where '4' means a failed 4th digit. A "-" sign failure is shown as "A7"
 def get_answer_impact_meaning_str(answer1_str, answer2_str):
 
