@@ -2,9 +2,13 @@ import json
 
 from .quanta_filter import QuantaFilter
 from .quanta_type import QuantaType
-from .quanta_map_impact import answer_name 
 from .useful_node import position_name, position_name_to_int, row_location_name, location_name, NodeLocation, UsefulNode 
 
+
+# convert 3 to "A3"
+def answer_name(n):
+  return "A" + str(n)
+  
 
 class UsefulInfo():
   # The number of "question" (input) token positions 
