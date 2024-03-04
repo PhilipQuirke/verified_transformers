@@ -27,26 +27,26 @@ def get_answer_impact_meaning_str(answer1_str, answer2_str):
 # Compare each digit in the answer. Returns a A645 pattern where '4' means a failed 4th answer digit.
 def get_answer_impact_meaning(question_and_answer, answer_str2):
 
-  answer1_str = tokens_to_string(question_and_answer[-useful_info.answer_tokens():])
+  answer1_str = tokens_to_string(question_and_answer[-useful_info.num_answer_positions:])
 
   return get_answer_impact_meaning_str(answer1_str, answer_str2)
 
 
-# Check if the digits in the string are sequential
-def is_answer_sequential(digits, ascending):
-  if ascending:
+# Check if the digits in the string are sequential e.g. A1234 or A4321
+def is_answer_sequential(digits):
+  if useful_info.answer_meanings_ascend :
     return all(ord(next_char) - ord(current_char) == 1 for current_char, next_char in zip(digits, digits[1:]))
   else:
     return all(ord(next_char) - ord(current_char) == -1 for current_char, next_char in zip(digits, digits[1:]))
 
 
-# Convert A654321 to A6..1 for compact display
-def compact_answer_if_sequential(s, ascending):
+# Convert A654321 to A6..1, or A123456 to A1..6 for compact display
+def compact_answer_if_sequential(s):
     if len(s) > 3:
       letter, digits = s[0], s[1:]
-      if is_answer_sequential(digits, ascending):
+      if is_answer_sequential(digits, useful_info.answer_meanings_ascend):
         # Convert to compact form 
-        if ascending:
+        if useful_info.answer_meanings_ascend:
           return f"{letter}{digits[-1]}..{digits[0]}"
         else:
           return f"{letter}{digits[0]}..{digits[-1]}"
