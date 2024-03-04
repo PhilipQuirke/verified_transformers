@@ -10,6 +10,6 @@ from .quanta_map import create_custom_colormap, calc_quanta_map
 from .quanta_map_attention import MAX_ATTENTION_TAGS, MIN_ATTENTION_PERC, get_quanta_attention
 from .quanta_map_failperc import get_quanta_fail_perc
 from .quanta_map_binary import get_quanta_binary
-from .quanta_map_impact import get_answer_impact_meaning_str, get_answer_impact_meaning
+from .quanta_map_impact import get_answer_impact_meaning_str, get_answer_impact_meaning, is_answer_sequential, compact_answer_if_sequential, get_quanta_impact
 
 from .filter_node import FilterAnd, FilterOr, FilterHead, FilterNeuron, FilterPosition, FilterAttention, FilterImpact, FilterPCA, FilterAlgo, filter_nodes
