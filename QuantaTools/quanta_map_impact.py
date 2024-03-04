@@ -9,8 +9,8 @@ from .token_to_char import token_to_char, tokens_to_string
 def get_answer_impact_meaning_str(answer1_str, answer2_str):
 
   impact = ""
-  sign_offset = useful_info.question_tokens()
-  for i in range(useful_info.answer_tokens()):
+  sign_offset = useful_info.num_question_positions 
+  for i in range(useful_info.num_answer_positions):
     impact += "" if answer2_str[i] == answer1_str[i] else useful_info.token_position_meanings[sign_offset + i]
 
   if impact == "":
