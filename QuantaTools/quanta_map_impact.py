@@ -2,6 +2,7 @@ from .quanta_filter import QuantaFilter
 from .quanta_type import QuantaType
 from .useful_node import position_name, position_name_to_int, row_location_name, location_name, NodeLocation, UsefulNode 
 from .useful_info import UsefulInfo, useful_info
+from .token_to_char import token_to_char, tokens_to_string 
 
 
 # Compare each digit in the answer. Returns a A645 pattern where '4' means a failed 4th digit. A "-" sign failure is shown as "A7"
