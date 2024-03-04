@@ -46,10 +46,7 @@ def compact_answer_if_sequential(s):
       letter, digits = s[0], s[1:]
       if is_answer_sequential(digits, useful_info.answer_meanings_ascend):
         # Convert to compact form 
-        if useful_info.answer_meanings_ascend:
-          return f"{letter}{digits[-1]}..{digits[0]}"
-        else:
-          return f"{letter}{digits[0]}..{digits[-1]}"
+        return f"{letter}{digits[0]}..{digits[-1]}"
 
     # Return original string if not sequential
     return s
