@@ -50,3 +50,17 @@ def compact_answer_if_sequential(s):
 
     # Return original string if not sequential
     return s
+
+
+def get_quanta_impact( node, major_tag, minor_tag, shades):
+
+  cell_text = ""
+  color_index = 0
+
+  cell_text = node.min_tag_suffix( major_tag, minor_tag )
+  if len(cell_text) > 0:
+    cell_text = compact_answer_if_sequential(cell_text)
+
+    color_index = int(cell_text[1]) if len(cell_text) > 1 and cell_text[1].isdigit() else shades-1
+
+  return cell_text, color_index
