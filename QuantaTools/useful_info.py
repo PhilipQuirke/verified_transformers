@@ -11,6 +11,10 @@ def answer_name(n):
   
 
 class UsefulInfo():
+  
+  # Vocabulary: Map from each character to each token
+  char_to_token : dict = { }
+
   # The number of "question" (input) token positions 
   num_question_positions : int = 12
   
