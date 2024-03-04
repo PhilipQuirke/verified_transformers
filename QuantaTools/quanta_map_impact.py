@@ -44,7 +44,7 @@ def is_answer_sequential(digits):
 def compact_answer_if_sequential(s):
     if len(s) > 3:
       letter, digits = s[0], s[1:]
-      if is_answer_sequential(digits, useful_info.answer_meanings_ascend):
+      if is_answer_sequential(digits):
         # Convert to compact form 
         return f"{letter}{digits[0]}..{digits[-1]}"
 
