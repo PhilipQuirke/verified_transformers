@@ -4,6 +4,8 @@ from .quanta_type import QuantaType
 from .useful_node import position_name, position_name_to_int, row_location_name, location_name, NodeLocation, UsefulNode  
 from .useful_info import answer_name, UsefulInfo, useful_info
 
+from .token_to_char import token_to_char, tokens_to_string 
+
 from .quanta_map import create_custom_colormap, calc_quanta_map
 from .quanta_map_attention import MAX_ATTENTION_TAGS, MIN_ATTENTION_PERC, get_quanta_attention
 from .quanta_map_failperc import get_quanta_fail_perc
