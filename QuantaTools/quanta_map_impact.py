@@ -6,7 +6,7 @@ from .token_to_char import token_to_char, tokens_to_string
 
 
 # Compare each digit in the answer. Returns a A645 pattern where '4' means a failed 4th digit. A "-" sign failure is shown as "A7"
-def get_answer_impact_meaning_str(answer1_str, answer2_str):
+def get_answer_impact(answer1_str, answer2_str):
 
   impact = ""
   sign_offset = useful_info.num_question_positions 
@@ -25,11 +25,11 @@ def get_answer_impact_meaning_str(answer1_str, answer2_str):
 
 
 # Compare each digit in the answer. Returns a A645 pattern where '4' means a failed 4th answer digit.
-def get_answer_impact_meaning(question_and_answer, answer_str2):
+def get_question_answer_impact(question_and_answer, answer_str2):
 
   answer1_str = tokens_to_string(question_and_answer[-useful_info.num_answer_positions:])
 
-  return get_answer_impact_meaning_str(answer1_str, answer_str2)
+  return get_answer_impact(answer1_str, answer_str2)
 
 
 # Check if the digits in the string are sequential e.g. A1234 or A4321
