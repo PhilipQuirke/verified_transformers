@@ -30,3 +30,26 @@ def get_answer_impact_meaning(question_and_answer, answer_str2):
   answer1_str = tokens_to_string(question_and_answer[-useful_info.answer_tokens():])
 
   return get_answer_impact_meaning_str(answer1_str, answer_str2)
+
+
+# Check if the digits in the string are sequential
+def is_answer_sequential(digits, ascending):
+  if ascending:
+    return all(ord(next_char) - ord(current_char) == 1 for current_char, next_char in zip(digits, digits[1:]))
+  else:
+    return all(ord(next_char) - ord(current_char) == -1 for current_char, next_char in zip(digits, digits[1:]))
+
+
+# Convert A654321 to A6..1 for compact display
+def compact_answer_if_sequential(s, ascending):
+    if len(s) > 3:
+      letter, digits = s[0], s[1:]
+      if is_answer_sequential(digits, ascending):
+        # Convert to compact form 
+        if ascending:
+          return f"{letter}{digits[-1]}..{digits[0]}"
+        else:
+          return f"{letter}{digits[0]}..{digits[-1]}"
+
+    # Return original string if not sequential
+    return s
