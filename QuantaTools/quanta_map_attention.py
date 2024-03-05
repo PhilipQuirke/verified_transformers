@@ -7,7 +7,7 @@ from .useful_info import UsefulInfo, useful_info
 # For each node, we store at most 5 input attention facts (as tags)
 MAX_ATTENTION_TAGS = 5
 
-# When graphing, we only show input tokens with >= 10% of the node's attention
+# When graphing, we only show input tokens with > 10% of the node's attention
 MIN_ATTENTION_PERC = 10
 
 
@@ -23,7 +23,7 @@ def get_quanta_attention(node, major_tag, minor_tag, shades):
       node_parts = minor_tag.split("=")
       token_pos = position_name_to_int(node_parts[0])
       the_perc = int(node_parts[1])
-      if the_perc >= MIN_ATTENTION_PERC:
+      if the_perc > MIN_ATTENTION_PERC:
         cell_text += useful_info.token_position_meanings[token_pos] + " "
         sum_perc += the_perc
 
