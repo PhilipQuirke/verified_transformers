@@ -5,8 +5,10 @@ from .useful_info import UsefulInfo, useful_info
 from .token_to_char import token_to_char, tokens_to_string 
 
 
-# Compare each digit in the answer. Returns a A645 pattern where '4' means a failed 4th digit. A "-" sign failure is shown as "A7"
+# Compare the digits in say "+0017726" and "+0018826" returning "A32" where '2' means a mismatch in digit A2. A "-" sign failure is shown as say "A7"
 def get_answer_impact(answer1_str, answer2_str):
+  assert len(answer1_str) > useful_info.num_question_positions
+  assert len(answer2_str) > useful_info.num_question_positions
 
   impact = ""
   sign_offset = useful_info.num_question_positions 
