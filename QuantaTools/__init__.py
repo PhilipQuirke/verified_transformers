@@ -12,4 +12,4 @@ from .quanta_map_failperc import get_quanta_fail_perc
 from .quanta_map_binary import get_quanta_binary
 from .quanta_map_impact import get_answer_impact, get_question_answer_impact, is_answer_sequential, compact_answer_if_sequential, get_quanta_impact
 
-from .filter_node import FilterAnd, FilterOr, FilterHead, FilterNeuron, FilterPosition, FilterAttention, FilterImpact, FilterPCA, FilterAlgo, filter_nodes
+from .filter_node import FilterAnd, FilterOr, FilterHead, FilterNeuron, FilterContains, FilterPosition, FilterAttention, FilterImpact, FilterPCA, FilterAlgo, filter_nodes
