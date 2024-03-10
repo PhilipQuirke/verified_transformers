@@ -15,11 +15,11 @@ class UsefulInfo():
   # Vocabulary: Map from each character to each token
   char_to_token : dict = { }
 
-  # The number of "question" (input) token positions 
+  # The number of "question" (input) token positions e.g. len("12340+12340=")
   num_question_positions : int = 12
   
-  # The number of "answer" (output) token positions 
-  num_answer_positions : int = 6
+  # The number of "answer" (output) token positions  e.g. len("+024680") 
+  num_answer_positions : int = 7
   
   # Do we name the answer tokens as A5, A4, A3, A2, A1, A0 or A0, A1, A2, A3, A4, A5?
   answer_meanings_ascend : bool = True
