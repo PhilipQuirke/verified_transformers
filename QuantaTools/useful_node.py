@@ -1,3 +1,6 @@
+import re
+
+
 # Convert int 14 to "P14"
 def position_name(position):
   return "P" + str(position)
@@ -47,7 +50,23 @@ class NodeLocation():
   # Node row name e.g. "L2H3" or "L2M0"
   def row_name(self):
     return row_location_name(self.layer,self.is_head,self.num)
-    
+
+
+def str_to_node_location( node_location_as_string ):
+  pattern = r"P(\d{1,3})L(\d{1,3})H(\d{1,3})"
+  match = re.search(pattern, node_location_as_string)
+  if match:
+      position, layer, num = match.groups()
+      return NodeLocation( int(position), int(layer), True, int(num))
+
+  pattern = r"P(\d{1,3})L(\d{1,3})M(\d{1,3})"
+  match = re.search(pattern, node_location_as_string)
+  if match:
+      position, layer, num = match.groups()
+      return NodeLocation( int(position), int(layer), False, int(num))
+ 
+  return None
+
 
 # A UsefulNode contains a NodeLocation and a list of tags representing its behaviour and purpose
 class UsefulNode(NodeLocation):
