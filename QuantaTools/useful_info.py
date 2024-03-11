@@ -1,4 +1,5 @@
 import json
+import matplotlib.pyplot as plt
 
 from .quanta_filter import QuantaFilter
 from .quanta_type import QuantaType
@@ -102,10 +103,33 @@ class UsefulInfo():
     self.nodes = sorted(self.nodes, key=lambda obj: (obj.position, obj.layer, obj.is_head, obj.num))
 
 
+  # Save the nodes and tasgs to a json file
   def save_nodes(self, filename):
     dict_list = [node.to_dict() for node in self.nodes]
     with open(filename, 'w') as file:
         json.dump(dict_list, file, default=lambda o: o.__dict__)
+
+
+  # Show the positions, their meanings, and the number of questions that failed when that position is ablated in a 3 row table
+  def calc_position_failures_map(self, num_failures_list, width_inches=16)
+    columns = ["Posn"]
+    for i in range(len(self.token_position_meanings)):
+      columns += [position_name(i)]
+    
+    rows = ["Posn", "# fails"]
+    data = [
+        ["Posn"] + self.token_position_meanings,
+        ["# fails"] + num_failures_list
+    ]
+    
+    fig, ax = plt.subplots(figsize=(width_inches,1))
+    ax.axis('tight')
+    ax.axis('off')
+    
+    table = ax.table(cellText=data, colLabels=columns, loc='center', cellLoc='center')
+    table.auto_set_font_size(False)
+    table.set_fontsize(10)  # Set the font size here
+    table.scale(1, 1.5)  # The first parameter scales column widths, the second scales row heights
 
 
 useful_info = UsefulInfo()
