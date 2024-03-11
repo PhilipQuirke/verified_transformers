@@ -79,6 +79,7 @@ class UsefulInfo():
       node.reset_tags(major_tag)
 
 
+  # Get the node at the specified location. May return None.    
   def get_node( self, nodelocation ):
     for node in self.nodes:
       if node.position == nodelocation.position and node.is_head == nodelocation.is_head and node.layer == nodelocation.layer and node.num == nodelocation.num:
@@ -87,6 +88,7 @@ class UsefulInfo():
     return None
 
 
+  # Add the tag to the node location (creating a node if necessary)  
   def add_node_tag( self, nodelocation, major_tag, minor_tag ):
 
     the_node = self.get_node( nodelocation )
@@ -99,11 +101,12 @@ class UsefulInfo():
     the_node.add_tag(major_tag, minor_tag)
 
 
+  # Sort the nodes into position, layer, is_head, num order
   def sort_nodes(self):
     self.nodes = sorted(self.nodes, key=lambda obj: (obj.position, obj.layer, obj.is_head, obj.num))
 
 
-  # Save the nodes and tasgs to a json file
+  # Save the nodes and tags to a json file
   def save_nodes(self, filename):
     dict_list = [node.to_dict() for node in self.nodes]
     with open(filename, 'w') as file:
@@ -111,7 +114,7 @@ class UsefulInfo():
 
 
   # Show the positions, their meanings, and the number of questions that failed when that position is ablated in a 3 row table
-  def calc_position_failures_map(self, num_failures_list, width_inches=16)
+  def calc_position_failures_map(self, num_failures_list, width_inches=16):
     columns = ["Posn"]
     for i in range(len(self.token_position_meanings)):
       columns += [position_name(i)]
