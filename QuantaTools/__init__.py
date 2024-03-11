@@ -1,7 +1,7 @@
 from .quanta_filter import QuantaFilter
 from .quanta_type import QuantaType 
 
-from .useful_node import position_name, position_name_to_int, row_location_name, location_name, NodeLocation, UsefulNode  
+from .useful_node import position_name, position_name_to_int, row_location_name, location_name, NodeLocation, str_to_node_location, UsefulNode  
 from .useful_info import answer_name, UsefulInfo, useful_info
 
 from .token_to_char import token_to_char, tokens_to_string 
