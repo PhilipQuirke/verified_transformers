@@ -53,13 +53,13 @@ class NodeLocation():
 
 
 def str_to_node_location( node_location_as_string ):
-  pattern = r"P(\d{1,3})L(\d{1,3})H(\d{1,3})"
+  pattern = r"P(\d{1,5})L(\d{1,5})H(\d{1,5})"
   match = re.search(pattern, node_location_as_string)
   if match:
       position, layer, num = match.groups()
       return NodeLocation( int(position), int(layer), True, int(num))
 
-  pattern = r"P(\d{1,3})L(\d{1,3})M(\d{1,3})"
+  pattern = r"P(\d{1,5})L(\d{1,5})M(\d{1,5})"
   match = re.search(pattern, node_location_as_string)
   if match:
       position, layer, num = match.groups()
