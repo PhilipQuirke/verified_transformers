@@ -1,3 +1,5 @@
+import re
+
 from .quanta_filter import QuantaFilter
 from .quanta_type import QuantaType, MIN_ATTENTION_PERC 
 
