@@ -1,9 +1,18 @@
 from .quanta_filter import QuantaFilter
-from .quanta_type import QuantaType 
+from .quanta_type import QuantaType, MIN_ATTENTION_PERC 
 
 from .useful_node import position_name, position_name_to_int, row_location_name, location_name, NodeLocation, UsefulNode  
 from .useful_info import UsefulInfo, useful_info
 
+
+def extract_trailing_int(input_string):
+    # Regular expression to find trailing integer
+    match = re.search(r'\d+$', input_string)
+    if match:
+        return int(match.group())
+    else:
+        return None
+        
 
 class FilterNode:
     def evaluate(self, useful_node):
@@ -107,10 +116,19 @@ class FilterContains(FilterNode):
 
 
 class FilterAttention(FilterContains):
-    def __init__(self, minor_tag, filter_strength = QuantaFilter.MUST):
-      super().__init__(QuantaType.ATTENTION, minor_tag, filter_strength)
+    def __init__(self, minor_tag, filter_strength = QuantaFilter.MUST, filter_min_perc = MIN_ATTENTION_PERC):
+        super().__init__(QuantaType.ATTENTION, minor_tag, filter_strength)
+        self.filter_min_perc = filter_min_perc
 
-
+    def evaluate(self, test_node):
+        if self.filter_strength in [QuantaFilter.MUST, QuantaFilter.CONTAINS]:
+            for tag in test_node.tags:
+                # We use contains(minor) as the ATTENTION_MAJOR_TAG minor tag is "P14=25" (i.e 25 percent)
+                if tag.startswith(QuantaType.ATTENTION) and (super().minor_tag in tag) and (extract_trailing_int(tag)>=self.filter_min_perc):
+                    return True
+            
+        return super().evaluate(self, test_node)
+        
 
 class FilterImpact(FilterContains):
     def __init__(self, minor_tag, filter_strength = QuantaFilter.MUST):
