@@ -124,7 +124,7 @@ class FilterAttention(FilterContains):
         if self.filter_strength in [QuantaFilter.MUST, QuantaFilter.CONTAINS]:
             for tag in test_node.tags:
                 # We use contains(minor) as the ATTENTION_MAJOR_TAG minor tag is "P14=25" (i.e 25 percent)
-                if tag.startswith(QuantaType.ATTENTION) and (super().minor_tag in tag) and (extract_trailing_int(tag)>=self.filter_min_perc):
+                if tag.startswith(QuantaType.ATTENTION) and (self.minor_tag in tag) and (extract_trailing_int(tag)>=self.filter_min_perc):
                     return True
             
         return super().evaluate(self, test_node)
