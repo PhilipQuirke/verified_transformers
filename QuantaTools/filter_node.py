@@ -129,7 +129,7 @@ class FilterAttention(FilterContains):
                 if tag.startswith(QuantaType.ATTENTION) and (self.minor_tag in tag) and (extract_trailing_int(tag)>=self.filter_min_perc):
                     return True
             
-        return super().evaluate(self, test_node)
+        return super().evaluate(test_node)
         
 
 class FilterImpact(FilterContains):
