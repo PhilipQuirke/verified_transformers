@@ -1,14 +1,7 @@
 from .quanta_filter import QuantaFilter
-from .quanta_type import QuantaType
+from .quanta_type import QuantaType, MAX_ATTENTION_TAGS, MIN_ATTENTION_PERC 
 from .useful_node import position_name, position_name_to_int, row_location_name, location_name, NodeLocation, UsefulNode 
 from .useful_info import UsefulInfo, useful_info
-
-
-# For each node, we store at most 5 input attention facts (as tags)
-MAX_ATTENTION_TAGS = 5
-
-# When graphing, we only show input tokens with > 10% of the node's attention
-MIN_ATTENTION_PERC = 10
 
 
 # Return the token_position_meanings that this node (attention head) pays attention to
