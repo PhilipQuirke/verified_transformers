@@ -142,7 +142,7 @@ class UsefulNode(NodeLocation):
     assert major_tag != ""
 
     for tag in self.tags:
-      # We use contains(minor) as the POSITION_MAJOR_TAG minor tag is "P14=25%"
+      # We use contains(minor) as the ATTENTION_MAJOR_TAG minor tag is "P14=25" (i.e 25 percent)
       if tag.startswith(major_tag) and minor_tag in tag:
         return True
 
