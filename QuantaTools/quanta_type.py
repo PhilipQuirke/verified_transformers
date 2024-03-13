@@ -24,8 +24,13 @@ class QuantaType:
   MATH_MUL = "Math.Mul"
   
 
+# Related to QuantaType.ATTENTION:
 # For each node, we store at most 5 input attention facts (as tags)
 MAX_ATTENTION_TAGS = 5
-
 # When graphing, we only show input tokens with > 10% of the node's attention
 MIN_ATTENTION_PERC = 10
+
+
+# Related to QuantaType.IMPACT:
+# No answer digits were impacted by the intervention
+NO_IMPACT_TAG = "(none)"
