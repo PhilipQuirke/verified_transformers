@@ -1,4 +1,3 @@
-import json
 import re
 
 from .quanta_filter import QuantaFilter
