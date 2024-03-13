@@ -21,6 +21,11 @@ def location_name(position, layer, is_head, num):
   return "P" + str(position) + row_location_name(layer, is_head, num)
 
 
+# Convert 3 to "A3"
+def answer_name(n):
+  return "A" + str(n)
+
+
 # The unique location of a node (attention head or MLP neuron) in a model 
 class NodeLocation():
   position : int  # Token position. Zero-based
@@ -157,3 +162,64 @@ class UsefulNode(NodeLocation):
       "num": self.num,
       "tags": self.tags
     }
+
+
+
+class UsefulNodeList():
+
+  # list of useful (attention head and MLP neuron) nodes
+  nodes = []
+
+  
+  def get_node_names():
+    answer = ""
+    for node in self.nodes:
+      answer += ( "" if answer == "" else ", " ) + node.name()
+    return answer
+    
+
+  def print_node_tags(self, major_tag = "", show_empty_tags = True):
+    for node in self.nodes:
+      tags = node.tags if major_tag == "" else node.filter_tags(major_tag)
+      if show_empty_tags or len(tags) > 0 :
+        print( node.name(), tags )       
+
+
+  def reset_node_tags( self, major_tag = "" ):
+    for node in self.nodes:
+      node.reset_tags(major_tag)
+
+
+  # Get the node at the specified location. May return None.    
+  def get_node( self, nodelocation ):
+    for node in self.nodes:
+      if node.position == nodelocation.position and node.is_head == nodelocation.is_head and node.layer == nodelocation.layer and node.num == nodelocation.num:
+        return node
+
+    return None
+
+
+  # Add the tag to the node location (creating a node if necessary)  
+  def add_node_tag( self, nodelocation, major_tag, minor_tag ):
+
+    the_node = self.get_node( nodelocation )
+    if the_node == None:
+
+      the_node = UsefulNode(nodelocation.position, nodelocation.layer, nodelocation.is_head, nodelocation.num)
+
+      self.nodes += [the_node]
+
+    the_node.add_tag(major_tag, minor_tag)
+
+
+  # Sort the nodes into position, layer, is_head, num order
+  def sort_nodes(self):
+    self.nodes = sorted(self.nodes, key=lambda obj: (obj.position, obj.layer, obj.is_head, obj.num))
+
+
+  # Save the nodes and tags to a json file
+  def save_nodes(self, filename):
+    dict_list = [node.to_dict() for node in self.nodes]
+    with open(filename, 'w') as file:
+        json.dump(dict_list, file, default=lambda o: o.__dict__)
+
