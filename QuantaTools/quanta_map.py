@@ -5,6 +5,7 @@ import textwrap
 
 from .useful_node import position_name, position_name_to_int, row_location_name, location_name, NodeLocation, UsefulNode  
 from .useful_info import UsefulInfo, useful_info
+from .filter_node import filter_nodes
 
 
 # Results to display in a quanta cell
@@ -20,11 +21,13 @@ class QuantaResult(NodeLocation):
 
 
 # Calculate the results to display in all the quanta cell
-def calc_quanta_results( major_tag, minor_tag, get_node_details, shades ):
+def calc_quanta_results( filters, major_tag, minor_tag, get_node_details, shades ):
 
   quanta_results = []
 
-  for node in useful_info.nodes:
+  test_nodes = useful_info.nodes if filters == None else filter_nodes( useful_info.nodes, filters)
+    
+  for node in test_nodes:
     cell_text, color_index = get_node_details(node, major_tag, minor_tag, shades)
     if cell_text != "" :
       quanta_results +=[QuantaResult(node, cell_text, color_index)]
@@ -59,9 +62,9 @@ def show_quanta_add_patch(ax, j, row, cell_color):
 
 
 # Calculate (but do not draw) the quanta map with cell contents provided by get_node_details 
-def calc_quanta_map( custom_cmap, shades, major_tag, minor_tag, get_node_details, base_fontsize = 10, max_width = 10):
+def calc_quanta_map( custom_cmap, shades, filters, major_tag, minor_tag, get_node_details, base_fontsize = 10, max_width = 10):
   
-  quanta_results = calc_quanta_results(major_tag, minor_tag, get_node_details, shades)
+  quanta_results = calc_quanta_results(filters, major_tag, minor_tag, get_node_details, shades)
 
   distinct_row_names = set()
   distinct_positions = set()
