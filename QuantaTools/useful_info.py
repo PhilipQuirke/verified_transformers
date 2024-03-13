@@ -1,4 +1,3 @@
-import json
 import matplotlib.pyplot as plt
 
 from .quanta_filter import QuantaFilter
