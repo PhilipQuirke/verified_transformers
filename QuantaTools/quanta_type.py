@@ -18,6 +18,12 @@ class QuantaType:
   ALGO = "Algorithm"
 
 
+  # Types of mathematical operations (questions)
+  MATH_ADD = "Math.Add" 
+  MATH_SUB = "Math.Sub"
+  MATH_MUL = "Math.Mul"
+  
+
 # For each node, we store at most 5 input attention facts (as tags)
 MAX_ATTENTION_TAGS = 5
 
