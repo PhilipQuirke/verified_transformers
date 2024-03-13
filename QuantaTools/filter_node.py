@@ -3,7 +3,7 @@ import re
 from .quanta_filter import QuantaFilter
 from .quanta_type import QuantaType, MIN_ATTENTION_PERC 
 
-from .useful_node import position_name, position_name_to_int, row_location_name, location_name, NodeLocation, UsefulNode  
+from .useful_node import position_name, position_name_to_int, row_location_name, location_name, NodeLocation, UsefulNode, UsefulNodeList 
 from .useful_info import UsefulInfo, useful_info
 
 
@@ -149,10 +149,10 @@ class FilterAlgo(FilterContains):
 
 
 def filter_nodes( the_nodes, the_filters):
-  answer = []
+  answer = UsefulNodeList
 
   for test_node in the_nodes:
     if the_filters.evaluate(test_node):
-      answer += [test_node]
+      answer.nodes += [test_node]
 
   return answer
