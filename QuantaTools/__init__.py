@@ -1,5 +1,5 @@
 from .quanta_filter import QuantaFilter
-from .quanta_type import QuantaType, MAX_ATTENTION_TAGS, MIN_ATTENTION_PERC 
+from .quanta_type import QuantaType, MAX_ATTENTION_TAGS, MIN_ATTENTION_PERC, NO_IMPACT_TAG 
 
 from .useful_node import position_name, position_name_to_int, row_location_name, location_name, answer_name, NodeLocation, str_to_node_location, UsefulNode, UsefulNodeList
 from .useful_info import UsefulInfo, useful_info
