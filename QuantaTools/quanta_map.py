@@ -4,28 +4,28 @@ import matplotlib.colors as mcolors
 import textwrap
 
 from .useful_node import position_name, position_name_to_int, row_location_name, location_name, NodeLocation, UsefulNode  
-from .useful_info import UsefulInfo, useful_info
+from .useful_info import useful_info
 from .filter_node import filter_nodes
 
 
 # Results to display in a quanta cell
 class QuantaResult(NodeLocation):
-  cell_text : str = ""
-  color_index : int = -1
+  cell_text : str
+  color_index : int
 
-
-  def __init__(self, node, cell_text, color_index):
+  
+  def __init__(self, node, cell_text = "", color_index = 0):
     super().__init__(node.position, node.layer, node.is_head, node.num)  # Call the parent class's constructor    
     self.cell_text = cell_text    
     self.color_index = color_index
 
 
 # Calculate the results to display in all the quanta cell
-def calc_quanta_results( filters, major_tag, minor_tag, get_node_details, shades ):
+def calc_quanta_results( useful_nodes, filters, major_tag, minor_tag, get_node_details, shades ):
 
   quanta_results = []
 
-  test_nodes = useful_info.nodes if filters == None else filter_nodes( useful_info.nodes, filters)
+  test_nodes = useful_nodes if filters == None else filter_nodes( useful_nodes, filters)
     
   for node in test_nodes:
     cell_text, color_index = get_node_details(node, major_tag, minor_tag, shades)
@@ -62,9 +62,9 @@ def show_quanta_add_patch(ax, j, row, cell_color):
 
 
 # Calculate (but do not draw) the quanta map with cell contents provided by get_node_details 
-def calc_quanta_map( custom_cmap, shades, filters, major_tag, minor_tag, get_node_details, base_fontsize = 10, max_width = 10):
+def calc_quanta_map( custom_cmap, shades, useful_nodes, filters, major_tag, minor_tag, get_node_details, base_fontsize = 10, max_width = 10):
   
-  quanta_results = calc_quanta_results(filters, major_tag, minor_tag, get_node_details, shades)
+  quanta_results = calc_quanta_results(useful_nodes, filters, major_tag, minor_tag, get_node_details, shades)
 
   distinct_row_names = set()
   distinct_positions = set()
