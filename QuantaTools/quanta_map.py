@@ -3,9 +3,9 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import textwrap
 
-from .useful_node import position_name, position_name_to_int, row_location_name, location_name, NodeLocation, UsefulNode  
+from .useful_node import position_name, position_name_to_int, row_location_name, location_name, NodeLocation, UsefulNode, UsefulNodeList 
 from .useful_info import useful_info
-from .filter_node import filter_nodes
+from .filter_node import FilterNode, filter_nodes
 
 
 # Results to display in a quanta cell
