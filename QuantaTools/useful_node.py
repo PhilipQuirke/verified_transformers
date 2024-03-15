@@ -172,6 +172,10 @@ class UsefulNodeList():
   nodes = []
 
   
+  def __init__(self):
+      self.nodes = []
+
+  
   def get_node_names(self):
     answer = ""
     for node in self.nodes:
