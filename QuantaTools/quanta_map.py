@@ -21,11 +21,11 @@ class QuantaResult(NodeLocation):
 
 
 # Calculate the results to display in all the quanta cell
-def calc_quanta_results( useful_nodes, filters, major_tag, minor_tag, get_node_details, shades ):
+def calc_quanta_results( the_nodes : UsefulNodeList, filters : FilterNode, major_tag : str, minor_tag : str, get_node_details, shades ):
 
   quanta_results = []
 
-  test_nodes = useful_nodes if filters == None else filter_nodes( useful_nodes, filters)
+  test_nodes = the_nodes if filters == None else filter_nodes( the_nodes, filters)
     
   for node in test_nodes.nodes:
     cell_text, color_index = get_node_details(node, major_tag, minor_tag, shades)
@@ -62,9 +62,9 @@ def show_quanta_add_patch(ax, j, row, cell_color):
 
 
 # Calculate (but do not draw) the quanta map with cell contents provided by get_node_details 
-def calc_quanta_map( custom_cmap, shades, useful_nodes, filters, major_tag, minor_tag, get_node_details, base_fontsize = 10, max_width = 10):
+def calc_quanta_map( custom_cmap, shades, the_nodes : UsefulNodeList, filters : FilterNode, major_tag : str, minor_tag : str, get_node_details, base_fontsize = 10, max_width = 10):
   
-  quanta_results = calc_quanta_results(useful_nodes, filters, major_tag, minor_tag, get_node_details, shades)
+  quanta_results = calc_quanta_results(the_nodes, filters, major_tag, minor_tag, get_node_details, shades)
 
   distinct_row_names = set()
   distinct_positions = set()
