@@ -172,7 +172,7 @@ class UsefulNodeList():
   nodes = []
 
   
-  def get_node_names():
+  def get_node_names(self):
     answer = ""
     for node in self.nodes:
       answer += ( "" if answer == "" else ", " ) + node.name()
