@@ -192,7 +192,7 @@ class UsefulNodeList():
 
 
   def num_neurons(self):
-    return len(self.nodes) - self.num_heads():
+    return len(self.nodes) - self.num_heads()
     
 
   def print_node_tags(self, major_tag = "", show_empty_tags = True):
