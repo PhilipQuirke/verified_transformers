@@ -62,7 +62,7 @@ def show_quanta_add_patch(ax, j, row, cell_color):
 
 
 # Calculate (but do not draw) the quanta map with cell contents provided by get_node_details 
-def calc_quanta_map( custom_cmap, shades, the_nodes : UsefulNodeList, filters : FilterNode, major_tag : str, minor_tag : str, get_node_details, base_fontsize = 10, max_width = 10):
+def calc_quanta_map( custom_cmap, shades, the_nodes : UsefulNodeList, filters : FilterNode, major_tag : str, minor_tag : str, get_node_details, base_fontsize = 10, max_width = 10, left_reserve = 0.3 ):
   
   quanta_results = calc_quanta_results(the_nodes, filters, major_tag, minor_tag, get_node_details, shades)
 
@@ -130,4 +130,8 @@ def calc_quanta_map( custom_cmap, shades, the_nodes : UsefulNodeList, filters : 
     label.set_horizontalalignment('left')
     label.set_position((-0.1, 0))  # Adjust the horizontal position
 
+  # Reserve constant space for y-axis labels
+  fig1.subplots_adjust(left=left_reserve) 
+
+  
   return ax1, quanta_results
