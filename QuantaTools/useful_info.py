@@ -8,16 +8,16 @@ from .useful_node import position_name, position_name_to_int, row_location_name,
 class UsefulInfo(UsefulNodeList):
   
   # Vocabulary: Map from each character to each token
-  char_to_token : dict = { }
+  char_to_token : dict 
 
   # The number of "question" (input) token positions e.g. len("12340+12340=")
-  num_question_positions : int = 12
+  num_question_positions : int 
   
   # The number of "answer" (output) token positions  e.g. len("+024680") 
-  num_answer_positions : int = 7
+  num_answer_positions : int
   
   # Do we name the answer tokens as A5, A4, A3, A2, A1, A0 or A0, A1, A2, A3, A4, A5?
-  answer_meanings_ascend : bool = True
+  answer_meanings_ascend : bool  
   
   # List of (short) strings representing the meaning of each token position.
   # For example D5, D4, D3, D2, D1, D0, +, D'5, D'4, D'3, D'2, D'1, D'0, =, A6, A5, A4, A3, A2, A1, A0
@@ -27,6 +27,15 @@ class UsefulInfo(UsefulNodeList):
   # sparce ordered list of useful (question and answer) token positions e.g. 0,1,8,9,10,11
   positions = []
 
+
+  # Default list of strings representing the token positions meanings
+  def default_token_position_meanings(self):
+    self.token_position_meanings = []
+    for i in range(self.num_question_positions):
+      self.token_position_meanings += ["P"+str(i)]
+    for i in range(self.num_answer_positions):
+      self.token_position_meanings += [answer_name(i if self.answer_meanings_ascend else self.num_answer_positions - i - 1 )]
+
   
   def initialize_token_positions(self, num_question_positions, num_answer_positions, answer_meanings_ascend ):
     self.num_question_positions = num_question_positions
@@ -35,14 +44,12 @@ class UsefulInfo(UsefulNodeList):
     self.default_token_position_meanings()
 
   
-  # Default list of strings representing the token positions meanings
-  def default_token_position_meanings(self):
-    self.token_position_meanings = []
-    for i in range(self.num_question_positions):
-      self.token_position_meanings += ["P"+str(i)]
-    for i in range(self.num_answer_positions):
-      self.token_position_meanings += [answer_name(i if self.answer_meanings_ascend else self.num_answer_positions - i - 1 )]
-      
+  def __init__(self):
+    super().__init__()
+    self.char_to_token = {}
+    self.positions = []
+    self.initialize_token_positions(12, 7, True)
+ 
   
   def min_useful_position(self):
     return min(self.positions)
