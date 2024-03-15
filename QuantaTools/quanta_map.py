@@ -131,7 +131,7 @@ def calc_quanta_map( custom_cmap, shades, the_nodes : UsefulNodeList, filters : 
     label.set_position((-0.1, 0))  # Adjust the horizontal position
 
   # Reserve constant space for y-axis labels
-  fig1.subplots_adjust(left=left_reserve) 
+  # fig1.subplots_adjust(left=left_reserve) Doesnt work as desired
 
   
   return ax1, quanta_results
