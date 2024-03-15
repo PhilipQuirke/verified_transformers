@@ -148,11 +148,12 @@ class FilterAlgo(FilterContains):
 
 
 
-def filter_nodes( the_nodes, the_filters):
-  answer = UsefulNodeList
+# Filters the list of nodes using the specified filter criteria and returns a (likely smaller) list of nodes.
+def filter_nodes( the_nodes : UsefulNodeList, the_filters: FilterNode):
+  answer = UsefulNodeList()
 
   for test_node in the_nodes:
     if the_filters.evaluate(test_node):
-      answer.nodes += [test_node]
+      answer.nodes.append(test_node)
 
   return answer
