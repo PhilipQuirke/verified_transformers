@@ -182,6 +182,17 @@ class UsefulNodeList():
     for node in self.nodes:
       answer += ( "" if answer == "" else ", " ) + node.name()
     return answer
+
+  
+  def num_heads(self):
+    answer = 0
+    for node in self.nodes:
+      answer += 1 if node.is_head else 0
+    return answer
+
+
+  def num_neurons(self):
+    return len(self.nodes) - self.num_heads():
     
 
   def print_node_tags(self, major_tag = "", show_empty_tags = True):
