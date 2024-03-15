@@ -27,7 +27,7 @@ def calc_quanta_results( useful_nodes, filters, major_tag, minor_tag, get_node_d
 
   test_nodes = useful_nodes if filters == None else filter_nodes( useful_nodes, filters)
     
-  for node in test_nodes:
+  for node in test_nodes.nodes:
     cell_text, color_index = get_node_details(node, major_tag, minor_tag, shades)
     if cell_text != "" :
       quanta_results +=[QuantaResult(node, cell_text, color_index)]
