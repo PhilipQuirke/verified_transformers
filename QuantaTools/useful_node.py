@@ -1,5 +1,6 @@
 import json
 import re
+from typing import List
 
 
 # Convert int 14 to "P14"
@@ -78,7 +79,7 @@ def str_to_node_location( node_location_as_string ):
 class UsefulNode(NodeLocation):
 
   # Tags related to the node of form "MajorVersion:MinorVersion"  containing behaviour and purpose data
-  tags : list
+  tags : List[str]
 
 
   def __init__(self, position, layer, is_head, num):
