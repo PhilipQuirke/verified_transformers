@@ -151,7 +151,7 @@ class FilterAlgo(FilterContains):
 def filter_nodes( the_nodes : UsefulNodeList, the_filters: FilterNode):
   answer = UsefulNodeList()
 
-  for test_node in the_nodes:
+  for test_node in the_nodes.nodes:
     if the_filters.evaluate(test_node):
       answer.nodes.append(test_node)
 
