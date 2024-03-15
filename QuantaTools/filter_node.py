@@ -1,4 +1,5 @@
 import re
+from abc import ABC, abstractmethod
 
 from .quanta_filter import QuantaFilter
 from .quanta_type import QuantaType, MIN_ATTENTION_PERC 
@@ -16,10 +17,12 @@ def extract_trailing_int(input_string):
         return None
         
 
-class FilterNode:
+class FilterNode(ABC):
+    @abstractmethod
     def evaluate(self, useful_node):
         pass
 
+    @abstractmethod
     def describe(self):
         pass
 
@@ -57,8 +60,6 @@ class FilterOr(FilterNode):
 
 
 class FilterHead(FilterNode):
-    def __init__(self):
-      pass
 
     def evaluate(self, test_node):
         return test_node.is_head
@@ -68,8 +69,6 @@ class FilterHead(FilterNode):
 
                                        
 class FilterNeuron(FilterNode):
-    def __init__(self):
-      pass
 
     def evaluate(self, test_node):
         return not test_node.is_head
