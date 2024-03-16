@@ -1,3 +1,5 @@
+import re
+
 from .useful_node import position_name, answer_name
 
 
@@ -40,7 +42,7 @@ class QuantaConfig():
     # Used in node tag, in the column headings of quanta-maps, etc. 
     self.token_position_meanings = []
   
-    self.initialize_token_positions( 12, 7, True) # Random values (based on 5 digit addition)
+    self.initialize_token_positions( 12, 7, True ) # Random values (based on 5 digit addition)
     
  
   def initialize_token_positions(self, num_question_positions, num_answer_positions, answer_meanings_ascend ):
@@ -67,3 +69,23 @@ class QuantaConfig():
 
   def d_mlp(self):
     return self.d_mlp_multiplier * self.d_model
+
+
+  # Update n_digits, n_layers, n_heads, n_training_steps from model_name
+  def parse_model_name(self):
+    match = re.search("d(\d)_", self.model_name)
+    if match:
+      self.n_digits = int(match.group(1))
+
+    match = re.search("l(\d)_", self.model_name)
+    if match:
+      self.n_layers = int(match.group(1))
+
+    match = re.search("h(\d)_", self.model_name)
+    if match:
+      self.n_heads = int(match.group(1))
+
+    match = re.search("t(\d\d)K", self.model_name)
+    if match:
+      self.n_training_steps = int(match.group(1)) * 1000
+  

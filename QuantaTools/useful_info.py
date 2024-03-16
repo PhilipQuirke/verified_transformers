@@ -13,25 +13,25 @@ class UsefulInfo(QuantaConfig):
     super().__init__()
 
     # sparce ordered list of useful (question and answer) token positions e.g. 0,1,8,9,10,11
-    self.positions = []
+    self.useful_positions = []
 
     # List of the useful attention heads and MLP neurons in the model 
-    self.nodes = UsefulNodeList()
+    self.useful_nodes = UsefulNodeList()
 
  
   
   def min_useful_position(self):
-    return min(self.positions)
+    return min(self.useful_positions)
 
 
   def max_useful_position(self):
-    return max(self.positions)
+    return max(self.useful_positions)
 
 
   # Add a token position that we know is used in calculations
   def add_useful_position(self, position):
-    if not (position in self.positions):
-      self.positions += [position]
+    if not (position in self.useful_positions):
+      self.useful_positions += [position]
 
 
   # Show the positions, their meanings, and the number of questions that failed when that position is ablated in a 3 row table
