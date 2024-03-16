@@ -4,12 +4,12 @@ from .useful_token_to_char import token_to_char, tokens_to_string
 
 class MathsTokens:
   # Tokens used in arithmetic vocab. (Token indexes 0 to 9 represent digits 0 to 9)
-  PLUS_INDEX = 10
-  MINUS_INDEX = 11
-  EQUALS_INDEX = 12
-  MULT_INDEX = 13
-  DIV_INDEX = 14
-  MAX_INDEX = DIV_INDEX
+  PLUS = 10
+  MINUS = 11
+  EQUALS = 12
+  MULT = 13
+  DIV = 14
+  MAX_INDEX = DIV
 
 
 # Vocabulary dictionary: Mapping from character (key) to token (value)
