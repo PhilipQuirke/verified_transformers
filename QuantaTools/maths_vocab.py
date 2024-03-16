@@ -15,13 +15,13 @@ class MathsTokens:
 # Vocabulary dictionary: Mapping from character (key) to token (value)
 def set_maths_vocabulary():
   useful_info.char_to_token = {str(i) : i for i in range(10)}
-  useful_info.char_to_token['+'] = PLUS_INDEX
-  useful_info.char_to_token['-'] = MINUS_INDEX
-  useful_info.char_to_token['='] = EQUALS_INDEX
-  useful_info.char_to_token['*'] = MULT_INDEX
-  useful_info.char_to_token['\\'] = DIV_INDEX
+  useful_info.char_to_token['+'] = MathsTokens.PLUS
+  useful_info.char_to_token['-'] = MathsTokens.MINUS
+  useful_info.char_to_token['='] = MathsTokens.EQUALS
+  useful_info.char_to_token['*'] = MathsTokens.MULT
+  useful_info.char_to_token['\\'] = MathsTokens.DIV
 
   # Unit tests
   assert token_to_char(4) == '4'
-  assert token_to_char(MULT_INDEX) == '*'
-  assert tokens_to_string([EQUALS_INDEX,4,0,7]) == '=407'
+  assert token_to_char(MathsTokens.MULT_INDEX) == '*'
+  assert tokens_to_string([MathsTokens.EQUALS_INDEX,4,0,7]) == '=407'
