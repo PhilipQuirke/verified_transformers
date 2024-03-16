@@ -54,6 +54,3 @@ class UsefulInfo(QuantaConfig):
     table.auto_set_font_size(False)
     table.set_fontsize(10)  # Set the font size here
     table.scale(1, 1.5)  # The first parameter scales column widths, the second scales row heights
-
-
-useful_info = UsefulInfo()
