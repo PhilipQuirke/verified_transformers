@@ -14,3 +14,4 @@ from .quanta_map_binary import get_quanta_binary
 from .quanta_map_impact import get_answer_impact, get_question_answer_impact, is_answer_sequential, compact_answer_if_sequential, get_quanta_impact
 
 from .maths_vocab import MathsTokens, set_maths_vocabulary
+from .maths_utilities import int_to_answer_str, tokens_to_unsigned_int, tokens_to_answer
