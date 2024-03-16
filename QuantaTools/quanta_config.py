@@ -21,7 +21,10 @@ class QuantaConfig():
     self.n_training_steps = 40000
     self.weight_decay = 0.00008
     self.lr = 0.1
-  
+
+    # Before training was this model initialised with another existing model?
+    self.insert_mode = 0 # 0=None 1=Init, 2=FreezeHeads 3=FreezeAll
+    
     # Random seeds
     self.training_seed = 372001
     self.analysis_seed = 673023
