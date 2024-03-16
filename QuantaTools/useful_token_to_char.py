@@ -1,8 +1,8 @@
-from .useful_info import UsefulInfo, useful_info
+from .useful_info import UsefulInfo
 
 
 # Map from token to character
-def token_to_char(i):
+def token_to_char(useful_info, i):
   for char, token in useful_info.char_to_token.items():
     if token == i:
       return char
