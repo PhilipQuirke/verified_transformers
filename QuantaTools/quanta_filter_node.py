@@ -5,7 +5,6 @@ from .quanta_filter import QuantaFilter
 from .quanta_type import QuantaType, MIN_ATTENTION_PERC 
 
 from .useful_node import position_name, position_name_to_int, row_location_name, location_name, NodeLocation, UsefulNode, UsefulNodeList 
-from .useful_info import UsefulInfo, useful_info
 
 
 def extract_trailing_int(input_string):
