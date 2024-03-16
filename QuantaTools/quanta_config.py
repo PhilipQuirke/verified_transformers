@@ -1,3 +1,6 @@
+from .useful_node import position_name, answer_name
+
+
 # Main configuration class for main model creation and training
 class QuantaConfig():
 
