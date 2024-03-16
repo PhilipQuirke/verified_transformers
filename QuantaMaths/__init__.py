@@ -1,1 +1,1 @@
-from .maths_vocab import set_maths_vocabulary
+from .maths_vocab import MathsTokens, set_maths_vocabulary
