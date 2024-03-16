@@ -25,6 +25,34 @@ class QuantaConfig():
     # Random seeds
     self.training_seed = 372001
     self.analysis_seed = 673023
-   
-    def d_mlp(self):
-      return d_mlp_multiplier * d_model
+
+    # Vocabulary: Map from each character to each token    
+    self.char_to_token = {}
+
+    self.initialize_token_positions(12, 6,True)
+    
+ 
+  def initialize_token_positions(self, num_question_positions, num_answer_positions, answer_meanings_ascend ):
+    # The number of "question" (input) token positions e.g. len("12340+12340=")    
+    self.num_question_positions = num_question_positions
+
+    # The number of "answer" (output) token positions  e.g. len("+024680") 
+    self.num_answer_positions = num_answer_positions
+
+    # Do we name the answer tokens as A5, A4, A3, A2, A1, A0 or A0, A1, A2, A3, A4, A5?
+    self.answer_meanings_ascend = answer_meanings_ascend   
+    
+    self.default_token_position_meanings()
+
+
+  # Default list of strings representing the token positions meanings
+  def default_token_position_meanings(self):
+    self.token_position_meanings = []
+    for i in range(self.num_question_positions):
+      self.token_position_meanings += ["P"+str(i)]
+    for i in range(self.num_answer_positions):
+      self.token_position_meanings += [answer_name(i if self.answer_meanings_ascend else self.num_answer_positions - i - 1 )]
+
+
+  def d_mlp(self):
+    return d_mlp_multiplier * d_model
