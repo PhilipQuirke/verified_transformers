@@ -34,7 +34,7 @@ class QuantaConfig():
     # Used in node tag, in the column headings of quanta-maps, etc. 
     self.token_position_meanings = []
   
-    self.initialize_token_positions(12, 6,True)
+    self.initialize_token_positions( 12, 7, True) # Random values (based on 5 digit addition)
     
  
   def initialize_token_positions(self, num_question_positions, num_answer_positions, answer_meanings_ascend ):
