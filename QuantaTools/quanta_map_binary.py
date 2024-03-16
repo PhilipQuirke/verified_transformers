@@ -4,7 +4,7 @@ from .useful_node import NodeLocation, UsefulNode
 
 
 # Either the node has or doesnt have matching tag(s). Show the tag(s) or show "??"
-def get_quanta_binary(useful_info, node, major_tag, minor_tag, shades):
+def get_quanta_binary(cfg, node, major_tag, minor_tag, shades):
 
   cell_text = ""
   color_index = 0

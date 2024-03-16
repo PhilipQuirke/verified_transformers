@@ -12,15 +12,15 @@ class MathsTokens:
 
 
 # Vocabulary dictionary: Mapping from character (key) to token (value)
-def set_maths_vocabulary(useful_info):
-  useful_info.char_to_token = {str(i) : i for i in range(10)}
-  useful_info.char_to_token['+'] = MathsTokens.PLUS
-  useful_info.char_to_token['-'] = MathsTokens.MINUS
-  useful_info.char_to_token['='] = MathsTokens.EQUALS
-  useful_info.char_to_token['*'] = MathsTokens.MULT
-  useful_info.char_to_token['\\'] = MathsTokens.DIV
+def set_maths_vocabulary(cfg):
+  cfg.char_to_token = {str(i) : i for i in range(10)}
+  cfg.char_to_token['+'] = MathsTokens.PLUS
+  cfg.char_to_token['-'] = MathsTokens.MINUS
+  cfg.char_to_token['='] = MathsTokens.EQUALS
+  cfg.char_to_token['*'] = MathsTokens.MULT
+  cfg.char_to_token['\\'] = MathsTokens.DIV
 
   # Unit tests
-  assert token_to_char(useful_info, 4) == '4'
-  assert token_to_char(useful_info, MathsTokens.MULT) == '*'
-  assert tokens_to_string(useful_info, [MathsTokens.EQUALS,4,0,7]) == '=407'
+  assert token_to_char(cfg, 4) == '4'
+  assert token_to_char(cfg, MathsTokens.MULT) == '*'
+  assert tokens_to_string(cfg, [MathsTokens.EQUALS,4,0,7]) == '=407'

@@ -4,7 +4,7 @@ from .useful_node import position_name, position_name_to_int, row_location_name,
 
 
 # Return the token_position_meanings that this node (attention head) pays attention to
-def get_quanta_attention(useful_info, node, major_tag, minor_tag, shades):
+def get_quanta_attention(cfg, node, major_tag, minor_tag, shades):
   cell_text = ""
   color_index = 0
 
@@ -16,7 +16,7 @@ def get_quanta_attention(useful_info, node, major_tag, minor_tag, shades):
       token_pos = position_name_to_int(node_parts[0])
       the_perc = int(node_parts[1])
       if the_perc > MIN_ATTENTION_PERC:
-        cell_text += useful_info.token_position_meanings[token_pos] + " "
+        cell_text += cfg.token_position_meanings[token_pos] + " "
         sum_perc += the_perc
 
     cell_text = cell_text.rstrip(" ")

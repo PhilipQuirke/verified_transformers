@@ -1,9 +1,9 @@
-from .useful_info import UsefulInfo
+from .useful_config import UsefulConfig
 
 
 # Map from token to character
-def token_to_char(useful_info, i):
-  for char, token in useful_info.char_to_token.items():
+def token_to_char(cfg, i):
+  for char, token in cfg.char_to_token.items():
     if token == i:
       return char
 
@@ -12,5 +12,5 @@ def token_to_char(useful_info, i):
 
 
 # Map from tokens to string
-def tokens_to_string(useful_info,tokens):
-    return "".join([token_to_char(useful_info,i) for i in tokens])
+def tokens_to_string(cfg,tokens):
+    return "".join([token_to_char(cfg,i) for i in tokens])

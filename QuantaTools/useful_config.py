@@ -7,7 +7,7 @@ from .quanta_config import QuantaConfig
 from .useful_node import position_name, position_name_to_int, row_location_name, location_name, answer_name, NodeLocation, UsefulNode, UsefulNodeList
 
 
-class UsefulInfo(QuantaConfig):
+class UsefulConfig(QuantaConfig):
  
   def __init__(self):
     super().__init__()

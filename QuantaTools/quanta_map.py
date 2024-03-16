@@ -19,12 +19,12 @@ class QuantaResult(NodeLocation):
 
 
 # Calculate the results to display in all the quanta cell
-def calc_quanta_results( useful_info, test_nodes : UsefulNodeList, major_tag : str, minor_tag : str, get_node_details, shades ):
+def calc_quanta_results( cfg, test_nodes : UsefulNodeList, major_tag : str, minor_tag : str, get_node_details, shades ):
 
   quanta_results = []
     
   for node in test_nodes.nodes:
-    cell_text, color_index = get_node_details(useful_info, node, major_tag, minor_tag, shades)
+    cell_text, color_index = get_node_details(cfg, node, major_tag, minor_tag, shades)
     if cell_text != "" :
       quanta_results +=[QuantaResult(node, cell_text, color_index)]
 
@@ -58,9 +58,9 @@ def show_quanta_add_patch(ax, j, row, cell_color):
 
 
 # Calculate (but do not draw) the quanta map with cell contents provided by get_node_details 
-def calc_quanta_map( useful_info, standard_quanta : bool, shades, the_nodes : UsefulNodeList, major_tag : str, minor_tag : str, get_node_details, base_fontsize = 10, max_width = 10, left_reserve = 0.3 ):
+def calc_quanta_map( cfg, standard_quanta : bool, shades, the_nodes : UsefulNodeList, major_tag : str, minor_tag : str, get_node_details, base_fontsize = 10, max_width = 10, left_reserve = 0.3 ):
   
-  quanta_results = calc_quanta_results(useful_info, the_nodes, major_tag, minor_tag, get_node_details, shades)
+  quanta_results = calc_quanta_results(cfg, the_nodes, major_tag, minor_tag, get_node_details, shades)
 
   distinct_row_names = set()
   distinct_positions = set()
@@ -94,7 +94,7 @@ def calc_quanta_map( useful_info, standard_quanta : bool, shades, the_nodes : Us
       cell_color = 'lightgrey'  # Color for empty cells
 
       if show_row == 0:
-        horizontal_labels += [useful_info.token_position_meanings[the_position]]
+        horizontal_labels += [cfg.token_position_meanings[the_position]]
 
       result = find_quanta_result_by_row_col(the_row_name, the_position, quanta_results)
       if result != None:
