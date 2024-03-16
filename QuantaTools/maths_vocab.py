@@ -22,5 +22,5 @@ def set_maths_vocabulary(useful_info):
 
   # Unit tests
   assert token_to_char(4) == '4'
-  assert token_to_char(MathsTokens.MULT_INDEX) == '*'
-  assert tokens_to_string([MathsTokens.EQUALS_INDEX,4,0,7]) == '=407'
+  assert token_to_char(useful_info,MathsTokens.MULT_INDEX) == '*'
+  assert tokens_to_string(useful_info,[MathsTokens.EQUALS_INDEX,4,0,7]) == '=407'
