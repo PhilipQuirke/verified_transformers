@@ -29,6 +29,11 @@ class QuantaConfig():
     # Vocabulary: Map from each character to each token    
     self.char_to_token = {}
 
+    # List of (short) strings representing the meaning of each token position.
+    # For example D5, D4, D3, D2, D1, D0, +, D'5, D'4, D'3, D'2, D'1, D'0, =, A6, A5, A4, A3, A2, A1, A0
+    # Used in node tag, in the column headings of quanta-maps, etc. 
+    self.token_position_meanings = []
+  
     self.initialize_token_positions(12, 6,True)
     
  
