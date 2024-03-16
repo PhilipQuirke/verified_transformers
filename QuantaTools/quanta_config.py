@@ -66,4 +66,4 @@ class QuantaConfig():
 
 
   def d_mlp(self):
-    return d_mlp_multiplier * d_model
+    return self.d_mlp_multiplier * self.d_model
