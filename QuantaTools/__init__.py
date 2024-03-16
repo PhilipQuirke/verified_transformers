@@ -2,6 +2,7 @@ from .useful_node import position_name, position_name_to_int, row_location_name,
 from .useful_info import UsefulInfo, useful_info
 from .useful_token_to_char import token_to_char, tokens_to_string 
 
+from .quanta_config import QuantaConfig
 from .quanta_type import QuantaType, MAX_ATTENTION_TAGS, MIN_ATTENTION_PERC, NO_IMPACT_TAG 
 from .quanta_filter import QuantaFilter
 from .quanta_filter_node import FilterNode, FilterAnd, FilterOr, FilterHead, FilterNeuron, FilterContains, FilterPosition, FilterAttention, FilterImpact, FilterPCA, FilterAlgo, filter_nodes
