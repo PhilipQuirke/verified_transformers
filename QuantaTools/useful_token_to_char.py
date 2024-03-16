@@ -12,5 +12,5 @@ def token_to_char(useful_info, i):
 
 
 # Map from tokens to string
-def tokens_to_string(tokens):
-    return "".join([token_to_char(i) for i in tokens])
+def tokens_to_string(useful_info,tokens):
+    return "".join([token_to_char(useful_info,i) for i in tokens])
