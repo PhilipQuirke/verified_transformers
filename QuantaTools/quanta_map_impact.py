@@ -1,12 +1,12 @@
 from .quanta_filter import QuantaFilter
 from .quanta_type import QuantaType
 from .useful_node import position_name, position_name_to_int, row_location_name, location_name, NodeLocation, UsefulNode 
-from .useful_info import UsefulInfo, useful_info
+from .useful_info import UsefulInfo 
 from .useful_token_to_char import token_to_char, tokens_to_string 
 
 
 # Compare the digits in say "+0017726" and "+0018826" returning "A32" where '2' means a mismatch in digit A2. A "-" sign failure is shown as say "A7"
-def get_answer_impact(answer1_str, answer2_str):
+def get_answer_impact(useful_info, answer1_str, answer2_str):
   assert len(answer1_str) >= useful_info.num_answer_positions
   assert len(answer2_str) >= useful_info.num_answer_positions
 
@@ -27,11 +27,11 @@ def get_answer_impact(answer1_str, answer2_str):
 
 
 # Compare each digit in the answer. Returns a A645 pattern where '4' means a failed 4th answer digit.
-def get_question_answer_impact(question_and_answer, answer_str2):
+def get_question_answer_impact(useful_info, question_and_answer, answer_str2):
 
-  answer1_str = tokens_to_string(question_and_answer[-useful_info.num_answer_positions:])
+  answer1_str = tokens_to_string(useful_info, question_and_answer[-useful_info.num_answer_positions:])
 
-  return get_answer_impact(answer1_str, answer_str2)
+  return get_answer_impact(useful_info, answer1_str, answer_str2)
 
 
 # Check if the digits in the string are sequential e.g. A1234 or A4321
@@ -54,7 +54,7 @@ def compact_answer_if_sequential(s):
     return s
 
 
-def get_quanta_impact( node, major_tag, minor_tag, shades):
+def get_quanta_impact( useful_info, node, major_tag, minor_tag, shades ):
 
   cell_text = ""
   color_index = 0
