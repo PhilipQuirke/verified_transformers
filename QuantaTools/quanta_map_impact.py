@@ -2,7 +2,7 @@ from .quanta_filter import QuantaFilter
 from .quanta_type import QuantaType
 from .useful_node import position_name, position_name_to_int, row_location_name, location_name, NodeLocation, UsefulNode 
 from .useful_info import UsefulInfo, useful_info
-from .token_to_char import token_to_char, tokens_to_string 
+from .useful_token_to_char import token_to_char, tokens_to_string 
 
 
 # Compare the digits in say "+0017726" and "+0018826" returning "A32" where '2' means a mismatch in digit A2. A "-" sign failure is shown as say "A7"
