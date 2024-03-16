@@ -1,11 +1,10 @@
 from .quanta_filter import QuantaFilter
 from .quanta_type import QuantaType, MAX_ATTENTION_TAGS, MIN_ATTENTION_PERC 
 from .useful_node import position_name, position_name_to_int, row_location_name, location_name, NodeLocation, UsefulNode 
-from .useful_info import UsefulInfo, useful_info
 
 
 # Return the token_position_meanings that this node (attention head) pays attention to
-def get_quanta_attention(node, major_tag, minor_tag, shades):
+def get_quanta_attention(useful_info, node, major_tag, minor_tag, shades):
   cell_text = ""
   color_index = 0
 
