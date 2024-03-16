@@ -4,7 +4,6 @@ import matplotlib.colors as mcolors
 import textwrap
 
 from .useful_node import position_name, position_name_to_int, row_location_name, location_name, NodeLocation, UsefulNode, UsefulNodeList 
-from .useful_info import useful_info
 
 
 # Results to display in a quanta cell
@@ -59,7 +58,7 @@ def show_quanta_add_patch(ax, j, row, cell_color):
 
 
 # Calculate (but do not draw) the quanta map with cell contents provided by get_node_details 
-def calc_quanta_map( standard_quanta : bool, shades, the_nodes : UsefulNodeList, major_tag : str, minor_tag : str, get_node_details, base_fontsize = 10, max_width = 10, left_reserve = 0.3 ):
+def calc_quanta_map( useful_info, standard_quanta : bool, shades, the_nodes : UsefulNodeList, major_tag : str, minor_tag : str, get_node_details, base_fontsize = 10, max_width = 10, left_reserve = 0.3 ):
   
   quanta_results = calc_quanta_results(the_nodes, major_tag, minor_tag, get_node_details, shades)
 
