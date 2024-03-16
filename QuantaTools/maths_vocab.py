@@ -1,4 +1,3 @@
-from .useful_info import useful_info
 from .useful_token_to_char import token_to_char, tokens_to_string
 
 
@@ -13,7 +12,7 @@ class MathsTokens:
 
 
 # Vocabulary dictionary: Mapping from character (key) to token (value)
-def set_maths_vocabulary():
+def set_maths_vocabulary(useful_info):
   useful_info.char_to_token = {str(i) : i for i in range(10)}
   useful_info.char_to_token['+'] = MathsTokens.PLUS
   useful_info.char_to_token['-'] = MathsTokens.MINUS
