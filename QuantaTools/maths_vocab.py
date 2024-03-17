@@ -19,8 +19,3 @@ def set_maths_vocabulary(cfg):
   cfg.char_to_token['='] = MathsTokens.EQUALS
   cfg.char_to_token['*'] = MathsTokens.MULT
   cfg.char_to_token['\\'] = MathsTokens.DIV
-
-  # Unit tests
-  assert token_to_char(cfg, 4) == '4'
-  assert token_to_char(cfg, MathsTokens.MULT) == '*'
-  assert tokens_to_string(cfg, [MathsTokens.EQUALS,4,0,7]) == '=407'

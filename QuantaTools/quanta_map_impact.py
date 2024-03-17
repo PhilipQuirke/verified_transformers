@@ -79,8 +79,3 @@ def sort_unique_digits(raw_input_string, do_reverse):
           unique_digits += char
 
   return ''.join(sorted(unique_digits, reverse=do_reverse))
-
-
-# Unit test
-#assert sort_unique_digits("A1231231278321", False) == "12378"
-#assert sort_unique_digits("A1231231278321", True) == "87321"
