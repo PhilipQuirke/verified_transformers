@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{96a77344-fe98-4400-8758-f7beed2bf843}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>setup.py</StartupFile>
+    <StartupFile>Tests\tests.py</StartupFile>
     <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -40,8 +40,12 @@
     <Compile Include="QuantaTools\useful_node.py" />
     <Compile Include="QuantaTools\__init__.py" />
     <Compile Include="setup.py" />
+    <Compile Include="Tests\tests.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Tests\" />
     <Folder Include="QuantaTools" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />

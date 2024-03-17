@@ -13,11 +13,6 @@ def int_to_answer_str( cfg, n ):
     return s
 
 
-# Unit test
-# if cfg.n_digits == 6 :
-#    assert int_to_answer_str(1234) == "+0001234"
-
-
 # Convert "0012345" to 12345
 def tokens_to_unsigned_int( q, offset, digits ):
     a = 0

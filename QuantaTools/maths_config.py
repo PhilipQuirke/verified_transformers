@@ -54,11 +54,7 @@ class MathsConfig(UsefulConfig):
 
 
     def short_config_description(self):       
-        return f'_d{self.n_digits}' + super().short_config_description() 
-    
-
-    def long_config_description(self):
-        return f'_d{self.n_digits}' + super().long_config_description()         
+        return f'_d{self.n_digits}' + super().short_config_description()      
     
 
     def op_config_description(self):
