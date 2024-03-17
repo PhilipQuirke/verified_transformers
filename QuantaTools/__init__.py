@@ -9,6 +9,8 @@ from .quanta_type import QuantaType, MAX_ATTENTION_TAGS, MIN_ATTENTION_PERC, NO_
 from .quanta_filter import QuantaFilter
 from .quanta_filter_node import FilterNode, FilterAnd, FilterOr, FilterHead, FilterNeuron, FilterContains, FilterPosition, FilterAttention, FilterImpact, FilterPCA, FilterAlgo, filter_nodes
 
+from .ablate_config import AblateConfig, acfg, a_reset, a_calc_mean_values
+
 from .quanta_map import create_custom_colormap, calc_quanta_map
 from .quanta_map_attention import get_quanta_attention
 from .quanta_map_failperc import get_quanta_fail_perc

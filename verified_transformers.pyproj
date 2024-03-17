@@ -19,6 +19,12 @@
     <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="QuantaTools\ablate_config.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="QuantaTools\ablate_hooks.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="QuantaTools\maths_complexity.py" />
     <Compile Include="QuantaTools\maths_config.py" />
     <Compile Include="QuantaTools\maths_data_generator.py" />

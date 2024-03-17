@@ -6,10 +6,14 @@ from .useful_node import position_name, answer_name
 # Base configuration class related to a Transformer model shape, training and analysis
 class ModelConfig():
 
+
     def __init__(self):
         # Model name for models stored on HuggingFace
         self.model_name = ""
-  
+        
+        # The transformer lens model
+        self.main_model = None
+
         # Model shape configuration
         self.n_layers = 3 
         self.n_heads = 4 
