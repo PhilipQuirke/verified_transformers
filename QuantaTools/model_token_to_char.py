@@ -1,4 +1,4 @@
-from .useful_config import UsefulConfig
+from .model_config import ModelConfig
 
 
 # Map from token to character

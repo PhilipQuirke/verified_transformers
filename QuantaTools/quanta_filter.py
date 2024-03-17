@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class QuantaFilter(Enum):
     MUST = "must" # The specified quanta value MUST exist in the object
     NOT = "not"  # The specified quanta value must NOT exist in the object

@@ -23,6 +23,12 @@ class QuantaType:
   MATH_SUB = "Math.Sub"
   MATH_MUL = "Math.Mul"
   
+  SPARE1 = "Spare1"
+  SPARE2 = "Spare2"
+  SPARE3 = "Spare3"
+  SPARE4 = "Spare4"
+  SPARE5 = "Spare5"
+  
 
 # Related to QuantaType.ATTENTION:
 # For each node, we store at most 5 input attention facts (as tags)

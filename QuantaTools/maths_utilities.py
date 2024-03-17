@@ -1,5 +1,5 @@
 from .maths_vocab import MathsTokens
-from .quanta_config import QuantaConfig
+from .model_config import ModelConfig
 
 
 def int_to_answer_str( cfg, n ):
