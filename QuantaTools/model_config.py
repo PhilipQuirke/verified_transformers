@@ -86,13 +86,13 @@ class ModelConfig():
         if match:
             self.n_training_steps = int(match.group(1)) * 1000
           
-        if self.model_name.contains("ins1_") :
+        if "ins1_" in self.model_name :
             self.insert_mode = 1 # Initialised with some existing model before training
 
-        elif self.model_name.contains("ins2_") :
+        elif "ins2_" in self.model_name :
             self.insert_mode = 2 # Initialised with existing model. Train & reset useful heads every 100 epochs
 
-        elif self.model_name.contains("ins3_") :
+        elif "ins3_" in self.model_name :
             self.insert_mode = 3 # Initialised with existing model. Trained & reset useful heads & MLPs every 100 epochs
             
 
