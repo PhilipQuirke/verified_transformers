@@ -99,3 +99,15 @@ def a_calc_mean_values(cfg, the_questions):
   print("Sample", acfg.l_mlp_hook_post_name[0], sample_mlp_hook_post_0.shape) # gives [350, 22, 2040] = num_questions, cfg.n_ctx, cfg.d_mlp
   acfg.mean_mlp_hook_post = torch.mean(sample_mlp_hook_post_0, dim=0, keepdim=True)
   print("Mean", acfg.l_mlp_hook_post_name[0], acfg.mean_mlp_hook_post.shape) # gives [1, 22, 2040] = 1, cfg.n_ctx, cfg.d_mlp
+
+
+# Ask the model to predict the question answers (with the hooks either reading data, doing intervetion ablations, or doing nothing )
+def a_predict_questions(cfg, questions, the_hooks):
+
+    cfg.main_model.reset_hooks()
+    cfg.main_model.set_use_attn_result(True)
+
+    all_logits = cfg.main_model.run_with_hooks(questions.cuda(), return_type="logits", fwd_hooks=the_hooks)
+    all_losses_raw, all_max_prob_tokens = logits_to_tokens_loss(cfg, all_logits, questions.cuda())
+
+    return all_losses_raw, all_max_prob_tokens

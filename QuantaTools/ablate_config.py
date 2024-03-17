@@ -57,7 +57,7 @@ class AblateConfig(NodeLocation):
         self.threshold = 0.00001
 
 
-    def reset_intervention(self, expected_answer = "", expected_impact = NO_IMPACT_TAG, operation = MathsTokens.PLUS):
+    def reset_intervention(self, expected_answer = "", expected_impact = NO_IMPACT_TAG, operation = 0):
         self.operation = operation
 
         # Expected output of an intervention ablation experiment
