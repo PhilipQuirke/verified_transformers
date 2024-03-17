@@ -1,4 +1,4 @@
-from .useful_token_to_char import token_to_char, tokens_to_string
+from .model_token_to_char import token_to_char, tokens_to_string
 
 
 class MathsTokens:

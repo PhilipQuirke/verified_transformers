@@ -5,7 +5,7 @@ import torch
 from .maths_vocab import MathsTokens
 
 
-# Generate an enriched data batch for one operator type
+# Generate an enriched data batch one maths operation
 # "Addition" batch entries are formated XXXXX+YYYYY=+ZZZZZZ e.g. 550030+800020=+1350050
 # "Subtraction" batch entries are formated XXXXX-YYYYY=-ZZZZZZ e.g. 550030-800020=-0249990, 800020-550030=+0249990
 # "Multiplication" batch entries are formated 000XXX*000YYY=+ZZZZZZ e.g. 000345*000678=+233910
@@ -91,8 +91,8 @@ def data_generator_core( cfg, batch_op ):
   return batch
 
 
-# Define "iterator" data generator function. Invoked using next().
-def data_generator( cfg ):
+# Define "iterator" maths "questions" data generator function. Invoked using next().
+def maths_data_generator( cfg ):
   torch.manual_seed(cfg.analysis_seed)
   while True:
 
