@@ -1,5 +1,6 @@
 from .model_config import ModelConfig
 from .model_token_to_char import token_to_char, tokens_to_string
+from .model_loss import logits_to_tokens_loss, loss_fn
 
 from .useful_config import UsefulConfig 
 from .useful_node import position_name, position_name_to_int, row_location_name, location_name, answer_name, NodeLocation, str_to_node_location, UsefulNode, UsefulNodeList
@@ -15,7 +16,7 @@ from .quanta_map_binary import get_quanta_binary
 from .quanta_map_impact import get_answer_impact, get_question_answer_impact, is_answer_sequential, compact_answer_if_sequential, get_quanta_impact, sort_unique_digits
 
 from .maths_config import MathsConfig
-from .maths_vocab import MathsTokens, set_maths_vocabulary
+from .maths_vocab import MathsTokens, set_maths_vocabulary, set_maths_question_meanings
 from .maths_tag import MathsTag, AlgoTag 
 from .maths_utilities import int_to_answer_str, tokens_to_unsigned_int, tokens_to_answer, insert_question_number, make_a_maths_question
 from .maths_complexity import get_maths_question_complexity

@@ -1,6 +1,7 @@
 import re
 
 from .useful_config import UsefulConfig
+from .useful_node import position_name, answer_name
 
 
 # Extends UsefulConfig with mathematics-specific info for "123456+123456=+0246912" style questions
@@ -40,7 +41,22 @@ class MathsConfig(UsefulConfig):
     def mlp_slices(self):
         return 1 # Paper 2 used this granualarity
         # return self.n_heads * self.d_mlp_multiplier # Alternative for Paper 3?
-    
+  
+
+    # Maths question and answer token position meanings are D5, .., D0, *, D5', .., D0', =, A7, A6, .., A0      
+    # Convert D0 to P5, D1 to P4, D2 to P3 in 6 digit addition
+    def dn_to_position_name(self, n):
+        return position_name(self.n_digits - 1 - n) 
+    # Convert D'0 to P10, D'1 to P9, D'2 to P8, etc in 6 digit addition
+    def ddn_to_position_name(self, n):
+      return position_name(2 * self.n_digits - n) 
+    # Convert A0 to P20, A1 to P19, A2 to P18, etc in 6 digit addition
+    def an_to_position_name(self, n):
+      return position_name(self.n_ctx() - 1 - n)
+    # Position of the operator (+, -, * or /)
+    def op_position_name(self):
+      return position_name(self.n_digits)
+
 
     def parse_model_name(self):
         super().parse_model_name()

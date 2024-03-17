@@ -27,6 +27,9 @@
     <Compile Include="QuantaTools\maths_utilities.py" />
     <Compile Include="QuantaTools\maths_vocab.py" />
     <Compile Include="QuantaTools\model_config.py" />
+    <Compile Include="QuantaTools\model_loss.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="QuantaTools\model_token_to_char.py" />
     <Compile Include="QuantaTools\quanta_filter.py" />
     <Compile Include="QuantaTools\quanta_filter_node.py" />
