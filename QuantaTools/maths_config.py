@@ -66,4 +66,4 @@ class MathsConfig(UsefulConfig):
     
 
     def file_config_prefix(self):
-        return self.file_insert_prefix() + self.op_config_description() + self.long_config_description()
+        return self.insert_config_description() + self.op_config_description() + self.long_config_description()
