@@ -60,6 +60,13 @@ def a_put_l3_attn_z_hook(value, hook):
       value[:,location.position,location.num,:] = acfg.layer_store[0][:,location.position,location.num,:].clone()
 
 
+def a_put_resid_post_hook(value, hook):
+  #print( "In hook", l_hook_resid_post_name[acfg.layer], acfg.ablate, acfg.position, value.shape) # Get [64, 22, 510] = cfg.batch_size, cfg.n_ctx, d_model
+
+  # Copy the mean resid post values in position N to all the batch questions
+  value[:,acfg.position,:] = acfg.mean_resid_post[0,acfg.position,:].clone()
+  
+
 def a_reset(node_locations):
   acfg.reset_hooks()
   acfg.node_locations = node_locations

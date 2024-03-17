@@ -10,7 +10,7 @@ from .quanta_filter import QuantaFilter
 from .quanta_filter_node import FilterNode, FilterAnd, FilterOr, FilterHead, FilterNeuron, FilterContains, FilterPosition, FilterAttention, FilterImpact, FilterPCA, FilterAlgo, filter_nodes
 
 from .ablate_config import AblateConfig, acfg
-from .ablate_hooks import a_reset, a_calc_mean_values, a_predict_questions
+from .ablate_hooks import a_put_resid_post_hook, a_reset, a_calc_mean_values, a_predict_questions
 
 from .quanta_map import create_custom_colormap, calc_quanta_map
 from .quanta_map_attention import get_quanta_attention
