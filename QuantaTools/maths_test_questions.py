@@ -1,7 +1,8 @@
 import torch
 
 from .quanta_type import QuantaType
-from .maths_vocab import MathsTokens, MathsTag
+from .maths_vocab import MathsTokens
+from .maths_tag import MathsTag
 from .maths_data_generator import maths_data_generator_core, make_maths_questions
 
 
