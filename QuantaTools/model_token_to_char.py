@@ -3,12 +3,12 @@ from .model_config import ModelConfig
 
 # Map from token to character
 def token_to_char(cfg, i):
-  for char, token in cfg.char_to_token.items():
-    if token == i:
-      return char
+    for char, token in cfg.char_to_token.items():
+        if token == i:
+            return char
 
-  # Should never happen
-  assert False
+    # Should never happen
+    assert False
 
 
 # Map from tokens to string

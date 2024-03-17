@@ -1,33 +1,40 @@
 class QuantaType:
-  # Token position tag
-  POSITION = "Position"
+    # Token position tag
+    POSITION = "Position"
   
-  # What % of questions failed when we ablated a specific node. A low percentage indicates a less common use case
-  FAIL = "Fail%"
+    # What % of questions failed when we ablated a specific node. A low percentage indicates a less common use case
+    FAIL = "Fail%"
   
-  # What input tokens (e.g. "D'3") are attended to by a specific attention head.
-  ATTENTION = "Attn"
+    # What input tokens (e.g. "D'3") are attended to by a specific attention head.
+    ATTENTION = "Attn"
   
-  # What answer digits (e.g. "A543") were impacted when we ablated a specific node.
-  IMPACT = "Impact"
+    # What answer digits (e.g. "A543") were impacted when we ablated a specific node.
+    IMPACT = "Impact"
   
-  # What does Principal Component Analysis say about the node?
-  PCA = "PCA"
+    # What does Principal Component Analysis say about the node?
+    PCA = "PCA"
   
-  # What algorithmic purpose is this node serving?
-  ALGO = "Algorithm"
+    # What algorithmic purpose is this node serving?
+    ALGO = "Algorithm"
 
 
-  # Types of mathematical operations (questions)
-  MATH_ADD = "Math.Add" 
-  MATH_SUB = "Math.Sub"
-  MATH_MUL = "Math.Mul"
+    # Types of mathematical operations (questions)
+    MATH_ADD = "Math.Add" 
+    MATH_SUB = "Math.Sub"
+    MATH_MUL = "Math.Mul"
   
-  SPARE1 = "Spare1"
-  SPARE2 = "Spare2"
-  SPARE3 = "Spare3"
-  SPARE4 = "Spare4"
-  SPARE5 = "Spare5"
+    # Types of logic questions (future)
+    LOGIC_1 = "Logic.1" 
+    LOGIC_2 = "Logic.2"
+    LOGIC_3 = "Logic.3"
+    LOGIC_4 = "Logic.4"
+    
+    # Types of questions (future)
+    SPARE_1 = "Spare.1"
+    SPARE_2 = "Spare.2"
+    SPARE_3 = "Spare.3"
+    SPARE_4 = "Spare.4"
+
   
 
 # Related to QuantaType.ATTENTION:

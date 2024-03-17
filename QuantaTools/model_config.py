@@ -83,15 +83,15 @@ class ModelConfig():
             self.n_heads = int(match.group(1))
 
         match = re.search("t(\d\d)K", self.model_name)
+        if not match:
+            match = re.search("t(\d)K", self.model_name)
         if match:
             self.n_training_steps = int(match.group(1)) * 1000
           
         if "ins1_" in self.model_name :
             self.insert_mode = 1 # Initialised with some existing model before training
-
         elif "ins2_" in self.model_name :
             self.insert_mode = 2 # Initialised with existing model. Train & reset useful heads every 100 epochs
-
         elif "ins3_" in self.model_name :
             self.insert_mode = 3 # Initialised with existing model. Trained & reset useful heads & MLPs every 100 epochs
      

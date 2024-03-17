@@ -183,14 +183,14 @@ class UsefulNodeList():
     def get_node_names(self):
         answer = ""
         for node in self.nodes:
-          answer += ( "" if answer == "" else ", " ) + node.name()
+            answer += ( "" if answer == "" else ", " ) + node.name()
         return answer
 
   
     def num_heads(self):
         answer = 0
         for node in self.nodes:
-          answer += 1 if node.is_head else 0
+            answer += 1 if node.is_head else 0
         return answer
 
 
@@ -200,21 +200,21 @@ class UsefulNodeList():
 
     def print_node_tags(self, major_tag = "", show_empty_tags = True):
         for node in self.nodes:
-          tags = node.tags if major_tag == "" else node.filter_tags(major_tag)
-          if show_empty_tags or len(tags) > 0 :
-            print( node.name(), tags )       
+            tags = node.tags if major_tag == "" else node.filter_tags(major_tag)
+            if show_empty_tags or len(tags) > 0 :
+                print( node.name(), tags )       
 
 
     def reset_node_tags( self, major_tag = "" ):
         for node in self.nodes:
-          node.reset_tags(major_tag)
+            node.reset_tags(major_tag)
 
 
     # Get the node at the specified location. May return None.    
     def get_node( self, nodelocation ):
         for node in self.nodes:
-          if node.position == nodelocation.position and node.is_head == nodelocation.is_head and node.layer == nodelocation.layer and node.num == nodelocation.num:
-            return node
+            if node.position == nodelocation.position and node.is_head == nodelocation.is_head and node.layer == nodelocation.layer and node.num == nodelocation.num:
+                return node
 
         return None
 
@@ -225,9 +225,9 @@ class UsefulNodeList():
         the_node = self.get_node( nodelocation )
         if the_node == None:
 
-          the_node = UsefulNode(nodelocation.position, nodelocation.layer, nodelocation.is_head, nodelocation.num)
+            the_node = UsefulNode(nodelocation.position, nodelocation.layer, nodelocation.is_head, nodelocation.num)
 
-          self.nodes += [the_node]
+            self.nodes += [the_node]
 
         the_node.add_tag(major_tag, minor_tag)
 
