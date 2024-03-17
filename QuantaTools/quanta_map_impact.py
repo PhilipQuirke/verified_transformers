@@ -65,3 +65,22 @@ def get_quanta_impact( cfg, node, major_tag, minor_tag, shades ):
     color_index = int(cell_text[1]) if len(cell_text) > 1 and cell_text[1].isdigit() else shades-1
 
   return cell_text, color_index
+
+
+# Convert "A1231231278321" to "12378" or "87321"
+def sort_unique_digits(raw_input_string, do_reverse):
+  digit_string = ''.join(filter(str.isdigit, raw_input_string))
+
+  seen = set()
+  unique_digits = ""
+  for char in digit_string:
+      if char not in seen:
+          seen.add(char)
+          unique_digits += char
+
+  return ''.join(sorted(unique_digits, reverse=do_reverse))
+
+
+# Unit test
+#assert sort_unique_digits("A1231231278321", False) == "12378"
+#assert sort_unique_digits("A1231231278321", True) == "87321"

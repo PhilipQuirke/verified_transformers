@@ -1,10 +1,11 @@
 import torch
 
-from .maths_vocab import MathsTokens, QuantaType, MathsTag
+from .quanta_type import QuantaType
+from .maths_vocab import MathsTokens, MathsTag
 from .maths_data_generator import maths_data_generator_core, make_maths_questions
 
 
-# Create a batch of manually-curated test questions
+# Create a batch of manually-curated mathematics test questions
 def make_maths_test_questions(cfg):
 
     # Start with a batch of random and manually-chosen questions
