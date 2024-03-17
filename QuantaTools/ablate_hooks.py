@@ -114,7 +114,10 @@ def a_predict_questions(cfg, questions, the_hooks):
     cfg.main_model.reset_hooks()
     cfg.main_model.set_use_attn_result(True)
 
-    all_logits = cfg.main_model.run_with_hooks(questions.cuda(), return_type="logits", fwd_hooks=the_hooks)
+    if the_hooks == None:
+        all_logits, _ = cfg.main_model.run_with_cache(questions.cuda())
+    else:
+        all_logits = cfg.main_model.run_with_hooks(questions.cuda(), return_type="logits", fwd_hooks=the_hooks)
     all_losses_raw, all_max_prob_tokens = logits_to_tokens_loss(cfg, all_logits, questions.cuda())
 
     return all_losses_raw, all_max_prob_tokens

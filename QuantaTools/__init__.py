@@ -24,6 +24,6 @@ from .maths_tag import MathsBehavior, MathsAlgorithm
 from .maths_utilities import int_to_answer_str, tokens_to_unsigned_int, tokens_to_answer, insert_question_number, make_a_maths_question
 from .maths_complexity import get_maths_question_complexity, get_maths_min_complexity
 from .maths_data_generator import maths_data_generator_core, maths_data_generator, make_maths_questions
-from .maths_test_questions import make_maths_test_questions, test_maths_questions_by_complexity, test_maths_questions_by_impact
+from .maths_test_questions import make_maths_test_questions, test_maths_questions_by_complexity, test_maths_questions_by_impact, test_maths_questions_and_add_useful_node_tags
 
 

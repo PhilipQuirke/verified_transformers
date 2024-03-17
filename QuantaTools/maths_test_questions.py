@@ -425,3 +425,61 @@ def test_maths_questions_by_impact(cfg, acfg, questions, the_hooks):
           print(tokens_to_string(q), "Q: ModelAnswer:", answer_str, "Impact:", impact_str, "Loss:", the_loss_mean )
 
   return num_fails
+
+
+def test_maths_questions_and_add_useful_node_tags(cfg, acfg, questions, the_hooks):
+
+    all_losses_raw, all_max_prob_tokens = a_predict_questions(cfg, questions, the_hooks)
+
+    num_fails = 0
+    impact_fails = ""
+    add_complexity_fails = ""
+    sub_complexity_fails = ""
+
+    for question_num in range(questions.shape[0]):
+        q = questions[question_num]
+
+        the_loss_mean = utils.to_numpy(loss_fn(all_losses_raw[question_num]).mean())
+
+        # Only show the question if the loss exceeds the threshold (because of the ablated token position)
+        if the_loss_mean > acfg.threshold:
+          answer_str = tokens_to_string(cfg, all_max_prob_tokens[question_num])
+
+          impact_str = get_question_answer_impact(cfg, q, answer_str )
+          # Only count the question if the model got the question wrong
+          if 'A' in impact_str:
+            num_fails += 1
+
+            impact_fails += impact_str
+
+            major_tag, minor_tag = get_maths_question_complexity(cfg, q)
+            if major_tag == QuantaType.MATH_ADD:
+              add_complexity_fails += minor_tag
+            elif major_tag == QuantaType.MATH_SUB:
+              sub_complexity_fails += minor_tag
+
+            if acfg.verbose :
+              print(tokens_to_string(q), "U: ModelAnswer:", answer_str, "Complexity:", major_tag, "Impact:", impact_str, "Loss:", the_loss_mean )
+
+
+    if num_fails > 0:
+
+        # Add percentage failure quanta
+        perc = int( 100.0 * num_fails / len(questions))
+        cfg.add_useful_node_tag( acfg, QuantaType.FAIL, str(perc) )
+
+        # Add summary of all answer digit impact quanta failures
+        cfg.add_useful_node_tag( acfg, QuantaType.IMPACT, "A" + sort_unique_digits(impact_fails, True) )
+
+        # Add summary of all addition question complexity quanta failures
+        if add_complexity_fails != "":
+          cfg.add_useful_node_tag( acfg, QuantaType.MATH_ADD, "S" + sort_unique_digits(add_complexity_fails, False) )
+
+        # Add summary of all subtraction question complexity quanta failures
+        if sub_complexity_fails != "":
+          sub_complexity_fails = sort_unique_digits(sub_complexity_fails, False)
+          if sub_complexity_fails == "":
+            sub_complexity_fails = MathsBehavior.SUB_NG_TAG
+          else:
+            sub_complexity_fails = "M" + sub_complexity_fails
+          cfg.add_useful_node_tag( acfg, QuantaType.MATH_SUB, sub_complexity_fails )

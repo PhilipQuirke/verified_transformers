@@ -32,6 +32,20 @@ class UsefulConfig(ModelConfig):
             self.useful_positions += [position]
 
 
+    def add_useful_node_tag(self, the_location, major_tag, minor_tag ):
+        assert the_location.position >= 0
+        assert the_location.layer >= 0
+        assert the_location.num >= 0
+        assert the_location.position < self.n_ctx()
+        assert the_location.layer < self.n_layers
+        if the_location.is_head:
+            assert the_location.num < self.n_heads
+        else:
+            assert the_location.num < self.mlp_slices()
+
+        self.useful_nodes.add_node_tag( the_location, major_tag, minor_tag )
+
+
     # Show the positions, their meanings, and the number of questions that failed when that position is ablated in a 3 row table
     def calc_position_failures_map(self, num_failures_list, width_inches=16):
         columns = ["Posn"]
