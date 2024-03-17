@@ -94,14 +94,18 @@ class ModelConfig():
 
         elif "ins3_" in self.model_name :
             self.insert_mode = 3 # Initialised with existing model. Trained & reset useful heads & MLPs every 100 epochs
-            
+     
 
-    def file_config_prefix(self):
+    def short_config_description(self):       
+        return f'_l{self.n_layers}_h{self.n_heads}'   
+    
+
+    def long_config_description(self):
         train_str = str(self.n_training_steps//1000) 
-        
-        return f'_l{self.n_layers}_h{self.n_heads}_t{train_str}K_s{self.training_seed}'
+        return self.short_config_description() + f'_t{train_str}K_s{self.training_seed}'
 
-    def file_insert_prefix(self):
+
+    def insert_config_description(self):
         return '' if self.insert_mode == 0 else f'ins{self.insert_mode}_' 
 
 

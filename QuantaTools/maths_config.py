@@ -52,7 +52,18 @@ class MathsConfig(UsefulConfig):
         self.initialize_token_positions( self.question_tokens(), self.answer_tokens(), self.answer_meanings_ascend )  
 
 
-    def file_config_prefix(self):
-        op_prefix = 'mul' if self.perc_mult == 100 else 'sub' if self.perc_sub == 100 else 'add' if self.perc_add() == 100 else 'mix'
 
-        return op_prefix + f'_d{self.n_digits}' + super().file_config_prefix()
+    def short_config_description(self):       
+        return f'_d{self.n_digits}' + super().short_config_description() 
+    
+
+    def long_config_description(self):
+        return f'_d{self.n_digits}' + super().long_config_description()         
+    
+
+    def op_config_description(self):
+        return 'mul' if self.perc_mult == 100 else 'sub' if self.perc_sub == 100 else 'add' if self.perc_add() == 100 else 'mix'    
+    
+
+    def file_config_prefix(self):
+        return self.file_insert_prefix() + self.op_config_description() + self.long_config_description()

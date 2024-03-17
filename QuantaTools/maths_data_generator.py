@@ -95,37 +95,38 @@ def maths_data_generator_core( cfg, batch_op ):
 
 # Define "iterator" maths "questions" data generator function. Invoked using next().
 def maths_data_generator( cfg ):
-  torch.manual_seed(cfg.analysis_seed)
-  while True:
+    torch.manual_seed(cfg.analysis_seed)
+    while True:
 
-    batch_rand = random.randint(1, 100)
-    batch_op = MathsTokens.MULT if batch_rand <= cfg.perc_mult else MathsTokens.MINUS if batch_rand <= cfg.perc_mult + cfg.perc_sub else MathsTokens.PLUS
+        batch_rand = random.randint(1, 100)
+        batch_op = MathsTokens.MULT if batch_rand <= cfg.perc_mult else MathsTokens.MINUS if batch_rand <= cfg.perc_mult + cfg.perc_sub else MathsTokens.PLUS
 
-    batch = maths_data_generator_core( cfg, batch_op )
+        batch = maths_data_generator_core( cfg, batch_op )
 
-    yield batch.cuda()
+        yield batch.cuda()
     
 
 # Create a batch of questions from a 2D matrix of ints
 def make_maths_questions(cfg, operator, major_tag, minor_tag, q_matrix):
-  max_len = len(q_matrix)
-  real_len = 0
-  questions = torch.zeros((max_len, cfg.n_ctx())).to(torch.int64)
-  limit = 10 ** cfg.n_digits
+    max_len = len(q_matrix)
+    real_len = 0
+    questions = torch.zeros((max_len, cfg.n_ctx())).to(torch.int64)
+    limit = 10 ** cfg.n_digits
 
-  for i in range(max_len):
-    a = q_matrix[i][0]
-    b = q_matrix[i][1]
+    for i in range(max_len):
+        a = q_matrix[i][0]
+        b = q_matrix[i][1]
 
-    if a < limit and b < limit:
-      make_a_maths_question(questions, real_len, a, b, operator)
+        if a < limit and b < limit:
+          make_a_maths_question(cfg, questions, real_len, a, b, operator)
 
-      if not ( major_tag == "" or minor_tag == "" ):
-        actual_major_tag, actual_minor_tag = get_maths_question_complexity(cfg, questions[real_len])
-        if not( actual_major_tag == major_tag and actual_minor_tag == minor_tag ):
-          print("make_maths_questions exception", questions[real_len], major_tag, minor_tag, actual_major_tag, actual_minor_tag )
-          assert False
+          if not ( major_tag == "" or minor_tag == "" ):
+            # Check that the complexity of the question matches what the test data believes it is
+            actual_major_tag, actual_minor_tag = get_maths_question_complexity(cfg, questions[real_len])
+            if not( actual_major_tag == major_tag and actual_minor_tag == minor_tag ):
+              print("make_maths_questions complexity mismatch", questions[real_len], major_tag, minor_tag, actual_major_tag, actual_minor_tag )
+              assert False
 
-      real_len += 1
+          real_len += 1
 
-  return questions[:real_len]
+    return questions[:real_len]
