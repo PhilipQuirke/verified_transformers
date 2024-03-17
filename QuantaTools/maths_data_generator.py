@@ -9,7 +9,7 @@ from .maths_vocab import MathsTokens
 # "Addition" batch entries are formated XXXXX+YYYYY=+ZZZZZZ e.g. 550030+800020=+1350050
 # "Subtraction" batch entries are formated XXXXX-YYYYY=-ZZZZZZ e.g. 550030-800020=-0249990, 800020-550030=+0249990
 # "Multiplication" batch entries are formated 000XXX*000YYY=+ZZZZZZ e.g. 000345*000678=+233910
-def data_generator_core( cfg, batch_op ):
+def maths_data_generator_core( cfg, batch_op ):
 
   batch = torch.zeros((cfg.batch_size, cfg.n_ctx())).to(torch.int64)
   x = torch.randint(0, 10, (cfg.batch_size, cfg.n_digits))

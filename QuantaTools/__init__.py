@@ -18,5 +18,5 @@ from .maths_config import MathsConfig
 from .maths_vocab import MathsTokens, set_maths_vocabulary
 from .maths_tag import MathsTag, AlgoTag 
 from .maths_utilities import int_to_answer_str, tokens_to_unsigned_int, tokens_to_answer
-from .maths_data_generator import maths_data_generator
+from .maths_data_generator import maths_data_generator_core, maths_data_generator
 from .maths_complexity import get_maths_question_complexity
