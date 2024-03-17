@@ -106,7 +106,7 @@ def calc_quanta_map( cfg, standard_quanta : bool, shades, the_nodes : UsefulNode
             show_quanta_add_patch(ax1, show_col, show_row, cell_color)
             show_col += 1
 
-    show_row -= 1
+        show_row -= 1
 
 
     # Configure x axis
