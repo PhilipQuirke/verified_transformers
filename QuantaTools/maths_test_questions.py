@@ -5,6 +5,9 @@ from .model_loss import logits_to_tokens_loss, loss_fn
 from .model_token_to_char import token_to_char, tokens_to_string
 
 from .quanta_type import QuantaType
+from .quanta_map_impact import get_answer_impact, get_question_answer_impact, is_answer_sequential, compact_answer_if_sequential, get_quanta_impact, sort_unique_digits
+
+from .ablate_hooks import a_put_resid_post_hook, a_reset, a_calc_mean_values, a_predict_questions
 
 from .maths_vocab import MathsTokens
 from .maths_tag import MathsBehavior
@@ -344,7 +347,7 @@ def make_maths_test_questions(cfg):
 
 
 
-def predict_maths_varied_questions(cfg, acfg, varied_questions):
+def test_maths_questions_by_complexity(cfg, acfg, varied_questions):
 
   num_questions = varied_questions.shape[0]
   correct_list = [True] * num_questions
@@ -398,3 +401,27 @@ def predict_maths_varied_questions(cfg, acfg, varied_questions):
     print("RESOLUTION: Understand these failures. Enrich the training data to provide more examples. Retrain the model.")
     print("INTERIM: Have reduced 'varied_questions' size from", org_size, "to", new_size, "so can continue.")
 
+
+def test_maths_questions_by_impact(cfg, acfg, questions, the_hooks):
+
+  all_losses_raw, all_max_prob_tokens = a_predict_questions(cfg, questions, the_hooks)
+
+  num_fails = 0
+  for question_num in range(questions.shape[0]):
+    q = questions[question_num]
+
+    the_loss_mean = utils.to_numpy(loss_fn(all_losses_raw[question_num]).mean())
+
+    # Only show the question if the loss exceeds the threshold (because of the ablated token position)
+    if the_loss_mean > acfg.threshold:
+      answer_str = tokens_to_string(cfg, all_max_prob_tokens[question_num])
+
+      # Only count the question if the model got the question wrong
+      impact_str = get_question_answer_impact(cfg, q, answer_str )
+      if 'A' in impact_str:
+        num_fails += 1
+
+        if acfg.verbose :
+          print(tokens_to_string(q), "Q: ModelAnswer:", answer_str, "Impact:", impact_str, "Loss:", the_loss_mean )
+
+  return num_fails
