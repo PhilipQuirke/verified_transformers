@@ -98,6 +98,7 @@ class ModelConfig():
 
     def file_config_prefix(self):
         train_str = str(self.n_training_steps//1000) 
+        
         return f'_l{self.n_layers}_h{self.n_heads}_t{train_str}K_s{self.training_seed}'
 
     def file_insert_prefix(self):

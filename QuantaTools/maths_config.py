@@ -53,6 +53,6 @@ class MathsConfig(UsefulConfig):
 
 
     def file_config_prefix(self):
-        op_prefix = 'mul' if cfg.perc_mult == 100 else 'sub' if cfg.perc_sub == 100 else 'add' if cfg.perc_add() == 100 else 'mix'
+        op_prefix = 'mul' if self.perc_mult == 100 else 'sub' if self.perc_sub == 100 else 'add' if self.perc_add() == 100 else 'mix'
 
         return op_prefix + f'_d{self.n_digits}' + super().file_config_prefix()
