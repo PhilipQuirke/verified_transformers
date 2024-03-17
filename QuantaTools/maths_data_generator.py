@@ -3,6 +3,8 @@ import random
 import torch
 
 from .maths_vocab import MathsTokens
+from .maths_complexity import get_maths_question_complexity
+from .maths_utilities import make_a_maths_question
 
 
 # Generate an enriched data batch one maths operation
@@ -99,6 +101,31 @@ def maths_data_generator( cfg ):
     batch_rand = random.randint(1, 100)
     batch_op = MathsTokens.MULT if batch_rand <= cfg.perc_mult else MathsTokens.MINUS if batch_rand <= cfg.perc_mult + cfg.perc_sub else MathsTokens.PLUS
 
-    batch = data_generator_core( cfg, batch_op )
+    batch = maths_data_generator_core( cfg, batch_op )
 
     yield batch.cuda()
+    
+
+# Create a batch of questions from a 2D matrix of ints
+def make_maths_questions(cfg, operator, major_tag, minor_tag, q_matrix):
+  max_len = len(q_matrix)
+  real_len = 0
+  questions = torch.zeros((max_len, cfg.n_ctx())).to(torch.int64)
+  limit = 10 ** cfg.n_digits
+
+  for i in range(max_len):
+    a = q_matrix[i][0]
+    b = q_matrix[i][1]
+
+    if a < limit and b < limit:
+      make_a_maths_question(questions, real_len, a, b, operator)
+
+      if not ( major_tag == "" or minor_tag == "" ):
+        actual_major_tag, actual_minor_tag = get_maths_question_complexity(cfg, questions[real_len])
+        if not( actual_major_tag == major_tag and actual_minor_tag == minor_tag ):
+          print("make_maths_questions exception", questions[real_len], major_tag, minor_tag, actual_major_tag, actual_minor_tag )
+          assert False
+
+      real_len += 1
+
+  return questions[:real_len]

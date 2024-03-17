@@ -1,5 +1,8 @@
+import numpy as np
+import random
+import torch
+
 from .maths_vocab import MathsTokens
-from .model_config import ModelConfig
 
 
 def int_to_answer_str( cfg, n ):
@@ -36,3 +39,37 @@ def tokens_to_answer(cfg, q):
         a = - a
 
     return a
+
+
+# Insert a number into the question
+def insert_question_number(the_question, index, first_digit_index, the_digits, n):
+
+  last_digit_index = first_digit_index + the_digits - 1
+
+  for j in range(the_digits):
+    the_question[index, last_digit_index-j] = n % 10
+    n = n // 10
+
+
+# Create a single question
+def make_a_maths_question(cfg, the_question, index, q1, q2, operator ):
+
+  insert_question_number(the_question, index, 0, cfg.n_digits, q1)
+
+  the_question[index, cfg.n_digits] = operator
+
+  insert_question_number( the_question, index, cfg.n_digits+1, cfg.n_digits, q2)
+
+  the_question[index, 2*cfg.n_digits+1] = MathsTokens.EQUALS
+
+  answer = q1+q2
+  if operator == MathsTokens.MINUS:
+    answer = q1-q2
+  elif operator == MathsTokens.MULT:
+    answer = q1*q2
+
+  the_question[index, cfg.question_tokens()] = MathsTokens.PLUS if answer >= 0 else MathsTokens.MINUS
+  if answer < 0:
+    answer = -answer
+
+  insert_question_number(the_question, index, 2*cfg.n_digits + 3, cfg.n_digits+1, answer)
