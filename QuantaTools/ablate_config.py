@@ -9,7 +9,6 @@ class AblateConfig():
 
 
     def __init__(self):
-        super().__init__(0, 0, True, 0)
         self.reset()
         self.reset_hooks()
         self.reset_intervention()
@@ -56,6 +55,8 @@ class AblateConfig():
         self.ablate_node_locations = []
         # A specific input token position to ablate
         self.ablate_position = 0
+        # A specific attention head to ablate
+        self.ablate_attn_head = 0
 
 
     def reset_intervention(self, expected_answer = "", expected_impact = NO_IMPACT_TAG, operation = 0):
