@@ -1,4 +1,5 @@
 import random
+from huggingface_hub.utils import validate_repo_id
 import torch
 import transformer_lens.utils as utils
 
@@ -350,57 +351,59 @@ def make_maths_test_questions(cfg):
 
 def test_maths_questions_by_complexity(cfg, acfg, varied_questions):
 
-  num_questions = varied_questions.shape[0]
-  correct_list = [True] * num_questions
+    num_questions = varied_questions.shape[0]
+    correct_list = [True] * num_questions
 
-  all_logits = cfg.main_model(varied_questions.cuda())
-  all_losses_raw, all_max_prob_tokens = logits_to_tokens_loss(cfg, all_logits, varied_questions.cuda())
+    all_logits = cfg.main_model(varied_questions.cuda())
+    all_losses_raw, all_max_prob_tokens = logits_to_tokens_loss(cfg, all_logits, varied_questions.cuda())
 
-  # Evaluate and categorize each object
-  categorization_results = {}
-  for question_num in range(num_questions):
-    q = varied_questions[question_num]
+    # Evaluate and categorize each object
+    categorization_results = {}
+    for question_num in range(num_questions):
+        q = varied_questions[question_num]
 
-    losses = loss_fn(all_losses_raw[question_num])
-    mean_loss = utils.to_numpy(losses.mean())
+        losses = loss_fn(all_losses_raw[question_num])
+        mean_loss = utils.to_numpy(losses.mean())
 
-    model_answer_str = tokens_to_string(cfg, all_max_prob_tokens[question_num])
-    model_answer_num = int(model_answer_str)
+        model_answer_str = tokens_to_string(cfg, all_max_prob_tokens[question_num])
+        model_answer_num = int(model_answer_str)
 
-    major_tag, minor_tag = get_maths_question_complexity(cfg, q)
-    group_name = major_tag + "." + minor_tag
+        major_tag, minor_tag = get_maths_question_complexity(cfg, q)
+        group_name = major_tag + "." + minor_tag
 
-    correct = (model_answer_num == tokens_to_answer(cfg, q))
-    correct_list[question_num] = correct
+        correct = (model_answer_num == tokens_to_answer(cfg, q))
+        correct_list[question_num] = correct
 
-    if group_name not in categorization_results:
-      categorization_results[group_name] = [0, 0]  # Initialize counts for new group
+        if group_name not in categorization_results:
+          categorization_results[group_name] = [0, 0]  # Initialize counts for new group
 
-    if correct:
-      categorization_results[group_name][0] += 1  # Increment good count for this group
-    else:
-      categorization_results[group_name][1] += 1  # Increment bad count for this group
-
-
-  # Calculate and print summary success rates per group
-  acfg.num_varied_questions = 0
-  acfg.num_varied_successes = 0
-  for group_name, counts in categorization_results.items():
-      total = sum(counts)
-      success_rate = counts[0] / total * 100 if total != 0 else 0
-      print(f"Group {group_name}: Success Rate = {success_rate:.2f}% ({counts[0]} good, {counts[1]} bad)")
-      acfg.num_varied_questions += total
-      acfg.num_varied_successes += counts[0]
+        if correct:
+          categorization_results[group_name][0] += 1  # Increment good count for this group
+        else:
+          categorization_results[group_name][1] += 1  # Increment bad count for this group
 
 
-  acfg.print_prediction_success_rate()
-  if acfg.num_varied_successes < acfg.num_varied_questions:
-    # Remove the questions that the model failed to answer as they turn up in every cell of the quanta maps
-    org_size = varied_questions.shape[0]
-    varied_questions = varied_questions[torch.tensor(correct_list)]
-    new_size = varied_questions.shape[0]
-    print("RESOLUTION: Understand these failures. Enrich the training data to provide more examples. Retrain the model.")
-    print("INTERIM: Have reduced 'varied_questions' size from", org_size, "to", new_size, "so can continue.")
+    # Calculate and print summary success rates per group
+    acfg.num_varied_questions = 0
+    acfg.num_varied_successes = 0
+    for group_name, counts in categorization_results.items():
+        total = sum(counts)
+        success_rate = counts[0] / total * 100 if total != 0 else 0
+        print(f"Group {group_name}: Success Rate = {success_rate:.2f}% ({counts[0]} good, {counts[1]} bad)")
+        acfg.num_varied_questions += total
+        acfg.num_varied_successes += counts[0]
+
+
+    acfg.print_prediction_success_rate()
+    if acfg.num_varied_successes < acfg.num_varied_questions:
+        # Remove the questions that the model failed to answer as they turn up in every cell of the quanta maps
+        org_size = varied_questions.shape[0]
+        varied_questions = varied_questions[torch.tensor(correct_list)]
+        new_size = varied_questions.shape[0]
+        print("RESOLUTION: Understand these failures. Enrich the training data to provide more examples. Retrain the model.")
+        print("INTERIM: Have reduced 'varied_questions' size from", org_size, "to", new_size, "so can continue.")
+    
+    return varied_questions
 
 
 def test_maths_questions_by_impact(cfg, acfg, questions, the_hooks):

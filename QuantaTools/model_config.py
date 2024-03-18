@@ -92,6 +92,7 @@ class ModelConfig():
         if match:
             self.n_training_steps = int(match.group(1)) * 1000
           
+        self.insert_mode = 0
         if "ins1_" in self.model_name :
             self.insert_mode = 1 # Initialised with some existing model before training
         elif "ins2_" in self.model_name :
