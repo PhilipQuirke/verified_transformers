@@ -149,8 +149,9 @@ def a_run_attention_intervention(cfg, acfg, node_locations, store_question_and_a
     store_question = store_question_and_answer[:cfg.num_question_positions]
     clean_question = clean_question_and_answer[:cfg.num_question_positions]
     clean_answer = clean_question_and_answer[-cfg.num_answer_positions:]
-    clean_answer_str = tokens_to_string(cfg, clean_answer)
-    description = "CleanAnswer: " + clean_answer_str + ", ExpectedAnswer/Impact: " + acfg.expected_answer + "/" + acfg.expected_impact + ", "
+    #PQR clean_answer_str = tokens_to_string(cfg, clean_answer)
+    #PQR description = "CleanAnswer: " + clean_answer + ", ExpectedAnswer/Impact: " + acfg.expected_answer + "/" + acfg.expected_impact + ", "
+    description = "ExpectedAnswer/Impact: " + acfg.expected_answer + "/" + acfg.expected_impact + ", "
 
 
     a_predict_questions(cfg, store_question, acfg.attn_get_hooks)
