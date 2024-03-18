@@ -408,6 +408,8 @@ def test_maths_questions_by_complexity(cfg, acfg, varied_questions):
 
 def test_maths_questions_by_impact(cfg, acfg, questions, ablate : bool = True):
 
+    a_reset(cfg, acfg, None)
+    
     the_hooks = acfg.resid_put_hooks if ablate else None
     all_losses_raw, all_max_prob_tokens = a_predict_questions(cfg, questions, the_hooks)
 
@@ -434,6 +436,8 @@ def test_maths_questions_by_impact(cfg, acfg, questions, ablate : bool = True):
 
 def test_maths_questions_and_add_useful_node_tags(cfg, acfg, questions, the_hooks):
 
+    a_reset(cfg, acfg, None)
+        
     all_losses_raw, all_max_prob_tokens = a_predict_questions(cfg, questions, the_hooks)
 
     num_fails = 0
