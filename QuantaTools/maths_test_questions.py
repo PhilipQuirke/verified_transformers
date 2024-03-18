@@ -486,7 +486,7 @@ def test_maths_questions_and_add_useful_node_tags(cfg, acfg, questions, the_hook
           cfg.add_useful_node_tag( acfg, QuantaType.MATH_SUB, sub_complexity_fails )
           
 
- TRICASE_QUESTIONS = 100
+TRICASE_QUESTIONS = 100
 
 
 def make_tricase_questions(cfg, test_digit, test_case, operation):
