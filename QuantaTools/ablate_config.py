@@ -52,6 +52,7 @@ class AblateConfig(NodeLocation):
         self.questions = []
         self.attn_get_hooks = []
         self.attn_put_hooks = []
+        self.resid_put_hooks = []
 
         self.reset_node_location()
         self.threshold = 0.00001
