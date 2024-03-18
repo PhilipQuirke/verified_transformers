@@ -58,19 +58,19 @@ def a_put_l1_attn_z_hook(value, hook):
     assert len(acfg.ablate_node_locations) > 0  
     for location in acfg.ablate_node_locations:
         if location.layer == 1:
-            value[:,location.position,location.num,:] = acfg.layer_store[0][:,location.position,location.num,:].clone()
+            value[:,location.position,location.num,:] = acfg.layer_store[1][:,location.position,location.num,:].clone()
 
 def a_put_l2_attn_z_hook(value, hook):
     assert len(acfg.ablate_node_locations) > 0 
     for location in acfg.ablate_node_locations:
         if location.layer == 2:
-            value[:,location.position,location.num,:] = acfg.layer_store[0][:,location.position,location.num,:].clone()
+            value[:,location.position,location.num,:] = acfg.layer_store[2][:,location.position,location.num,:].clone()
 
 def a_put_l3_attn_z_hook(value, hook):
     assert len(acfg.ablate_node_locations) > 0  
     for location in acfg.ablate_node_locations:
         if location.layer == 3:
-            value[:,location.position,location.num,:] = acfg.layer_store[0][:,location.position,location.num,:].clone()
+            value[:,location.position,location.num,:] = acfg.layer_store[3][:,location.position,location.num,:].clone()
 
 
 # Position (aka input token) ablation - impacts all layers.
@@ -142,13 +142,18 @@ def a_predict_questions(cfg, questions, the_hooks):
 # Run an ablation intervention on the model, and return a description of the impact of the intervention
 def a_run_attention_intervention(cfg, acfg, node_locations, store_question_and_answer, clean_question_and_answer, clean_answer_str):
 
-    a_reset(cfg, acfg, node_locations)
-    acfg.num_tests_run += 1
-
     # These are all matrixes of tokens
     store_question = store_question_and_answer[:cfg.num_question_positions]
     clean_question = clean_question_and_answer[:cfg.num_question_positions]
     clean_answer = clean_question_and_answer[-cfg.num_answer_positions:]
+    
+    assert len(node_locations) > 0
+    a_reset(cfg, acfg, node_locations)
+    acfg.num_tests_run += 1
+    acfg.intervened_answer = ""
+    acfg.intervened_impact = ""    
+    acfg.abort = False    
+
     description = "CleanAnswer: " + clean_answer_str + ", ExpectedAnswer/Impact: " + acfg.expected_answer + "/" + acfg.expected_impact + ", "
 
 
@@ -167,10 +172,10 @@ def a_run_attention_intervention(cfg, acfg, node_locations, store_question_and_a
         return description + "(Aborted on Bad all_losses_raw)"
     loss_max = utils.to_numpy(loss_fn(all_losses_raw[0]).max())
     acfg.intervened_answer = tokens_to_string(cfg, all_max_prob_tokens[0])
-    assert len(clean_answer_str) == len(acfg.intervened_answer)
 
 
     # Compare the clean test question answer to what the model generated (impacted by the ablation intervention)
+    assert len(clean_answer_str) == len(acfg.intervened_answer)
     acfg.intervened_impact = get_answer_impact( cfg, clean_answer_str, acfg.intervened_answer )
     if acfg.intervened_impact == "":
         acfg.intervened_impact = NO_IMPACT_TAG

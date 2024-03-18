@@ -44,7 +44,7 @@ class AblateConfig():
 
         # A list of "default" stored weightings collected from the model.
         # Same length as nodes
-        self.layer_store = [[],[],[]]   # Supports 3 layers
+        self.layer_store = [[],[],[],[]]   # Supports 1 to 4 model layers
 
         # A list of hooks that action the ablation interventions
         self.attn_get_hooks = []
