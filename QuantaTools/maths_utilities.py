@@ -46,8 +46,8 @@ def insert_question_number(the_question, index, first_digit_index, the_digits, n
     n = n // 10
 
 
-# Create a single question
-def make_a_maths_question(cfg, the_question, index, q1, q2, operator ):
+# Create a single maths question and answer
+def make_a_maths_question_and_answer(cfg, the_question, index, q1, q2, operator ):
 
   insert_question_number(the_question, index, 0, cfg.n_digits, q1)
 

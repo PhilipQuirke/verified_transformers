@@ -1,10 +1,13 @@
 import torch
 import transformer_lens.utils as utils
 
-from .ablate_config import AblateConfig, acfg
 from .model_config import ModelConfig
+from .model_token_to_char import token_to_char, tokens_to_string
 from .model_loss import logits_to_tokens_loss, loss_fn
 from .useful_node import NodeLocation, UsefulNode, UsefulNodeList
+from .quanta_map_impact import get_answer_impact
+from .ablate_config import AblateConfig, acfg
+from .quanta_type import QuantaType, NO_IMPACT_TAG
 
 
 def a_null_attn_z_hook(value, hook):
@@ -134,3 +137,47 @@ def a_predict_questions(cfg, questions, the_hooks):
     all_losses_raw, all_max_prob_tokens = logits_to_tokens_loss(cfg, all_logits, questions.cuda())
 
     return all_losses_raw, all_max_prob_tokens
+
+
+# Run an ablation intervention on the model, and return a description of the impact of the intervention
+def a_run_attention_intervention(cfg, acfg, node_locations, store_question_and_answer_str : str, clean_question_and_answer_str : str):
+
+    a_reset(cfg, acfg, node_locations)
+    acfg.num_tests_run += 1
+
+    store_question_str = store_question_and_answer_str[:cfg.num_question_positions]
+    clean_question_str = clean_question_and_answer_str[:cfg.num_question_positions]
+    clean_answer_str = clean_question_and_answer_str[-cfg.num_answer_positions:]
+    description = "CleanAnswer: " + clean_answer_str + ", ExpectedAnswer/Impact: " + acfg.expected_answer + "/" + acfg.expected_impact + ", "
+
+
+    a_predict_questions(cfg, store_question_str, acfg.attn_get_hooks)
+    if acfg.abort:
+        return description + "(Aborted on store)"
+
+
+    # Predict "test" question overriding PnLmHp to give a bad answer
+    all_losses_raw, all_max_prob_tokens = a_predict_questions(cfg, clean_question_str, acfg.attn_put_hooks)
+    if acfg.abort:
+        return description + "(Aborted on intervention)"
+    if all_losses_raw.shape[0] == 0:
+        acfg.abort = True
+        print( "Bad all_losses_raw", all_losses_raw.shape, store_question_and_answer_str, clean_question_and_answer_str )
+        return description + "(Aborted on Bad all_losses_raw)"
+    loss_max = utils.to_numpy(loss_fn(all_losses_raw[0]).max())
+    acfg.intervened_answer = tokens_to_string(cfg, all_max_prob_tokens[0])
+    assert len(clean_answer_str) == len(acfg.intervened_answer)
+
+
+    # Compare the clean test question answer to what the model generated (impacted by the ablation intervention)
+    acfg.intervened_impact = get_answer_impact( cfg, clean_answer_str, acfg.intervened_answer )
+    if acfg.intervened_impact == "":
+        acfg.intervened_impact = NO_IMPACT_TAG
+
+    description += "IntervenedAnswer/Impact: " + acfg.intervened_answer + "/" + acfg.intervened_impact
+
+    if loss_max > acfg.threshold:
+        loss_str = NO_IMPACT_TAG if loss_max < 1e-7 else str(loss_max)
+        description += ", Loss: " + loss_str
+
+    return description

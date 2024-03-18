@@ -4,7 +4,7 @@ import torch
 
 from .maths_vocab import MathsTokens
 from .maths_complexity import get_maths_question_complexity
-from .maths_utilities import make_a_maths_question
+from .maths_utilities import make_a_maths_question_and_answer
 
 
 # Generate an enriched data batch one maths operation
@@ -107,7 +107,7 @@ def maths_data_generator( cfg ):
     
 
 # Create a batch of questions from a 2D matrix of ints
-def make_maths_questions(cfg, operator, major_tag, minor_tag, q_matrix):
+def make_maths_questions_and_answers(cfg, operator, major_tag, minor_tag, q_matrix):
     max_len = len(q_matrix)
     real_len = 0
     questions = torch.zeros((max_len, cfg.n_ctx())).to(torch.int64)
@@ -118,13 +118,13 @@ def make_maths_questions(cfg, operator, major_tag, minor_tag, q_matrix):
         b = q_matrix[i][1]
 
         if a < limit and b < limit:
-          make_a_maths_question(cfg, questions, real_len, a, b, operator)
+          make_a_maths_question_and_answer(cfg, questions, real_len, a, b, operator)
 
           if not ( major_tag == "" or minor_tag == "" ):
             # Check that the complexity of the question matches what the test data believes it is
             actual_major_tag, actual_minor_tag = get_maths_question_complexity(cfg, questions[real_len])
             if not( actual_major_tag == major_tag and actual_minor_tag == minor_tag ):
-              print("make_maths_questions complexity mismatch", questions[real_len], major_tag, minor_tag, actual_major_tag, actual_minor_tag )
+              print("make_maths_questions_and_answers complexity mismatch", questions[real_len], major_tag, minor_tag, actual_major_tag, actual_minor_tag )
               assert False
 
           real_len += 1
