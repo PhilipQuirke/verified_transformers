@@ -67,7 +67,7 @@ def a_put_resid_post_hook(value, hook):
   value[:,acfg.position,:] = acfg.mean_resid_post[0,acfg.position,:].clone()
   
 
-def a_reset(node_locations):
+def a_reset(cfg, node_locations):
   acfg.reset_hooks()
   acfg.node_locations = node_locations
   acfg.attn_get_hooks = [(acfg.l_attn_hook_z_name[0], a_get_l0_attn_z_hook), (acfg.l_attn_hook_z_name[1], a_get_l1_attn_z_hook), (acfg.l_attn_hook_z_name[2], a_get_l2_attn_z_hook), (acfg.l_attn_hook_z_name[3], a_get_l3_attn_z_hook)][:cfg.n_layers]

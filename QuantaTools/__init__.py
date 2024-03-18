@@ -8,22 +8,26 @@ from .model_loss import logits_to_tokens_loss, loss_fn
 from .useful_config import UsefulConfig 
 from .useful_node import position_name, position_name_to_int, row_location_name, location_name, answer_name, NodeLocation, str_to_node_location, UsefulNode, UsefulNodeList
 
+
 # quanta_*.py: Contains categorisations of model behavior (aka quanta). Applicable to all models
 from .quanta_type import QuantaType, MAX_ATTENTION_TAGS, MIN_ATTENTION_PERC, NO_IMPACT_TAG 
 from .quanta_filter import QuantaFilter
 from .quanta_filter_node import FilterNode, FilterAnd, FilterOr, FilterHead, FilterNeuron, FilterContains, FilterPosition, FilterAttention, FilterImpact, FilterPCA, FilterAlgo, filter_nodes
 
+
 # ablate_*.py: Contains ways to "intervention ablate" the model and detect the impact of the ablation
 from .ablate_config import AblateConfig, acfg
 from .ablate_hooks import a_put_resid_post_hook, a_reset, a_calc_mean_values, a_predict_questions
 
-# quanta_*.py: Contains ways to detect and graph model behavior (aka quanta). Applicable to all models
+
+# quanta_*.py: Contains ways to detect and graph model behavior (aka quanta) 
 from .quanta_test_questions import test_questions_and_add_node_attention_tags
 from .quanta_map import create_custom_colormap, calc_quanta_map
 from .quanta_map_attention import get_quanta_attention
 from .quanta_map_failperc import get_quanta_fail_perc
 from .quanta_map_binary import get_quanta_binary
 from .quanta_map_impact import get_answer_impact, get_question_answer_impact, is_answer_sequential, compact_answer_if_sequential, get_quanta_impact, sort_unique_digits
+
 
 # maths_*.py: Contains specializations of the above specific to arithmetic (addition and subtraction) transformer models
 from .maths_config import MathsConfig
