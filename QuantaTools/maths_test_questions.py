@@ -406,29 +406,30 @@ def test_maths_questions_by_complexity(cfg, acfg, varied_questions):
     return varied_questions
 
 
-def test_maths_questions_by_impact(cfg, acfg, questions, the_hooks):
+def test_maths_questions_by_impact(cfg, acfg, questions, ablate : bool = True):
 
-  all_losses_raw, all_max_prob_tokens = a_predict_questions(cfg, questions, the_hooks)
+    the_hooks = acfg.resid_put_hooks if ablate else None
+    all_losses_raw, all_max_prob_tokens = a_predict_questions(cfg, questions, the_hooks)
 
-  num_fails = 0
-  for question_num in range(questions.shape[0]):
-    q = questions[question_num]
+    num_fails = 0
+    for question_num in range(questions.shape[0]):
+        q = questions[question_num]
 
-    the_loss_mean = utils.to_numpy(loss_fn(all_losses_raw[question_num]).mean())
+        the_loss_mean = utils.to_numpy(loss_fn(all_losses_raw[question_num]).mean())
 
-    # Only show the question if the loss exceeds the threshold (because of the ablated token position)
-    if the_loss_mean > acfg.threshold:
-      answer_str = tokens_to_string(cfg, all_max_prob_tokens[question_num])
+        # Only show the question if the loss exceeds the threshold (because of the ablated token position)
+        if the_loss_mean > acfg.threshold:
+            answer_str = tokens_to_string(cfg, all_max_prob_tokens[question_num])
 
-      # Only count the question if the model got the question wrong
-      impact_str = get_question_answer_impact(cfg, q, answer_str )
-      if 'A' in impact_str:
-        num_fails += 1
+            # Only count the question if the model got the question wrong
+            impact_str = get_question_answer_impact(cfg, q, answer_str )
+            if 'A' in impact_str:
+                num_fails += 1
 
-        if acfg.verbose :
-          print(tokens_to_string(q), "Q: ModelAnswer:", answer_str, "Impact:", impact_str, "Loss:", the_loss_mean )
+                if acfg.verbose :
+                    print(tokens_to_string(q), "Q: ModelAnswer:", answer_str, "Impact:", impact_str, "Loss:", the_loss_mean )
 
-  return num_fails
+    return num_fails
 
 
 def test_maths_questions_and_add_useful_node_tags(cfg, acfg, questions, the_hooks):

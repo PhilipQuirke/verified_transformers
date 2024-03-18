@@ -70,6 +70,7 @@ def a_put_l3_attn_z_hook(value, hook):
             value[:,location.position,location.num,:] = acfg.layer_store[0][:,location.position,location.num,:].clone()
 
 
+# Position (aka input token) ablation - not node level.
 def a_put_resid_post_hook(value, hook):
     global acfg    
     #print( "In hook", l_hook_resid_post_name[acfg.layer], acfg.ablate, acfg.position, value.shape) # Get [64, 22, 510] = cfg.batch_size, cfg.n_ctx, d_model
