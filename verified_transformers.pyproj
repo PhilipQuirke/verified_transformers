@@ -44,6 +44,9 @@
     <Compile Include="QuantaTools\quanta_map_binary.py" />
     <Compile Include="QuantaTools\quanta_map_failperc.py" />
     <Compile Include="QuantaTools\quanta_map_impact.py" />
+    <Compile Include="QuantaTools\quanta_test_questions.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="QuantaTools\quanta_type.py" />
     <Compile Include="QuantaTools\useful_config.py" />
     <Compile Include="QuantaTools\useful_node.py" />
