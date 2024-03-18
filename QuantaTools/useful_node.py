@@ -198,9 +198,9 @@ class UsefulNodeList():
         return len(self.nodes) - self.num_heads()
     
 
-    def print_node_tags(self, major_tag = "", show_empty_tags = True):
+    def print_node_tags(self, major_tag = "", minor_tag = "", show_empty_tags = True):
         for node in self.nodes:
-            tags = node.tags if major_tag == "" else node.filter_tags(major_tag)
+            tags = node.tags if major_tag == "" else node.filter_tags(major_tag, minor_tag)
             if show_empty_tags or len(tags) > 0 :
                 print( node.name(), tags )       
 
