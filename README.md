@@ -13,6 +13,6 @@ Tool used to verify accuracy of transformer model. Contains:
   - useful_*.py: Contains data on the useful token positions and useful nodes (attention heads and MLP neurons) that the model uses in predictions
   - quanta_*.py: Contains categorisations of model behavior (aka quanta), with ways to detect and graph them 
   - ablate_*.py: Contains ways to "intervention ablate" the model and detect the impact of the ablation
-  - maths_*.py: Contains specializations of the above specific to arithmetic (addition and subctraction) transformer models
+  - maths_*.py: Contains specializations of the above specific to arithmetic (addition and subtraction) transformer models
           
 - Tests: Unit tests 
