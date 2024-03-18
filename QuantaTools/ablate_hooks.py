@@ -15,7 +15,7 @@ def validate_value(name, value):
     global acfg
    
     if value.shape[0] == 0:
-        print( "Aborted", name, acfg.node_names(), acfg.questions, acfg.operation, acfg.expected_answer, acfg.expected_impact)
+        print( "Aborted", name, acfg.node_names(), acfg.operation, acfg.expected_answer, acfg.expected_impact)
         acfg.abort = True # TransformerLens returned a [0, 22, 3, 170] tensor. This is bad data. Bug in code? Abort
         return False
 
@@ -47,25 +47,25 @@ def a_get_l3_attn_z_hook(value, hook):
 def a_put_l0_attn_z_hook(value, hook):
     global acfg    
     # print( "In a_put_l0_attn_z_hook", value.shape) # Get [1, 22, 3, 170] = ???, cfg.n_ctx, cfg.n_heads, d_head
-    for location in acfg.node_locations:
+    for location in acfg.ablate_node_locations:
         if location.layer == 0:
             value[:,location.position,location.num,:] = acfg.layer_store[0][:,location.position,location.num,:].clone()
 
 def a_put_l1_attn_z_hook(value, hook):
     global acfg    
-    for location in acfg.node_locations:
+    for location in acfg.ablate_node_locations:
         if location.layer == 1:
             value[:,location.position,location.num,:] = acfg.layer_store[0][:,location.position,location.num,:].clone()
 
 def a_put_l2_attn_z_hook(value, hook):
     global acfg    
-    for location in acfg.node_locations:
+    for location in acfg.ablate_node_locations:
         if location.layer == 2:
             value[:,location.position,location.num,:] = acfg.layer_store[0][:,location.position,location.num,:].clone()
 
 def a_put_l3_attn_z_hook(value, hook):
     global acfg    
-    for location in acfg.node_locations:
+    for location in acfg.ablate_node_locations:
         if location.layer == 3:
             value[:,location.position,location.num,:] = acfg.layer_store[0][:,location.position,location.num,:].clone()
 
@@ -76,12 +76,12 @@ def a_put_resid_post_hook(value, hook):
     #print( "In hook", l_hook_resid_post_name[acfg.layer], acfg.ablate, acfg.position, value.shape) # Get [64, 22, 510] = cfg.batch_size, cfg.n_ctx, d_model
 
     # Copy the mean resid post values in position N to all the batch questions
-    value[:,acfg.position,:] = acfg.mean_resid_post[0,acfg.position,:].clone()
+    value[:,acfg.ablate_position,:] = acfg.mean_resid_post[0,acfg.ablate_position,:].clone()
   
 
-def a_reset(cfg, acfg, node_locations):
+def a_reset(cfg, acfg, node_locations = None):
     acfg.reset_hooks()
-    acfg.node_locations = node_locations
+    acfg.ablate_node_locations = node_locations
     acfg.attn_get_hooks = [(acfg.l_attn_hook_z_name[0], a_get_l0_attn_z_hook), (acfg.l_attn_hook_z_name[1], a_get_l1_attn_z_hook), (acfg.l_attn_hook_z_name[2], a_get_l2_attn_z_hook), (acfg.l_attn_hook_z_name[3], a_get_l3_attn_z_hook)][:cfg.n_layers]
     acfg.attn_put_hooks = [(acfg.l_attn_hook_z_name[0], a_put_l0_attn_z_hook), (acfg.l_attn_hook_z_name[1], a_put_l1_attn_z_hook), (acfg.l_attn_hook_z_name[2], a_put_l2_attn_z_hook), (acfg.l_attn_hook_z_name[3], a_put_l3_attn_z_hook)][:cfg.n_layers]
     acfg.resid_put_hooks = [(acfg.l_hook_resid_post_name[0], a_put_resid_post_hook),(acfg.l_hook_resid_post_name[1], a_put_resid_post_hook),(acfg.l_hook_resid_post_name[2], a_put_resid_post_hook),(acfg.l_hook_resid_post_name[3], a_put_resid_post_hook)][:cfg.n_layers]

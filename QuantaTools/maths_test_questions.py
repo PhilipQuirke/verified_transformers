@@ -430,7 +430,7 @@ def test_maths_questions_by_impact(cfg, acfg, questions, ablate : bool = True):
                 num_fails += 1
 
                 if acfg.verbose :
-                    print(tokens_to_string(q), "Q: ModelAnswer:", answer_str, "Impact:", impact_str, "Loss:", the_loss_mean )
+                    print(tokens_to_string(cfg, q), "Q: ModelAnswer:", answer_str, "Impact:", impact_str, "Loss:", the_loss_mean )
 
     return num_fails
 
@@ -467,7 +467,7 @@ def test_maths_questions_and_add_useful_node_tags(cfg, acfg, questions, the_hook
               sub_complexity_fails += minor_tag
 
             if acfg.verbose :
-              print(tokens_to_string(q), "U: ModelAnswer:", answer_str, "Complexity:", major_tag, "Impact:", impact_str, "Loss:", the_loss_mean )
+              print(tokens_to_string(cfg, q), "U: ModelAnswer:", answer_str, "Complexity:", major_tag, "Impact:", impact_str, "Loss:", the_loss_mean )
 
 
     if num_fails > 0:

@@ -5,7 +5,7 @@ from .useful_node import NodeLocation
 from .quanta_type import QuantaType, NO_IMPACT_TAG 
 
 
-class AblateConfig(NodeLocation):
+class AblateConfig():
 
 
     def __init__(self):
@@ -42,20 +42,20 @@ class AblateConfig(NodeLocation):
 
 
     def reset_hooks(self):
-        # A list of NodeLocations
-        self.node_locations = []
 
-        # A list of stored weightings collected from the model.
+        # A list of "default" stored weightings collected from the model.
         # Same length as nodes
         self.layer_store = [[],[],[]]   # Supports 3 layers
 
-        self.questions = []
+        # A list of hooks that action the ablation interventions
         self.attn_get_hooks = []
         self.attn_put_hooks = []
         self.resid_put_hooks = []
 
-        self.reset_node_location()
-        self.threshold = 0.00001
+        # A list of NodeLocations to ablate
+        self.ablate_node_locations = []
+        # A specific input token position to ablate
+        self.ablate_position = 0
 
 
     def reset_intervention(self, expected_answer = "", expected_impact = NO_IMPACT_TAG, operation = 0):
@@ -80,7 +80,7 @@ class AblateConfig(NodeLocation):
     def node_names(self):
         answer = ""
 
-        for node in self.node_locations:
+        for node in self.ablate_node_locations:
           if answer != "":
             answer += ", "
           answer += node.name()
