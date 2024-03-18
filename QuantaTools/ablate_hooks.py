@@ -140,7 +140,7 @@ def a_predict_questions(cfg, questions, the_hooks):
 
 
 # Run an ablation intervention on the model, and return a description of the impact of the intervention
-def a_run_attention_intervention(cfg, acfg, node_locations, store_question_and_answer, clean_question_and_answer):
+def a_run_attention_intervention(cfg, acfg, node_locations, store_question_and_answer, clean_question_and_answer, clean_answer_str):
 
     a_reset(cfg, acfg, node_locations)
     acfg.num_tests_run += 1
@@ -149,9 +149,7 @@ def a_run_attention_intervention(cfg, acfg, node_locations, store_question_and_a
     store_question = store_question_and_answer[:cfg.num_question_positions]
     clean_question = clean_question_and_answer[:cfg.num_question_positions]
     clean_answer = clean_question_and_answer[-cfg.num_answer_positions:]
-    #PQR clean_answer_str = tokens_to_string(cfg, clean_answer)
-    #PQR description = "CleanAnswer: " + clean_answer + ", ExpectedAnswer/Impact: " + acfg.expected_answer + "/" + acfg.expected_impact + ", "
-    description = "ExpectedAnswer/Impact: " + acfg.expected_answer + "/" + acfg.expected_impact + ", "
+    description = "CleanAnswer: " + clean_answer_str + ", ExpectedAnswer/Impact: " + acfg.expected_answer + "/" + acfg.expected_impact + ", "
 
 
     a_predict_questions(cfg, store_question, acfg.attn_get_hooks)
@@ -169,7 +167,7 @@ def a_run_attention_intervention(cfg, acfg, node_locations, store_question_and_a
         return description + "(Aborted on Bad all_losses_raw)"
     loss_max = utils.to_numpy(loss_fn(all_losses_raw[0]).max())
     acfg.intervened_answer = tokens_to_string(cfg, all_max_prob_tokens[0])
-    assert len(clean_answer) == len(acfg.intervened_answer)
+    assert len(clean_answer_str) == len(acfg.intervened_answer)
 
 
     # Compare the clean test question answer to what the model generated (impacted by the ablation intervention)

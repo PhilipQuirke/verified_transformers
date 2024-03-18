@@ -28,8 +28,10 @@ from .quanta_map_failperc import get_quanta_fail_perc
 from .quanta_map_binary import get_quanta_binary
 from .quanta_map_impact import get_answer_impact, get_question_answer_impact, is_answer_sequential, compact_answer_if_sequential, get_quanta_impact, sort_unique_digits
 
-# quanta_*.py: Contains utilities to support model algorithm investigation
-from .algo_config import AlgoConfig
+
+# algo_*.py: Contains utilities to support model algorithm investigation
+from .algo_config import AlgoConfig, search_and_tag_digit_position, search_and_tag_digit, search_and_tag
+
 
 # maths_*.py: Contains specializations of the above specific to arithmetic (addition and subtraction) transformer models
 from .maths_config import MathsConfig
