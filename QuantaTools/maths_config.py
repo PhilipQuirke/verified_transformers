@@ -2,10 +2,11 @@ import re
 
 from .useful_config import UsefulConfig
 from .useful_node import position_name, answer_name
+from .algo_config import AlgoConfig
 
 
 # Extends UsefulConfig with mathematics-specific info for "123456+123456=+0246912" style questions
-class MathsConfig(UsefulConfig):
+class MathsConfig(AlgoConfig):
 
     def __init__(self):
         super().__init__()
