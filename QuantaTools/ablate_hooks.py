@@ -45,26 +45,26 @@ def a_get_l3_attn_z_hook(value, hook):
 
 
 def a_put_l0_attn_z_hook(value, hook):
-    global acfg    
+    assert len(acfg.ablate_node_locations) > 0 
     # print( "In a_put_l0_attn_z_hook", value.shape) # Get [1, 22, 3, 170] = ???, cfg.n_ctx, cfg.n_heads, d_head
     for location in acfg.ablate_node_locations:
         if location.layer == 0:
             value[:,location.position,location.num,:] = acfg.layer_store[0][:,location.position,location.num,:].clone()
 
 def a_put_l1_attn_z_hook(value, hook):
-    global acfg    
+    assert len(acfg.ablate_node_locations) > 0  
     for location in acfg.ablate_node_locations:
         if location.layer == 1:
             value[:,location.position,location.num,:] = acfg.layer_store[0][:,location.position,location.num,:].clone()
 
 def a_put_l2_attn_z_hook(value, hook):
-    global acfg    
+    assert len(acfg.ablate_node_locations) > 0 
     for location in acfg.ablate_node_locations:
         if location.layer == 2:
             value[:,location.position,location.num,:] = acfg.layer_store[0][:,location.position,location.num,:].clone()
 
 def a_put_l3_attn_z_hook(value, hook):
-    global acfg    
+    assert len(acfg.ablate_node_locations) > 0  
     for location in acfg.ablate_node_locations:
         if location.layer == 3:
             value[:,location.position,location.num,:] = acfg.layer_store[0][:,location.position,location.num,:].clone()
@@ -72,7 +72,6 @@ def a_put_l3_attn_z_hook(value, hook):
 
 # Position (aka input token) ablation - impacts all layers.
 def a_put_resid_post_hook(value, hook):
-    global acfg    
     #print( "In l_hook_resid_post_name", value.shape, acfg.ablate_position) # Get [64, 22, 510] = cfg.batch_size, cfg.n_ctx, d_model
 
     # Copy the mean resid post values in position N to all the layers
@@ -122,7 +121,7 @@ def a_calc_mean_values(cfg, acfg, the_questions):
  
 
 
-# Ask the model to predict the question answers (with the hooks either reading data, doing intervetion ablations, or doing nothing )
+# Ask the model to predict the question answers (with the hooks either getting data, putting intervention ablations in place, or doing nothing )
 def a_predict_questions(cfg, questions, the_hooks):
 
     cfg.main_model.reset_hooks()
