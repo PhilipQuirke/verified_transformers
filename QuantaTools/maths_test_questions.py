@@ -406,6 +406,7 @@ def test_maths_questions_by_complexity(cfg, acfg, varied_questions):
     return varied_questions
 
 
+# test accuracy of model in predicting question answers. Ablates all layers at acfg.ablate_position
 def test_maths_questions_by_impact(cfg, acfg, questions, ablate : bool = True):
     
     the_hooks = acfg.resid_put_hooks if ablate else None
@@ -435,7 +436,8 @@ def test_maths_questions_by_impact(cfg, acfg, questions, ablate : bool = True):
     return num_fails
 
 
-def test_maths_questions_and_add_useful_node_tags(cfg, acfg, questions, the_hooks):
+# test accuracy of model in predicting question answers. Ablates at node-level. Adds node tags
+def test_maths_questions_and_add_useful_node_tags(cfg, acfg, node_location, questions, the_hooks):
         
     all_losses_raw, all_max_prob_tokens = a_predict_questions(cfg, questions, the_hooks)
 
@@ -474,14 +476,14 @@ def test_maths_questions_and_add_useful_node_tags(cfg, acfg, questions, the_hook
 
         # Add percentage failure quanta
         perc = int( 100.0 * num_fails / len(questions))
-        cfg.add_useful_node_tag( acfg, QuantaType.FAIL, str(perc) )
+        cfg.add_useful_node_tag( node_location, QuantaType.FAIL, str(perc) )
 
         # Add summary of all answer digit impact quanta failures
-        cfg.add_useful_node_tag( acfg, QuantaType.IMPACT, "A" + sort_unique_digits(impact_fails, True) )
+        cfg.add_useful_node_tag( node_location, QuantaType.IMPACT, "A" + sort_unique_digits(impact_fails, True) )
 
         # Add summary of all addition question complexity quanta failures
         if add_complexity_fails != "":
-          cfg.add_useful_node_tag( acfg, QuantaType.MATH_ADD, "S" + sort_unique_digits(add_complexity_fails, False) )
+          cfg.add_useful_node_tag( node_location, QuantaType.MATH_ADD, "S" + sort_unique_digits(add_complexity_fails, False) )
 
         # Add summary of all subtraction question complexity quanta failures
         if sub_complexity_fails != "":
@@ -490,7 +492,7 @@ def test_maths_questions_and_add_useful_node_tags(cfg, acfg, questions, the_hook
             sub_complexity_fails = MathsBehavior.SUB_NG_TAG
           else:
             sub_complexity_fails = "M" + sub_complexity_fails
-          cfg.add_useful_node_tag( acfg, QuantaType.MATH_SUB, sub_complexity_fails )
+          cfg.add_useful_node_tag( node_location, QuantaType.MATH_SUB, sub_complexity_fails )
           
 
 TRICASE_QUESTIONS = 100
