@@ -1,3 +1,4 @@
+import random
 import torch
 import transformer_lens.utils as utils
 
@@ -483,3 +484,77 @@ def test_maths_questions_and_add_useful_node_tags(cfg, acfg, questions, the_hook
           else:
             sub_complexity_fails = "M" + sub_complexity_fails
           cfg.add_useful_node_tag( acfg, QuantaType.MATH_SUB, sub_complexity_fails )
+          
+
+ TRICASE_QUESTIONS = 100
+
+
+def make_tricase_questions(cfg, test_digit, test_case, operation):
+    limit = 10 ** test_digit
+    questions = []
+    for i in range(TRICASE_QUESTIONS):
+      x_noise = 0
+      y_noise = 0
+
+      if operation == MathsTokens.PLUS:
+        if test_case == 8:
+          # These are n_digit addition questions where x and y sum is between 0 to 8
+          x = random.randint(0, 8)
+          y = random.randint(0, 8-x)
+        if test_case == 9:
+          # These are n_digit addition questions where x and y sum is 9
+          x = random.randint(0, 9)
+          y = 9 - x
+        if test_case == 10:
+          # These are n_digit addition questions where x and y sum is between 10 to 18
+          x = random.randint(1, 9)
+          y = random.randint(10-x, 9)
+
+        # Randomise the lower digits - ensuring that x_noise + y_noise dont cause a MakeCarry
+        x_noise = random.randint(0, limit-1)
+        y_noise = random.randint(0, limit-1 - x_noise)
+
+
+      if operation == MathsTokens.MINUS:
+        if test_case == 8:
+          # These are n_digit subtraction questions where x - y < 0
+          x = random.randint(0, 8)
+          y = random.randint(x+1, 9)
+        if test_case == 9:
+          # These are n_digit subtraction questions where x - y is 0
+          x = random.randint(0, 9)
+          y = x
+        if test_case == 10:
+          # These are n_digit subtraction questions where x - y > 0
+          x = random.randint(1, 9)
+          y = random.randint(0, x-1)
+
+        # Randomise the lower digits - ensuring that x_noise + y_noise dont cause a BorrowOne
+        x_noise = random.randint(0, limit-1)
+        y_noise = random.randint(0, x_noise)
+
+
+      x = x * limit + x_noise
+      y = y * limit + y_noise
+      questions.append([x, y])
+
+    return make_maths_questions(cfg, operation, "", "", questions)
+
+
+
+def make_maths_tricase_questions_core(cfg, test_digit, operation):
+    q1 = make_tricase_questions(cfg, test_digit, 8, operation)
+    q2 = make_tricase_questions(cfg, test_digit, 9, operation)
+    q3 = make_tricase_questions(cfg, test_digit, 10, operation)
+
+    return torch.vstack((q1, q2, q3))
+
+
+# Create a cache of sample maths questions based on the T8, T9, T10 categorisation
+def make_maths_tricase_questions(cfg):
+    cfg.tricase_questions_dict = {}
+    for answer_digit in range(cfg.n_digits):
+        for operation in [MathsTokens.PLUS, MathsTokens.MINUS]:
+            t_questions = make_maths_tricase_questions_core(cfg, answer_digit, operation)
+            # Use a tuple of (answer_digit, operation) as the key for indexing
+            cfg.tricase_questions_dict[(answer_digit, operation)] = t_questions

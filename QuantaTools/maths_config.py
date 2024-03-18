@@ -20,6 +20,9 @@ class MathsConfig(UsefulConfig):
         self.n_digits = 6
         self.initialize_token_positions( self.question_tokens(), self.answer_tokens(), self.answer_meanings_ascend )
 
+        # Dictionary of test maths questions based on the T8, T9, T10 categorisation
+        self.tricase_questions_dict = {}
+
 
     def perc_add(self):
         return max(0, 100 - self.perc_mult - self.perc_sub)
