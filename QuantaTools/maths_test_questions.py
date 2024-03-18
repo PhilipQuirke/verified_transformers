@@ -18,7 +18,7 @@ from .maths_utilities import int_to_answer_str, tokens_to_unsigned_int, tokens_t
 from .maths_complexity import get_maths_question_complexity, get_maths_min_complexity
 
 
-# Create a batch of manually-curated mathematics test questions
+# Create a (matrix) batch of manually-curated mathematics test questions
 def make_maths_test_questions_and_answers(cfg):
 
     # Start with a batch of random and manually-chosen questions
@@ -559,7 +559,7 @@ def make_maths_tricase_questions_core(cfg, test_digit, operation):
     return torch.vstack((q1, q2, q3))
 
 
-# Create a cache of sample maths questions based on the T8, T9, T10 categorisation
+# Create a cache of sample (matrix) maths questions based on the T8, T9, T10 categorisation
 def make_maths_tricase_questions(cfg):
     cfg.tricase_questions_dict = {}
     for answer_digit in range(cfg.n_digits):

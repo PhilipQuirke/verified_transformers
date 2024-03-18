@@ -140,33 +140,35 @@ def a_predict_questions(cfg, questions, the_hooks):
 
 
 # Run an ablation intervention on the model, and return a description of the impact of the intervention
-def a_run_attention_intervention(cfg, acfg, node_locations, store_question_and_answer_str : str, clean_question_and_answer_str : str):
+def a_run_attention_intervention(cfg, acfg, node_locations, store_question_and_answer, clean_question_and_answer):
 
     a_reset(cfg, acfg, node_locations)
     acfg.num_tests_run += 1
 
-    store_question_str = store_question_and_answer_str[:cfg.num_question_positions]
-    clean_question_str = clean_question_and_answer_str[:cfg.num_question_positions]
-    clean_answer_str = clean_question_and_answer_str[-cfg.num_answer_positions:]
+    # These are all matrixes of tokens
+    store_question = store_question_and_answer[:cfg.num_question_positions]
+    clean_question = clean_question_and_answer[:cfg.num_question_positions]
+    clean_answer = clean_question_and_answer[-cfg.num_answer_positions:]
+    clean_answer_str = tokens_to_string(cfg, clean_answer)
     description = "CleanAnswer: " + clean_answer_str + ", ExpectedAnswer/Impact: " + acfg.expected_answer + "/" + acfg.expected_impact + ", "
 
 
-    a_predict_questions(cfg, store_question_str, acfg.attn_get_hooks)
+    a_predict_questions(cfg, store_question, acfg.attn_get_hooks)
     if acfg.abort:
         return description + "(Aborted on store)"
 
 
     # Predict "test" question overriding PnLmHp to give a bad answer
-    all_losses_raw, all_max_prob_tokens = a_predict_questions(cfg, clean_question_str, acfg.attn_put_hooks)
+    all_losses_raw, all_max_prob_tokens = a_predict_questions(cfg, clean_question, acfg.attn_put_hooks)
     if acfg.abort:
         return description + "(Aborted on intervention)"
     if all_losses_raw.shape[0] == 0:
         acfg.abort = True
-        print( "Bad all_losses_raw", all_losses_raw.shape, store_question_and_answer_str, clean_question_and_answer_str )
+        print( "Bad all_losses_raw", all_losses_raw.shape, store_question_and_answer, clean_question_and_answer )
         return description + "(Aborted on Bad all_losses_raw)"
     loss_max = utils.to_numpy(loss_fn(all_losses_raw[0]).max())
     acfg.intervened_answer = tokens_to_string(cfg, all_max_prob_tokens[0])
-    assert len(clean_answer_str) == len(acfg.intervened_answer)
+    assert len(clean_answer) == len(acfg.intervened_answer)
 
 
     # Compare the clean test question answer to what the model generated (impacted by the ablation intervention)

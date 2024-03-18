@@ -106,7 +106,7 @@ def maths_data_generator( cfg ):
         yield batch.cuda()
     
 
-# Create a batch of questions from a 2D matrix of ints
+# Create a (matrix) batch of questions from a 2D matrix of ints
 def make_maths_questions_and_answers(cfg, operator, major_tag, minor_tag, q_matrix):
     max_len = len(q_matrix)
     real_len = 0
