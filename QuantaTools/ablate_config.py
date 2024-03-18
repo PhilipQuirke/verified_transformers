@@ -82,9 +82,7 @@ class AblateConfig():
         answer = ""
 
         for node in self.ablate_node_locations:
-          if answer != "":
-            answer += ", "
-          answer += node.name()
+            answer += ( "" if answer == "" else ", " ) + node.name()          
 
         return answer
 
