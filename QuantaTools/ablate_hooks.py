@@ -152,7 +152,7 @@ def a_run_attention_intervention(cfg, acfg, node_locations, store_question_and_a
     acfg.intervened_impact = ""    
     acfg.abort = False    
 
-    assert len(acfg.blate_node_locations) > 0
+    assert len(acfg.ablate_node_locations) > 0
     description = "Node[0]" + acfg.ablate_node_locations[0].name() + ", CleanAnswer: " + clean_answer_str + ", ExpectedAnswer/Impact: " + acfg.expected_answer + "/" + acfg.expected_impact + ", "
 
 
