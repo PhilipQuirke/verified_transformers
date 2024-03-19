@@ -52,7 +52,7 @@ def a_put_l0_attn_z_hook(value, hook):
 
 def a_put_l1_attn_z_hook(value, hook):
     assert len(acfg.ablate_node_locations) > 0  
-    print( "In a_put_l1_attn_z_hook", value.shape, location.name())
+    print( "In a_put_l1_attn_z_hook", value.shape, "Start") 
     for location in acfg.ablate_node_locations:
         if location.layer == 1:
             print( "In a_put_l1_attn_z_hook", value.shape, location.name()) # Get [1, 22, 3, 170] = ???, cfg.n_ctx, cfg.n_heads, d_head
