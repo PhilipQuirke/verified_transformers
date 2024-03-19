@@ -476,7 +476,6 @@ def test_maths_questions_and_add_useful_node_tags(cfg, acfg, node_location, ques
                 if acfg.verbose :
                     print(tokens_to_string(cfg, q), "U: ModelAnswer:", answer_str, "Complexity:", major_tag, "Impact:", impact_str, "Loss:", the_loss_mean )
 
-    print( "PQR", node_location.name(), num_fails, impact_fails, add_complexity_fails, sub_complexity_fails)
     if num_fails > 0:
 
         # Add percentage failure quanta

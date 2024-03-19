@@ -28,12 +28,12 @@ def validate_value(name, value):
 
 
 def a_get_l0_attn_z_hook(value, hook):
-    print( "In a_get_l0_attn_z_hook", value.shape ) # Get [1, 22, 3, 170] = ???, cfg.n_ctx, cfg.n_heads, cfg.d_head
+    #print( "In a_get_l0_attn_z_hook", value.shape ) # Get [1, 22, 3, 170] = ???, cfg.n_ctx, cfg.n_heads, cfg.d_head
     if validate_value("a_get_l0_attn_z_hook", value):
         acfg.layer_store[0] = value.clone()
 
 def a_get_l1_attn_z_hook(value, hook):
-    print( "In a_get_l1_attn_z_hook", value.shape ) # Get [1, 22, 3, 170] = ???, cfg.n_ctx, cfg.n_heads, cfg.d_head
+    #print( "In a_get_l1_attn_z_hook", value.shape ) # Get [1, 22, 3, 170] = ???, cfg.n_ctx, cfg.n_heads, cfg.d_head
     if validate_value("a_get_l1_attn_z_hook", value):
         acfg.layer_store[1] = value.clone()
 
@@ -47,17 +47,15 @@ def a_get_l3_attn_z_hook(value, hook):
 
 
 def a_put_l0_attn_z_hook(value, hook):
-    print( "In a_put_l0_attn_z_hook", value.shape, "Start")  
     for location in acfg.ablate_node_locations:
         if location.is_head and location.layer == 0:
-            print( "In a_put_l0_attn_z_hook", value.shape, location.name()) # Get [1, 22, 3, 170] = ???, cfg.n_ctx, cfg.n_heads, d_head
+            #print( "In a_put_l0_attn_z_hook", value.shape, location.name()) # Get [1, 22, 3, 170] = ???, cfg.n_ctx, cfg.n_heads, d_head
             value[:,location.position,location.num,:] = acfg.layer_store[0][:,location.position,location.num,:].clone()
 
 def a_put_l1_attn_z_hook(value, hook):
-    print( "In a_put_l1_attn_z_hook", value.shape, "Start") 
     for location in acfg.ablate_node_locations:
         if location.is_head and location.layer == 1:
-            print( "In a_put_l1_attn_z_hook", value.shape, location.name()) # Get [1, 22, 3, 170] = ???, cfg.n_ctx, cfg.n_heads, d_head
+            #print( "In a_put_l1_attn_z_hook", value.shape, location.name()) # Get [1, 22, 3, 170] = ???, cfg.n_ctx, cfg.n_heads, d_head
             value[:,location.position,location.num,:] = acfg.layer_store[1][:,location.position,location.num,:].clone()
 
 def a_put_l2_attn_z_hook(value, hook):
