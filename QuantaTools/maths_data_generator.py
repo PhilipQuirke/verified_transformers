@@ -50,7 +50,7 @@ def maths_data_generator_core( cfg, batch_op ):
         y = y_flat.view(x.shape)
 
 
-    first_answer_index = cfg.question_tokens()
+    first_answer_index = cfg.num_question_positions
 
     batch[:, :cfg.n_digits] = x
     batch[:, cfg.n_digits] = batch_op

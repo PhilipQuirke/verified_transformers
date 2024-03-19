@@ -10,7 +10,7 @@ from .maths_tag import MathsBehavior
 # Analyse and return the question complexity for the Addition (S0 to S4) or Subtraction (M0 to NG) questions
 def get_maths_question_complexity(cfg, question):
     qlist = utils.to_numpy(question)
-    inputs = qlist[:cfg.question_tokens()]
+    inputs = qlist[:cfg.num_question_positions]
     operator = qlist[cfg.n_digits]
 
     if operator == MathsTokens.PLUS:

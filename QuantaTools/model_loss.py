@@ -5,7 +5,7 @@ import torch.nn.functional as F
 # Calculate the per-token probability by comparing a batch of prediction "logits" to answer "tokens"
 def logits_to_tokens_loss(cfg, logits, tokens):
     # Addition answer can have one extra digit than question. Answer also has a +/- sign
-    n_answer_digits = cfg.answer_tokens()
+    n_answer_digits = cfg.num_answer_positions
 
     # The addition answer digit token probabilities
     ans_logits = logits[:, -(n_answer_digits+1):-1]

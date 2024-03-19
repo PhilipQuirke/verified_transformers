@@ -20,7 +20,7 @@ def tokens_to_unsigned_int( q, offset, digits ):
 # Convert "-12345" to -12345, and "+12345" to 12345
 def tokens_to_answer(cfg, q):
     # offset of sign character
-    sign_offset = cfg.question_tokens()
+    sign_offset = cfg.num_question_positions
 
     # 5 digit addition yields a 6 digit answer. So cfg.n_digits+1 DIGITS
     answer_digits = cfg.n_digits+1
@@ -59,7 +59,7 @@ def make_a_maths_question_and_answer(cfg, the_question, index, q1, q2, operator 
     elif operator == MathsTokens.MULT:
         answer = q1*q2
 
-    the_question[index, cfg.question_tokens()] = MathsTokens.PLUS if answer >= 0 else MathsTokens.MINUS
+    the_question[index, cfg.num_question_positions] = MathsTokens.PLUS if answer >= 0 else MathsTokens.MINUS
     if answer < 0:
         answer = -answer
 
