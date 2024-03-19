@@ -8,7 +8,7 @@ from .quanta_type import NO_IMPACT_TAG
 from .ablate_config import acfg
 
 
-def a_null_attn_z_hook(_, __):
+def a_null_attn_z_hook(value, hook):
     pass
 
 
@@ -21,26 +21,26 @@ def validate_value(name, value):
     return True
 
 
-def a_get_l0_attn_z_hook(value, _):
+def a_get_l0_attn_z_hook(value, hook):
     print( "In a_get_l0_attn_z_hook", value.shape ) # Get [1, 22, 3, 170] = ???, cfg.n_ctx, cfg.n_heads, cfg.d_head
     if validate_value("a_get_l0_attn_z_hook", value):
         acfg.layer_store[0] = value.clone()
 
-def a_get_l1_attn_z_hook(value, _):
+def a_get_l1_attn_z_hook(value, hook):
     print( "In a_get_l1_attn_z_hook", value.shape ) # Get [1, 22, 3, 170] = ???, cfg.n_ctx, cfg.n_heads, cfg.d_head
     if validate_value("a_get_l1_attn_z_hook", value):
         acfg.layer_store[1] = value.clone()
 
-def a_get_l2_attn_z_hook(value, _):
+def a_get_l2_attn_z_hook(value, hook):
     if validate_value("a_get_l2_attn_z_hook", value):
         acfg.layer_store[2] = value.clone()
 
-def a_get_l3_attn_z_hook(value, _):
+def a_get_l3_attn_z_hook(value, hook):
     if validate_value("a_get_l3_attn_z_hook", value):
         acfg.layer_store[3] = value.clone()
 
 
-def a_put_l0_attn_z_hook(value, _):
+def a_put_l0_attn_z_hook(value, hook):
     assert len(acfg.ablate_node_locations) > 0 
     print( "In a_put_l0_attn_z_hook", value.shape, "Start")  
     for location in acfg.ablate_node_locations:
@@ -48,7 +48,7 @@ def a_put_l0_attn_z_hook(value, _):
             print( "In a_put_l0_attn_z_hook", value.shape, location.name()) # Get [1, 22, 3, 170] = ???, cfg.n_ctx, cfg.n_heads, d_head
             value[:,location.position,location.num,:] = acfg.layer_store[0][:,location.position,location.num,:].clone()
 
-def a_put_l1_attn_z_hook(value, _):
+def a_put_l1_attn_z_hook(value, hook):
     assert len(acfg.ablate_node_locations) > 0  
     print( "In a_put_l1_attn_z_hook", value.shape, "Start") 
     for location in acfg.ablate_node_locations:
@@ -56,13 +56,13 @@ def a_put_l1_attn_z_hook(value, _):
             print( "In a_put_l1_attn_z_hook", value.shape, location.name()) # Get [1, 22, 3, 170] = ???, cfg.n_ctx, cfg.n_heads, d_head
             value[:,location.position,location.num,:] = acfg.layer_store[1][:,location.position,location.num,:].clone()
 
-def a_put_l2_attn_z_hook(value, _):
+def a_put_l2_attn_z_hook(value, hook):
     assert len(acfg.ablate_node_locations) > 0 
     for location in acfg.ablate_node_locations:
         if location.is_head and location.layer == 2:
             value[:,location.position,location.num,:] = acfg.layer_store[2][:,location.position,location.num,:].clone()
 
-def a_put_l3_attn_z_hook(value, _):
+def a_put_l3_attn_z_hook(value, hook):
     assert len(acfg.ablate_node_locations) > 0  
     for location in acfg.ablate_node_locations:
         if location.is_head and location.layer == 3:
@@ -70,7 +70,7 @@ def a_put_l3_attn_z_hook(value, _):
 
 
 # Position (aka input token) ablation - impacts all layers.
-def a_put_resid_post_hook(value, _):
+def a_put_resid_post_hook(value, hook):
     #print( "In l_hook_resid_post_name", value.shape, acfg.ablate_position) # Get [64, 22, 510] = cfg.batch_size, cfg.n_ctx, d_model
 
     # Copy the mean resid post values in position N to all the layers

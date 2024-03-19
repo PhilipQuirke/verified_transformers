@@ -52,13 +52,13 @@ class AblateConfig():
         # A list of NodeLocations to ablate
         self.ablate_node_locations = []
         # A specific input token position to ablate
-        self.ablate_position = 0
+        self.ablate_position : int = 0
         # A specific attention head to ablate
-        self.ablate_attn_head = 0
+        self.ablate_attn_head : int = 0
 
 
     def reset_intervention(self, expected_answer = "", expected_impact = NO_IMPACT_TAG, operation = 0):
-        self.operation = operation
+        self.operation : int = operation
 
         # Expected output of an intervention ablation experiment
         self.expected_answer = expected_answer

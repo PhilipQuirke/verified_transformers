@@ -15,19 +15,19 @@ class ModelConfig():
         self.main_model = None
 
         # Model shape configuration
-        self.n_layers = 3 
-        self.n_heads = 4 
-        self.d_vocab = 15
-        self.d_model = 510
-        self.d_mlp_multiplier = 4
-        self.d_head = 170
+        self.n_layers : int = 3 
+        self.n_heads : int = 4 
+        self.d_vocab : int = 15
+        self.d_model : int = 510
+        self.d_mlp_multiplier : int = 4
+        self.d_head : int = 170
         self.act_fn = 'relu'
  
         # Batch size. Training often 64. Larger size used for speed during analysis
-        self.batch_size = 512 
+        self.batch_size : int = 512 
   
         # Optimizer
-        self.n_training_steps = 40000
+        self.n_training_steps : int = 40000
         self.weight_decay = 0.00008
         self.lr = 0.1
 
@@ -35,8 +35,8 @@ class ModelConfig():
         self.insert_mode = 0 # 0=None 1=Init, 2=FreezeHeads 3=FreezeAll
     
         # Random seeds
-        self.training_seed = 372001
-        self.analysis_seed = 673023
+        self.training_seed : int = 372001
+        self.analysis_seed : int = 673023
 
         # Vocabulary: Map from each character to each token    
         self.char_to_token = {}

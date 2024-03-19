@@ -11,13 +11,13 @@ class MathsConfig(AlgoConfig):
         super().__init__()
 
         # Percent of questions that are multiplication, subtraction (rest are addition questions).
-        self.perc_mult = 0 # e.g. 20
-        self.perc_sub = 0 # e.g. 80
+        self.perc_mult : int = 0 # e.g. 20
+        self.perc_sub : int = 0 # e.g. 80
 
         # Save graphs to CoLab temp files as PDF or SVG. You can manually export temp files for re-use in papers.
         self.graph_file_suffix = "svg"
         
-        self.n_digits = 6
+        self.n_digits : int = 6
         
         self.initialize_token_positions( self.n_digits*2 + 2, self.n_digits + 2, False )      
 
