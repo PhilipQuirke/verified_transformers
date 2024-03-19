@@ -80,7 +80,6 @@ def a_set_ablate_hooks(cfg):
 
 # Using the provided questions, run some model predictions and store the results in the cache, for use in later ablation interventions
 def a_calc_mean_values(cfg, the_questions):
-    acfg.reset_ablate_locations()
 
     # Run the sample batch, gather the cache
     cfg.main_model.reset_hooks()

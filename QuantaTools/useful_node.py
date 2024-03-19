@@ -33,17 +33,17 @@ class NodeLocation():
 
 
     def __init__(self, position : int, layer : int, is_head : bool, num : int):
-        self.position = position # Token position. Zero-based
-        self.layer = layer # Layer. Zero-based
-        self.is_head = is_head # Else is MLP neuron
-        self.num = num # Either attention head or MLP neuron number. Zero-based
-
-
-    def reset_node_location(self):
-        self.position = 0
-        self.layer = 0
-        self.is_head = True
-        self.num = 0
+        # Token position. Zero-based
+        self.position = position 
+        
+        # Layer. Zero-based
+        self.layer = layer 
+        
+        # Is this an attention had or MLP neuron location
+        self.is_head = is_head 
+        
+        # Either attention head or MLP neuron number. Zero-based
+        self.num = num 
     
 
     # Node name e.g. "P14L2H3" or "P14L2M0"
@@ -75,12 +75,10 @@ def str_to_node_location( node_location_as_string ):
 # A UsefulNode contains a NodeLocation and a list of tags representing its behaviour and purpose
 class UsefulNode(NodeLocation):
 
-    # Tags related to the node of form "MajorVersion:MinorVersion"  containing behaviour and purpose data
-    tags : List[str]
+    def __init__(self, position : int, layer : int, is_head : bool, num : int, tags : List[str]):
+        super().__init__(position, layer, is_head, num)  
 
-
-    def __init__(self, position, layer, is_head, num, tags = []):
-        super().__init__(position, layer, is_head, num)  # Call the parent class's constructor    
+        # Tags related to the node of form "MajorVersion:MinorVersion"  containing behaviour and purpose data
         self.tags = tags
 
   

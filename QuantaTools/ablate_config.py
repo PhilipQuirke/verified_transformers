@@ -8,7 +8,6 @@ class AblateConfig():
 
     def __init__(self):
         self.reset()
-        self.reset_ablate_locations()
         self.reset_intervention()
         self.reset_intervention_totals()
         self.show_test_failures = False
@@ -41,9 +40,6 @@ class AblateConfig():
         self.mean_attn_z = []
         self.mean_resid_post = []
         self.mean_mlp_hook_post = []
-
-       
-    def reset_ablate_locations(self):
 
         # A list of NodeLocations to ablate
         self.ablate_node_locations = []
