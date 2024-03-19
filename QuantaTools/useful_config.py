@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 
 from .model_config import ModelConfig
 
-from .useful_node import position_name, position_name_to_int, row_location_name, location_name, answer_name, NodeLocation, UsefulNode, UsefulNodeList
+from .useful_node import position_name, UsefulNodeList
 
 
 # Extends ModelConfig with info on which layers and nodes (attention heads and MLP neuron) in the model are actually useful.
@@ -40,8 +40,6 @@ class UsefulConfig(ModelConfig):
         assert the_location.layer < self.n_layers
         if the_location.is_head:
             assert the_location.num < self.n_heads
-        else:
-            assert the_location.num < self.mlp_slices()
 
         self.useful_nodes.add_node_tag( the_location, major_tag, minor_tag )
 
@@ -50,15 +48,14 @@ class UsefulConfig(ModelConfig):
     def calc_position_failures_map(self, num_failures_list, width_inches=16):
         columns = ["Posn"]
         for i in range(len(self.token_position_meanings)):
-          columns += [position_name(i)]
+            columns += [position_name(i)]
     
-        rows = ["Posn", "# fails"]
         data = [
             ["Posn"] + self.token_position_meanings,
             ["# fails"] + num_failures_list
         ]
     
-        fig, ax = plt.subplots(figsize=(width_inches,1))
+        _, ax = plt.subplots(figsize=(width_inches,1))
         ax.axis('tight')
         ax.axis('off')
     

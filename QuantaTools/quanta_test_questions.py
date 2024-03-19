@@ -1,7 +1,4 @@
 import torch
-import transformer_lens.utils as utils
-
-from .useful_node import NodeLocation, UsefulNode
 
 from .quanta_type import QuantaType
 
@@ -9,7 +6,7 @@ from .quanta_type import QuantaType
 def test_questions_and_add_node_attention_tags(cfg, questions):
     cfg.useful_nodes.reset_node_tags(QuantaType.ATTENTION)
 
-    logits, cache = cfg.main_model.run_with_cache(questions)
+    _, cache = cfg.main_model.run_with_cache(questions)
 
     all_attention_weights = []
     for layer in range(cfg.n_layers):

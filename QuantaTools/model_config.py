@@ -1,6 +1,6 @@
 import re
 
-from .useful_node import position_name, answer_name
+from .useful_node import answer_name
 
 
 # Base configuration class related to a Transformer model shape, training and analysis
@@ -66,9 +66,13 @@ class ModelConfig():
     def default_token_position_meanings(self):
         self.token_position_meanings = []
         for i in range(self.num_question_positions):
-          self.token_position_meanings += ["P"+str(i)]
+            self.token_position_meanings += ["P"+str(i)]
         for i in range(self.num_answer_positions):
-          self.token_position_meanings += [answer_name(i if self.answer_meanings_ascend else self.num_answer_positions - i - 1 )]
+            self.token_position_meanings += [answer_name(i if self.answer_meanings_ascend else self.num_answer_positions - i - 1 )]
+
+          
+    def n_ctx(self):
+        return self.num_question_positions + self.num_answer_positions
 
 
     def d_mlp(self):

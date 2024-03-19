@@ -30,16 +30,13 @@ def answer_name(n):
 
 # The unique location of a node (attention head or MLP neuron) in a model 
 class NodeLocation():
-    position : int  # Token position. Zero-based
-    layer : int # Layer. Zero-based
-    is_head : bool # Else is MLP neuron
-    num: int # Either attention head or MLP neuron number. Zero-based
 
-    def __init__(self, position, layer, is_head, num):
-        self.position = position
-        self.layer = layer
-        self.is_head = is_head
-        self.num = num
+
+    def __init__(self, position : int, layer : int, is_head : bool, num : int):
+        self.position = position # Token position. Zero-based
+        self.layer = layer # Layer. Zero-based
+        self.is_head = is_head # Else is MLP neuron
+        self.num = num # Either attention head or MLP neuron number. Zero-based
 
 
     def reset_node_location(self):
@@ -82,9 +79,9 @@ class UsefulNode(NodeLocation):
     tags : List[str]
 
 
-    def __init__(self, position, layer, is_head, num):
+    def __init__(self, position, layer, is_head, num, tags = []):
         super().__init__(position, layer, is_head, num)  # Call the parent class's constructor    
-        self.tags = []
+        self.tags = tags
 
   
     # Remove some/all tags from this 

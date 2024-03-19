@@ -1,8 +1,6 @@
 import transformer_lens.utils as utils
 
-from .useful_node import NodeLocation
-
-from .quanta_type import QuantaType, NO_IMPACT_TAG 
+from .quanta_type import NO_IMPACT_TAG 
 
 
 class AblateConfig():
@@ -91,14 +89,14 @@ class AblateConfig():
         bad_predictions = self.num_varied_questions - self.num_varied_successes
 
         if self.num_varied_questions > 0:
-          print(f"Varied_questions prediction success rate = {self.num_varied_successes / self.num_varied_questions * 100:.2f}% ({self.num_varied_successes} good, {bad_predictions} bad)")
+            print(f"Varied_questions prediction success rate = {self.num_varied_successes / self.num_varied_questions * 100:.2f}% ({self.num_varied_successes} good, {bad_predictions} bad)")
 
         if bad_predictions == 0:
-          # This is evidence not proof because there may be very rare edge cases (say 1 in ten million) that do not exist in the test questions.
-          # Even if you believe you know all the edge cases, and have enriched the training data to contain them, you may not have thought of all edge cases, so this is not proof.
-          print("Model got all test questions correct. This is a pre-requisite for the model to be fully accurate, but this is NOT proof.")
+            # This is evidence not proof because there may be very rare edge cases (say 1 in ten million) that do not exist in the test questions.
+            # Even if you believe you know all the edge cases, and have enriched the training data to contain them, you may not have thought of all edge cases, so this is not proof.
+            print("Model got all test questions correct. This is a pre-requisite for the model to be fully accurate, but this is NOT proof.")
         else:
-          print("WARNING: Model is not fully accurate as it got", bad_predictions, "questions wrong.")
+            print("WARNING: Model is not fully accurate as it got", bad_predictions, "questions wrong.")
           
 
 

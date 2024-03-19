@@ -1,7 +1,4 @@
 from .model_token_to_char import tokens_to_string 
-from .useful_node import NodeLocation, UsefulNode 
-from .quanta_filter import QuantaFilter
-from .quanta_type import QuantaType
 
 
 # Compare the digits in say "+0017726" and "+0018826" returning "A32" where '2' means a mismatch in digit A2. A "-" sign failure is shown as say "A7"

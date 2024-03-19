@@ -1,4 +1,3 @@
-from .model_config import ModelConfig
 
 
 # Map from token to character

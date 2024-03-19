@@ -1,7 +1,6 @@
 import re
 
-from .useful_config import UsefulConfig
-from .useful_node import position_name, answer_name
+from .useful_node import position_name 
 from .algo_config import AlgoConfig
 
 
@@ -19,7 +18,8 @@ class MathsConfig(AlgoConfig):
         self.graph_file_suffix = "svg"
         
         self.n_digits = 6
-        self.initialize_token_positions( self.question_tokens(), self.answer_tokens(), self.answer_meanings_ascend )
+        
+        self.initialize_token_positions( self.n_digits*2 + 2, self.n_digits + 2, False )      
 
         # Dictionary of test maths questions based on the T8, T9, T10 categorisation
         self.tricase_questions_dict = {}
@@ -27,18 +27,6 @@ class MathsConfig(AlgoConfig):
 
     def perc_add(self):
         return max(0, 100 - self.perc_mult - self.perc_sub)
-
-
-    # The number of question tokens
-    # This is also the token position of the first answer digit (which is a "+" or a  "-")
-    def question_tokens(self):
-        return self.n_digits*2 + 2
-
-    def answer_tokens(self):
-        return self.n_digits + 2
-
-    def n_ctx(self):
-        return self.question_tokens() + self.answer_tokens()
 
 
     # How many slices do we break the MLP layer up into?
@@ -53,13 +41,13 @@ class MathsConfig(AlgoConfig):
         return position_name(self.n_digits - 1 - n) 
     # Convert D'0 to P10, D'1 to P9, D'2 to P8, etc in 6 digit addition
     def ddn_to_position_name(self, n):
-      return position_name(2 * self.n_digits - n) 
+        return position_name(2 * self.n_digits - n) 
     # Convert A0 to P20, A1 to P19, A2 to P18, etc in 6 digit addition
     def an_to_position_name(self, n):
-      return position_name(self.n_ctx() - 1 - n)
+        return position_name(self.n_ctx() - 1 - n)
     # Position of the operator (+, -, * or /)
     def op_position_name(self):
-      return position_name(self.n_digits)
+        return position_name(self.n_digits)
 
 
     def parse_model_name(self):
@@ -69,7 +57,7 @@ class MathsConfig(AlgoConfig):
         if match:
             self.n_digits = int(match.group(1))
             
-        self.initialize_token_positions( self.question_tokens(), self.answer_tokens(), self.answer_meanings_ascend )  
+        self.initialize_token_positions( self.num_question_positions, self.num_answer_positions, self.answer_meanings_ascend )  
 
 
 

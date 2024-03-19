@@ -14,7 +14,7 @@ class TestYourModule(unittest.TestCase):
     def test_int_to_answer_str(self):
         cfg = MathsConfig()
         cfg.n_digits = 6
-        self.assertEqual( int_to_answer_str(1234), "+0001234" )
+        self.assertEqual( int_to_answer_str(cfg, 1234), "+0001234" )
 
         
     def test_tokens_to_unsigned_int(self):

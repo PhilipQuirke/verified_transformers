@@ -3,8 +3,8 @@ import itertools
 from .useful_config import UsefulConfig
 from .quanta_filter import QuantaFilter
 from .quanta_filter_node import FilterAlgo, filter_nodes
-from .quanta_type import QuantaType, NO_IMPACT_TAG
-from .ablate_config import AblateConfig, acfg
+from .quanta_type import QuantaType
+ 
 
 
 # Extends UsefulConfig with algorithm functionality
@@ -17,7 +17,7 @@ class AlgoConfig(UsefulConfig):
         self.num_algo_invalid_clauses = 0
       
         
-    def start_algorithm_test(self):
+    def start_algorithm_test(self, acfg):
         self.num_algo_valid_clauses = 0
         self.num_algo_invalid_clauses = 0
 

@@ -1,6 +1,3 @@
-from .model_token_to_char import token_to_char, tokens_to_string
-from .useful_node import position_name, answer_name
-
 
 class MathsTokens:
     # Tokens used in arithmetic vocab. (Token indexes 0 to 9 represent digits 0 to 9)
@@ -24,12 +21,12 @@ def set_maths_vocabulary(cfg):
 
 # Maths question and answer token position meanings are D5, .., D0, *, D5', .., D0', =, A7, A6, .., A0
 def set_maths_question_meanings(cfg):
-  q_meanings = []
-  for i in range(cfg.n_digits):
-    q_meanings += ["D" + str(cfg.n_digits-i-1)]
-  q_meanings += ["Op"] # Stands in for operation +, - or *
-  for i in range(cfg.n_digits):
-    q_meanings += ["D'" + str(cfg.n_digits-i-1)]
-  q_meanings += ["="]
+    q_meanings = []
+    for i in range(cfg.n_digits):
+        q_meanings += ["D" + str(cfg.n_digits-i-1)]
+    q_meanings += ["Op"] # Stands in for operation +, - or *
+    for i in range(cfg.n_digits):
+        q_meanings += ["D'" + str(cfg.n_digits-i-1)]
+    q_meanings += ["="]
 
-  cfg.token_position_meanings = q_meanings + cfg.token_position_meanings[-cfg.num_answer_positions:]
+    cfg.token_position_meanings = q_meanings + cfg.token_position_meanings[-cfg.num_answer_positions:]

@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 from .quanta_filter import QuantaFilter
 from .quanta_type import QuantaType, MIN_ATTENTION_PERC 
 
-from .useful_node import position_name, position_name_to_int, row_location_name, location_name, NodeLocation, UsefulNode, UsefulNodeList 
+from .useful_node import position_name, position_name_to_int, UsefulNodeList 
 
 
 def extract_trailing_int(input_string):
@@ -18,7 +18,7 @@ def extract_trailing_int(input_string):
 
 class FilterNode(ABC):
     @abstractmethod
-    def evaluate(self, useful_node):
+    def evaluate(self, test_node):
         pass
 
     @abstractmethod
@@ -36,7 +36,7 @@ class FilterAnd(FilterNode):
     def describe(self):
         answer = " and( "
         for child in self.children:
-          answer += child.describe() + ", "
+            answer += child.describe() + ", "
         answer = answer[:-2]  # Remove the last two characters            
         answer += ")"
         return answer
@@ -52,7 +52,7 @@ class FilterOr(FilterNode):
     def describe(self):
         answer = " or( "
         for child in self.children:
-          answer += child.describe() + ", "
+            answer += child.describe() + ", "
         answer = answer[:-2]  # Remove the last two characters
         answer += ")"
         return answer    
@@ -64,7 +64,7 @@ class FilterHead(FilterNode):
         return test_node.is_head
 
     def describe(self):
-         return "IsHead" 
+        return "IsHead" 
 
                                        
 class FilterNeuron(FilterNode):
@@ -73,23 +73,23 @@ class FilterNeuron(FilterNode):
         return not test_node.is_head
 
     def describe(self):
-         return "IsNeuron" 
+        return "IsNeuron" 
 
                                        
 class FilterPosition(FilterNode):
-    def __init__(self, position_name, filter_strength = QuantaFilter.MUST):
+    def __init__(self, the_position_name, filter_strength = QuantaFilter.MUST):
         self.filter_strength = filter_strength
-        self.position = position_name_to_int(position_name)
+        self.position = position_name_to_int(the_position_name)
 
     def evaluate(self, test_node):
         if self.filter_strength in [QuantaFilter.MUST, QuantaFilter.CONTAINS]:
-          return (test_node.position == self.position)
+            return (test_node.position == self.position)
         if self.filter_strength == QuantaFilter.NOT:
-          return (not test_node.position == self.position)
+            return (not test_node.position == self.position)
         if self.filter_strength == QuantaFilter.MAY:
-          return True 
+            return True 
         if self.filter_strength == QuantaFilter.MUST_BY:
-          return (test_node.position <= self.position)      
+            return (test_node.position <= self.position)      
         return False
 
     def describe(self):
@@ -104,11 +104,11 @@ class FilterContains(FilterNode):
 
     def evaluate(self, test_node):
         if self.filter_strength in [QuantaFilter.MUST, QuantaFilter.CONTAINS]:
-          return test_node.contains_tag(self.quanta_type, self.minor_tag)   
+            return test_node.contains_tag(self.quanta_type, self.minor_tag)   
         if self.filter_strength == QuantaFilter.NOT:
-          return not test_node.contains_tag(self.quanta_type, self.minor_tag)
+            return not test_node.contains_tag(self.quanta_type, self.minor_tag)
         if self.filter_strength == QuantaFilter.MAY:
-          return True  
+            return True  
         return False
 
     def describe(self):
@@ -132,26 +132,26 @@ class FilterAttention(FilterContains):
 
 class FilterImpact(FilterContains):
     def __init__(self, minor_tag, filter_strength = QuantaFilter.MUST):
-      super().__init__(QuantaType.IMPACT, minor_tag, filter_strength)
+        super().__init__(QuantaType.IMPACT, minor_tag, filter_strength)
 
 
 class FilterPCA(FilterContains):
     def __init__(self, minor_tag, filter_strength = QuantaFilter.MUST):
-      super().__init__(QuantaType.PCA, minor_tag, filter_strength)
+        super().__init__(QuantaType.PCA, minor_tag, filter_strength)
 
 
 class FilterAlgo(FilterContains):
     def __init__(self, minor_tag, filter_strength = QuantaFilter.MUST):
-      super().__init__(QuantaType.ALGO, minor_tag, filter_strength)
+        super().__init__(QuantaType.ALGO, minor_tag, filter_strength)
 
 
 
 # Filters the list of nodes using the specified filter criteria and returns a (likely smaller) list of nodes.
 def filter_nodes( the_nodes : UsefulNodeList, the_filters: FilterNode):
-  answer = UsefulNodeList()
+    answer = UsefulNodeList()
+    
+    for test_node in the_nodes.nodes:
+        if the_filters.evaluate(test_node):
+            answer.nodes.append(test_node)
 
-  for test_node in the_nodes.nodes:
-    if the_filters.evaluate(test_node):
-      answer.nodes.append(test_node)
-
-  return answer
+    return answer

@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import textwrap
 
-from .useful_node import position_name, position_name_to_int, row_location_name, location_name, NodeLocation, UsefulNode, UsefulNodeList 
+from .useful_node import NodeLocation, UsefulNodeList 
 
 
 # Results to display in a quanta cell
@@ -58,7 +58,7 @@ def show_quanta_add_patch(ax, j, row, cell_color):
 
 
 # Calculate (but do not draw) the quanta map with cell contents provided by get_node_details 
-def calc_quanta_map( cfg, standard_quanta : bool, shades, the_nodes : UsefulNodeList, major_tag : str, minor_tag : str, get_node_details, base_fontsize = 10, max_width = 10, left_reserve = 0.3 ):
+def calc_quanta_map( cfg, standard_quanta : bool, shades, the_nodes : UsefulNodeList, major_tag : str, minor_tag : str, get_node_details, base_fontsize = 10, max_width = 10 ):
   
     quanta_results = calc_quanta_results(cfg, the_nodes, major_tag, minor_tag, get_node_details, shades)
 
@@ -76,7 +76,7 @@ def calc_quanta_map( cfg, standard_quanta : bool, shades, the_nodes : UsefulNode
     custom_cmap = plt.cm.winter if standard_quanta else create_custom_colormap()
   
     # Create figure and axes
-    fig1, ax1 = plt.subplots(figsize=(2*len(distinct_positions)/3, 2*len(distinct_row_names)/3))  # Adjust the figure size as needed
+    _, ax1 = plt.subplots(figsize=(2*len(distinct_positions)/3, 2*len(distinct_row_names)/3))  # Adjust the figure size as needed
 
     # Ensure cells are square
     ax1.set_aspect('equal', adjustable='box')

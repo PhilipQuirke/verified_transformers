@@ -1,16 +1,14 @@
 import torch
 import transformer_lens.utils as utils
 
-from .model_config import ModelConfig
-from .model_token_to_char import token_to_char, tokens_to_string
+from .model_token_to_char import tokens_to_string
 from .model_loss import logits_to_tokens_loss, loss_fn
-from .useful_node import NodeLocation, UsefulNode, UsefulNodeList
 from .quanta_map_impact import get_answer_impact
-from .ablate_config import AblateConfig, acfg
-from .quanta_type import QuantaType, NO_IMPACT_TAG
+from .quanta_type import NO_IMPACT_TAG
+from .ablate_config import acfg
 
 
-def a_null_attn_z_hook(value, hook):
+def a_null_attn_z_hook(_, __):
     pass
 
 
@@ -23,63 +21,63 @@ def validate_value(name, value):
     return True
 
 
-def a_get_l0_attn_z_hook(value, hook):
+def a_get_l0_attn_z_hook(value, _):
     print( "In a_get_l0_attn_z_hook", value.shape ) # Get [1, 22, 3, 170] = ???, cfg.n_ctx, cfg.n_heads, cfg.d_head
     if validate_value("a_get_l0_attn_z_hook", value):
         acfg.layer_store[0] = value.clone()
 
-def a_get_l1_attn_z_hook(value, hook):
+def a_get_l1_attn_z_hook(value, _):
     print( "In a_get_l1_attn_z_hook", value.shape ) # Get [1, 22, 3, 170] = ???, cfg.n_ctx, cfg.n_heads, cfg.d_head
     if validate_value("a_get_l1_attn_z_hook", value):
         acfg.layer_store[1] = value.clone()
 
-def a_get_l2_attn_z_hook(value, hook):
+def a_get_l2_attn_z_hook(value, _):
     if validate_value("a_get_l2_attn_z_hook", value):
         acfg.layer_store[2] = value.clone()
 
-def a_get_l3_attn_z_hook(value, hook):
+def a_get_l3_attn_z_hook(value, _):
     if validate_value("a_get_l3_attn_z_hook", value):
         acfg.layer_store[3] = value.clone()
 
 
-def a_put_l0_attn_z_hook(value, hook):
+def a_put_l0_attn_z_hook(value, _):
     assert len(acfg.ablate_node_locations) > 0 
     print( "In a_put_l0_attn_z_hook", value.shape, "Start")  
     for location in acfg.ablate_node_locations:
-        if location.layer == 0:
+        if location.is_head and location.layer == 0:
             print( "In a_put_l0_attn_z_hook", value.shape, location.name()) # Get [1, 22, 3, 170] = ???, cfg.n_ctx, cfg.n_heads, d_head
             value[:,location.position,location.num,:] = acfg.layer_store[0][:,location.position,location.num,:].clone()
 
-def a_put_l1_attn_z_hook(value, hook):
+def a_put_l1_attn_z_hook(value, _):
     assert len(acfg.ablate_node_locations) > 0  
     print( "In a_put_l1_attn_z_hook", value.shape, "Start") 
     for location in acfg.ablate_node_locations:
-        if location.layer == 1:
+        if location.is_head and location.layer == 1:
             print( "In a_put_l1_attn_z_hook", value.shape, location.name()) # Get [1, 22, 3, 170] = ???, cfg.n_ctx, cfg.n_heads, d_head
             value[:,location.position,location.num,:] = acfg.layer_store[1][:,location.position,location.num,:].clone()
 
-def a_put_l2_attn_z_hook(value, hook):
+def a_put_l2_attn_z_hook(value, _):
     assert len(acfg.ablate_node_locations) > 0 
     for location in acfg.ablate_node_locations:
-        if location.layer == 2:
+        if location.is_head and location.layer == 2:
             value[:,location.position,location.num,:] = acfg.layer_store[2][:,location.position,location.num,:].clone()
 
-def a_put_l3_attn_z_hook(value, hook):
+def a_put_l3_attn_z_hook(value, _):
     assert len(acfg.ablate_node_locations) > 0  
     for location in acfg.ablate_node_locations:
-        if location.layer == 3:
+        if location.is_head and location.layer == 3:
             value[:,location.position,location.num,:] = acfg.layer_store[3][:,location.position,location.num,:].clone()
 
 
 # Position (aka input token) ablation - impacts all layers.
-def a_put_resid_post_hook(value, hook):
+def a_put_resid_post_hook(value, _):
     #print( "In l_hook_resid_post_name", value.shape, acfg.ablate_position) # Get [64, 22, 510] = cfg.batch_size, cfg.n_ctx, d_model
 
     # Copy the mean resid post values in position N to all the layers
     value[:,acfg.ablate_position,:] = acfg.mean_resid_post[0,acfg.ablate_position,:].clone()
   
 
-def a_reset(cfg, acfg, node_locations = [] ):
+def a_reset(cfg, node_locations = [] ):
     acfg.reset_ablate_hooks()
     acfg.ablate_node_locations = node_locations
     acfg.attn_get_hooks = [(acfg.l_attn_hook_z_name[0], a_get_l0_attn_z_hook), (acfg.l_attn_hook_z_name[1], a_get_l1_attn_z_hook), (acfg.l_attn_hook_z_name[2], a_get_l2_attn_z_hook), (acfg.l_attn_hook_z_name[3], a_get_l3_attn_z_hook)][:cfg.n_layers]
@@ -88,14 +86,14 @@ def a_reset(cfg, acfg, node_locations = [] ):
 
 
 # Using the provided questions, run some model predictions and store the results in the cache, for use in later ablation interventions
-def a_calc_mean_values(cfg, acfg, the_questions):
+def a_calc_mean_values(cfg, the_questions):
 
     # Run the sample batch, gather the cache
     cfg.main_model.reset_hooks()
     cfg.main_model.set_use_attn_result(True)
     sample_logits, sample_cache = cfg.main_model.run_with_cache(the_questions.cuda())
     print(sample_cache) # Gives names of datasets in the cache
-    sample_losses_raw, sample_max_prob_tokens = logits_to_tokens_loss(cfg, sample_logits, the_questions.cuda())
+    sample_losses_raw, _ = logits_to_tokens_loss(cfg, sample_logits, the_questions.cuda())
     sample_loss_mean = utils.to_numpy(loss_fn(sample_losses_raw).mean())
     print("Sample Mean Loss", sample_loss_mean) # Loss < 0.04 is good
 
@@ -139,12 +137,11 @@ def a_predict_questions(cfg, questions, the_hooks):
 
 
 # Run an ablation intervention on the model, and return a description of the impact of the intervention
-def a_run_attention_intervention(cfg, acfg, store_question_and_answer, clean_question_and_answer, clean_answer_str):
+def a_run_attention_intervention(cfg, store_question_and_answer, clean_question_and_answer, clean_answer_str):
 
     # These are all matrixes of tokens
     store_question = store_question_and_answer[:cfg.num_question_positions]
     clean_question = clean_question_and_answer[:cfg.num_question_positions]
-    clean_answer = clean_question_and_answer[-cfg.num_answer_positions:]
     
     acfg.num_tests_run += 1
 
