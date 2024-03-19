@@ -220,7 +220,7 @@ class UsefulNodeList():
         the_node = self.get_node( nodelocation )
         if the_node == None:
 
-            the_node = UsefulNode(nodelocation.position, nodelocation.layer, nodelocation.is_head, nodelocation.num)
+            the_node = UsefulNode(nodelocation.position, nodelocation.layer, nodelocation.is_head, nodelocation.num, [])
 
             self.nodes += [the_node]
 
