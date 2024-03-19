@@ -146,15 +146,14 @@ def a_run_attention_intervention(cfg, acfg, node_locations, store_question_and_a
     clean_question = clean_question_and_answer[:cfg.num_question_positions]
     clean_answer = clean_question_and_answer[-cfg.num_answer_positions:]
     
-    assert len(node_locations) > 0
-    print( "PQR", node_locations.get_node_names())
     a_reset(cfg, acfg, node_locations)
     acfg.num_tests_run += 1
     acfg.intervened_answer = ""
     acfg.intervened_impact = ""    
     acfg.abort = False    
 
-    description = "CleanAnswer: " + clean_answer_str + ", ExpectedAnswer/Impact: " + acfg.expected_answer + "/" + acfg.expected_impact + ", "
+    assert len(acfg.blate_node_locations) > 0
+    description = "Node[0]" + acfg.ablate_node_locations[0].name() + ", CleanAnswer: " + clean_answer_str + ", ExpectedAnswer/Impact: " + acfg.expected_answer + "/" + acfg.expected_impact + ", "
 
 
     a_predict_questions(cfg, store_question, acfg.attn_get_hooks)
