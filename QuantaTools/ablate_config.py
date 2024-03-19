@@ -10,7 +10,7 @@ class AblateConfig():
 
     def __init__(self):
         self.reset()
-        self.reset_hooks()
+        self.reset_ablate_hooks()
         self.reset_intervention()
         self.reset_intervention_totals()
         self.show_test_failures = False
@@ -40,7 +40,7 @@ class AblateConfig():
         self.mean_mlp_hook_post = []
 
 
-    def reset_hooks(self):
+    def reset_ablate_hooks(self):
 
         # A list of "default" stored weightings collected from the model.
         # Same length as nodes

@@ -80,7 +80,7 @@ def a_put_resid_post_hook(value, hook):
   
 
 def a_reset(cfg, acfg, node_locations = [] ):
-    acfg.reset_hooks()
+    acfg.reset_ablate_hooks()
     acfg.ablate_node_locations = node_locations
     acfg.attn_get_hooks = [(acfg.l_attn_hook_z_name[0], a_get_l0_attn_z_hook), (acfg.l_attn_hook_z_name[1], a_get_l1_attn_z_hook), (acfg.l_attn_hook_z_name[2], a_get_l2_attn_z_hook), (acfg.l_attn_hook_z_name[3], a_get_l3_attn_z_hook)][:cfg.n_layers]
     acfg.attn_put_hooks = [(acfg.l_attn_hook_z_name[0], a_put_l0_attn_z_hook), (acfg.l_attn_hook_z_name[1], a_put_l1_attn_z_hook), (acfg.l_attn_hook_z_name[2], a_put_l2_attn_z_hook), (acfg.l_attn_hook_z_name[3], a_put_l3_attn_z_hook)][:cfg.n_layers]
@@ -139,21 +139,16 @@ def a_predict_questions(cfg, questions, the_hooks):
 
 
 # Run an ablation intervention on the model, and return a description of the impact of the intervention
-def a_run_attention_intervention(cfg, acfg, node_locations, store_question_and_answer, clean_question_and_answer, clean_answer_str):
+def a_run_attention_intervention(cfg, acfg, store_question_and_answer, clean_question_and_answer, clean_answer_str):
 
     # These are all matrixes of tokens
     store_question = store_question_and_answer[:cfg.num_question_positions]
     clean_question = clean_question_and_answer[:cfg.num_question_positions]
     clean_answer = clean_question_and_answer[-cfg.num_answer_positions:]
     
-    a_reset(cfg, acfg, node_locations)
     acfg.num_tests_run += 1
-    acfg.intervened_answer = ""
-    acfg.intervened_impact = ""    
-    acfg.abort = False    
 
-    assert len(acfg.ablate_node_locations) > 0
-    description = "Node[0]" + acfg.ablate_node_locations[0].name() + ", CleanAnswer: " + clean_answer_str + ", ExpectedAnswer/Impact: " + acfg.expected_answer + "/" + acfg.expected_impact + ", "
+    description = "CleanAnswer: " + clean_answer_str + ", ExpectedAnswer/Impact: " + acfg.expected_answer + "/" + acfg.expected_impact + ", "
 
 
     a_predict_questions(cfg, store_question, acfg.attn_get_hooks)
