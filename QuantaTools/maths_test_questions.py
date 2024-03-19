@@ -5,6 +5,8 @@ import transformer_lens.utils as utils
 from .model_loss import logits_to_tokens_loss, loss_fn
 from .model_token_to_char import tokens_to_string
 
+from .useful_node import NodeLocation
+
 from .quanta_type import QuantaType
 from .quanta_map_impact import get_question_answer_impact, sort_unique_digits
 
@@ -347,7 +349,10 @@ def make_maths_test_questions_and_answers(cfg):
     return varied_questions
 
 
-
+# Test maths question prediction accuracy on the sample questions provided.
+# Does NOT use acfg.* or UsefulInfo.* information 
+# Used to estimate the accuracy of the model's predictions.
+# Returns a reduced set of questions - removing questions that the model failed to answer.
 def test_maths_questions_by_complexity(cfg, acfg, varied_questions):
         
     num_questions = varied_questions.shape[0]
@@ -402,13 +407,15 @@ def test_maths_questions_by_complexity(cfg, acfg, varied_questions):
     return varied_questions
 
 
-# test accuracy of model in predicting question answers. Ablates all layers at acfg.ablate_position
-def test_maths_questions_by_impact(cfg, acfg, questions, ablate : bool = True):
+# Test accuracy of model in predicting question answers. Ablates all nodes at position
+# Does NOT use UsefulInfo.* information. Used to populate UsefulInfo.useful_positions
+def test_maths_questions_by_impact(cfg, acfg, questions, position : int, ablate : bool ):
     
     the_hooks = acfg.resid_put_hooks if ablate else None
     if ablate:
         assert not (the_hooks == None)
     
+    acfg.ablate_node_locations = [NodeLocation(position, 0, True, 0)]  # Ablate all nodes at position
     all_losses_raw, all_max_prob_tokens = a_predict_questions(cfg, questions, the_hooks)
 
     num_fails = 0
@@ -432,9 +439,11 @@ def test_maths_questions_by_impact(cfg, acfg, questions, ablate : bool = True):
     return num_fails
 
 
-# test accuracy of model in predicting question answers. Ablates at node-level. Adds node tags
+# Test accuracy of model in predicting question answers, when a single node is ablated. 
+# Adds nodes to Useful.useful_nodes and adds tags to those nodes.
 def test_maths_questions_and_add_useful_node_tags(cfg, acfg, node_location, questions, the_hooks):
-        
+       
+    acfg.ablate_node_locations = [node_location]  # Ablate this node  
     all_losses_raw, all_max_prob_tokens = a_predict_questions(cfg, questions, the_hooks)
 
     num_fails = 0

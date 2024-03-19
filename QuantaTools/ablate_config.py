@@ -47,11 +47,6 @@ class AblateConfig():
 
         # A list of NodeLocations to ablate
         self.ablate_node_locations = []
-        
-        # A specific input token position to ablate
-        self.ablate_position : int = 0
-        # A specific attention head to ablate
-        self.ablate_attn_head : int = 0
 
         # A list of "default" stored weightings collected from the model.
         self.layer_store = [[],[],[],[]]   # Supports 1 to 4 model layers

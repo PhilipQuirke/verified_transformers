@@ -9,12 +9,13 @@ from .ablate_config import acfg
 
 
 
-# Position (aka input token) ablation - impacts all layers.
+# (Question and answer) position ablation.
+# Impacts all nodes at acfg.ablate_node_locations[0].position
 def a_put_resid_post_hook(value, hook):
-    #print( "In l_hook_resid_post_name", value.shape, acfg.ablate_position) # Get [64, 22, 510] = cfg.batch_size, cfg.n_ctx, d_model
+    #print( "In l_hook_resid_post_name", value.shape, acfg.ablate_node_locations[0].position) # Get [64, 22, 510] = cfg.batch_size, cfg.n_ctx, d_model
 
     # Copy the mean resid post values in position N to all the layers
-    value[:,acfg.ablate_position,:] = acfg.mean_resid_post[0,acfg.ablate_position,:].clone()
+    value[:,acfg.ablate_node_locations[0].position,:] = acfg.mean_resid_post[0,acfg.ablate_node_locations[0].position,:].clone()
     
 
 def validate_value(name, value):
