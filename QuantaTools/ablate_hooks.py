@@ -24,13 +24,13 @@ def validate_value(name, value):
 
 
 def a_get_l0_attn_z_hook(value, hook):
+    print( "In a_get_l0_attn_z_hook", value.shape ) # Get [1, 22, 3, 170] = ???, cfg.n_ctx, cfg.n_heads, cfg.d_head
     if validate_value("a_get_l0_attn_z_hook", value):
-        print( "In a_get_l0_attn_z_hook", value.shape ) # Get [1, 22, 3, 170] = ???, cfg.n_ctx, cfg.n_heads, cfg.d_head
         acfg.layer_store[0] = value.clone()
 
 def a_get_l1_attn_z_hook(value, hook):
+    print( "In a_get_l1_attn_z_hook", value.shape ) # Get [1, 22, 3, 170] = ???, cfg.n_ctx, cfg.n_heads, cfg.d_head
     if validate_value("a_get_l1_attn_z_hook", value):
-        print( "In a_get_l1_attn_z_hook", value.shape ) # Get [1, 22, 3, 170] = ???, cfg.n_ctx, cfg.n_heads, cfg.d_head
         acfg.layer_store[1] = value.clone()
 
 def a_get_l2_attn_z_hook(value, hook):
@@ -44,16 +44,18 @@ def a_get_l3_attn_z_hook(value, hook):
 
 def a_put_l0_attn_z_hook(value, hook):
     assert len(acfg.ablate_node_locations) > 0 
+    print( "In a_put_l0_attn_z_hook", value.shape, "Start")  
     for location in acfg.ablate_node_locations:
         if location.layer == 0:
-            print( "In a_put_l0_attn_z_hook", value.shape, acfg.ablate_position) # Get [1, 22, 3, 170] = ???, cfg.n_ctx, cfg.n_heads, d_head
+            print( "In a_put_l0_attn_z_hook", value.shape, location.name()) # Get [1, 22, 3, 170] = ???, cfg.n_ctx, cfg.n_heads, d_head
             value[:,location.position,location.num,:] = acfg.layer_store[0][:,location.position,location.num,:].clone()
 
 def a_put_l1_attn_z_hook(value, hook):
     assert len(acfg.ablate_node_locations) > 0  
+    print( "In a_put_l1_attn_z_hook", value.shape, location.name())
     for location in acfg.ablate_node_locations:
         if location.layer == 1:
-            print( "In a_put_l1_attn_z_hook", value.shape, acfg.ablate_position) # Get [1, 22, 3, 170] = ???, cfg.n_ctx, cfg.n_heads, d_head
+            print( "In a_put_l1_attn_z_hook", value.shape, location.name()) # Get [1, 22, 3, 170] = ???, cfg.n_ctx, cfg.n_heads, d_head
             value[:,location.position,location.num,:] = acfg.layer_store[1][:,location.position,location.num,:].clone()
 
 def a_put_l2_attn_z_hook(value, hook):
@@ -145,6 +147,7 @@ def a_run_attention_intervention(cfg, acfg, node_locations, store_question_and_a
     clean_answer = clean_question_and_answer[-cfg.num_answer_positions:]
     
     assert len(node_locations) > 0
+    print( "PQR", node_locations.get_node_names())
     a_reset(cfg, acfg, node_locations)
     acfg.num_tests_run += 1
     acfg.intervened_answer = ""
