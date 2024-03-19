@@ -8,7 +8,7 @@ class AblateConfig():
 
     def __init__(self):
         self.reset()
-        self.reset_ablate_hooks()
+        self.reset_ablate_locations()
         self.reset_intervention()
         self.reset_intervention_totals()
         self.show_test_failures = False
@@ -32,29 +32,29 @@ class AblateConfig():
         # mlp.hook_post is the "MLP layer" hook point name (at a specified layer)
         self.l_mlp_hook_post_name = [utils.get_act_name('post', 0),utils.get_act_name('post', 1),utils.get_act_name('post', 2),utils.get_act_name('post', 3)] # 'blocks.0.mlp.hook_post' etc
 
+        # A list of hooks that action the ablation interventions
+        self.resid_put_hooks = [] # layer level
+        self.attn_get_hooks = [] # node level
+        self.attn_put_hooks = [] # node level
+        
         # Sample model outputs used in ablation interventions
         self.mean_attn_z = []
         self.mean_resid_post = []
         self.mean_mlp_hook_post = []
 
-
-    def reset_ablate_hooks(self):
-
-        # A list of "default" stored weightings collected from the model.
-        # Same length as nodes
-        self.layer_store = [[],[],[],[]]   # Supports 1 to 4 model layers
-
-        # A list of hooks that action the ablation interventions
-        self.attn_get_hooks = []
-        self.attn_put_hooks = []
-        self.resid_put_hooks = []
+       
+    def reset_ablate_locations(self):
 
         # A list of NodeLocations to ablate
         self.ablate_node_locations = []
+        
         # A specific input token position to ablate
         self.ablate_position : int = 0
         # A specific attention head to ablate
         self.ablate_attn_head : int = 0
+
+        # A list of "default" stored weightings collected from the model.
+        self.layer_store = [[],[],[],[]]   # Supports 1 to 4 model layers
 
 
     def reset_intervention(self, expected_answer = "", expected_impact = NO_IMPACT_TAG, operation = 0):
