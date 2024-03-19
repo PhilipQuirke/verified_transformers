@@ -15,8 +15,6 @@ def a_null_attn_z_hook(value, hook):
 
 
 def validate_value(name, value):
-    global acfg
-   
     if value.shape[0] == 0:
         print( "Aborted", name, acfg.node_names(), acfg.operation, acfg.expected_answer, acfg.expected_impact)
         acfg.abort = True # TransformerLens returned a [0, 22, 3, 170] tensor. This is bad data. Bug in code? Abort
@@ -26,38 +24,36 @@ def validate_value(name, value):
 
 
 def a_get_l0_attn_z_hook(value, hook):
-    global acfg    
-    # print( "In a_get_l0_attn_z_hook", value.shape) # Get [1, 22, 3, 170] = ???, cfg.n_ctx, cfg.n_heads, cfg.d_head
     if validate_value("a_get_l0_attn_z_hook", value):
+        print( "In a_get_l0_attn_z_hook", value.shape ) # Get [1, 22, 3, 170] = ???, cfg.n_ctx, cfg.n_heads, cfg.d_head
         acfg.layer_store[0] = value.clone()
 
 def a_get_l1_attn_z_hook(value, hook):
-    global acfg    
     if validate_value("a_get_l1_attn_z_hook", value):
+        print( "In a_get_l1_attn_z_hook", value.shape ) # Get [1, 22, 3, 170] = ???, cfg.n_ctx, cfg.n_heads, cfg.d_head
         acfg.layer_store[1] = value.clone()
 
 def a_get_l2_attn_z_hook(value, hook):
-    global acfg    
     if validate_value("a_get_l2_attn_z_hook", value):
         acfg.layer_store[2] = value.clone()
 
 def a_get_l3_attn_z_hook(value, hook):
-    global acfg    
     if validate_value("a_get_l3_attn_z_hook", value):
         acfg.layer_store[3] = value.clone()
 
 
 def a_put_l0_attn_z_hook(value, hook):
     assert len(acfg.ablate_node_locations) > 0 
-    # print( "In a_put_l0_attn_z_hook", value.shape) # Get [1, 22, 3, 170] = ???, cfg.n_ctx, cfg.n_heads, d_head
     for location in acfg.ablate_node_locations:
         if location.layer == 0:
+            print( "In a_put_l0_attn_z_hook", value.shape, acfg.ablate_position) # Get [1, 22, 3, 170] = ???, cfg.n_ctx, cfg.n_heads, d_head
             value[:,location.position,location.num,:] = acfg.layer_store[0][:,location.position,location.num,:].clone()
 
 def a_put_l1_attn_z_hook(value, hook):
     assert len(acfg.ablate_node_locations) > 0  
     for location in acfg.ablate_node_locations:
         if location.layer == 1:
+            print( "In a_put_l1_attn_z_hook", value.shape, acfg.ablate_position) # Get [1, 22, 3, 170] = ???, cfg.n_ctx, cfg.n_heads, d_head
             value[:,location.position,location.num,:] = acfg.layer_store[1][:,location.position,location.num,:].clone()
 
 def a_put_l2_attn_z_hook(value, hook):
@@ -130,13 +126,14 @@ def a_predict_questions(cfg, questions, the_hooks):
     cfg.main_model.reset_hooks()
     cfg.main_model.set_use_attn_result(True)
 
+    all_logits = None
     if the_hooks == None:
         all_logits, _ = cfg.main_model.run_with_cache(questions.cuda())
     else:
         all_logits = cfg.main_model.run_with_hooks(questions.cuda(), return_type="logits", fwd_hooks=the_hooks)
     all_losses_raw, all_max_prob_tokens = logits_to_tokens_loss(cfg, all_logits, questions.cuda())
 
-    return all_losses_raw, all_max_prob_tokens
+    return all_losses_raw, all_max_prob_tokens 
 
 
 # Run an ablation intervention on the model, and return a description of the impact of the intervention
