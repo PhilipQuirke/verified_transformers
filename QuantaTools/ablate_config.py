@@ -7,13 +7,13 @@ class AblateConfig():
 
 
     def __init__(self):
-        self.reset()
+        self.reset_ablate()
         self.reset_intervention()
         self.reset_intervention_totals()
         self.show_test_failures = False
 
 
-    def reset(self):
+    def reset_ablate(self):
         self.threshold = 0.01
         self.verbose = False
 
