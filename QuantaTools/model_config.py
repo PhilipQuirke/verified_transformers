@@ -82,17 +82,17 @@ class ModelConfig():
     # Update n_digits, n_layers, n_heads, n_training_steps from model_name
     def parse_model_name(self):
 
-        match = re.search("l(\d)_", self.model_name)
+        match = re.search(r"l(\d)_", self.model_name)
         if match:
             self.n_layers = int(match.group(1))
 
-        match = re.search("h(\d)_", self.model_name)
+        match = re.search(r"h(\d)_", self.model_name)
         if match:
             self.n_heads = int(match.group(1))
 
-        match = re.search("t(\d\d)K", self.model_name)
+        match = re.search(r"t(\d\d)K", self.model_name)
         if not match:
-            match = re.search("t(\d)K", self.model_name)
+            match = re.search(r"t(\d)K", self.model_name)
         if match:
             self.n_training_steps = int(match.group(1)) * 1000
           

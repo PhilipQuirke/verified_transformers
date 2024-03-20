@@ -1,10 +1,9 @@
 import torch
 import transformer_lens.utils as utils
 
-from .quanta_type import QuantaType
+from .quanta_constants import QuantaType
 from .maths_utilities import tokens_to_unsigned_int
-from .maths_vocab import MathsTokens
-from .maths_tag import MathsBehavior
+from .maths_constants import MathsTokens, MathsBehavior
 
 
 # Analyse and return the question complexity for the Addition (S0 to S4) or Subtraction (M0 to NG) questions

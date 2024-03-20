@@ -1,6 +1,6 @@
 import transformer_lens.utils as utils
 
-from .quanta_type import NO_IMPACT_TAG 
+from .quanta_constants import NO_IMPACT_TAG 
 
 
 class AblateConfig():

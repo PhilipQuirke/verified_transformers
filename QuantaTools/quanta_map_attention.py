@@ -1,4 +1,4 @@
-from .quanta_type import MAX_ATTENTION_TAGS, MIN_ATTENTION_PERC 
+from .quanta_constants import MAX_ATTENTION_TAGS, MIN_ATTENTION_PERC 
 from .useful_node import position_name_to_int 
 
 

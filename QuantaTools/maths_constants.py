@@ -1,3 +1,11 @@
+class MathsTokens:
+    # Tokens used in arithmetic vocab. (Token indexes 0 to 9 represent digits 0 to 9)
+    PLUS = 10
+    MINUS = 11
+    EQUALS = 12
+    MULT = 13
+    DIV = 14
+    MAX_INDEX = DIV
 
 
 # These are maths behaviors: quanta we can evaluate for each node based just on that node

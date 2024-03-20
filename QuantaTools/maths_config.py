@@ -60,7 +60,7 @@ class MathsConfig(AlgoConfig):
     def parse_model_name(self):
         super().parse_model_name()
         
-        match = re.search("d(\d)_", self.model_name)
+        match = re.search(r"d(\d)_", self.model_name)
         if match:
             self.n_digits = int(match.group(1))
             

@@ -5,9 +5,8 @@ from QuantaTools.model_token_to_char import token_to_char, tokens_to_string
 from QuantaTools.quanta_map_impact import sort_unique_digits
 
 from QuantaTools.maths_config import MathsConfig
-from QuantaTools.maths_vocab import MathsTokens
-from QuantaTools.maths_vocab import set_maths_vocabulary
-from QuantaTools.maths_utilities import int_to_answer_str, tokens_to_unsigned_int
+from QuantaTools.maths_constants import MathsTokens
+from QuantaTools.maths_utilities import set_maths_vocabulary, int_to_answer_str, tokens_to_unsigned_int
 
 
 class TestYourModule(unittest.TestCase):

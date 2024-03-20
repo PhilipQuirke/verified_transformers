@@ -1,9 +1,8 @@
 import itertools
 
 from .useful_config import UsefulConfig
-from .quanta_filter import QuantaFilter
-from .quanta_filter_node import FilterAlgo, filter_nodes
-from .quanta_type import QuantaType
+from .quanta_filter import FilterAlgo, filter_nodes
+from .quanta_constants import QuantaType, QuantaFilter
  
 
 

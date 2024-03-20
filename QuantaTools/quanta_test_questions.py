@@ -1,6 +1,6 @@
 import torch
 
-from .quanta_type import QuantaType
+from .quanta_constants import QuantaType
 
 
 def test_questions_and_add_node_attention_tags(cfg, questions):

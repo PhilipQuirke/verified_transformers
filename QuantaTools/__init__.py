@@ -10,9 +10,8 @@ from .useful_node import position_name, position_name_to_int, row_location_name,
 
 
 # quanta_*.py: Contains categorisations of model behavior (aka quanta). Applicable to all models
-from .quanta_type import QuantaType, MAX_ATTENTION_TAGS, MIN_ATTENTION_PERC, NO_IMPACT_TAG 
-from .quanta_filter import QuantaFilter
-from .quanta_filter_node import FilterNode, FilterAnd, FilterOr, FilterHead, FilterNeuron, FilterContains, FilterPosition, FilterAttention, FilterImpact, FilterPCA, FilterAlgo, filter_nodes
+from .quanta_constants import QuantaFilter, QuantaType, MAX_ATTENTION_TAGS, MIN_ATTENTION_PERC, NO_IMPACT_TAG 
+from .quanta_filter import FilterNode, FilterAnd, FilterOr, FilterHead, FilterNeuron, FilterContains, FilterPosition, FilterAttention, FilterImpact, FilterPCA, FilterAlgo, filter_nodes
 
 
 # ablate_*.py: Contains ways to "intervention ablate" the model and detect the impact of the ablation
@@ -35,9 +34,8 @@ from .algo_config import AlgoConfig, search_and_tag_digit_position, search_and_t
 
 # maths_*.py: Contains specializations of the above specific to arithmetic (addition and subtraction) transformer models
 from .maths_config import MathsConfig
-from .maths_vocab import MathsTokens, set_maths_vocabulary, set_maths_question_meanings
-from .maths_tag import MathsBehavior, MathsAlgorithm 
-from .maths_utilities import int_to_answer_str, tokens_to_unsigned_int, tokens_to_answer, insert_question_number, make_a_maths_question_and_answer
+from .maths_constants import MathsTokens, MathsBehavior, MathsAlgorithm 
+from .maths_utilities import set_maths_vocabulary, set_maths_question_meanings, int_to_answer_str, tokens_to_unsigned_int, tokens_to_answer, insert_question_number, make_a_maths_question_and_answer
 from .maths_complexity import get_maths_question_complexity, get_maths_min_complexity
 from .maths_data_generator import maths_data_generator_core, maths_data_generator, make_maths_questions_and_answers
 from .maths_test_questions import make_maths_test_questions_and_answers, test_maths_questions_by_complexity, test_maths_questions_by_impact, test_maths_questions_and_add_useful_node_tags, TRICASE_QUESTIONS, make_maths_tricase_questions

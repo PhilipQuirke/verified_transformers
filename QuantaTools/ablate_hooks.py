@@ -4,7 +4,7 @@ import transformer_lens.utils as utils
 from .model_token_to_char import tokens_to_string
 from .model_loss import logits_to_tokens_loss, loss_fn
 from .quanta_map_impact import get_answer_impact
-from .quanta_type import NO_IMPACT_TAG
+from .quanta_constants import NO_IMPACT_TAG
 from .ablate_config import acfg
 
 

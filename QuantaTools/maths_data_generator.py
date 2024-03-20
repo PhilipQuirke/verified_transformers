@@ -1,7 +1,7 @@
 import random
 import torch
 
-from .maths_vocab import MathsTokens
+from .maths_constants import MathsTokens
 from .maths_complexity import get_maths_question_complexity
 from .maths_utilities import make_a_maths_question_and_answer
 
