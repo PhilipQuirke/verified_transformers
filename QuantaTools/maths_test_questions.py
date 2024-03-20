@@ -420,8 +420,6 @@ def test_maths_questions_by_impact(cfg, acfg, questions, position : int, ablate 
     the_hooks = acfg.resid_put_hooks if ablate else None
     if ablate:
         assert not (the_hooks == None)
-    
-    print( "PQR1", questions.shape)
         
     acfg.ablate_node_locations = [NodeLocation(position, 0, True, 0)]  # Ablate all nodes at position
     all_losses_raw, all_max_prob_tokens = a_predict_questions(cfg, questions, the_hooks)
@@ -429,7 +427,6 @@ def test_maths_questions_by_impact(cfg, acfg, questions, position : int, ablate 
     num_fails = 0
     for question_num in range(questions.shape[0]):
         q = questions[question_num]
-        print( "PQR2", q.shape[0])
         assert q.shape[0] == cfg.n_ctx() # Check answer is embedded in question
 
         the_loss_mean = utils.to_numpy(loss_fn(all_losses_raw[question_num]).mean())
