@@ -357,6 +357,7 @@ def test_maths_questions_by_complexity(cfg, acfg, varied_questions):
         
     num_questions = varied_questions.shape[0]
     correct_list = [True] * num_questions
+    print( "PQR1", num_questions)
 
     all_logits = cfg.main_model(varied_questions.cuda())
     _, all_max_prob_tokens = logits_to_tokens_loss(cfg, all_logits, varied_questions.cuda())
@@ -365,14 +366,15 @@ def test_maths_questions_by_complexity(cfg, acfg, varied_questions):
     categorization_results = {}
     for question_num in range(num_questions):
         q = varied_questions[question_num]
-
+        print( "PQR2", q.shape )
+    
         model_answer_str = tokens_to_string(cfg, all_max_prob_tokens[question_num])
         model_answer_num = int(model_answer_str)
 
         major_tag, minor_tag = get_maths_question_complexity(cfg, q)
         group_name = major_tag + "." + minor_tag
 
-        correct_answer = tokens_to_answer(cfg, q)
+        correct_answer = tokens_to_string(cfg, q)
         correct = (model_answer_num == correct_answer)
         correct_list[question_num] = correct
 
@@ -418,17 +420,22 @@ def test_maths_questions_by_impact(cfg, acfg, questions, position : int, ablate 
     if ablate:
         assert not (the_hooks == None)
     
+    print( "PQR1", questions.shape)
+        
     acfg.ablate_node_locations = [NodeLocation(position, 0, True, 0)]  # Ablate all nodes at position
     all_losses_raw, all_max_prob_tokens = a_predict_questions(cfg, questions, the_hooks)
 
     num_fails = 0
     for question_num in range(questions.shape[0]):
         q = questions[question_num]
+        print( "PQR2", q.shape[0])
+        assert q.shape[0] == cfg.n_ctx() # Check answer is embedded in question
 
         the_loss_mean = utils.to_numpy(loss_fn(all_losses_raw[question_num]).mean())
-
+        
         # Only show the question if the loss exceeds the threshold (because of the ablated token position)
         if the_loss_mean > acfg.threshold:
+       
             answer_str = tokens_to_string(cfg, all_max_prob_tokens[question_num])
 
             # Only count the question if the model got the question wrong
