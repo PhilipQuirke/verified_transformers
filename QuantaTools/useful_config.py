@@ -11,8 +11,11 @@ class UsefulConfig(ModelConfig):
 
     def __init__(self):
         super().__init__()
+        self.reset_useful()
+        
 
-        # sparce ordered list of useful (question and answer) token positions actually used by the model e.g. 0,1,8,9,10,11
+    def reset_useful(self):
+        # Sparce ordered list of useful (question and answer) token positions actually used by the model e.g. 0,1,8,9,10,11
         self.useful_positions = []
 
         # List of the useful attention heads and MLP neurons that the model actually uses

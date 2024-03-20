@@ -13,14 +13,16 @@ class AlgoConfig(UsefulConfig):
 
     def __init__(self):
         super().__init__()
+        self.reset_algo()
+        
 
+    def reset_algo(self):
         self.num_algo_valid_clauses = 0
         self.num_algo_invalid_clauses = 0
       
         
     def start_algorithm_test(self, acfg):
-        self.num_algo_valid_clauses = 0
-        self.num_algo_invalid_clauses = 0
+        self.reset_algo()
 
         acfg.print_prediction_success_rate()
         print()
