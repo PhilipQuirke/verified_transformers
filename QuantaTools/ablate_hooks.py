@@ -117,18 +117,12 @@ def a_predict_questions(cfg, questions, the_hooks):
     cfg.main_model.reset_hooks()
     cfg.main_model.set_use_attn_result(True)
 
-    local_questions = questions.clone()
-    assert local_questions.shape[0] > 0 # Check we have questions
-    if local_questions.shape[1] > cfg.num_question_positions:
-        # Trim the questions to only be cfg.num_question_positions tokens wide. Don't pass answers to the model
-        local_questions = local_questions[:,:cfg.num_question_positions]
-
     all_logits = None
     if the_hooks == None:
-        all_logits, _ = cfg.main_model.run_with_cache(local_questions.cuda())
+        all_logits, _ = cfg.main_model.run_with_cache(questions.cuda())
     else:
-        all_logits = cfg.main_model.run_with_hooks(local_questions.cuda(), return_type="logits", fwd_hooks=the_hooks)
-    all_losses_raw, all_max_prob_tokens = logits_to_tokens_loss(cfg, all_logits, local_questions.cuda())
+        all_logits = cfg.main_model.run_with_hooks(questions.cuda(), return_type="logits", fwd_hooks=the_hooks)
+    all_losses_raw, all_max_prob_tokens = logits_to_tokens_loss(cfg, all_logits, questions.cuda())
 
     return all_losses_raw, all_max_prob_tokens 
 
