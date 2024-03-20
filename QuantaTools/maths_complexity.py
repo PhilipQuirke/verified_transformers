@@ -1,7 +1,7 @@
 import torch
 import transformer_lens.utils as utils
 
-from .quanta_constants import QuantaType
+from .quanta_constants import QType
 from .maths_utilities import tokens_to_unsigned_int
 from .maths_constants import MathsTokens, MathsBehavior
 
@@ -24,35 +24,35 @@ def get_maths_question_complexity(cfg, question):
                 mc[cfg.n_digits-1-dn] = 1
 
         if torch.sum(mc) == 0:
-            return QuantaType.MATH_ADD, MathsBehavior.ADD_S0_TAG
+            return QType.MATH_ADD, MathsBehavior.ADD_S0_TAG
 
         if torch.sum(ms) == 0:
-            return QuantaType.MATH_ADD, MathsBehavior.ADD_S1_TAG
+            return QType.MATH_ADD, MathsBehavior.ADD_S1_TAG
 
         for dn in range(cfg.n_digits-4):
             if mc[dn] == 1 and ms[dn+1] == 1 and ms[dn+2] == 1 and ms[dn+3] == 1 and ms[dn+4] == 1:
-                return QuantaType.MATH_ADD, MathsBehavior.ADD_S5_TAG # MC cascades 4 or more digits
+                return QType.MATH_ADD, MathsBehavior.ADD_S5_TAG # MC cascades 4 or more digits
 
         for dn in range(cfg.n_digits-3):
             if mc[dn] == 1 and ms[dn+1] == 1 and ms[dn+2] == 1 and ms[dn+3] == 1:
-                return QuantaType.MATH_ADD, MathsBehavior.ADD_S4_TAG # MC cascades 3 or more digits
+                return QType.MATH_ADD, MathsBehavior.ADD_S4_TAG # MC cascades 3 or more digits
 
         for dn in range(cfg.n_digits-2):
             if mc[dn] == 1 and ms[dn+1] == 1 and ms[dn+2] == 1:
-                return QuantaType.MATH_ADD, MathsBehavior.ADD_S3_TAG # MC cascades 2 or more digits
+                return QType.MATH_ADD, MathsBehavior.ADD_S3_TAG # MC cascades 2 or more digits
 
         for dn in range(cfg.n_digits-1):
             if mc[dn] == 1 and ms[dn+1] == 1:
-                return QuantaType.MATH_ADD, MathsBehavior.ADD_S2_TAG # Simple US 9
+                return QType.MATH_ADD, MathsBehavior.ADD_S2_TAG # Simple US 9
 
-        return QuantaType.MATH_ADD, MathsBehavior.ADD_S1_TAG
+        return QType.MATH_ADD, MathsBehavior.ADD_S1_TAG
 
 
     if operator == MathsTokens.MINUS:
         a = tokens_to_unsigned_int( question, 0, cfg.n_digits )
         b = tokens_to_unsigned_int( question, cfg.n_digits + 1, cfg.n_digits )
         if a - b < 0:
-            return QuantaType.MATH_SUB, MathsBehavior.SUB_NG_TAG
+            return QType.MATH_SUB, MathsBehavior.SUB_NG_TAG
 
         # Locate the BO and MZ digits (if any)
         bo = torch.zeros(cfg.n_digits).to(torch.int64)
@@ -65,24 +65,24 @@ def get_maths_question_complexity(cfg, question):
 
         # Evaluate BaseSub questions - when no column generates a Borrow One
         if torch.sum(bo) == 0:
-            return QuantaType.MATH_SUB, MathsBehavior.SUB_S0_TAG
+            return QType.MATH_SUB, MathsBehavior.SUB_S0_TAG
 
         # Evaluate subtraction "cascade multiple steps" questions
         for dn in range(cfg.n_digits-3):
             if bo[dn] == 1 and mz[dn+1] == 1 and mz[dn+2] == 1 and mz[dn+3] == 1:
-                return QuantaType.MATH_SUB, "M4+" # BO cascades 3 or more digits
+                return QType.MATH_SUB, "M4+" # BO cascades 3 or more digits
 
         # Evaluate subtraction "cascade multiple steps" questions
         for dn in range(cfg.n_digits-2):
             if bo[dn] == 1 and mz[dn+1] == 1 and mz[dn+2] == 1:
-                return QuantaType.MATH_SUB, MathsBehavior.SUB_S3_TAG # BO cascades 2 or more digits
+                return QType.MATH_SUB, MathsBehavior.SUB_S3_TAG # BO cascades 2 or more digits
 
         # Evaluate subtraction "cascade 1" questions
         for dn in range(cfg.n_digits-1):
             if bo[dn] == 1 and mz[dn+1] == 1:
-                return QuantaType.MATH_SUB, MathsBehavior.SUB_S2_TAG # BO cascades 1 digit
+                return QType.MATH_SUB, MathsBehavior.SUB_S2_TAG # BO cascades 1 digit
 
-        return QuantaType.MATH_SUB, MathsBehavior.SUB_S1_TAG
+        return QType.MATH_SUB, MathsBehavior.SUB_S1_TAG
 
 
     # Should never get here

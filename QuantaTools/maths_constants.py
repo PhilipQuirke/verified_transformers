@@ -10,12 +10,12 @@ class MathsTokens:
 
 # These are maths behaviors: quanta we can evaluate for each node based just on that node
 class MathsBehavior:
-    # Minor "maths" tags related to major tag QuantaType.PCA:
+    # Minor "maths" tags related to major tag QType.PCA:
     # PCA says the node outputs is interpretable aligned to the T8,T9,T10 questions, giving 2 or 3 distinct output clusters
     PCA_ADD_TAG = "PA"
     PCA_SUB_TAG = "PS"
 
-    # Minor "maths" tags related to major tag QuantaType.MATH_ADD:
+    # Minor "maths" tags related to major tag QType.MATH_ADD:
     # Addition operation "complexity" non-overlapping minor tags
     ADD_S0_TAG = "S0" # Easy. No MakeCarry1
     ADD_S1_TAG = "S1"
@@ -24,7 +24,7 @@ class MathsBehavior:
     ADD_S4_TAG = "S4"
     ADD_S5_TAG = "S5" # Hard. Multiple cascades of MakeCarry1
 
-    # Minor "maths" tags related to major tag QuantaType.MATH_SUB:
+    # Minor "maths" tags related to major tag QType.MATH_SUB:
     # Subtraction operation "complexity" non-overlapping minor tags
     SUB_S0_TAG = "M0" # Easy. No BorrowOne. Answer is positive
     SUB_S1_TAG = "M1"
@@ -34,7 +34,7 @@ class MathsBehavior:
 
 
 # These are maths algorthmic purposes: interpretations we assign to each node, partially based on its behavior
-# Minor "maths" tags related to major tag QuantaType.ALGO:
+# Minor "maths" tags related to major tag QType.ALGO:
 # A node may serve multiple purposes and so have more than 1 of these tags.
 class MathsAlgorithm:
     ADD_BA_TAG = "BA" # Addition - Base Add (Dn, D'n)

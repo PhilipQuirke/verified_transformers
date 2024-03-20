@@ -10,7 +10,7 @@ from .useful_node import position_name, position_name_to_int, row_location_name,
 
 
 # quanta_*.py: Contains categorisations of model behavior (aka quanta). Applicable to all models
-from .quanta_constants import QuantaFilter, QuantaType, MAX_ATTENTION_TAGS, MIN_ATTENTION_PERC, NO_IMPACT_TAG 
+from .quanta_constants import QCondition, QType, MAX_ATTENTION_TAGS, MIN_ATTENTION_PERC, NO_IMPACT_TAG 
 from .quanta_filter import FilterNode, FilterAnd, FilterOr, FilterHead, FilterNeuron, FilterContains, FilterPosition, FilterAttention, FilterImpact, FilterPCA, FilterAlgo, filter_nodes
 
 

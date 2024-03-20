@@ -1,7 +1,7 @@
 import re
 from abc import ABC, abstractmethod
 
-from .quanta_constants import QuantaFilter, QuantaType, MIN_ATTENTION_PERC 
+from .quanta_constants import QCondition, QType, MIN_ATTENTION_PERC 
 
 from .useful_node import position_name, position_name_to_int, UsefulNodeList 
 
@@ -76,18 +76,18 @@ class FilterNeuron(FilterNode):
 
                                        
 class FilterPosition(FilterNode):
-    def __init__(self, the_position_name, filter_strength = QuantaFilter.MUST):
+    def __init__(self, the_position_name, filter_strength = QCondition.MUST):
         self.filter_strength = filter_strength
         self.position = position_name_to_int(the_position_name)
 
     def evaluate(self, test_node):
-        if self.filter_strength in [QuantaFilter.MUST, QuantaFilter.CONTAINS]:
+        if self.filter_strength in [QCondition.MUST, QCondition.CONTAINS]:
             return (test_node.position == self.position)
-        if self.filter_strength == QuantaFilter.NOT:
+        if self.filter_strength == QCondition.NOT:
             return (not test_node.position == self.position)
-        if self.filter_strength == QuantaFilter.MAY:
+        if self.filter_strength == QCondition.MAY:
             return True 
-        if self.filter_strength == QuantaFilter.MUST_BY:
+        if self.filter_strength == QCondition.MUST_BY:
             return (test_node.position <= self.position)      
         return False
 
@@ -96,17 +96,17 @@ class FilterPosition(FilterNode):
 
                                        
 class FilterContains(FilterNode):
-    def __init__(self, quanta_type, minor_tag, filter_strength = QuantaFilter.MUST):
+    def __init__(self, quanta_type, minor_tag, filter_strength = QCondition.MUST):
         self.quanta_type = quanta_type
         self.minor_tag = minor_tag
         self.filter_strength = filter_strength
 
     def evaluate(self, test_node):
-        if self.filter_strength in [QuantaFilter.MUST, QuantaFilter.CONTAINS]:
+        if self.filter_strength in [QCondition.MUST, QCondition.CONTAINS]:
             return test_node.contains_tag(self.quanta_type, self.minor_tag)   
-        if self.filter_strength == QuantaFilter.NOT:
+        if self.filter_strength == QCondition.NOT:
             return not test_node.contains_tag(self.quanta_type, self.minor_tag)
-        if self.filter_strength == QuantaFilter.MAY:
+        if self.filter_strength == QCondition.MAY:
             return True  
         return False
 
@@ -115,33 +115,33 @@ class FilterContains(FilterNode):
 
 
 class FilterAttention(FilterContains):
-    def __init__(self, minor_tag, filter_strength = QuantaFilter.MUST, filter_min_perc = MIN_ATTENTION_PERC):
-        super().__init__(QuantaType.ATTENTION, minor_tag, filter_strength)
+    def __init__(self, minor_tag, filter_strength = QCondition.MUST, filter_min_perc = MIN_ATTENTION_PERC):
+        super().__init__(QType.ATTENTION, minor_tag, filter_strength)
         self.filter_min_perc = filter_min_perc
 
     def evaluate(self, test_node):
-        if self.filter_strength in [QuantaFilter.MUST, QuantaFilter.CONTAINS]:
+        if self.filter_strength in [QCondition.MUST, QCondition.CONTAINS]:
             for tag in test_node.tags:
                 # We use contains(minor) as the ATTENTION_MAJOR_TAG minor tag is "P14=25" (i.e 25 percent)
-                if tag.startswith(QuantaType.ATTENTION) and (self.minor_tag in tag) and (extract_trailing_int(tag)>=self.filter_min_perc):
+                if tag.startswith(QType.ATTENTION) and (self.minor_tag in tag) and (extract_trailing_int(tag)>=self.filter_min_perc):
                     return True
             
         return super().evaluate(test_node)
         
 
 class FilterImpact(FilterContains):
-    def __init__(self, minor_tag, filter_strength = QuantaFilter.MUST):
-        super().__init__(QuantaType.IMPACT, minor_tag, filter_strength)
+    def __init__(self, minor_tag, filter_strength = QCondition.MUST):
+        super().__init__(QType.IMPACT, minor_tag, filter_strength)
 
 
 class FilterPCA(FilterContains):
-    def __init__(self, minor_tag, filter_strength = QuantaFilter.MUST):
-        super().__init__(QuantaType.PCA, minor_tag, filter_strength)
+    def __init__(self, minor_tag, filter_strength = QCondition.MUST):
+        super().__init__(QType.PCA, minor_tag, filter_strength)
 
 
 class FilterAlgo(FilterContains):
-    def __init__(self, minor_tag, filter_strength = QuantaFilter.MUST):
-        super().__init__(QuantaType.ALGO, minor_tag, filter_strength)
+    def __init__(self, minor_tag, filter_strength = QCondition.MUST):
+        super().__init__(QType.ALGO, minor_tag, filter_strength)
 
 
 

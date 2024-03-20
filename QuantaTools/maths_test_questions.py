@@ -7,7 +7,7 @@ from .model_token_to_char import tokens_to_string
 
 from .useful_node import NodeLocation
 
-from .quanta_constants import QuantaType
+from .quanta_constants import QType
 from .quanta_map_impact import get_question_answer_impact, sort_unique_digits
 
 from .ablate_hooks import a_predict_questions
@@ -28,7 +28,7 @@ def make_maths_test_questions_and_answers(cfg):
         varied_questions = torch.vstack((
         varied_questions.cuda(),
             # Make BaseAdd questions
-            make_maths_questions_and_answers(cfg, MathsTokens.PLUS, QuantaType.MATH_ADD, MathsBehavior.ADD_S0_TAG,
+            make_maths_questions_and_answers(cfg, MathsTokens.PLUS, QType.MATH_ADD, MathsBehavior.ADD_S0_TAG,
               [[0, 0],
               [1, 3],
               [12345, 33333],
@@ -60,7 +60,7 @@ def make_maths_test_questions_and_answers(cfg):
               [60000000, 3111111],
               [10000000, 2111111]]).cuda(),
             # Make UseCarry1 (addition) questions
-            make_maths_questions_and_answers(cfg, MathsTokens.PLUS, QuantaType.MATH_ADD, MathsBehavior.ADD_S1_TAG,
+            make_maths_questions_and_answers(cfg, MathsTokens.PLUS, QType.MATH_ADD, MathsBehavior.ADD_S1_TAG,
               [[ 15, 45],
               [ 27, 55],
               [ 35, 59],
@@ -91,7 +91,7 @@ def make_maths_test_questions_and_answers(cfg):
               [ 25002111, 55019111],
               [ 35002111, 59019111]]).cuda(),
             # Make SimpleUseSum9 (addition) questions
-            make_maths_questions_and_answers(cfg, MathsTokens.PLUS, QuantaType.MATH_ADD, MathsBehavior.ADD_S2_TAG,
+            make_maths_questions_and_answers(cfg, MathsTokens.PLUS, QType.MATH_ADD, MathsBehavior.ADD_S2_TAG,
               [[ 55, 45],
               [ 45, 55],
               [ 45, 59],
@@ -124,7 +124,7 @@ def make_maths_test_questions_and_answers(cfg):
               [ 41127111, 10881111],
               [ 12386111, 82623111]]).cuda(),
             # These are two level UseSum9 cascades
-            make_maths_questions_and_answers(cfg, MathsTokens.PLUS, QuantaType.MATH_ADD, MathsBehavior.ADD_S3_TAG,
+            make_maths_questions_and_answers(cfg, MathsTokens.PLUS, QType.MATH_ADD, MathsBehavior.ADD_S3_TAG,
               [[ 555, 445],
               [ 3340, 6661],
               [ 8880, 1121],
@@ -135,7 +135,7 @@ def make_maths_test_questions_and_answers(cfg):
               [ 679, 321],
               [ 1283, 78785]]).cuda(),
             # These are three level UseSum9 cascades
-            make_maths_questions_and_answers(cfg, MathsTokens.PLUS, QuantaType.MATH_ADD, MathsBehavior.ADD_S4_TAG,
+            make_maths_questions_and_answers(cfg, MathsTokens.PLUS, QType.MATH_ADD, MathsBehavior.ADD_S4_TAG,
               [[ 5555, 4445],
               [ 55550, 44451],
               [ 3334, 6666],
@@ -145,7 +145,7 @@ def make_maths_test_questions_and_answers(cfg):
               [ 1234, 8766],
               [ 4321, 5679]]).cuda(),
             # These are four level UseSum9 cascades
-            make_maths_questions_and_answers(cfg, MathsTokens.PLUS, QuantaType.MATH_ADD, MathsBehavior.ADD_S5_TAG,
+            make_maths_questions_and_answers(cfg, MathsTokens.PLUS, QType.MATH_ADD, MathsBehavior.ADD_S5_TAG,
               [[ 44445, 55555],
               [ 33334, 66666],
               [ 88888, 11112],
@@ -158,7 +158,7 @@ def make_maths_test_questions_and_answers(cfg):
               [ 55379, 44621]]).cuda(),
             # Make questions focus mainly on 1 digit at a time
             # (assuming that the 0 + 0 digit additions/subtractions are trivial bigrams)
-            make_maths_questions_and_answers(cfg, MathsTokens.PLUS, QuantaType.MATH_ADD, "",
+            make_maths_questions_and_answers(cfg, MathsTokens.PLUS, QType.MATH_ADD, "",
               [[ 1, 0],
               [ 4, 3],
               [ 5, 5],
@@ -200,7 +200,7 @@ def make_maths_test_questions_and_answers(cfg):
         varied_questions = torch.vstack((
             varied_questions.cuda(),
             # Make M0 questions - when no column generates a Borrow One. Answer is always positive (or zero).
-            make_maths_questions_and_answers(cfg, MathsTokens.MINUS, QuantaType.MATH_SUB, MathsBehavior.SUB_S0_TAG,
+            make_maths_questions_and_answers(cfg, MathsTokens.MINUS, QType.MATH_SUB, MathsBehavior.SUB_S0_TAG,
               [[0, 0],
               [6, 6],
               [61, 60],
@@ -239,7 +239,7 @@ def make_maths_test_questions_and_answers(cfg):
               [61111111, 30000000],
               [99111111, 99111111]]).cuda(), # = +000000000
             # Make subtraction M1 questions with exactly one "borrow 1" instance. Answer is always positive.
-            make_maths_questions_and_answers(cfg, MathsTokens.MINUS, QuantaType.MATH_SUB, MathsBehavior.SUB_S1_TAG,
+            make_maths_questions_and_answers(cfg, MathsTokens.MINUS, QType.MATH_SUB, MathsBehavior.SUB_S1_TAG,
               [[22222, 11113],
               [ 22222, 11131],
               [ 22222, 11311],
@@ -265,7 +265,7 @@ def make_maths_test_questions_and_answers(cfg):
               [ 77777777, 22292222],
               [ 66666666, 22922222]]).cuda(),
             # Make subtraction M2 questions containing BO and DZ. Answer is always positive (or zero).
-            make_maths_questions_and_answers(cfg, MathsTokens.MINUS, QuantaType.MATH_SUB, MathsBehavior.SUB_S2_TAG,
+            make_maths_questions_and_answers(cfg, MathsTokens.MINUS, QType.MATH_SUB, MathsBehavior.SUB_S2_TAG,
               [[22212, 11113],
               [ 22122, 11131],
               [ 21222, 11311],
@@ -288,7 +288,7 @@ def make_maths_test_questions_and_answers(cfg):
               [ 77777777, 22792222],
               [ 66666666, 26922222]]).cuda(),
             # Make subtraction M3,M4,... questions containing BO and multiple DZs. Answer is always positive (or zero).
-            make_maths_questions_and_answers(cfg, MathsTokens.MINUS, QuantaType.MATH_SUB, MathsBehavior.SUB_S3_TAG,
+            make_maths_questions_and_answers(cfg, MathsTokens.MINUS, QType.MATH_SUB, MathsBehavior.SUB_S3_TAG,
               [[22112, 11113],
               [ 21122, 11131],
               [ 99004,     8],
@@ -304,7 +304,7 @@ def make_maths_test_questions_and_answers(cfg):
               [ 88888888, 22889222],
               [ 77777777, 28892222]]).cuda(),
             # Make subtraction questions with negative answers
-            make_maths_questions_and_answers(cfg, MathsTokens.MINUS, QuantaType.MATH_SUB, MathsBehavior.SUB_NG_TAG,
+            make_maths_questions_and_answers(cfg, MathsTokens.MINUS, QType.MATH_SUB, MathsBehavior.SUB_NG_TAG,
               [[0, 1],
               [7, 9],
               [12345, 33333],
@@ -475,9 +475,9 @@ def test_maths_questions_and_add_useful_node_tags(cfg, acfg, node_location, ques
                 impact_fails += impact_str
 
                 major_tag, minor_tag = get_maths_question_complexity(cfg, q)
-                if major_tag == QuantaType.MATH_ADD:
+                if major_tag == QType.MATH_ADD:
                     add_complexity_fails += minor_tag
-                elif major_tag == QuantaType.MATH_SUB:
+                elif major_tag == QType.MATH_SUB:
                     sub_complexity_fails += minor_tag
 
                 if acfg.verbose :
@@ -487,14 +487,14 @@ def test_maths_questions_and_add_useful_node_tags(cfg, acfg, node_location, ques
 
         # Add percentage failure quanta
         perc = int( 100.0 * num_fails / len(questions))
-        cfg.add_useful_node_tag( node_location, QuantaType.FAIL, str(perc) )
+        cfg.add_useful_node_tag( node_location, QType.FAIL, str(perc) )
 
         # Add summary of all answer digit impact quanta failures
-        cfg.add_useful_node_tag( node_location, QuantaType.IMPACT, "A" + sort_unique_digits(impact_fails, True) )
+        cfg.add_useful_node_tag( node_location, QType.IMPACT, "A" + sort_unique_digits(impact_fails, True) )
 
         # Add summary of all addition question complexity quanta failures
         if add_complexity_fails != "":
-            cfg.add_useful_node_tag( node_location, QuantaType.MATH_ADD, "S" + sort_unique_digits(add_complexity_fails, False) )
+            cfg.add_useful_node_tag( node_location, QType.MATH_ADD, "S" + sort_unique_digits(add_complexity_fails, False) )
 
         # Add summary of all subtraction question complexity quanta failures
         if sub_complexity_fails != "":
@@ -503,7 +503,7 @@ def test_maths_questions_and_add_useful_node_tags(cfg, acfg, node_location, ques
                 sub_complexity_fails = MathsBehavior.SUB_NG_TAG
             else:
                 sub_complexity_fails = "M" + sub_complexity_fails
-            cfg.add_useful_node_tag( node_location, QuantaType.MATH_SUB, sub_complexity_fails )
+            cfg.add_useful_node_tag( node_location, QType.MATH_SUB, sub_complexity_fails )
           
 
 TRICASE_QUESTIONS = 100

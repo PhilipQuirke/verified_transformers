@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class QuantaFilter(Enum):
+class QCondition(Enum):
     MUST = "must" # The specified quanta value MUST exist in the object
     NOT = "not"  # The specified quanta value must NOT exist in the object
     CONTAINS = "contains" # The specified quanta value can equal the object value or a subset of the object value
@@ -9,7 +9,7 @@ class QuantaFilter(Enum):
     MUST_BY = "must-by"  # The specified quanta value MUST exist in the object at or before the specified position       
 
 
-class QuantaType:
+class QType:
     # Token position tag
     POSITION = "Position"
   
@@ -48,13 +48,13 @@ class QuantaType:
 
   
 
-# Related to QuantaType.ATTENTION:
+# Related to QType.ATTENTION:
 # For each node, we store at most 5 input attention facts (as tags)
 MAX_ATTENTION_TAGS = 5
 # When graphing, we only show input tokens with > 10% of the node's attention
 MIN_ATTENTION_PERC = 10
 
 
-# Related to QuantaType.IMPACT:
+# Related to QType.IMPACT:
 # No answer digits were impacted by the intervention
 NO_IMPACT_TAG = "(none)"

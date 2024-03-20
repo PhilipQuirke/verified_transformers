@@ -1,10 +1,10 @@
 import torch
 
-from .quanta_constants import QuantaType
+from .quanta_constants import QType
 
 
 def test_questions_and_add_node_attention_tags(cfg, questions):
-    cfg.useful_nodes.reset_node_tags(QuantaType.ATTENTION)
+    cfg.useful_nodes.reset_node_tags(QType.ATTENTION)
 
     _, cache = cfg.main_model.run_with_cache(questions)
 
@@ -34,4 +34,4 @@ def test_questions_and_add_node_attention_tags(cfg, questions):
             for idx, token_idx in enumerate(top_tokens.indices):
                 perc = attention_percentage[idx]
                 if perc >= 1.0:
-                    cfg.add_useful_node_tag( node, QuantaType.ATTENTION, f"P{token_idx}={perc:.0f}" )
+                    cfg.add_useful_node_tag( node, QType.ATTENTION, f"P{token_idx}={perc:.0f}" )
