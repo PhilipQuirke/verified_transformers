@@ -357,26 +357,26 @@ def test_maths_questions_by_complexity(cfg, acfg, varied_questions):
         
     num_questions = varied_questions.shape[0]
     correct_list = [True] * num_questions
-    print( "PQR1", num_questions)
-
+ 
     all_logits = cfg.main_model(varied_questions.cuda())
     _, all_max_prob_tokens = logits_to_tokens_loss(cfg, all_logits, varied_questions.cuda())
+
 
     # Evaluate and categorize each object
     categorization_results = {}
     for question_num in range(num_questions):
-        q = varied_questions[question_num]
-        print( "PQR2", q.shape )
+        q_and_a = varied_questions[question_num]
     
+        # Get the last cfg.num_answer_positions tokens in the q_and_a, which is the correct answer
+        correct_answer_str = tokens_to_string(cfg, q_and_a[-cfg.num_answer_positions:])
+        
         model_answer_str = tokens_to_string(cfg, all_max_prob_tokens[question_num])
-        model_answer_num = int(model_answer_str)
 
-        major_tag, minor_tag = get_maths_question_complexity(cfg, q)
-        group_name = major_tag + "." + minor_tag
-
-        correct_answer = tokens_to_string(cfg, q)
-        correct = (model_answer_num == correct_answer)
+        correct = (model_answer_str == correct_answer_str)
         correct_list[question_num] = correct
+
+        major_tag, minor_tag = get_maths_question_complexity(cfg, q_and_a)
+        group_name = major_tag + "." + minor_tag
 
         if group_name not in categorization_results:
             categorization_results[group_name] = [0, 0]  # Initialize counts for new group
@@ -387,7 +387,8 @@ def test_maths_questions_by_complexity(cfg, acfg, varied_questions):
             categorization_results[group_name][1] += 1  # Increment bad count for this group
 
         if acfg.show_test_failures and not correct:
-            print("Failed: ModelAnswer:", model_answer_str, "Correct:", correct_answer, "Complexity:", group_name)
+            print("Failed: ModelAnswer:", model_answer_str, "Correct:", correct_answer_str, "Complexity:", group_name)
+
 
     # Calculate and print summary success rates per group
     acfg.num_varied_questions = 0
