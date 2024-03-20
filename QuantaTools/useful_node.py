@@ -75,6 +75,7 @@ def str_to_node_location( node_location_as_string ):
 # A UsefulNode contains a NodeLocation and a list of tags representing its behaviour and purpose
 class UsefulNode(NodeLocation):
 
+
     def __init__(self, position : int, layer : int, is_head : bool, num : int, tags : List[str]):
         super().__init__(position, layer, is_head, num)  
 
@@ -167,11 +168,9 @@ class UsefulNode(NodeLocation):
 
 class UsefulNodeList():
 
-    # list of useful (attention head and MLP neuron) nodes
-    nodes = []
-
   
     def __init__(self):
+        # list of useful (attention head and MLP neuron) nodes
         self.nodes = []
 
   

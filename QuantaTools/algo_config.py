@@ -10,6 +10,7 @@ from .quanta_type import QuantaType
 # Extends UsefulConfig with algorithm functionality
 class AlgoConfig(UsefulConfig):
 
+
     def __init__(self):
         super().__init__()
 

@@ -3,7 +3,7 @@ from .useful_node import position_name_to_int
 
 
 # Return the token_position_meanings that this node (attention head) pays attention to
-def get_quanta_attention(cfg, node, major_tag, minor_tag, shades):
+def get_quanta_attention(cfg, node, major_tag : str, minor_tag : str, num_shades : int):
     cell_text = ""
     color_index = 0
 
@@ -19,10 +19,10 @@ def get_quanta_attention(cfg, node, major_tag, minor_tag, shades):
                 sum_perc += the_perc
 
         cell_text = cell_text.rstrip(" ")
-        color_index = shades - sum_perc // shades    # Want >90% => Dark-Green, and <10% => Yellow
+        color_index = num_shades - sum_perc // num_shades    # Want >90% => Dark-Green, and <10% => Yellow
 
         if len(node_tags) == MAX_ATTENTION_TAGS:
             # Number of input tokens that node attended to could be > MAX_ATTENTION_TAGS so show yellow
-            color_index = shades-1
+            color_index = num_shades-1
 
     return cell_text, color_index

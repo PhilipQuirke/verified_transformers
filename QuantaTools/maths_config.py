@@ -7,6 +7,7 @@ from .algo_config import AlgoConfig
 # Extends UsefulConfig with mathematics-specific info for "123456+123456=+0246912" style questions
 class MathsConfig(AlgoConfig):
 
+
     def __init__(self):
         super().__init__()
 
@@ -14,15 +15,21 @@ class MathsConfig(AlgoConfig):
         self.perc_mult : int = 0 # e.g. 20
         self.perc_sub : int = 0 # e.g. 80
 
-        # Save graphs to CoLab temp files as PDF or SVG. You can manually export temp files for re-use in papers.
-        self.graph_file_suffix = "svg"
-        
         self.n_digits : int = 6
-        
-        self.initialize_token_positions( self.n_digits*2 + 2, self.n_digits + 2, False )      
+        self.initialize_maths_token_positions()     
 
         # Dictionary of test maths questions based on the T8, T9, T10 categorisation
         self.tricase_questions_dict = {}
+
+        # Save graphs to CoLab temp files as PDF or SVG. You can manually export temp files for re-use in papers.
+        self.graph_file_suffix = "svg"
+        
+
+    def initialize_maths_token_positions(self):
+        self.initialize_token_positions( 
+            self.n_digits*2 + 2,  # Plus 2 for operator (+ or -) and equals (=) sign
+            self.n_digits + 2, # Plus 2 for answer sign (+ or -) and answer digits (adding two 5 digits numbers gives a 6 digit answer )
+            False ) 
 
 
     def perc_add(self):
@@ -57,8 +64,8 @@ class MathsConfig(AlgoConfig):
         if match:
             self.n_digits = int(match.group(1))
             
-        self.initialize_token_positions( self.num_question_positions, self.num_answer_positions, self.answer_meanings_ascend )  
-
+        # n_digits may have changed 
+        self.initialize_maths_token_positions()  
 
 
     def short_config_description(self):       

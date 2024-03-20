@@ -11,6 +11,8 @@ from QuantaTools.maths_utilities import int_to_answer_str, tokens_to_unsigned_in
 
 
 class TestYourModule(unittest.TestCase):
+
+
     def test_int_to_answer_str(self):
         cfg = MathsConfig()
         cfg.n_digits = 6

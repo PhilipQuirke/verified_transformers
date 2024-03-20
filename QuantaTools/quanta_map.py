@@ -8,23 +8,21 @@ from .useful_node import NodeLocation, UsefulNodeList
 
 # Results to display in a quanta cell
 class QuantaResult(NodeLocation):
-    cell_text : str
-    color_index : int
 
   
     def __init__(self, node, cell_text = "", color_index = 0):
         super().__init__(node.position, node.layer, node.is_head, node.num)  # Call the parent class's constructor    
-        self.cell_text = cell_text    
-        self.color_index = color_index
+        self.cell_text : str = cell_text    
+        self.color_index : int = color_index
 
 
 # Calculate the results to display in all the quanta cell
-def calc_quanta_results( cfg, test_nodes : UsefulNodeList, major_tag : str, minor_tag : str, get_node_details, shades ):
+def calc_quanta_results( cfg, test_nodes : UsefulNodeList, major_tag : str, minor_tag : str, get_node_details, num_shades : int ):
 
     quanta_results = []
     
     for node in test_nodes.nodes:
-        cell_text, color_index = get_node_details(cfg, node, major_tag, minor_tag, shades)
+        cell_text, color_index = get_node_details(cfg, node, major_tag, minor_tag, num_shades)
         if cell_text != "" :
             quanta_results +=[QuantaResult(node, cell_text, color_index)]
 
@@ -58,9 +56,9 @@ def show_quanta_add_patch(ax, j, row, cell_color):
 
 
 # Calculate (but do not draw) the quanta map with cell contents provided by get_node_details 
-def calc_quanta_map( cfg, standard_quanta : bool, shades, the_nodes : UsefulNodeList, major_tag : str, minor_tag : str, get_node_details, base_fontsize = 10, max_width = 10 ):
+def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : UsefulNodeList, major_tag : str, minor_tag : str, get_node_details, base_fontsize = 10, max_width = 10 ):
   
-    quanta_results = calc_quanta_results(cfg, the_nodes, major_tag, minor_tag, get_node_details, shades)
+    quanta_results = calc_quanta_results(cfg, the_nodes, major_tag, minor_tag, get_node_details, num_shades)
 
     distinct_row_names = set()
     distinct_positions = set()
@@ -72,7 +70,7 @@ def calc_quanta_map( cfg, standard_quanta : bool, shades, the_nodes : UsefulNode
     distinct_row_names = sorted(distinct_row_names)
     distinct_positions = sorted(distinct_positions)
 
-    # Show standard_quanta (common across all potentional models) in blue shades and model-specific quanta in green shades 
+    # Show standard_quanta (common across all potentional models) in blue num_shades and model-specific quanta in green num_shades 
     custom_cmap = plt.cm.winter if standard_quanta else create_custom_colormap()
   
     # Create figure and axes
@@ -82,7 +80,7 @@ def calc_quanta_map( cfg, standard_quanta : bool, shades, the_nodes : UsefulNode
     ax1.set_aspect('equal', adjustable='box')
     ax1.yaxis.set_tick_params(labelleft=True, labelright=False)
 
-    colors = [pale_color(custom_cmap(i/shades)) for i in range(shades)]
+    colors = [pale_color(custom_cmap(i/num_shades)) for i in range(num_shades)]
     horizontal_labels = []
     wrapper = textwrap.TextWrapper(width=max_width)
 
@@ -98,7 +96,8 @@ def calc_quanta_map( cfg, standard_quanta : bool, shades, the_nodes : UsefulNode
 
             result = find_quanta_result_by_row_col(the_row_name, the_position, quanta_results)
             if result != None:
-                cell_color = colors[result.color_index] if result.color_index >= 0 else 'lightgrey'
+                the_shade = max(0, min(result.color_index, num_shades-1))
+                cell_color = colors[the_shade] if result.color_index >= 0 else 'lightgrey'
                 the_fontsize = base_fontsize if len(result.cell_text) < 4 else base_fontsize-1 if len(result.cell_text) < 5 else base_fontsize-2
                 wrapped_text = wrapper.fill(text=result.cell_text)
                 ax1.text(show_col + 0.5, show_row + 0.5, wrapped_text, ha='center', va='center', color='black', fontsize=the_fontsize)

@@ -50,7 +50,7 @@ def compact_answer_if_sequential(cfg, s):
     return s
 
 
-def get_quanta_impact( cfg, node, major_tag, minor_tag, shades ):
+def get_quanta_impact( cfg, node, major_tag, minor_tag, num_shades ):
 
     cell_text = ""
     color_index = 0
@@ -59,7 +59,7 @@ def get_quanta_impact( cfg, node, major_tag, minor_tag, shades ):
     if len(cell_text) > 0:
         cell_text = compact_answer_if_sequential(cfg, cell_text)
 
-        color_index = int(cell_text[1]) if len(cell_text) > 1 and cell_text[1].isdigit() else shades-1
+        color_index = int(cell_text[1]) if len(cell_text) > 1 and cell_text[1].isdigit() else num_shades-1
 
     return cell_text, color_index
 

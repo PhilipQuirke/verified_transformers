@@ -93,11 +93,11 @@ def get_maths_question_complexity(cfg, question):
 
 # Analyze the tags associated with node, to show the minimum mathematical complexity
 # That is, what is the simpliest type of question that this node is needed for?
-def get_maths_min_complexity(_, node, major_tag, minor_tag, shades):
+def get_maths_min_complexity(_, node, major_tag, minor_tag, num_shades):
     color_index = 0
     cell_text = node.min_tag_suffix( major_tag, minor_tag )
     if cell_text != "" :
         cell_text = cell_text[0:2]
-        color_index = int(cell_text[1]) if len(cell_text) > 1 and cell_text[1].isdigit() else shades-1
+        color_index = int(cell_text[1]) if len(cell_text) > 1 and cell_text[1].isdigit() else num_shades-1
 
     return cell_text, color_index
