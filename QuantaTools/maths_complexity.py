@@ -3,7 +3,7 @@ import transformer_lens.utils as utils
 
 from .quanta_constants import QType
 from .maths_utilities import tokens_to_unsigned_int
-from .maths_constants import MathsTokens, MathsBehavior
+from .maths_constants import MathsToken, MathsBehavior
 
 
 # Analyse and return the question complexity for the Addition (S0 to S4) or Subtraction (M0 to NG) questions
@@ -12,7 +12,7 @@ def get_maths_question_complexity(cfg, question):
     inputs = qlist[:cfg.num_question_positions]
     operator = qlist[cfg.n_digits]
 
-    if operator == MathsTokens.PLUS:
+    if operator == MathsToken.PLUS:
 
         # Locate the MC and MS digits (if any)
         mc = torch.zeros(cfg.n_digits).to(torch.int64)
@@ -48,7 +48,7 @@ def get_maths_question_complexity(cfg, question):
         return QType.MATH_ADD, MathsBehavior.ADD_S1_TAG
 
 
-    if operator == MathsTokens.MINUS:
+    if operator == MathsToken.MINUS:
         a = tokens_to_unsigned_int( question, 0, cfg.n_digits )
         b = tokens_to_unsigned_int( question, cfg.n_digits + 1, cfg.n_digits )
         if a - b < 0:

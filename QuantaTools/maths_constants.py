@@ -1,5 +1,6 @@
-class MathsTokens:
-    # Tokens used in arithmetic vocab. (Token indexes 0 to 9 represent digits 0 to 9)
+# These are tokens used in arithmetic vocab. 
+class MathsToken:
+    # Token indexes 0 to 9 represent digits 0 to 9
     PLUS = 10
     MINUS = 11
     EQUALS = 12

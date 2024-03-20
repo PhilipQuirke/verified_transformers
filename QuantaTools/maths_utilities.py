@@ -1,14 +1,14 @@
-from .maths_constants import MathsTokens
+from .maths_constants import MathsToken
 
 
 # Vocabulary dictionary: Mapping from character (key) to token (value)
 def set_maths_vocabulary(cfg):
     cfg.char_to_token = {str(i) : i for i in range(10)}
-    cfg.char_to_token['+'] = MathsTokens.PLUS
-    cfg.char_to_token['-'] = MathsTokens.MINUS
-    cfg.char_to_token['='] = MathsTokens.EQUALS
-    cfg.char_to_token['*'] = MathsTokens.MULT
-    cfg.char_to_token['\\'] = MathsTokens.DIV
+    cfg.char_to_token['+'] = MathsToken.PLUS
+    cfg.char_to_token['-'] = MathsToken.MINUS
+    cfg.char_to_token['='] = MathsToken.EQUALS
+    cfg.char_to_token['*'] = MathsToken.MULT
+    cfg.char_to_token['\\'] = MathsToken.DIV
 
 
 # Maths question and answer token position meanings are D5, .., D0, *, D5', .., D0', =, A7, A6, .., A0
@@ -49,7 +49,7 @@ def tokens_to_answer(cfg, q):
     answer_digits = cfg.n_digits+1
 
     a = tokens_to_unsigned_int( q, sign_offset+1, answer_digits )
-    if q[sign_offset] == MathsTokens.MINUS:
+    if q[sign_offset] == MathsToken.MINUS:
         a = - a
 
     return a
@@ -74,15 +74,15 @@ def make_a_maths_question_and_answer(cfg, the_question, index, q1, q2, operator 
 
     insert_question_number( the_question, index, cfg.n_digits+1, cfg.n_digits, q2)
 
-    the_question[index, 2*cfg.n_digits+1] = MathsTokens.EQUALS
+    the_question[index, 2*cfg.n_digits+1] = MathsToken.EQUALS
 
     answer = q1+q2
-    if operator == MathsTokens.MINUS:
+    if operator == MathsToken.MINUS:
         answer = q1-q2
-    elif operator == MathsTokens.MULT:
+    elif operator == MathsToken.MULT:
         answer = q1*q2
 
-    the_question[index, cfg.num_question_positions] = MathsTokens.PLUS if answer >= 0 else MathsTokens.MINUS
+    the_question[index, cfg.num_question_positions] = MathsToken.PLUS if answer >= 0 else MathsToken.MINUS
     if answer < 0:
         answer = -answer
 

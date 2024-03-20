@@ -1,6 +1,7 @@
 from enum import Enum
 
 
+# Set of distinct conditions using in filtering. Each filter contains zero or one of these conditions
 class QCondition(Enum):
     MUST = "must" # The specified quanta value MUST exist in the object
     NOT = "not"  # The specified quanta value must NOT exist in the object
@@ -9,7 +10,8 @@ class QCondition(Enum):
     MUST_BY = "must-by"  # The specified quanta value MUST exist in the object at or before the specified position       
 
 
-class QType:
+# Set of (independent) quanta "types". Each node tag contains exactly one of these quanta types
+class QType(Enum):
     # Token position tag
     POSITION = "Position"
   
@@ -56,5 +58,5 @@ MIN_ATTENTION_PERC = 10
 
 
 # Related to QType.IMPACT:
-# No answer digits were impacted by the intervention
+# Used when no answer digits were impacted by the intervention
 NO_IMPACT_TAG = "(none)"

@@ -1,7 +1,7 @@
 import random
 import torch
 
-from .maths_constants import MathsTokens
+from .maths_constants import MathsToken
 from .maths_complexity import get_maths_question_complexity
 from .maths_utilities import make_a_maths_question_and_answer
 
@@ -16,7 +16,7 @@ def maths_data_generator_core( cfg, batch_op ):
     x = torch.randint(0, 10, (cfg.batch_size, cfg.n_digits))
     y = torch.randint(0, 10, (cfg.batch_size, cfg.n_digits))
 
-    if batch_op == MathsTokens.MULT:
+    if batch_op == MathsToken.MULT:
         # Convert from NNNNNN*NNNNNN= to 000NNN*000NNN= so answer (product) is NNNNNN
         num_zeros = cfg.n_digits // 2
         for z in range(num_zeros):
@@ -24,12 +24,12 @@ def maths_data_generator_core( cfg, batch_op ):
             y[:, z] = 0
 
     # Enrich the question data on 60% of batches to speed up training
-    if ( batch_op == MathsTokens.PLUS or batch_op == MathsTokens.MINUS ) and (random.randint(1, 5) < 3):
+    if ( batch_op == MathsToken.PLUS or batch_op == MathsToken.MINUS ) and (random.randint(1, 5) < 3):
         # Flatten x and y to 1D tensors
         x_flat = x.view(-1)
         y_flat = y.view(-1)
 
-        if batch_op == MathsTokens.PLUS :
+        if batch_op == MathsToken.PLUS :
             # The UseSum9 task is compound and rare and so hard to learn.
             # Increase the MakeSum9 case frequency
             # UseSum9 also relies on MakeCarry1 (50%) from previous column.
@@ -55,7 +55,7 @@ def maths_data_generator_core( cfg, batch_op ):
     batch[:, :cfg.n_digits] = x
     batch[:, cfg.n_digits] = batch_op
     batch[:, 1+cfg.n_digits:1+cfg.n_digits*2] = y
-    batch[:, first_answer_index-1] = MathsTokens.EQUALS
+    batch[:, first_answer_index-1] = MathsToken.EQUALS
 
     # Convert each row into a 5-digit number
     x_values = x[:, 0]
@@ -65,10 +65,10 @@ def maths_data_generator_core( cfg, batch_op ):
         y_values = y_values * 10 + y[:, dn]
 
     # Elementwise operations to give the 1D tensor answers
-    if batch_op == MathsTokens.MULT:
+    if batch_op == MathsToken.MULT:
         answers = x_values * y_values
     else:
-        if batch_op == MathsTokens.MINUS:
+        if batch_op == MathsToken.MINUS:
             answers = x_values - y_values
         else:
             answers = x_values + y_values
@@ -77,9 +77,9 @@ def maths_data_generator_core( cfg, batch_op ):
     for i in range(cfg.batch_size):
         answer = answers[i]
 
-        sign = MathsTokens.PLUS
+        sign = MathsToken.PLUS
         if answer < 0:
-            sign = MathsTokens.MINUS
+            sign = MathsToken.MINUS
         answer = - answer
 
         batch[i, first_answer_index] = sign
@@ -98,7 +98,7 @@ def maths_data_generator( cfg ):
     while True:
 
         batch_rand = random.randint(1, 100)
-        batch_op = MathsTokens.MULT if batch_rand <= cfg.perc_mult else MathsTokens.MINUS if batch_rand <= cfg.perc_mult + cfg.perc_sub else MathsTokens.PLUS
+        batch_op = MathsToken.MULT if batch_rand <= cfg.perc_mult else MathsToken.MINUS if batch_rand <= cfg.perc_mult + cfg.perc_sub else MathsToken.PLUS
 
         batch = maths_data_generator_core( cfg, batch_op )
 

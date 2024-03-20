@@ -5,7 +5,7 @@ from QuantaTools.model_token_to_char import token_to_char, tokens_to_string
 from QuantaTools.quanta_map_impact import sort_unique_digits
 
 from QuantaTools.maths_config import MathsConfig
-from QuantaTools.maths_constants import MathsTokens
+from QuantaTools.maths_constants import MathsToken
 from QuantaTools.maths_utilities import set_maths_vocabulary, int_to_answer_str, tokens_to_unsigned_int
 
 
@@ -30,8 +30,8 @@ class TestYourModule(unittest.TestCase):
         set_maths_vocabulary(cfg)
 
         self.assertEqual( token_to_char(cfg, 4), '4')
-        self.assertEqual( token_to_char(cfg, MathsTokens.MULT), '*')
-        self.assertEqual( tokens_to_string(cfg, [MathsTokens.EQUALS,4,0,7]), '=407')
+        self.assertEqual( token_to_char(cfg, MathsToken.MULT), '*')
+        self.assertEqual( tokens_to_string(cfg, [MathsToken.EQUALS,4,0,7]), '=407')
   
 
     def test_sort_unique_digits(self):

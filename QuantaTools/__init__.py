@@ -34,7 +34,7 @@ from .algo_config import AlgoConfig, search_and_tag_digit_position, search_and_t
 
 # maths_*.py: Contains specializations of the above specific to arithmetic (addition and subtraction) transformer models
 from .maths_config import MathsConfig
-from .maths_constants import MathsTokens, MathsBehavior, MathsAlgorithm 
+from .maths_constants import MathsToken, MathsBehavior, MathsAlgorithm 
 from .maths_utilities import set_maths_vocabulary, set_maths_question_meanings, int_to_answer_str, tokens_to_unsigned_int, tokens_to_answer, insert_question_number, make_a_maths_question_and_answer
 from .maths_complexity import get_maths_question_complexity, get_maths_min_complexity
 from .maths_data_generator import maths_data_generator_core, maths_data_generator, make_maths_questions_and_answers
