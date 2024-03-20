@@ -372,7 +372,8 @@ def test_maths_questions_by_complexity(cfg, acfg, varied_questions):
         major_tag, minor_tag = get_maths_question_complexity(cfg, q)
         group_name = major_tag + "." + minor_tag
 
-        correct = (model_answer_num == tokens_to_answer(cfg, q))
+        correct_answer = tokens_to_answer(cfg, q)
+        correct = (model_answer_num == correct_answer)
         correct_list[question_num] = correct
 
         if group_name not in categorization_results:
@@ -383,6 +384,8 @@ def test_maths_questions_by_complexity(cfg, acfg, varied_questions):
         else:
             categorization_results[group_name][1] += 1  # Increment bad count for this group
 
+        if acfg.show_test_failures and not correct:
+            print("Failed: ModelAnswer:", model_answer_str, "Correct:", correct_answer, "Complexity:", group_name)
 
     # Calculate and print summary success rates per group
     acfg.num_varied_questions = 0
