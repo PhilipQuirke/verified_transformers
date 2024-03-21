@@ -111,7 +111,7 @@ def get_maths_min_complexity(_, node, major_tag, minor_tag, num_shades):
 
 
 # Show the quanta that are known for the specified position for each useful node
-def show_maths_quanta_for_position_nodes(cfg, position, node, major_tag, minor_tag, num_shades):
+def show_maths_quanta_for_position_nodes(cfg, position):
 
     columns = ["Pos Meaning", "Useful Node", "Answer Impact", "Algo Purpose", "Attention", "Add Complexity", "Sub Complexity"]
     data = None
