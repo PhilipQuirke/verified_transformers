@@ -63,6 +63,7 @@ class AblateConfig():
 
 
     def reset_intervention_totals(self):
+        self.num_filtered_nodes = 0
         self.num_tests_run = 0
         self.num_tags_added = 0
 
