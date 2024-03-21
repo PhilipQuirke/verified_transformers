@@ -375,7 +375,7 @@ def test_maths_questions_by_complexity(cfg, acfg, varied_questions):
         correct_list[question_num] = correct
 
         major_tag, minor_tag = get_maths_question_complexity(cfg, q_and_a)
-        group_name = major_tag + "." + minor_tag
+        group_name = str(major_tag) + "." + minor_tag
 
         if group_name not in categorization_results:
             categorization_results[group_name] = [0, 0]  # Initialize counts for new group
