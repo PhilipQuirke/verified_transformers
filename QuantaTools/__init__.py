@@ -36,7 +36,7 @@ from .algo_config import AlgoConfig, search_and_tag_digit_position, search_and_t
 from .maths_config import MathsConfig
 from .maths_constants import MathsToken, MathsBehavior, MathsAlgorithm 
 from .maths_utilities import set_maths_vocabulary, set_maths_question_meanings, int_to_answer_str, tokens_to_unsigned_int, tokens_to_answer, insert_question_number, make_a_maths_question_and_answer
-from .maths_complexity import get_maths_question_complexity, get_maths_min_complexity, show_maths_quanta_for_position_nodes
+from .maths_complexity import get_maths_question_complexity, get_maths_min_complexity, calc_maths_quanta_for_position_nodes
 from .maths_data_generator import maths_data_generator_core, maths_data_generator, make_maths_questions_and_answers
 from .maths_test_questions import make_maths_test_questions_and_answers, test_maths_questions_by_complexity, test_maths_questions_by_impact, test_maths_questions_and_add_useful_node_tags, TRICASE_QUESTIONS, make_maths_tricase_questions
 

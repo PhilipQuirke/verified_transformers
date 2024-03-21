@@ -386,7 +386,8 @@ def test_maths_questions_by_complexity(cfg, acfg, varied_questions):
             categorization_results[group_name][1] += 1  # Increment bad count for this group
 
         if acfg.show_test_failures and not correct:
-            print("Failed: ModelAnswer:", model_answer_str, "Correct:", correct_answer_str, "Complexity:", group_name)
+            q_and_a_str = tokens_to_string(cfg, q_and_a)            
+            print("Failed: Q&A:", q_and_a_str, "ModelAnswer:", model_answer_str, "Correct:", correct_answer_str, "Complexity:", group_name)
 
 
     # Calculate and print summary success rates per group

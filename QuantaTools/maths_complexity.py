@@ -110,10 +110,10 @@ def get_maths_min_complexity(_, node, major_tag, minor_tag, num_shades):
 
 
 
-# Show the quanta that are known for the specified position for each useful node
-def show_maths_quanta_for_position_nodes(cfg, position):
+# Calculate a table of the known quanta for the specified position for each useful node
+def calc_maths_quanta_for_position_nodes(cfg, position):
 
-    columns = ["Pos Meaning", "Useful Node", "Answer Impact", "Algo Purpose", "Attention", "Add Complexity", "Sub Complexity"]
+    columns = ["Posn meaning", "Node name", "Answer impact", "Algo purpose", "Attends to", "Min Add Complexity", "Min Sub Complexity"]
     data = None
 
     nodelist = filter_nodes(cfg.useful_nodes, FilterPosition(position_name(position)))
@@ -132,7 +132,7 @@ def show_maths_quanta_for_position_nodes(cfg, position):
             data += [[position_meaning, node_name,node_impact,node_algorithm_purpose,node_attention,node_add_complexity,node_sub_complexity]]
 
     if not data is None:
-        _, ax = plt.subplots(figsize=(12,2))
+        _, ax = plt.subplots(figsize=(14,2))
         ax.axis('tight')
         ax.axis('off')
 
