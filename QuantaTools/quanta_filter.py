@@ -153,4 +153,6 @@ def filter_nodes( the_nodes : UsefulNodeList, the_filters: FilterNode):
         if the_filters.evaluate(test_node):
             answer.nodes.append(test_node)
 
+    answer.sort_nodes()
+    
     return answer
