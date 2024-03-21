@@ -17,7 +17,7 @@ def maths_data_generator_core( cfg, batch_op ):
     y = torch.randint(0, 10, (cfg.batch_size, cfg.n_digits))
 
     if batch_op == MathsToken.MULT:
-        # Convert from NNNNNN*NNNNNN= to 000NNN*000NNN= so answer (product) is NNNNNN
+        # Convert from NNNNNN*NNNNNN= to 000NNN*000NNN= so answer (product) is +0NNNNNN
         num_zeros = cfg.n_digits // 2
         for z in range(num_zeros):
             x[:, z] = 0
@@ -67,11 +67,10 @@ def maths_data_generator_core( cfg, batch_op ):
     # Elementwise operations to give the 1D tensor answers
     if batch_op == MathsToken.MULT:
         answers = x_values * y_values
+    elif batch_op == MathsToken.MINUS:
+        answers = x_values - y_values
     else:
-        if batch_op == MathsToken.MINUS:
-            answers = x_values - y_values
-        else:
-            answers = x_values + y_values
+        answers = x_values + y_values
 
     # Insert the answers into the batch
     for i in range(cfg.batch_size):
@@ -80,7 +79,7 @@ def maths_data_generator_core( cfg, batch_op ):
         sign = MathsToken.PLUS
         if answer < 0:
             sign = MathsToken.MINUS
-        answer = - answer
+            answer = - answer
 
         batch[i, first_answer_index] = sign
         for j in range(cfg.n_digits+1):
