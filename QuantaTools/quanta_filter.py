@@ -111,7 +111,7 @@ class FilterContains(FilterNode):
         return False
 
     def describe(self):
-        return self.filter_strength.value + " " + self.quanta_type + " " + self.minor_tag
+        return self.filter_strength.value + " " + str(self.quanta_type) + " " + self.minor_tag
 
 
 class FilterAttention(FilterContains):
