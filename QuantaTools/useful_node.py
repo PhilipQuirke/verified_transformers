@@ -1,3 +1,4 @@
+from ctypes.wintypes import SHORT
 import json
 import re
 from typing import List
@@ -19,8 +20,12 @@ def row_location_name(layer, is_head, num):
 
 
 # Return "P19L1H2" or "P19L1M0"
-def location_name(position, layer, is_head, num):
-    return "P" + str(position) + row_location_name(layer, is_head, num)
+def location_name(position, layer, is_head, num, short_position = True):
+    pos_str = str(position) 
+    if not short_position and len(pos_str)<2:
+        pos_str = "0" + pos_str    
+
+    return "P" + pos_str + row_location_name(layer, is_head, num)
 
 
 # Convert 3 to "A3"
@@ -47,8 +52,8 @@ class NodeLocation():
     
 
     # Node name e.g. "P14L2H3" or "P14L2M0"
-    def name(self):
-        return location_name(self.position,self.layer,self.is_head,self.num)
+    def name(self, short_position = True ):
+        return location_name(self.position,self.layer,self.is_head,self.num, short_position)
 
 
     # Node row name e.g. "L2H3" or "L2M0"
@@ -228,8 +233,8 @@ class UsefulNodeList():
 
     # Sort the nodes into position, layer, is_head, num order
     def sort_nodes(self):
-        #self.nodes = sorted(self.nodes, key=lambda obj: (obj.position, obj.layer, obj.is_head, obj.num))
-        self.nodes = sorted(self.nodes, key=lambda obj: (obj.name()))
+        # We use 2-digit position numbers so that they sort correctly
+        self.nodes = sorted(self.nodes, key=lambda obj: (obj.name(False)))
 
 
     # Save the nodes and tags to a json file

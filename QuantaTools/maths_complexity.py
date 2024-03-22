@@ -141,3 +141,14 @@ def calc_maths_quanta_for_position_nodes(cfg, position):
         table.auto_set_font_size(False)
         table.set_fontsize(10)  # Set the font size here
         table.scale(1, 1.5)  # The first parameter scales column widths, the second scales row heights
+        
+        # Set column headings to bold
+        for col, column in enumerate(columns):
+            table[(0, col)].get_text().set_weight('bold')
+            
+        # Color all cells in the specified column (except header) green
+        for row in range(len(data) ):
+            table[(row+1, 2)].set_facecolor('#d9f2d9')  # Light green color
+            table[(row+1, 3)].set_facecolor('#d9f2d9')  # Light green color
+            table[(row+1, 6)].set_facecolor('#d9f2d9')  # Light green color
+
