@@ -113,7 +113,7 @@ def get_maths_min_complexity(_, node, major_tag, minor_tag, num_shades):
 # Calculate a table of the known quanta for the specified position for each useful node
 def calc_maths_quanta_for_position_nodes(cfg, position):
 
-    columns = ["Posn meaning", "Node name", "Answer impact", "Algo purpose", "Attends to", "Min Add Complexity", "Min Sub Complexity"]
+    columns = ["Posn meaning", "Node name", "Answer impact", "Algo purpose", "Attends to", "Min Add Complexity", "Min Sub Complexity", "Fail %"]
     data = None
 
     nodelist = filter_nodes(cfg.useful_nodes, FilterPosition(position_name(position)))
@@ -125,11 +125,12 @@ def calc_maths_quanta_for_position_nodes(cfg, position):
         node_attention, _ = get_quanta_attention( cfg, node, QType.ATTENTION, "", 2 )
         node_add_complexity, _ = get_maths_min_complexity( cfg, node, QType.MATH_ADD, "", 2)
         node_sub_complexity, _ = get_maths_min_complexity( cfg, node, QType.MATH_SUB, "", 2)
+        node_fail_perc, _ = get_quanta_fail_perc( cfg, node, QType.FAIL, "", 10)
 
         if data is None:
-            data = [[position_meaning, node_name,node_impact,node_algorithm_purpose,node_attention,node_add_complexity,node_sub_complexity]]
+            data = [[position_meaning, node_name,node_impact,node_algorithm_purpose,node_attention,node_add_complexity,node_sub_complexity,node_fail_perc]]
         else:
-            data += [[position_meaning, node_name,node_impact,node_algorithm_purpose,node_attention,node_add_complexity,node_sub_complexity]]
+            data += [[position_meaning, node_name,node_impact,node_algorithm_purpose,node_attention,node_add_complexity,node_sub_complexity,node_fail_perc]]
 
     if not data is None:
         _, ax = plt.subplots(figsize=(14,2))
