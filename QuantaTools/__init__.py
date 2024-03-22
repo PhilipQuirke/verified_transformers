@@ -21,7 +21,7 @@ from .ablate_hooks import a_put_resid_post_hook, a_set_ablate_hooks, a_calc_mean
 
 # quanta_*.py: Contains ways to detect and graph model behavior (aka quanta) 
 from .quanta_test_questions import test_questions_and_add_node_attention_tags
-from .quanta_map import create_custom_colormap, calc_quanta_map
+from .quanta_map import create_colormap, calc_quanta_map
 from .quanta_map_attention import get_quanta_attention
 from .quanta_map_failperc import get_quanta_fail_perc
 from .quanta_map_binary import get_quanta_binary
