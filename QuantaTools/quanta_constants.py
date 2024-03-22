@@ -12,7 +12,7 @@ class QCondition(Enum):
 
 # Set of (independent) quanta "types". Each node tag contains exactly one of these quanta types
 class QType(Enum):
-    # Token position tag
+    # (Input or answer) token position tag
     POSN = "Posn"
   
     # What % of questions failed when we ablated a specific node. A low percentage indicates a less common use case

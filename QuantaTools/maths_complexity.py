@@ -2,11 +2,12 @@ import matplotlib.pyplot as plt
 import torch
 import transformer_lens.utils as utils
 
-from .useful_node import position_name, position_name_to_int, UsefulNodeList 
+from .useful_node import position_name, UsefulNodeList 
 from .quanta_constants import QType
 from .quanta_filter import FilterAlgo, FilterPosition, filter_nodes
 from .maths_utilities import tokens_to_unsigned_int
 from .maths_constants import MathsToken, MathsBehavior
+from .quanta_map import create_colormap, pale_color
 from .quanta_map_attention import get_quanta_attention
 from .quanta_map_failperc import get_quanta_fail_perc
 from .quanta_map_binary import get_quanta_binary
@@ -141,14 +142,20 @@ def calc_maths_quanta_for_position_nodes(cfg, position):
         table.auto_set_font_size(False)
         table.set_fontsize(10)  # Set the font size here
         table.scale(1, 1.5)  # The first parameter scales column widths, the second scales row heights
-        
+
         # Set column headings to bold
         for col, column in enumerate(columns):
             table[(0, col)].get_text().set_weight('bold')
-            
+
+        standard_colormap = pale_color(create_colormap( True )(0)) # Light green color
+        specific_colormap = pale_color(create_colormap( False )(0)) # Light blue color
+
         # Color all cells in the specified column (except header) green
         for row in range(len(data) ):
-            table[(row+1, 2)].set_facecolor('#d9f2d9')  # Light green color
-            table[(row+1, 3)].set_facecolor('#d9f2d9')  # Light green color
-            table[(row+1, 6)].set_facecolor('#d9f2d9')  # Light green color
+            table[(row+1, 2)].set_facecolor(standard_colormap)
+            table[(row+1, 3)].set_facecolor(standard_colormap)
+            table[(row+1, 4)].set_facecolor(standard_colormap)
+            table[(row+1, 5)].set_facecolor(specific_colormap)
+            table[(row+1, 6)].set_facecolor(specific_colormap)        
+            table[(row+1, 7)].set_facecolor(standard_colormap)
 

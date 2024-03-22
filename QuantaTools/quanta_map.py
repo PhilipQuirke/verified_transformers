@@ -29,8 +29,11 @@ def calc_quanta_results( cfg, test_nodes : UsefulNodeList, major_tag : str, mino
     return quanta_results
 
 
-# Define a colormap for use with graphing
-def create_custom_colormap():
+# Show standard_quanta (common across all potential models) in blue shades and model-specific quanta in green/yellow num_shades 
+def create_colormap(standard_quanta : bool):
+    if standard_quanta:
+        return plt.cm.winter
+    
     colors = ["green", "yellow"]
     return mcolors.LinearSegmentedColormap.from_list("custom_colormap", colors)
 
@@ -71,7 +74,7 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
     distinct_positions = sorted(distinct_positions)
 
     # Show standard_quanta (common across all potentional models) in blue num_shades and model-specific quanta in green num_shades 
-    custom_cmap = plt.cm.winter if standard_quanta else create_custom_colormap()
+    colormap = create_colormap(standard_quanta)
   
     # Create figure and axes
     _, ax1 = plt.subplots(figsize=(2*len(distinct_positions)/3, 2*len(distinct_row_names)/3))  # Adjust the figure size as needed
@@ -80,7 +83,7 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
     ax1.set_aspect('equal', adjustable='box')
     ax1.yaxis.set_tick_params(labelleft=True, labelright=False)
 
-    colors = [pale_color(custom_cmap(i/num_shades)) for i in range(num_shades)]
+    colors = [pale_color(colormap(i/num_shades)) for i in range(num_shades)]
     horizontal_labels = []
     wrapper = textwrap.TextWrapper(width=max_width)
 
