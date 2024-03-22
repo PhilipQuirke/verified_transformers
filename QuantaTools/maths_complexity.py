@@ -114,7 +114,7 @@ def get_maths_min_complexity(_, node, major_tag, minor_tag, num_shades):
 # Calculate a table of the known quanta for the specified position for each useful node
 def calc_maths_quanta_for_position_nodes(cfg, position):
 
-    columns = ["Posn meaning", "Node name", "Answer impact", "Algo purpose", "Attends to", "Min Add Complexity", "Min Sub Complexity", "Fail %"]
+    columns = ["Posn meaning", "Node name", "Answer impact", "Algo purpose", "Attends to", "Min Add Complex", "Min Sub Complex", "Fail %"]
     data = None
 
     nodelist = filter_nodes(cfg.useful_nodes, FilterPosition(position_name(position)))
@@ -134,7 +134,7 @@ def calc_maths_quanta_for_position_nodes(cfg, position):
             data += [[position_meaning, node_name,node_impact,node_algorithm_purpose,node_attention,node_add_complexity,node_sub_complexity,node_fail_perc]]
 
     if not data is None:
-        _, ax = plt.subplots(figsize=(15,2))
+        _, ax = plt.subplots(figsize=(16,2))
         ax.axis('tight')
         ax.axis('off')
 
@@ -147,15 +147,15 @@ def calc_maths_quanta_for_position_nodes(cfg, position):
         for col, column in enumerate(columns):
             table[(0, col)].get_text().set_weight('bold')
 
-        standard_colormap = pale_color(create_colormap( True )(0)) # Light green color
-        specific_colormap = pale_color(create_colormap( False )(0)) # Light blue color
+        standard_color = pale_color(create_colormap( True )(1)) # Light green color
+        specific_color = pale_color(create_colormap( False )(1)) # Light blue color
 
-        # Color all cells in the specified column (except header) green
+        # Color all cells in the specified column (except header) green or blue
         for row in range(len(data) ):
-            table[(row+1, 2)].set_facecolor(standard_colormap)
-            table[(row+1, 3)].set_facecolor(standard_colormap)
-            table[(row+1, 4)].set_facecolor(standard_colormap)
-            table[(row+1, 5)].set_facecolor(specific_colormap)
-            table[(row+1, 6)].set_facecolor(specific_colormap)        
-            table[(row+1, 7)].set_facecolor(standard_colormap)
+            table[(row+1, 2)].set_facecolor(standard_color)
+            table[(row+1, 3)].set_facecolor(standard_color)
+            table[(row+1, 4)].set_facecolor(standard_color)
+            table[(row+1, 5)].set_facecolor(specific_color)
+            table[(row+1, 6)].set_facecolor(specific_color)        
+            table[(row+1, 7)].set_facecolor(standard_color)
 
