@@ -122,7 +122,7 @@ def calc_maths_quanta_for_position_nodes(cfg, position):
         node_name = node.name()
         node_algorithm_purpose, _ = get_quanta_binary( cfg, node, QType.ALGO, "", 2)
         node_impact, _ = get_quanta_impact( cfg, node, QType.IMPACT, "", 2 )
-        node_attention, _ = get_quanta_attention( cfg, node, QType.ATTENTION, "", 2 )
+        node_attention, _ = get_quanta_attention( cfg, node, QType.ATTN, "", 2 )
         node_add_complexity, _ = get_maths_min_complexity( cfg, node, QType.MATH_ADD, "", 2)
         node_sub_complexity, _ = get_maths_min_complexity( cfg, node, QType.MATH_SUB, "", 2)
         node_fail_perc, _ = get_quanta_fail_perc( cfg, node, QType.FAIL, "", 10)

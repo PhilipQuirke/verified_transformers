@@ -116,14 +116,14 @@ class FilterContains(FilterNode):
 
 class FilterAttention(FilterContains):
     def __init__(self, minor_tag, filter_strength = QCondition.MUST, filter_min_perc = MIN_ATTENTION_PERC):
-        super().__init__(QType.ATTENTION, minor_tag, filter_strength)
+        super().__init__(QType.ATTN, minor_tag, filter_strength)
         self.filter_min_perc = filter_min_perc
 
     def evaluate(self, test_node):
         if self.filter_strength in [QCondition.MUST, QCondition.CONTAINS]:
             for tag in test_node.tags:
                 # We use contains(minor) as the ATTENTION_MAJOR_TAG minor tag is "P14=25" (i.e 25 percent)
-                if tag.startswith(str(QType.ATTENTION)) and (self.minor_tag in tag) and (extract_trailing_int(tag)>=self.filter_min_perc):
+                if tag.startswith(str(QType.ATTN)) and (self.minor_tag in tag) and (extract_trailing_int(tag)>=self.filter_min_perc):
                     return True
             
         return super().evaluate(test_node)
