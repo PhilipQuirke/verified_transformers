@@ -228,7 +228,8 @@ class UsefulNodeList():
 
     # Sort the nodes into position, layer, is_head, num order
     def sort_nodes(self):
-        self.nodes = sorted(self.nodes, key=lambda obj: (obj.position, obj.layer, obj.is_head, obj.num))
+        #self.nodes = sorted(self.nodes, key=lambda obj: (obj.position, obj.layer, obj.is_head, obj.num))
+        self.nodes = sorted(self.nodes, key=lambda obj: (obj.name()))
 
 
     # Save the nodes and tags to a json file

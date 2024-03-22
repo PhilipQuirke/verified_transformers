@@ -133,7 +133,7 @@ def calc_maths_quanta_for_position_nodes(cfg, position):
             data += [[position_meaning, node_name,node_impact,node_algorithm_purpose,node_attention,node_add_complexity,node_sub_complexity,node_fail_perc]]
 
     if not data is None:
-        _, ax = plt.subplots(figsize=(14,2))
+        _, ax = plt.subplots(figsize=(15,2))
         ax.axis('tight')
         ax.axis('off')
 
