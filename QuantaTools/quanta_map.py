@@ -127,7 +127,7 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
     # Add the extra row of labels (P0, P5, P8, ...) below the matrix
     for index in range(len(horizontal_bottom_labels)):
         label = horizontal_bottom_labels[index]
-        ax1.text(index + 0.5, - 0.05, label, ha='center', va='top', fontsize=9, transform=ax1.get_xaxis_transform())
+        ax1.text(index + 0.5, - 0.02, label, ha='center', va='top', fontsize=9, transform=ax1.get_xaxis_transform())
 
     # Adjust figure layout to accommodate the new row of labels
     plt.subplots_adjust(bottom=0.1)  # Adjust as needed based on your specific figure layout
