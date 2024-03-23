@@ -127,7 +127,7 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
     # if horizontal_top_labels is not P0 to P17, add the extra row of labels (P0, P1, ..., Pn) below the matrix
     if horizontal_top_labels[0] != horizontal_bottom_labels[0]:
         # Add the extra row of labels (P0, P1, ..., Pn) below the matrix
-        for index in len(horizontal_bottom_labels):
+        for index in range(len(horizontal_bottom_labels)):
             label = horizontal_bottom_labels[index]
             ax1.text(index + 0.5, -0.1, label, ha='center', va='top', fontsize=9, transform=ax1.get_xaxis_transform())
 
