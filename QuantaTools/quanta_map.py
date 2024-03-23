@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import textwrap
 
-from .useful_node import NodeLocation, UsefulNodeList 
+from .useful_node import position_name, NodeLocation, UsefulNodeList 
 
 
 # Results to display in a quanta cell
@@ -84,7 +84,8 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
     ax1.yaxis.set_tick_params(labelleft=True, labelright=False)
 
     colors = [pale_color(colormap(i/num_shades)) for i in range(num_shades)]
-    horizontal_labels = []
+    horizontal_top_labels = []
+    horizontal_bottom_labels = []
     wrapper = textwrap.TextWrapper(width=max_width)
 
 
@@ -95,7 +96,8 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
             cell_color = 'lightgrey'  # Color for empty cells
 
             if show_row == 0:
-                horizontal_labels += [cfg.token_position_meanings[the_position]]
+                horizontal_top_labels += [cfg.token_position_meanings[the_position]]
+                horizontal_bottom_labels += [position_name(the_position)]
 
             result = find_quanta_result_by_row_col(the_row_name, the_position, quanta_results)
             if result != None:
@@ -112,14 +114,26 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
 
 
     # Configure x axis
-    ax1.set_xlim(0, len(horizontal_labels))
-    ax1.set_xticks(np.arange(0.5, len(horizontal_labels), 1))
-    ax1.set_xticklabels(horizontal_labels)
+    ax1.set_xlim(0, len(horizontal_top_labels))
+    ax1.set_xticks(np.arange(0.5, len(horizontal_top_labels), 1))
+    ax1.set_xticklabels(horizontal_top_labels)
     ax1.xaxis.tick_top()
     ax1.xaxis.set_label_position('top')
     ax1.tick_params(axis='x', length=0)
     for label in ax1.get_xticklabels():
         label.set_fontsize(9)
+
+
+    # if horizontal_top_labels is not P0 to P17, add the extra row of labels (P0, P1, ..., Pn) below the matrix
+    if horizontal_top_labels[0] != horizontal_bottom_labels[0]:
+        # Add the extra row of labels (P0, P1, ..., Pn) below the matrix
+        for index in len(horizontal_bottom_labels):
+            label = horizontal_bottom_labels[index]
+            ax1.text(index + 0.5, -0.1, label, ha='center', va='top', fontsize=9, transform=ax1.get_xaxis_transform())
+
+        # Adjust figure layout to accommodate the new row of labels
+        plt.subplots_adjust(bottom=0.1)  # Adjust as needed based on your specific figure layout
+
 
     # Configure y axis
     distinct_row_names = distinct_row_names[::-1] # Reverse the order
@@ -130,6 +144,7 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
     for label in ax1.get_yticklabels():
         label.set_horizontalalignment('left')
         label.set_position((-0.1, 0))  # Adjust the horizontal position
+
 
     # Reserve constant space for y-axis labels
     # fig1.subplots_adjust(left=left_reserve) Doesnt work as desired
