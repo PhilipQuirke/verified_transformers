@@ -115,8 +115,8 @@ def get_maths_min_complexity(_, node, major_tag, minor_tag, num_shades):
 def calc_maths_quanta_for_position_nodes(cfg, position):
 
     columns = ["Posn meaning", "Node name", "Answer impact", "Algo purpose", "Attends to", "Min Add Complex", "Min Sub Complex", "Fail %"]
-    data = None
-    shades = None
+    text_data = None
+    shade_data = None
 
     nodelist = filter_nodes(cfg.useful_nodes, FilterPosition(position_name(position)))
     for node in nodelist.nodes:
@@ -129,30 +129,34 @@ def calc_maths_quanta_for_position_nodes(cfg, position):
         node_sub_complexity, sub_complexity_shade = get_maths_min_complexity( cfg, node, QType.MATH_SUB, "", MATH_SUB_SHADES)
         node_fail_perc, fail_perc_shade = get_quanta_fail_perc( cfg, node, QType.FAIL, "", FAIL_SHADES)
 
-        the_shades = [0, 0, 
+        shade_array = [0, 0, 
             1.0 * impact_shade / cfg.num_answer_positions, 
             1.0 * algo_shade / ALGO_SHADES, 
             1.0 * attention_shade / ATTN_SHADES, 
             1.0 * add_complexity_shade / MATH_ADD_SHADES, 
             1.0 * sub_complexity_shade / MATH_SUB_SHADES, 
             1.0 * fail_perc_shade / FAIL_SHADES]
-        if shades is None:
-            shades = [the_shades]            
+        if shade_data is None:
+            shade_data = [shade_array]            
         else:
-            shades += [the_shades]
+            shade_data += [shade_array]
 
-        the_text = [position_meaning, node_name, node_impact, node_algorithm_purpose, node_attention, node_add_complexity, node_sub_complexity, node_fail_perc]
-        if data is None:
-            data = [the_text]
+        text_array = [position_meaning, node_name, node_impact, node_algorithm_purpose, node_attention, node_add_complexity, node_sub_complexity, node_fail_perc]
+        if text_data is None:
+            text_data = [text_array]
         else:
-            data += [the_text]
+            text_data += [text_array]
 
-    if not data is None:
+    print( "PQR", shade_data)
+    print( "PQR02", shade_data[0,2])
+    print( "PQR", len(text_data))
+
+    if not text_data is None:
         _, ax = plt.subplots(figsize=(16,2))
         ax.axis('tight')
         ax.axis('off')
 
-        table = ax.table(cellText=data, colLabels=columns, loc='center', cellLoc='center')
+        table = ax.table(cellText=text_data, colLabels=columns, loc='center', cellLoc='center')
         table.auto_set_font_size(False)
         table.set_fontsize(10)  # Set the font size here
         table.scale(1, 1.5)  # The first parameter scales column widths, the second scales row heights
@@ -165,12 +169,12 @@ def calc_maths_quanta_for_position_nodes(cfg, position):
         specific_map = create_colormap( False ) # Light blue color
 
         # Color all cells in the specified column (except header) green or blue
-        for row in range(len(data) ):
-            table[(row+1, 2)].set_facecolor(pale_color(standard_map(shades[row,2])))
-            table[(row+1, 3)].set_facecolor(pale_color(standard_map(shades[row,3])))
-            table[(row+1, 4)].set_facecolor(pale_color(standard_map(shades[row,4])))
-            table[(row+1, 5)].set_facecolor(pale_color(specific_map(shades[row,5])))
-            table[(row+1, 6)].set_facecolor(pale_color(specific_map(shades[row,6])))       
-            table[(row+1, 7)].set_facecolor(pale_color(standard_map(shades[row,7])))
+        for row in range(len(text_data)):
+            table[(row+1, 2)].set_facecolor(pale_color(standard_map(shade_data[row,2])))
+            table[(row+1, 3)].set_facecolor(pale_color(standard_map(shade_data[row,3])))
+            table[(row+1, 4)].set_facecolor(pale_color(standard_map(shade_data[row,4])))
+            table[(row+1, 5)].set_facecolor(pale_color(specific_map(shade_data[row,5])))
+            table[(row+1, 6)].set_facecolor(pale_color(specific_map(shade_data[row,6])))       
+            table[(row+1, 7)].set_facecolor(pale_color(standard_map(shade_data[row,7])))
 
 
