@@ -169,10 +169,8 @@ def calc_maths_quanta_for_position_nodes(cfg, position):
         for row in range(len(text_data)):
             for col in range(2, len(columns)):
                 if text_data[row][col] != "":
-                    if col == 2 or col == 3 or col == 4 or col == 7:
-                        table[(row+1, col)].set_facecolor(specific_map(shade_data[row][col]))
-                    else:
-                        table[(row+1, col)].set_facecolor(standard_map(shade_data[row][col]))
+                    base_color = specific_map(shade_data[row][col]) if col < 4 or col == 7 else standard_map(shade_data[row][col])
+                    table[(row+1, col)].set_facecolor(pale_color(base_color))
 
 
 
