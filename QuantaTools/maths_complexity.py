@@ -2,16 +2,15 @@ import matplotlib.pyplot as plt
 import torch
 import transformer_lens.utils as utils
 
-from .useful_node import position_name, UsefulNodeList 
-from .quanta_constants import QType
-from .quanta_filter import FilterAlgo, FilterPosition, filter_nodes
+from .quanta_constants import QType, FAIL_SHADES, ATTN_SHADES, ALGO_SHADES, MATH_ADD_SHADES, MATH_SUB_SHADES
+from .quanta_filter import FilterPosition, filter_nodes
 from .maths_utilities import tokens_to_unsigned_int
 from .maths_constants import MathsToken, MathsBehavior
 from .quanta_map import create_colormap, pale_color
 from .quanta_map_attention import get_quanta_attention
 from .quanta_map_failperc import get_quanta_fail_perc
 from .quanta_map_binary import get_quanta_binary
-from .quanta_map_impact import get_answer_impact, get_question_answer_impact, is_answer_sequential, compact_answer_if_sequential, get_quanta_impact, sort_unique_digits
+from .quanta_map_impact import get_quanta_impact
 
 
 # Analyse and return the question complexity for the Addition (S0 to S4) or Subtraction (M0 to NG) questions
@@ -116,22 +115,36 @@ def calc_maths_quanta_for_position_nodes(cfg, position):
 
     columns = ["Posn meaning", "Node name", "Answer impact", "Algo purpose", "Attends to", "Min Add Complex", "Min Sub Complex", "Fail %"]
     data = None
+    shades = None
 
     nodelist = filter_nodes(cfg.useful_nodes, FilterPosition(position_name(position)))
     for node in nodelist.nodes:
         position_meaning = cfg.token_position_meanings[position]
         node_name = node.name()
-        node_algorithm_purpose, _ = get_quanta_binary( cfg, node, QType.ALGO, "", 2)
-        node_impact, _ = get_quanta_impact( cfg, node, QType.IMPACT, "", 2 )
-        node_attention, _ = get_quanta_attention( cfg, node, QType.ATTN, "", 2 )
-        node_add_complexity, _ = get_maths_min_complexity( cfg, node, QType.MATH_ADD, "", 2)
-        node_sub_complexity, _ = get_maths_min_complexity( cfg, node, QType.MATH_SUB, "", 2)
-        node_fail_perc, _ = get_quanta_fail_perc( cfg, node, QType.FAIL, "", 10)
+        node_impact, impact_shade = get_quanta_impact( cfg, node, QType.IMPACT, "", cfg.num_answer_positions )
+        node_algorithm_purpose, algo_shade = get_quanta_binary( cfg, node, QType.ALGO, "", ALGO_SHADES)
+        node_attention, attention_shade = get_quanta_attention( cfg, node, QType.ATTN, "", ATTN_SHADES )
+        node_add_complexity, add_complexity_shade = get_maths_min_complexity( cfg, node, QType.MATH_ADD, "", MATH_ADD_SHADES)
+        node_sub_complexity, sub_complexity_shade = get_maths_min_complexity( cfg, node, QType.MATH_SUB, "", MATH_SUB_SHADES)
+        node_fail_perc, fail_perc_shade = get_quanta_fail_perc( cfg, node, QType.FAIL, "", FAIL_SHADES)
 
-        if data is None:
-            data = [[position_meaning, node_name,node_impact,node_algorithm_purpose,node_attention,node_add_complexity,node_sub_complexity,node_fail_perc]]
+        the_shades = [0, 0, 
+            1.0 * impact_shade / cfg.num_answer_positions, 
+            1.0 * algo_shade / ALGO_SHADES, 
+            1.0 * attention_shade / ATTN_SHADES, 
+            1.0 * add_complexity_shade / MATH_ADD_SHADES, 
+            1.0 * sub_complexity_shade / MATH_SUB_SHADES, 
+            1.0 * fail_perc_shade / FAIL_SHADES]
+        if shades is None:
+            shades = [the_shades]            
         else:
-            data += [[position_meaning, node_name,node_impact,node_algorithm_purpose,node_attention,node_add_complexity,node_sub_complexity,node_fail_perc]]
+            shades += [the_shades]
+
+        the_text = [position_meaning, node_name, node_impact, node_algorithm_purpose, node_attention, node_add_complexity, node_sub_complexity, node_fail_perc]
+        if data is None:
+            data = [the_text]
+        else:
+            data += [the_text]
 
     if not data is None:
         _, ax = plt.subplots(figsize=(16,2))
@@ -144,18 +157,19 @@ def calc_maths_quanta_for_position_nodes(cfg, position):
         table.scale(1, 1.5)  # The first parameter scales column widths, the second scales row heights
 
         # Set column headings to bold
-        for col, column in enumerate(columns):
+        for col, _ in enumerate(columns):
             table[(0, col)].get_text().set_weight('bold')
 
-        standard_color = pale_color(create_colormap( True )(1)) # Light green color
-        specific_color = pale_color(create_colormap( False )(1)) # Light blue color
+        standard_map = create_colormap( True ) # Light green color
+        specific_map = create_colormap( False ) # Light blue color
 
         # Color all cells in the specified column (except header) green or blue
         for row in range(len(data) ):
-            table[(row+1, 2)].set_facecolor(standard_color)
-            table[(row+1, 3)].set_facecolor(standard_color)
-            table[(row+1, 4)].set_facecolor(standard_color)
-            table[(row+1, 5)].set_facecolor(specific_color)
-            table[(row+1, 6)].set_facecolor(specific_color)        
-            table[(row+1, 7)].set_facecolor(standard_color)
+            table[(row+1, 2)].set_facecolor(pale_color(standard_map(shades[row,2])))
+            table[(row+1, 3)].set_facecolor(pale_color(standard_map(shades[row,3])))
+            table[(row+1, 4)].set_facecolor(pale_color(standard_map(shades[row,4])))
+            table[(row+1, 5)].set_facecolor(pale_color(specific_map(shades[row,5])))
+            table[(row+1, 6)].set_facecolor(pale_color(specific_map(shades[row,6])))       
+            table[(row+1, 7)].set_facecolor(pale_color(standard_map(shades[row,7])))
+
 

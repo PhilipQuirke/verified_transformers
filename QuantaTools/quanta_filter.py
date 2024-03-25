@@ -1,7 +1,7 @@
 import re
 from abc import ABC, abstractmethod
 
-from .quanta_constants import QCondition, QType, MIN_ATTENTION_PERC 
+from .quanta_constants import QCondition, QType, MIN_ATTN_PERC 
 
 from .useful_node import position_name, position_name_to_int, UsefulNodeList 
 
@@ -115,7 +115,7 @@ class FilterContains(FilterNode):
 
 
 class FilterAttention(FilterContains):
-    def __init__(self, minor_tag, filter_strength = QCondition.MUST, filter_min_perc = MIN_ATTENTION_PERC):
+    def __init__(self, minor_tag, filter_strength = QCondition.MUST, filter_min_perc = MIN_ATTN_PERC):
         super().__init__(QType.ATTN, minor_tag, filter_strength)
         self.filter_min_perc = filter_min_perc
 

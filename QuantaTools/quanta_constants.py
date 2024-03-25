@@ -48,15 +48,34 @@ class QType(Enum):
     SPARE_3 = "Spare.3"
     SPARE_4 = "Spare.4"
 
-  
+
+
+# Related to QType.FAIL:
+NO_IMPACT_TAG = "(none)"
+# Number of shades used in quanta maps
+FAIL_SHADES = 10 
+
 
 # Related to QType.ATTN:
 # For each node, we store at most 5 input attention facts (as tags)
-MAX_ATTENTION_TAGS = 5
+MAX_ATTN_TAGS = 5
 # When graphing, we only show input tokens with > 10% of the node's attention
-MIN_ATTENTION_PERC = 10
+MIN_ATTN_PERC = 10
+# Number of shades used in quanta maps
+ATTN_SHADES = 10 
 
 
 # Related to QType.IMPACT:
 # Used when no answer digits were impacted by the intervention
 NO_IMPACT_TAG = "(none)"
+
+
+# Related to QType.ALGO:
+# Number of shades used in quanta maps
+ALGO_SHADES = 2
+
+
+# Related to QType.MATH_*:
+# Number of shades used in quanta maps for mathematical questions
+MATH_ADD_SHADES = 6
+MATH_SUB_SHADES = 6

@@ -14,7 +14,6 @@ from .ablate_hooks import a_predict_questions
 
 from .maths_constants import MathsToken, MathsBehavior
 from .maths_data_generator import maths_data_generator_core, make_maths_questions_and_answers
-from .maths_utilities import tokens_to_answer
 from .maths_complexity import get_maths_question_complexity
 
 
