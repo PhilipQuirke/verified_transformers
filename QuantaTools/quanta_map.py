@@ -88,7 +88,7 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
     horizontal_bottom_labels = []
     wrapper = textwrap.TextWrapper(width=max_width)
 
-
+    num_results = 0
     show_row = len(distinct_row_names)-1
     for the_row_name in distinct_row_names:
         show_col = 0
@@ -101,6 +101,7 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
 
             result = find_quanta_result_by_row_col(the_row_name, the_position, quanta_results)
             if result != None:
+                num_results += 1
                 the_shade = max(0, min(result.color_index, num_shades-1))
                 cell_color = colors[the_shade] if result.color_index >= 0 else 'lightgrey'
                 the_fontsize = base_fontsize if len(result.cell_text) < 4 else base_fontsize-1 if len(result.cell_text) < 5 else base_fontsize-2
@@ -148,4 +149,4 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
     # fig1.subplots_adjust(left=left_reserve) Doesnt work as desired
 
   
-    return ax1, quanta_results
+    return ax1, quanta_results, num_results
