@@ -146,10 +146,7 @@ def calc_maths_quanta_for_position_nodes(cfg, position):
             text_data = [text_array]
         else:
             text_data += [text_array]
-
-    print( "PQR", shade_data)
-    print( "PQR02", shade_data[0][2])
-    print( "PQR", len(text_data))
+            
 
     if not text_data is None:
         _, ax = plt.subplots(figsize=(16,2))
@@ -168,13 +165,15 @@ def calc_maths_quanta_for_position_nodes(cfg, position):
         standard_map = create_colormap( True ) # Light green color
         specific_map = create_colormap( False ) # Light blue color
 
-        # Color all cells in the specified column (except header) green or blue
+        # Color all non-blank body cells in the specified column (except header) green or blue
         for row in range(len(text_data)):
-            table[(row+1, 2)].set_facecolor(pale_color(standard_map(shade_data[row][2])))
-            table[(row+1, 3)].set_facecolor(pale_color(standard_map(shade_data[row][3])))
-            table[(row+1, 4)].set_facecolor(pale_color(standard_map(shade_data[row][4])))
-            table[(row+1, 5)].set_facecolor(pale_color(specific_map(shade_data[row][5])))
-            table[(row+1, 6)].set_facecolor(pale_color(specific_map(shade_data[row][6])))       
-            table[(row+1, 7)].set_facecolor(pale_color(standard_map(shade_data[row][7])))
+            for col in range(2, len(columns)):
+                if text_data[row][col] != "":
+                    if col == 2 or col == 3 or col == 4 or col == 7:
+                        table[(row+1, col)].set_facecolor(specific_map(shade_data[row][col]))
+                    else:
+                        table[(row+1, col)].set_facecolor(standard_map(specific_map[row][col]))
+
+
 
 
