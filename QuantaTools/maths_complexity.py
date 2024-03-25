@@ -165,12 +165,12 @@ def calc_maths_quanta_for_position_nodes(cfg, position):
         standard_map = create_colormap( True ) # Light green color
         specific_map = create_colormap( False ) # Light blue color
 
-        # Color all non-blank body cells in the specified column (except header) green or blue
+        # Color all non-blank body cells in the specified column a shade of green or blue
         for row in range(len(text_data)):
             for col in range(2, len(columns)):
                 if text_data[row][col] != "":
-                    base_color = specific_map(shade_data[row][col]) if col < 4 or col == 7 else standard_map(shade_data[row][col])
-                    table[(row+1, col)].set_facecolor(pale_color(base_color))
+                    the_color_map = specific_map if col < 4 or col == 7 else standard_map 
+                    table[(row+1, col)].set_facecolor(pale_color(the_color_map(shade_data[row][col])))
 
 
 

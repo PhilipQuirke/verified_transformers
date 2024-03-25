@@ -78,4 +78,4 @@ ALGO_SHADES = 2
 # Related to QType.MATH_*:
 # Number of shades used in quanta maps for mathematical questions
 MATH_ADD_SHADES = 6
-MATH_SUB_SHADES = 6
+MATH_SUB_SHADES = 5
