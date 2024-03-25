@@ -15,7 +15,8 @@ def position_name_to_int(s):
 
 # Return "L1H2" or "L1M0"
 def row_location_name(layer, is_head, num):
-    return "L" + str(layer) + ("H" if is_head else "M") + str(num) 
+    return "L" + str(layer) + (("H" + str(num)) if is_head else "MLP")   # Paper 2
+    # return "L" + str(layer) + ("H" if is_head else "M") + str(num)  # Paper 3
 
 
 # Return "P19L1H2" or "P19L1M0"

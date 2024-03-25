@@ -143,10 +143,5 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
     for label in ax1.get_yticklabels():
         label.set_horizontalalignment('left')
         label.set_position((-0.1, 0))  # Adjust the horizontal position
-
-
-    # Reserve constant space for y-axis labels
-    # fig1.subplots_adjust(left=left_reserve) Doesnt work as desired
-
   
     return ax1, quanta_results, num_results
