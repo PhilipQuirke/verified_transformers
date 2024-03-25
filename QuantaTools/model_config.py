@@ -86,16 +86,23 @@ class ModelConfig():
         if match:
             self.n_layers = int(match.group(1))
 
+
         match = re.search(r"h(\d)_", self.model_name)
         if match:
             self.n_heads = int(match.group(1))
 
+
         match = re.search(r"t(\d\d)K", self.model_name)
         if not match:
             match = re.search(r"t(\d)K", self.model_name)
+        if not match:
+            match = re.search(r"train(\d\d)K", self.model_name) # Old style            
+        if not match:
+            match = re.search(r"train(\d)K", self.model_name) # Old style            
         if match:
             self.n_training_steps = int(match.group(1)) * 1000
-          
+    
+            
         self.insert_mode = 0
         if "ins1_" in self.model_name :
             self.insert_mode = 1 # Initialised with some existing model before training
