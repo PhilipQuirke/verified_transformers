@@ -148,7 +148,7 @@ def calc_maths_quanta_for_position_nodes(cfg, position):
             text_data += [text_array]
 
     print( "PQR", shade_data)
-    print( "PQR02", shade_data[0,2])
+    print( "PQR02", shade_data[0][2])
     print( "PQR", len(text_data))
 
     if not text_data is None:
@@ -170,11 +170,11 @@ def calc_maths_quanta_for_position_nodes(cfg, position):
 
         # Color all cells in the specified column (except header) green or blue
         for row in range(len(text_data)):
-            table[(row+1, 2)].set_facecolor(pale_color(standard_map(shade_data[row,2])))
-            table[(row+1, 3)].set_facecolor(pale_color(standard_map(shade_data[row,3])))
-            table[(row+1, 4)].set_facecolor(pale_color(standard_map(shade_data[row,4])))
-            table[(row+1, 5)].set_facecolor(pale_color(specific_map(shade_data[row,5])))
-            table[(row+1, 6)].set_facecolor(pale_color(specific_map(shade_data[row,6])))       
-            table[(row+1, 7)].set_facecolor(pale_color(standard_map(shade_data[row,7])))
+            table[(row+1, 2)].set_facecolor(pale_color(standard_map(shade_data[row][2])))
+            table[(row+1, 3)].set_facecolor(pale_color(standard_map(shade_data[row][3])))
+            table[(row+1, 4)].set_facecolor(pale_color(standard_map(shade_data[row][4])))
+            table[(row+1, 5)].set_facecolor(pale_color(specific_map(shade_data[row][5])))
+            table[(row+1, 6)].set_facecolor(pale_color(specific_map(shade_data[row][6])))       
+            table[(row+1, 7)].set_facecolor(pale_color(standard_map(shade_data[row][7])))
 
 

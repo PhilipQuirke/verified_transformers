@@ -9,11 +9,13 @@ from .useful_node import position_name, UsefulNodeList
 class UsefulConfig(ModelConfig):
  
 
+    # Create an empty useful configuration
     def __init__(self):
         super().__init__()
         self.reset_useful()
         
 
+    # Reset the useful positions and nodes to empty
     def reset_useful(self):
         # Sparce ordered list of useful (question and answer) token positions actually used by the model e.g. 0,1,8,9,10,11
         self.useful_positions = []
@@ -22,10 +24,12 @@ class UsefulConfig(ModelConfig):
         self.useful_nodes = UsefulNodeList()
  
   
+    # Returns the minimum useful token position
     def min_useful_position(self):
         return min(self.useful_positions)
 
 
+    # Returns the maximum useful token position
     def max_useful_position(self):
         return max(self.useful_positions)
 
@@ -36,6 +40,7 @@ class UsefulConfig(ModelConfig):
             self.useful_positions += [position]
 
 
+    # Add/update a useful node location, adding the specifying major and minor tags
     def add_useful_node_tag(self, the_location, major_tag, minor_tag ):
         assert the_location.position >= 0
         assert the_location.layer >= 0

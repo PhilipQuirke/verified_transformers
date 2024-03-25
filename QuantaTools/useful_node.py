@@ -173,11 +173,13 @@ class UsefulNode(NodeLocation):
 class UsefulNodeList():
 
   
+    # Create an empty list of useful nodes
     def __init__(self):
         # list of useful (attention head and MLP neuron) nodes
         self.nodes = []
 
   
+    # Return the node names as a comma-separated string
     def get_node_names(self):
         answer = ""
         for node in self.nodes:
@@ -185,6 +187,7 @@ class UsefulNodeList():
         return answer
 
   
+    # Number of nodes that are attention heads
     def num_heads(self):
         answer = 0
         for node in self.nodes:
@@ -192,10 +195,12 @@ class UsefulNodeList():
         return answer
 
 
+    # Number of nodes that are MLP neurons
     def num_neurons(self):
         return len(self.nodes) - self.num_heads()
     
 
+    # Print the node names and tags matching major_tag and minor_tag (if specified).
     def print_node_tags(self, major_tag = "", minor_tag = "", show_empty_tags = True):
         for node in self.nodes:
             tags = node.tags if str(major_tag) == "" else node.filter_tags(major_tag, minor_tag)
@@ -203,6 +208,7 @@ class UsefulNodeList():
                 print( node.name(), tags )       
 
 
+    # Delete all tags matching major_tag (if specified) from all nodes. Else delete all tags.
     def reset_node_tags( self, major_tag = "" ):
         for node in self.nodes:
             node.reset_tags(major_tag)
