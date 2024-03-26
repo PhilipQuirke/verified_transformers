@@ -1,5 +1,8 @@
 # verified_transformers
-This library contains tool to help verify the accuracy of various transformer models trained to perform integer addition, subtraction and multiplication e.g. 133357+182243=+0315600, 123450-345670=-0123230 and 000345*000823=+283935. Each digit is a separate token. For 6 digit questions, the model is given 14 "question" (input) tokens, and must then predict the corresponding 8 "answer" (output) tokens.
+This library contains tool to help train various transformer models trained to perform integer addition, subtraction and multiplication e.g. 133357+182243=+0315600, 123450-345670=-0123230 and 000345*000823=+283935. Each digit is a separate token. For 6 digit questions, the model is given 14 "question" (input) tokens, and must then predict the corresponding 8 "answer" (output) tokens.
+
+The library contains tools to help investigate, graph and understand the transformer model's agorithm. 
+Sample automatically-generated tool images are available in https://github.com/PhilipQuirke/verified_transformers/tree/main/assets
 
 This library contains files:
 
