@@ -22,7 +22,7 @@ class MathsConfig(AlgoConfig):
         self.tricase_questions_dict = {}
 
         # Save graphs to CoLab temp files as PDF or SVG. You can manually export temp files for re-use in papers.
-        self.graph_file_suffix = "svg"
+        self.graph_file_suffix = "pdf"
         
 
     def initialize_maths_token_positions(self):
