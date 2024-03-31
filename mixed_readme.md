@@ -1,7 +1,7 @@
 # What is the mixed model algorithm?
 What algorithm has a trained mixed (addition and subtraction) model learnt that allows to perform both addition and subtraction accurately?
 
-# Initial facts and working assumptions
+## Initial facts and working assumptions
 We investigation model ins1_mix_d6_l3_h4_t40K which answers 6-digit question. Some initial thoughts:
 - Read section 4.3 of https://arxiv.org/pdf/2402.02619.pdf
 - For an n digit question the answer is n+2 tokens long e.g. 66666+66666=+1333332
@@ -24,7 +24,7 @@ We investigation model ins1_mix_d6_l3_h4_t40K which answers 6-digit question. So
   - Uses tasks Base Add (BA), Make Carry 1 (MC) and Use Sum 9 (US)
   - Determines if the first numeric token of the answer (An) is 1 or 0 just in time at token position An+1
 
-# Hypothesis 1
+## Hypothesis 1
 Our first hypothesis was that the model's algorithm steps are:
 - H1: Pays attention to the +- question operator (using OP task)
 - If operator is "+" then
@@ -49,8 +49,9 @@ Questions/Thoughts:
 - H6 seems unlikely as it requires two passes.
   - H6 implies the model learns positive-answer-subtraction before learns negative-answer-subtraction. This seems unlikely. Models prefer to learn in parallel
   - Has model learnt a single pass approach? Seems more likely as the layer 0 attention heads are used for BA/MC and BS/BO etc. What is that method?
+- Overall we prefer hypothesis 2    
 
-# Hypothesis 2
+## Hypothesis 2
 Our second hypothesis is that the model's algorithm steps are:
 - H1: Store the question operator
 - H2: If operator is -, calculates if D > D' using unknown functions XXX, YYY, ZZZ
