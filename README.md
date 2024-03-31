@@ -38,6 +38,6 @@ This library contains files:
 - Accurate_Math_Train/Analyse (deprecated) files are stored at https://huggingface.co/PhilipQuirke/Accurate5DigitAddition
 
 The associated **papers** are:
-- Understanding Addition in Transformers: https://arxiv.org/abs/2310.13121 . Model add_d5_l1_h3_t30K is very similar to the one in this paper.
-- Increasing Trust in Language Models through the Reuse of Verified Circuits. https://arxiv.org/abs/2402.02619. Uses many of these models mostly focusing on add_d5_l2_h3_t15K, add_d6_l2_h3_t15K and ins1_mix_d6_l3_h4_t40K
-- The next paper will focus on explaining model ins1_mix_d6_l3_h4_t40K
+- Understanding Addition in Transformers: https://arxiv.org/abs/2310.13121 . Aka Paper1. Model add_d5_l1_h3_t30K is very similar to the one in this paper. 
+- Increasing Trust in Language Models through the Reuse of Verified Circuits. https://arxiv.org/abs/2402.02619. Aka Paper2. Uses many of these models mostly focusing on add_d5_l2_h3_t15K, add_d6_l2_h3_t15K and ins1_mix_d6_l3_h4_t40K
+- The next paper (Paper3) will include explaining the algorithm of the "mixed" model ins1_mix_d6_l3_h4_t40K
