@@ -29,7 +29,8 @@ As an example, suppose we have an addition model, and want to find all "candidat
 
 In a Colab, we can find the candidate nodes with this filter:
 
-````import QuantaTools as qt
+````
+import QuantaTools as qt
 
 my_filters = qt.FilterAnd(
     qt.FilterHead(),
