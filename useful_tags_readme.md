@@ -21,4 +21,4 @@ The library find the useful locations and nodes by asking the model to predict q
 Model nodes are systematically ablated (aka removed) to see whether the model needs the nodes to do calculations.
 
 The percentage of questions that fail at each useful node is mapped (by this library) as follows:
-![FailureRate](./Assets/ins1_mix_d6_l3_h4_t40K_s372001FailureFrequencyBehaviorPerNode.svg?raw=true "FailureRate")
+![FailureRate](./assets/ins1_mix_d6_l3_h4_t40K_s372001FailureFrequencyBehaviorPerNode.svg?raw=true "FailureRate")
