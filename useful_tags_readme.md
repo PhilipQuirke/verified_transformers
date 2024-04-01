@@ -37,7 +37,8 @@ The answer tokens that the model gets wrong when each useful node is ablated can
 ![AnswerImpact](./assets/ins1_mix_d6_l3_h4_t40K_s372001AnswerImpactBehaviorPerNode.svg?raw=true "AnswerImpact")
 
 ## Attention (aka Attn)
-Attention heads can move information between token positions (MLP neurons can't do this). Each attention head **attends** (aka focuses on) one or more token positions. This information can be displayed:
+Attention heads can move information between token positions (MLP neurons can't do this). Each attention head **attends** (aka focuses on) one or more token positions. This information can be displayed.
+In this maths example, a cell that contains "D2 D'2" means that the node is attending to the two token positions named D2 and D'2. 
 
 ![Attention](./assets/ins1_mix_d6_l3_h4_t40K_s372001AttentionBehaviorPerHead.svg?raw=true "Attention")
 
@@ -52,7 +53,4 @@ P9L0H3 ['Fail:0', 'Impact:A7', 'MathSub:NG', 'Attn:P6=84', 'Attn:P9=6', 'Attn:P8
 P9L0M0 ['Fail:11', 'Impact:A765', 'MathAdd:S12345', 'MathSub:M123']
 ```
 
-
-
-
-
+This JSON format can be extended with addition categorises of facts.
