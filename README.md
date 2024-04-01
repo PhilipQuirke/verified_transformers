@@ -1,10 +1,10 @@
 # verified_transformers
-This library contains tool to help train various transformer models trained to perform integer addition, subtraction and multiplication e.g. 133357+182243=+0315600, 123450-345670=-0123230 and 000345*000823=+283935. Each digit is a separate token. For 6 digit questions, the model is given 14 "question" (input) tokens, and must then predict the corresponding 8 "answer" (output) tokens.
+This library help a researcher to understand the algorithm implemented by a transformer model. Various generic tools and techniques are provided. We aim to extend this set over time. 
+The tools produce JSON (refer [Useful_Tags](./useful_tags.md) for details) and visual output (refer [Assets](./Assets/"Assets") for samples).
 
-The library contains tools to help investigate, graph and understand the transformer model's agorithm. 
-Sample automatically-generated tool images are available in https://github.com/PhilipQuirke/verified_transformers/tree/main/assets
+The generic tools and techniques are used to analyse a transfomer model trained o perform integer addition, subtraction and multiplication e.g. 133357+182243=+0315600, 123450-345670=-0123230 and 000345*000823=+283935. Each digit is a separate token. For 6 digit questions, the model is given 14 "question" (input) tokens, and must then predict the corresponding 8 "answer" (output) tokens.
 
-This library uses terminilogy introduced in this paper: https://arxiv.org/abs/2402.02619 . Please read the paper.
+This library uses terminology introduced in this paper: https://arxiv.org/abs/2402.02619 . Please read the paper.
 
 ## Folders, Files and Classes 
 This library contains files:
