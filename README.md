@@ -20,7 +20,7 @@ This library contains files:
 
 - **QuantaTools:** Python library code imported into the notebooks:
   - model_*.py: Contains the configuration of the transformer model being trained/analysed. Includes class ModelConfig 
-  - useful_*.py: Contains data on the useful token positions and useful nodes (attention heads and MLP neurons) that the model uses in predictions. Includes class UsefulConfig derived from ModelConfig.
+  - useful_*.py: Contains data on the useful token positions and useful nodes (attention heads and MLP neurons) that the model uses in predictions. Includes class UsefulConfig derived from ModelConfig. Refer [Useful_Tags](./useful_tags.md) for more detail. 
   - algo_*.py: Contains tools to support declaring and validating a model algorithm. Includes class AlgoConfig derived from UsefulConfig.
   - maths_*.py: Contains specializations of the above specific to arithmetic (addition and subtraction) transformer models. Includes class MathsConfig derived from AlgoConfig.
   - quanta_*.py: Contains categorisations of model behavior (aka quanta), with ways to detect and graph them 
