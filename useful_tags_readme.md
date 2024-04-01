@@ -19,6 +19,6 @@ Nodes that are used in calculations are termed **useful** and are stored in **Us
 ## Behaviour Maps
 The library find the useful locations and nodes by asking the model to predict questions with known answers. 
 Model nodes are systematically ablated (aka removed) to see whether the model needs the nodes to do calculations.
-This search can be mapped (by this library) as follows:
 
-![FailureRate](./Static/ins1_mix_d6_l3_h4_t40K_s372001FailureFrequencyBehaviorPerNode.svg?raw=true "FailureRate")
+The percentage of questions that fail at each useful node is mapped (by this library) as follows:
+![FailureRate](./Assets/ins1_mix_d6_l3_h4_t40K_s372001FailureFrequencyBehaviorPerNode.svg?raw=true "FailureRate")
