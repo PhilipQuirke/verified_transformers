@@ -1,7 +1,7 @@
 # Node Filters
 You can filter the useful nodes based on their tags, using the Filter classes. 
 
-# Filter Types
+## Filter Types
 The generic Filters are:
 - FilterAnd: node must satisfy all the child criteria to be selected 
 - FilterOr: node must satisfy at least one child criteria to be selected
@@ -16,15 +16,20 @@ The generic Filters are:
 
 The library can be extended with topic-additional specific filter classes
 
-# Filter Use Example
-If mathematics for addition, suppose we want to find any useful node that:
-- Is at position P14
-- Is an attention head
-- Attends to (at least) D2 and D'2
-- Impacts answer token A2
+## Filter Use 
+Filters are often used to find candidate nodes that could implement a specific algorithmic task. 
+Confirming that a node implements a specific algorithmic task is not covered here.
+If we find a candidate node **does** implement the task, a new tag is added to the node to document that fact.   
 
-In a Colab, we can write that filter criteria as:
+As an example, suppose we have an addition model, and want to find all "candidate" nodes that:
+- Are at position P14
+- Are an attention head
+- Attend to (at least) D2 and D'2
+- Impact (at least) answer token A2
+
+In a Colab, we can find the candidate nodes with this filter:
   import QuantaTools as qt
+
   my_filters = qt.FilterAnd(
     qt.FilterHead(),
     qt.FilterPosition(qt.position_name(14)),
@@ -32,5 +37,4 @@ In a Colab, we can write that filter criteria as:
     qt.FilterAttention(cfg.ddn_to_position_name(2)), # Attends to D'n
     qt.FilterImpact(qt.answer_name(2))) # Impacts An
 
-We can then write:
   test_nodes = qt.filter_nodes(cfg.useful_nodes, my_filters)
