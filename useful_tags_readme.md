@@ -42,6 +42,9 @@ In this maths example, a cell that contains "D2 D'2" means that the node is atte
 
 ![Attention](./assets/ins1_mix_d6_l3_h4_t40K_s372001AttentionBehaviorPerHead.svg?raw=true "Attention")
 
+## Non-generic tags
+The library can be extended with non-generic tags - that is tags specific to a particular subject. The mathematics models included in this library include tags MathAdd, MathSub, the MathsBehavior tags and the MathsAlgorithm tags.    
+
 ## Useful Node Tags
 The list of useful nodes and the facts gathered about them (e.g. percentage failure, answer impact, attention) are saved to a JSON file:
 
