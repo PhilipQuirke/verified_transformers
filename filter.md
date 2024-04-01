@@ -28,13 +28,15 @@ As an example, suppose we have an addition model, and want to find all "candidat
 - Impact (at least) answer token A2
 
 In a Colab, we can find the candidate nodes with this filter:
-  import QuantaTools as qt
 
-  my_filters = qt.FilterAnd(
+''''import QuantaTools as qt
+
+my_filters = qt.FilterAnd(
     qt.FilterHead(),
     qt.FilterPosition(qt.position_name(14)),
     qt.FilterAttention(cfg.dn_to_position_name(2)), # Attends to Dn
     qt.FilterAttention(cfg.ddn_to_position_name(2)), # Attends to D'n
     qt.FilterImpact(qt.answer_name(2))) # Impacts An
 
-  test_nodes = qt.filter_nodes(cfg.useful_nodes, my_filters)
+test_nodes = qt.filter_nodes(cfg.useful_nodes, my_filters)
+''''
