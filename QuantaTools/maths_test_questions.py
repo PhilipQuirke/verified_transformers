@@ -374,6 +374,8 @@ def test_maths_questions_by_complexity(cfg, acfg, varied_questions):
         correct_list[question_num] = correct
 
         major_tag, minor_tag = get_maths_question_complexity(cfg, q_and_a)
+        print("PQR", type(major_tag))
+        print("PQR", type(minor_tag))        
         group_name = major_tag.value + "." + minor_tag.value
 
         if group_name not in categorization_results:
