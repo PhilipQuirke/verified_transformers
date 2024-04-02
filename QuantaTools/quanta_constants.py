@@ -12,6 +12,9 @@ class QCondition(Enum):
 
 # Set of (independent) quanta "types". Each node tag contains exactly one of these quanta types
 class QType(Enum):
+    # GENERIC QUANTA TYPES:
+    # Some quanata types apply to all models
+
     # (Input or answer) token position tag
     POSN = "Posn"
   
@@ -30,8 +33,17 @@ class QType(Enum):
     # What algorithmic purpose is this node serving?
     ALGO = "Algo"
 
+    # What are the dependencies between nodes? (future)
+    ACDC = "ACDC"
+    
+    UNKNOWN = "Unknown"
 
-    # Types of mathematical operations (questions)
+
+    # MODEL-SPECIFIC QUANTA TYPES:
+    # These quanta types apply to specific models predicting specific types of questions
+    # They are defined here to 1) avoid naming conflicts and 2) act as an 'index' of implemented quanta
+    
+    # Types of mathematical questions 
     MATH_ADD = "Math.Add" 
     MATH_SUB = "Math.Sub"
     MATH_MUL = "Math.Mul"
@@ -48,7 +60,6 @@ class QType(Enum):
     SPARE_3 = "Spare.3"
     SPARE_4 = "Spare.4"
     
-    UNKNOWN = "Unknown"
 
 
 
