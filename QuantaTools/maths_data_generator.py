@@ -1,7 +1,9 @@
 import random
 import torch
 
-from .maths_constants import MathsToken
+from .quanta_constants import QType
+
+from .maths_constants import MathsBehavior, MathsToken
 from .maths_complexity import get_maths_question_complexity
 from .maths_utilities import make_a_maths_question_and_answer
 
@@ -118,7 +120,7 @@ def make_maths_questions_and_answers(cfg, operator, major_tag, minor_tag, q_matr
         if a < limit and b < limit:
             make_a_maths_question_and_answer(cfg, questions, real_len, a, b, operator)
 
-            if not ( major_tag == "" or minor_tag == "" ):
+            if not ( major_tag == QType.UNKNOWN or minor_tag == MathsBehavior.UNKNOWN ):
                 # Check that the complexity of the question matches what the test data believes it is
                 actual_major_tag, actual_minor_tag = get_maths_question_complexity(cfg, questions[real_len])
                 if not( actual_major_tag == major_tag and actual_minor_tag == minor_tag ):

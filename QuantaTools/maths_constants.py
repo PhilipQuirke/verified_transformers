@@ -33,6 +33,8 @@ class MathsBehavior:
     SUB_S3_TAG = "M3" # Hard. Multiple cascades of BorrowOne. Answer is positive
     SUB_NG_TAG = "NG" # Hard. Subtraction question has negative answer
 
+    UNKNOWN = "Unknown"
+    
 
 # These are maths algorthmic purposes: interpretations we assign to each node, partially based on its behavior
 # Minor "maths" tags related to major tag QType.ALGO:

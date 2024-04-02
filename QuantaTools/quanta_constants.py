@@ -47,6 +47,8 @@ class QType(Enum):
     SPARE_2 = "Spare.2"
     SPARE_3 = "Spare.3"
     SPARE_4 = "Spare.4"
+    
+    UNKNOWN = "Unknown"
 
 
 

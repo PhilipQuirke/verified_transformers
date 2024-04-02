@@ -157,7 +157,7 @@ def make_maths_test_questions_and_answers(cfg):
               [ 55379, 44621]]).cuda(),
             # Make questions focus mainly on 1 digit at a time
             # (assuming that the 0 + 0 digit additions/subtractions are trivial bigrams)
-            make_maths_questions_and_answers(cfg, MathsToken.PLUS, QType.MATH_ADD, "",
+            make_maths_questions_and_answers(cfg, MathsToken.PLUS, QType.MATH_ADD, MathsBehavior.UNKNOWN,
               [[ 1, 0],
               [ 4, 3],
               [ 5, 5],
@@ -374,7 +374,7 @@ def test_maths_questions_by_complexity(cfg, acfg, varied_questions):
         correct_list[question_num] = correct
 
         major_tag, minor_tag = get_maths_question_complexity(cfg, q_and_a)
-        group_name = str(major_tag) + "." + minor_tag
+        group_name = major_tag.value + "." + minor_tag.value
 
         if group_name not in categorization_results:
             categorization_results[group_name] = [0, 0]  # Initialize counts for new group
@@ -555,7 +555,8 @@ def make_tricase_questions(cfg, test_digit, test_case, operation):
         y = y * limit + y_noise
         questions.append([x, y])
 
-    return make_maths_questions_and_answers(cfg, operation, "", "", questions)
+    qtype = QType.MATH_ADD if operation == MathsToken.PLUS else QType.MATH_SUB
+    return make_maths_questions_and_answers(cfg, operation, qtype, MathsBehavior.UNKNOWN, questions)
 
 
 

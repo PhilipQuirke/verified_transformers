@@ -95,7 +95,7 @@ def get_maths_question_complexity(cfg, question):
 
     # Should never get here
     print("get_question_complexity OP? exception", question)
-    return "", "OP?"
+    return QType.UNKNOWN, MathsBehavior.UNKNOWN
 
 
 # Analyze the tags associated with node, to show the minimum mathematical complexity
