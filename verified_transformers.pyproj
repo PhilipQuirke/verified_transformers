@@ -49,7 +49,7 @@
     <Compile Include="QuantaTools\quanta_map_binary.py" />
     <Compile Include="QuantaTools\quanta_map_failperc.py" />
     <Compile Include="QuantaTools\quanta_map_impact.py" />
-    <Compile Include="QuantaTools\quanta_test_questions.py">
+    <Compile Include="QuantaTools\quanta_add_attn_tags.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="QuantaTools\quanta_constants.py" />

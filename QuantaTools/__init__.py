@@ -21,7 +21,7 @@ from .ablate_add_useful import ablate_mlp_and_add_useful_node_tags, ablate_head_
 
 
 # quanta_*.py: Contains ways to detect and graph model behavior (aka quanta) 
-from .quanta_test_questions import test_questions_and_add_node_attention_tags
+from .quanta_add_attn_tags import add_node_attention_tags
 from .quanta_map import create_colormap, calc_quanta_map
 from .quanta_map_attention import get_quanta_attention
 from .quanta_map_failperc import get_quanta_fail_perc
