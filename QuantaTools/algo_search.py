@@ -51,7 +51,7 @@ def search_and_tag_digit(cfg, acfg, prerequisites_function, the_impact_digit, te
 
             for position in range(from_position, to_position+1):
                 the_filters = prerequisites_function(position, the_impact_digit)
-                print( "Filters:", the_filters.describe()) # Debugging
+                #print( "Filters:", the_filters.describe()) # Debugging
                 
                 test_nodes = filter_nodes( cfg.useful_nodes, the_filters)
                 acfg.num_filtered_nodes += len(test_nodes.nodes)
