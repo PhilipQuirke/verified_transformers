@@ -138,5 +138,5 @@ def search_and_tag(cfg, acfg, prerequisites_function, test_function, tag_functio
         search_and_tag_digit(cfg, acfg, 
             prerequisites_function, the_impact_digit, test_function, tag_function,
             do_pair_search, do_weak_search, from_position, to_position )
-
-    print( f"Filtering gave {acfg.num_filtered_nodes} node candidates. Ran {acfg.num_tests_run} intervention test(s). Added {acfg.num_tags_added} tag(s)")
+    print( "Filters are:", prerequisites_function.describe())
+    print( f"Filtering gave {acfg.num_filtered_nodes} candidate node(s). Ran {acfg.num_tests_run} intervention test(s). Added {acfg.num_tags_added} tag(s)")
