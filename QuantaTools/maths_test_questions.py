@@ -473,9 +473,9 @@ def test_maths_questions_and_add_useful_node_tags(cfg, acfg, questions, node_loc
 
                 major_tag, minor_tag = get_maths_question_complexity(cfg, q)
                 if major_tag == QType.MATH_ADD:
-                    add_complexity_fails += minor_tag
+                    add_complexity_fails += minor_tag.value
                 elif major_tag == QType.MATH_SUB:
-                    sub_complexity_fails += minor_tag
+                    sub_complexity_fails += minor_tag.value
 
                 if acfg.verbose :
                     print(tokens_to_string(cfg, q), "U: ModelAnswer:", answer_str, "Complexity:", major_tag, "Impact:", impact_str, "Loss:", the_loss_mean )
@@ -484,23 +484,23 @@ def test_maths_questions_and_add_useful_node_tags(cfg, acfg, questions, node_loc
 
         # Add percentage failure quanta
         perc = int( 100.0 * num_fails / len(questions))
-        cfg.add_useful_node_tag( node_location, QType.FAIL, str(perc) )
+        cfg.add_useful_node_tag( node_location, QType.FAIL.value, str(perc) )
 
         # Add summary of all answer digit impact quanta failures
-        cfg.add_useful_node_tag( node_location, QType.IMPACT, "A" + sort_unique_digits(impact_fails, True) )
+        cfg.add_useful_node_tag( node_location, QType.IMPACT.value, "A" + sort_unique_digits(impact_fails, True) )
 
         # Add summary of all addition question complexity quanta failures
         if add_complexity_fails != "":
-            cfg.add_useful_node_tag( node_location, QType.MATH_ADD, "S" + sort_unique_digits(add_complexity_fails, False) )
+            cfg.add_useful_node_tag( node_location, QType.MATH_ADD.value, "S" + sort_unique_digits(add_complexity_fails, False) )
 
         # Add summary of all subtraction question complexity quanta failures
         if sub_complexity_fails != "":
             sub_complexity_fails = sort_unique_digits(sub_complexity_fails, False)
             if sub_complexity_fails == "":
-                sub_complexity_fails = MathsBehavior.SUB_NG_TAG
+                sub_complexity_fails = MathsBehavior.SUB_NG_TAG.value
             else:
                 sub_complexity_fails = "M" + sub_complexity_fails
-            cfg.add_useful_node_tag( node_location, QType.MATH_SUB, sub_complexity_fails )
+            cfg.add_useful_node_tag( node_location, QType.MATH_SUB.value, sub_complexity_fails )
           
 
 TRICASE_QUESTIONS = 100
