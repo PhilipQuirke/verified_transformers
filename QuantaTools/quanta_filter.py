@@ -96,22 +96,22 @@ class FilterPosition(FilterNode):
 
                                        
 class FilterContains(FilterNode):
-    def __init__(self, quanta_type, minor_tag, filter_strength = QCondition.MUST):
+    def __init__(self, quanta_type : QType, minor_tag : str, filter_strength = QCondition.MUST):
         self.quanta_type = quanta_type
         self.minor_tag = minor_tag
         self.filter_strength = filter_strength
 
     def evaluate(self, test_node):
         if self.filter_strength in [QCondition.MUST, QCondition.CONTAINS]:
-            return test_node.contains_tag(self.quanta_type, self.minor_tag)   
+            return test_node.contains_tag(self.quanta_type.value, self.minor_tag)   
         if self.filter_strength == QCondition.NOT:
-            return not test_node.contains_tag(self.quanta_type, self.minor_tag)
+            return not test_node.contains_tag(self.quanta_type.value, self.minor_tag)
         if self.filter_strength == QCondition.MAY:
             return True  
         return False
 
     def describe(self):
-        return self.filter_strength.value + " " + str(self.quanta_type) + " " + self.minor_tag
+        return self.filter_strength.value + " " + self.quanta_type.value + " " + self.minor_tag
 
 
 class FilterAttention(FilterContains):
