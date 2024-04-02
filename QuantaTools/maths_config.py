@@ -7,7 +7,7 @@ from .algo_config import AlgoConfig
 # Extends UsefulConfig with mathematics-specific info for "123456+123456=+0246912" style questions
 class MathsConfig(AlgoConfig):
 
-
+    # Constructor
     def __init__(self):
         super().__init__()
 
@@ -15,16 +15,18 @@ class MathsConfig(AlgoConfig):
         self.perc_mult : int = 0 # e.g. 20
         self.perc_sub : int = 0 # e.g. 80
 
+        # Number of digits in the question e.g. 123456+123456=+0246912
         self.n_digits : int = 6
         self.initialize_maths_token_positions()     
 
         # Dictionary of test maths questions based on the T8, T9, T10 categorisation
         self.tricase_questions_dict = {}
 
-        # Save graphs to CoLab temp files as PDF or SVG. You can manually export temp files for re-use in papers.
+        # Format to save graphs to CoLab temp files as. Supports PDF and SVG. You can later manually export the temp files for re-use in papers.
         self.graph_file_suffix = "pdf"
         
 
+    # Based on n_digits, set the number of question and answer tokens in the context 
     def initialize_maths_token_positions(self):
         self.initialize_token_positions( 
             self.n_digits*2 + 2,  # Plus 2 for operator (+ or -) and equals (=) sign
@@ -32,6 +34,7 @@ class MathsConfig(AlgoConfig):
             False ) 
 
 
+    # percentage of addition questions
     def perc_add(self):
         return max(0, 100 - self.perc_mult - self.perc_sub)
 
@@ -57,6 +60,7 @@ class MathsConfig(AlgoConfig):
         return position_name(self.n_digits)
 
 
+    # Parse the model name to extract the number of digits in question
     def parse_model_name(self):
         super().parse_model_name()
         
@@ -68,13 +72,16 @@ class MathsConfig(AlgoConfig):
         self.initialize_maths_token_positions()  
 
 
+    # Extend "l2_h3_t15K" with number of digits in question to give "_d5_l2_h3_t15K
     def short_config_description(self):       
         return f'_d{self.n_digits}' + super().short_config_description()      
     
 
+    # Return string stating whether we are doing multiplication, subtraction, addition or a mix
     def op_config_description(self):
         return 'mul' if self.perc_mult == 100 else 'sub' if self.perc_sub == 100 else 'add' if self.perc_add() == 100 else 'mix'    
     
 
+    # Return string like "ins1_mix_d6_l3_h4_t40K"
     def file_config_prefix(self):
         return self.insert_config_description() + self.op_config_description() + self.long_config_description()

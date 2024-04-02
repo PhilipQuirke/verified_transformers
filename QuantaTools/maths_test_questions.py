@@ -448,11 +448,8 @@ def test_maths_questions_by_impact(cfg, acfg, questions, position : int, ablate 
 
 # Test accuracy of model in predicting question answers, when a single node is ablated. 
 # Adds nodes to Useful.useful_nodes and adds tags to those nodes.
-def test_maths_questions_and_add_useful_node_tags(cfg, acfg, node_location, questions, the_hooks):
+def test_maths_questions_and_add_useful_node_tags(cfg, acfg, questions, node_location, all_losses_raw, all_max_prob_tokens):
        
-    acfg.ablate_node_locations = [node_location]  # Ablate this node  
-    all_losses_raw, all_max_prob_tokens = a_predict_questions(cfg, questions, the_hooks)
-
     num_fails = 0
     impact_fails = ""
     add_complexity_fails = ""
