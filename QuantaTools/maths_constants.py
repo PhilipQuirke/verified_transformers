@@ -1,3 +1,6 @@
+from enum import Enum
+
+
 # These are tokens used in arithmetic vocab. 
 class MathsToken:
     # Token indexes 0 to 9 represent digits 0 to 9
@@ -10,7 +13,7 @@ class MathsToken:
 
 
 # These are maths behaviors: quanta we can evaluate for each node based just on that node
-class MathsBehavior:
+class MathsBehavior(Enum):
     # Minor "maths" tags related to major tag QType.PCA:
     # PCA says the node outputs is interpretable aligned to the T8,T9,T10 questions, giving 2 or 3 distinct output clusters
     PCA_ADD_TAG = "PA"
@@ -39,7 +42,7 @@ class MathsBehavior:
 # These are maths algorthmic purposes: interpretations we assign to each node, partially based on its behavior
 # Minor "maths" tags related to major tag QType.ALGO:
 # A node may serve multiple purposes and so have more than 1 of these tags.
-class MathsAlgorithm:
+class MathsAlgorithm(Enum):
     ADD_BA_TAG = "BA" # Addition - Base Add (Dn, D'n)
     ADD_MC_TAG = "MC" # Addition - Make Carry (Dn, D'n)
     ADD_US_TAG = "US" # Addition - Use Sum 9 (Dn, D'n)
