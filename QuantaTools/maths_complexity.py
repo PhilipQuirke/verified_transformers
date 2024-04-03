@@ -122,12 +122,12 @@ def calc_maths_quanta_for_position_nodes(cfg, position):
     for node in nodelist.nodes:
         position_meaning = cfg.token_position_meanings[position]
         node_name = node.name()
-        node_impact, impact_shade = get_quanta_impact( cfg, node, QType.IMPACT, "", cfg.num_answer_positions )
-        node_algorithm_purpose, algo_shade = get_quanta_binary( cfg, node, QType.ALGO, "", ALGO_SHADES)
-        node_attention, attention_shade = get_quanta_attention( cfg, node, QType.ATTN, "", ATTN_SHADES )
-        node_add_complexity, add_complexity_shade = get_maths_min_complexity( cfg, node, QType.MATH_ADD, "", MATH_ADD_SHADES)
-        node_sub_complexity, sub_complexity_shade = get_maths_min_complexity( cfg, node, QType.MATH_SUB, "", MATH_SUB_SHADES)
-        node_fail_perc, fail_perc_shade = get_quanta_fail_perc( cfg, node, QType.FAIL, "", FAIL_SHADES)
+        node_impact, impact_shade = get_quanta_impact( cfg, node, QType.IMPACT.value, "", cfg.num_answer_positions )
+        node_algorithm_purpose, algo_shade = get_quanta_binary( cfg, node, QType.ALGO.value, "", ALGO_SHADES)
+        node_attention, attention_shade = get_quanta_attention( cfg, node, QType.ATTN.value, "", ATTN_SHADES )
+        node_add_complexity, add_complexity_shade = get_maths_min_complexity( cfg, node, QType.MATH_ADD.value, "", MATH_ADD_SHADES)
+        node_sub_complexity, sub_complexity_shade = get_maths_min_complexity( cfg, node, QType.MATH_SUB.value, "", MATH_SUB_SHADES)
+        node_fail_perc, fail_perc_shade = get_quanta_fail_perc( cfg, node, QType.FAIL.value, "", FAIL_SHADES)
 
         shade_array = [0, 0, 
             1.0 * impact_shade / cfg.num_answer_positions, 
