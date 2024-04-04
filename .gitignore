@@ -7,3 +7,4 @@ notebooks/*
 # Ignore .ipynb_checkpoints directories created by Jupyter
 .ipynb_checkpoints/
 /.vs
+/QuantaTools/__pycache__

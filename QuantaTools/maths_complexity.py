@@ -59,38 +59,82 @@ def get_maths_question_complexity(cfg, question):
     if operator == MathsToken.MINUS:
         a = tokens_to_unsigned_int( question, 0, cfg.n_digits )
         b = tokens_to_unsigned_int( question, cfg.n_digits + 1, cfg.n_digits )
-        if a - b < 0:
-            return QType.MATH_SUB, MathsBehavior.SUB_NG_TAG
+        if a - b >= 0:
+            # Answer is zero or positive. Return SUB_M0_TAG to SUB_M4_TAG
+            
+            # Locate the BO and MZ digits (if any)
+            bo = torch.zeros(cfg.n_digits).to(torch.int64)
+            mz = torch.zeros(cfg.n_digits).to(torch.int64)
+            for dn in range(cfg.n_digits):
+                ddn = dn + cfg.n_digits + 1
+                if inputs[dn] - inputs[ddn] < 0:
+                    bo[cfg.n_digits-1-dn] = 1
+                if inputs[dn] - inputs[ddn] == 0:
+                    mz[cfg.n_digits-1-dn] = 1
 
-        # Locate the BO and MZ digits (if any)
-        bo = torch.zeros(cfg.n_digits).to(torch.int64)
-        mz = torch.zeros(cfg.n_digits).to(torch.int64)
-        for dn in range(cfg.n_digits):
-            if inputs[dn] - inputs[dn + cfg.n_digits + 1] < 0:
-                bo[cfg.n_digits-1-dn] = 1
-            if inputs[dn] - inputs[dn + cfg.n_digits +1] == 0:
-                mz[cfg.n_digits-1-dn] = 1
+            # Evaluate BaseSub questions - when no column generates a Borrow One
+            if torch.sum(bo) == 0:
+                return QType.MATH_SUB, MathsBehavior.SUB_M0_TAG
 
-        # Evaluate BaseSub questions - when no column generates a Borrow One
-        if torch.sum(bo) == 0:
-            return QType.MATH_SUB, MathsBehavior.SUB_S0_TAG
+            # Evaluate subtraction "cascade multiple steps" questions
+            for dn in range(cfg.n_digits-3):
+                if bo[dn] == 1 and mz[dn+1] == 1 and mz[dn+2] == 1 and mz[dn+3] == 1:
+                    return QType.MATH_SUB, MathsBehavior.SUB_M4_TAG # BO cascades 3 or more digits
 
-        # Evaluate subtraction "cascade multiple steps" questions
-        for dn in range(cfg.n_digits-3):
-            if bo[dn] == 1 and mz[dn+1] == 1 and mz[dn+2] == 1 and mz[dn+3] == 1:
-                return QType.MATH_SUB, "M4+" # BO cascades 3 or more digits
+            # Evaluate subtraction "cascade multiple steps" questions
+            for dn in range(cfg.n_digits-2):
+                if bo[dn] == 1 and mz[dn+1] == 1 and mz[dn+2] == 1:
+                    return QType.MATH_SUB, MathsBehavior.SUB_M3_TAG # BO cascades 2 or more digits
 
-        # Evaluate subtraction "cascade multiple steps" questions
-        for dn in range(cfg.n_digits-2):
-            if bo[dn] == 1 and mz[dn+1] == 1 and mz[dn+2] == 1:
-                return QType.MATH_SUB, MathsBehavior.SUB_S3_TAG # BO cascades 2 or more digits
+            # Evaluate subtraction "cascade 1" questions
+            for dn in range(cfg.n_digits-1):
+                if bo[dn] == 1 and mz[dn+1] == 1:
+                    return QType.MATH_SUB, MathsBehavior.SUB_M2_TAG # BO cascades 1 digit
 
-        # Evaluate subtraction "cascade 1" questions
-        for dn in range(cfg.n_digits-1):
-            if bo[dn] == 1 and mz[dn+1] == 1:
-                return QType.MATH_SUB, MathsBehavior.SUB_S2_TAG # BO cascades 1 digit
+            return QType.MATH_SUB, MathsBehavior.SUB_M1_TAG
+        else:
+            # Answer is negative. Return SUB_N1_TAG to SUB_N4_TAG
 
-        return QType.MATH_SUB, MathsBehavior.SUB_S1_TAG
+            # Locate the BO and MZ digits (if any)
+            bo = torch.zeros(cfg.n_digits).to(torch.int64)
+            mz = torch.zeros(cfg.n_digits).to(torch.int64)
+            max_question_digit = 0
+            for dn in range(cfg.n_digits):
+                ddn = dn + cfg.n_digits + 1   
+                an = cfg.n_digits - 1 - dn
+                if inputs[dn] - inputs[ddn] < 0: 
+                    bo[an] = 1
+                if inputs[dn] - inputs[ddn] == 0:
+                    mz[an] = 1
+                if inputs[dn] > 0 or inputs[ddn] > 0:
+                    max_question_digit = max(max_question_digit,an)
+            # MakeZeros are not interesting beyond the max_question_digit
+            dn = max_question_digit + 1
+            while dn < cfg.n_digits:
+                mz[dn] = 0
+                dn += 1
+
+            # To generate a negative answer, at least one column must generates a Borrow One
+            if torch.sum(bo) == 0:
+                print("get_question_complexity OP? exception", question)
+                return QType.UNKNOWN, MathsBehavior.UNKNOWN
+
+            # Evaluate subtraction "cascade multiple steps" questions
+            for dn in range(cfg.n_digits-3):
+                if max_question_digit >= dn+3 and bo[dn] == 1 and mz[dn+1] == 1 and mz[dn+2] == 1 and mz[dn+3] == 1:
+                    return QType.MATH_NEG, MathsBehavior.SUB_N4_TAG # BO cascades 3 or more digits
+
+            # Evaluate subtraction "cascade multiple steps" questions
+            for dn in range(cfg.n_digits-2):
+                if max_question_digit >= dn+2 and bo[dn] == 1 and mz[dn+1] == 1 and mz[dn+2] == 1:
+                    return QType.MATH_NEG, MathsBehavior.SUB_N3_TAG # BO cascades 2 or more digits
+
+            # Evaluate subtraction "cascade 1" questions
+            for dn in range(cfg.n_digits-1):
+                if max_question_digit >= dn and bo[dn] == 1 and mz[dn+1] == 1:
+                    return QType.MATH_NEG, MathsBehavior.SUB_N2_TAG # BO cascades 1 digit
+
+            return QType.MATH_NEG, MathsBehavior.SUB_N1_TAG
 
 
     # Should never get here
