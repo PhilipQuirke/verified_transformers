@@ -8,8 +8,8 @@ setup(
     author='Philip Quirke',
     author_email='philipquirkenzgmail.com',
     install_requires=[
-        'numpy>=1.18.1',  # Example dependency, specify your package's dependencies here
-        # Add other dependencies as needed
+        'numpy>=1.18.1',
+        'wheel'
     ],
     classifiers=[
         'Development Status :: 3 - Alpha',
