@@ -5,8 +5,8 @@
 <p>
 
 ## Introduction
-This library support goals and uses terminology introduced in the paper https://arxiv.org/abs/2402.02619 . Please read the paper. In brief:
-- Given an existing transformer model with low loss, this library help a researcher to analyze and understand the algorithm implemented by a transformer model.
+This library support goals and uses terminology introduced in the paper [Increasing Trust in Language Models through the Reuse of Verified Circuits](https://arxiv.org/abs/2402.02619). Please read the paper. In brief:
+- Given an existing transformer model with low loss, this library helps a researcher to analyze and understand the algorithm implemented by a transformer model.
 - The "useful" token positions, attention heads and MLP neurons that are used in predictions are identified.  
 - Various tools and techniques evaluate aspects of the model's "behavior" (e.g. attention patterns).
 - The researcher can extend the tools with model-specific searches and tests - searching for hypothesised model components that perform model-specific algorithm "sub-tasks" (e.g. Base Add in the Addition model)
