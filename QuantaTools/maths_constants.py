@@ -51,12 +51,12 @@ class MathsAlgorithm(Enum):
     ADD_BA_TAG = "BA" # Addition - Base Add (Dn, D'n)
     ADD_MC_TAG = "MC" # Addition - Make Carry (Dn, D'n)
     ADD_US_TAG = "US" # Addition - Use Sum 9 (Dn, D'n)
-    ADD_TC_TAG = "TC" # Addition - TriCase (Dn, D'n)
+    ADD_AC_TAG = "AC" # Addition - TriCase (Dn, D'n)
   
     SUB_BS_TAG = "BS" # Subtraction - Base Sub (Dn, D'n)
     SUB_BO_TAG = "BO" # Subtraction - Borrow One (Dn, D'n)
     SUB_SZ_TAG = "SZ" # Subtraction - Sum Zero (Dn, D'n)
-    SUB_NG_TAG = "NG" # Subtraction - Answer is negative (that is D < D')
+    SUB_SC_TAG = "SC" # Subtraction - TriCase (Dn, D'n)
   
     MIX_OP_TAG = "OP" # Add/Sub - Attends to operation token (in the middle of the question)
     MIX_SG_TAG = "SG" # Add/Sub - Attends to answer sign (+/-) token (at the start of the answer)

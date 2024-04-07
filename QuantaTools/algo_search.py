@@ -14,8 +14,7 @@ def search_and_tag_digit_position(acfg, the_impact_digit, the_test_nodes, test_f
     for node in the_test_nodes.nodes:
         if test_function( [node], the_impact_digit, strong):
             full_tag = the_tag + ("" if strong else "." + acfg.intervened_impact)
-            node.add_tag(QType.ALGO.value, full_tag)
-            acfg.num_tags_added += 1
+            acfg.num_tags_added += node.add_tag(QType.ALGO.value, full_tag)
             return True
 
     # Try pairs of nodes. Sometimes a task is split across two attention heads (i.e. a virtual attention head)
@@ -26,9 +25,8 @@ def search_and_tag_digit_position(acfg, the_impact_digit, the_test_nodes, test_f
             if pair[0].layer == pair[1].layer and pair[0].is_head == pair[1].is_head:
                 if test_function( [pair[0], pair[1]], the_impact_digit, strong):
                     full_tag = the_tag + ("" if strong else "." + acfg.intervened_impact)
-                    pair[0].add_tag(QType.ALGO.value, full_tag)
-                    pair[1].add_tag(QType.ALGO.value, full_tag)
-                    acfg.num_tags_added += 2
+                    acfg.num_tags_added += pair[0].add_tag(QType.ALGO.value, full_tag)
+                    acfg.num_tags_added += pair[1].add_tag(QType.ALGO.value, full_tag)
                     return True
 
     return False

@@ -96,13 +96,16 @@ class UsefulNode(NodeLocation):
             self.tags = [s for s in self.tags if not s.startswith(str(major_tag))]
 
 
-    # Add a tag to this  (if not already present)
+    # Add a tag to this (if not already present). Returns number of tags added as 0 or 1
     def add_tag(self, major_tag, minor_tag):
         assert str(major_tag) != ""
     
         tag = str(major_tag) + ":" + minor_tag
         if tag != "" and (not (tag in self.tags)):
             self.tags += [tag]
+            return 1
+        
+        return 0
 
 
     # Return tags with the matching major and minor versions
@@ -224,7 +227,7 @@ class UsefulNodeList():
         return None
 
 
-    # Add the tag to the node location (creating a node if necessary)  
+    # Add the tag to the node location (creating a node if necessary). Returns number of tags added as 0 or 1
     def add_node_tag( self, nodelocation, major_tag, minor_tag ):
 
         the_node = self.get_node( nodelocation )
@@ -234,7 +237,7 @@ class UsefulNodeList():
 
             self.nodes += [the_node]
 
-        the_node.add_tag(major_tag, minor_tag)
+        return the_node.add_tag(major_tag, minor_tag)
 
 
     # Sort the nodes into position, layer, is_head, num order
