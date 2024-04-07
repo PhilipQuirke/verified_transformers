@@ -3,7 +3,7 @@ from .ablate_config import acfg
 from .maths_data_generator import maths_data_generator
 from .maths_test_questions import test_maths_questions_by_impact
 
-def one_million_questions_core(cfg):
+def test_correctness_on_num_questions_core(cfg, num_questions=1000000):
   acfg.verbose = False
 
   cfg.analysis_seed = 345621 # Randomly chosen
@@ -31,7 +31,7 @@ def one_million_questions_core(cfg):
     "WARNING: Model is not fully accurate. It failed the 1M Q test"
 
 
-def one_million_questions(cfg):
+def test_correctness_on_num_questions(cfg, num_questions=1000000):
   store_perc_sub = cfg.perc_sub
   store_perc_mult = cfg.perc_mult
 
@@ -45,13 +45,13 @@ def one_million_questions(cfg):
     print("Addition:")
     cfg.perc_sub = 0
     cfg.perc_mult = 0
-    one_million_questions_core(cfg)
+    test_correctness_on_num_questions_core(cfg, num_questions=num_questions)
 
   if store_perc_sub > 0:
     print("Subtraction:")
     cfg.perc_sub = 100
     cfg.perc_mult = 0
-    one_million_questions_core(cfg)
+    test_correctness_on_num_questions_core(cfg)
     print()
 
   cfg.perc_sub = store_perc_sub
