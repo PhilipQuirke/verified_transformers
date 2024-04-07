@@ -1,21 +1,35 @@
-# verified_transformers
+<p align="center">
+    <br>
+    <img src="./pics/apart_banner.png" width="900"/>
+    <br>
+<p>
 
-## Purpose
-This library support goals and uses terminology introduced in the paper https://arxiv.org/abs/2402.02619 . Please read the paper. In brief:
-- Given an existing transformer model with low loss, this library help a researcher to analyze and understand the algorithm implemented by a transformer model.
+## Introduction
+This library support goals and uses terminology introduced in the paper [Increasing Trust in Language Models through the Reuse of Verified Circuits](https://arxiv.org/abs/2402.02619). Please read the paper. In brief:
+- Given an existing transformer model with low loss, this library helps a researcher to analyze and understand the algorithm implemented by a transformer model.
 - The "useful" token positions, attention heads and MLP neurons that are used in predictions are identified.  
 - Various tools and techniques evaluate aspects of the model's "behavior" (e.g. attention patterns).
 - The researcher can extend the tools with model-specific searches and tests - searching for hypothesised model components that perform model-specific algorithm "sub-tasks" (e.g. Base Add in the Addition model)
 - Useful facts found in this way are stored as JSON (refer [Useful_Tags](./useful_tags.md) for details) and can be visualized (refer [Assets](./Assets/"Assets") for samples).
-- A researcher can describe an algorithm hypothesis as a series of claims, and evaluate those claims against the facts found. The resulting insights can be used to refine and\or extend both the algorithm sub-task tests and the algorithm hypothesis description, leading to a full description of the model's algorithm.   
+- A researcher can describe an algorithm hypothesis as a series of claims, and evaluate those claims against the facts found. The resulting insights can be used to refine and\or extend both the algorithm sub-task tests and the algorithm hypothesis description, leading to a full description of the model's algorithm.
+
+## Installation
+
+From source
+
+```bash
+git clone https://github.com/PhilipQuirke/verified_transformers.git
+cd verified_transformers
+pip install .
+```
 
 ## Test bed
-Much of this library is generic (can be applied to any transformer model). As a "real-world" testbed to help refine this library we use models trained to perform integer addition and subtraction (e.g. 133357+182243=+0315600 and 123450-345670=-0123230). Arithmetic-specific algorithm sub-task searches are defined (e.g. Base Add, Use Sum 9, Make Carry, Base Subtract, Borrow One). Addition and Subtraction hypothesises are described and evaluated in the Colab notebook VerifiedArithmeticAnalyse.ipynb. Arithmetic-specific python code is in files like "maths_config.py"   
+Much of this library is generic (can be applied to any transformer model). As a "real-world" testbed to help refine this library we use models trained to perform integer addition and subtraction (e.g. 133357+182243=+0315600 and 123450-345670=-0123230). Arithmetic-specific algorithm sub-task searches are defined (e.g. Base Add, Use Sum 9, Make Carry, Base Subtract, Borrow One). Addition and Subtraction hypothesises are described and evaluated in the Colab notebook VerifiedArithmeticAnalyse.ipynb. Arithmetic-specific python code is in files like [maths_config.py](./QuantaTools/maths_config.py).   
 
 ## Folders, Files and Classes 
 This library contains files:
 
-- **Notebooks:** Jupyter notebooks which are run in Goole Colab: 
+- **Notebooks:** Jupyter notebooks which are run in Google Colab or Jupyter: 
   - VerifiedArithmeticTrain.ipynb: Colab used to train transformer arithmetic models. 
     - Outputs pth and json files that are (manually) stored on HuggingFace
   - VerifiedArithmeticAnalyse.ipynb: Colab used to analyze the behavior and algorithm of transformer arithmetic models
