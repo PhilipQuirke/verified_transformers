@@ -8,12 +8,12 @@ We investigation model ins1_mix_d6_l3_h4_t40K which answers 6-digit question. So
   - We name the answer tokens An+1 to A0 
 - We assume model is accurate (We know it can do 1M Qs for add and sub. This is evidence not proof of accuracy)
   - We assume each answer token is accurate    
-- The first answer token An+1 (A7 for 6-digit questions) is always "+" or "-" representing a positive or negative answer
+- The first answer token is An+1 (aka A_max, A7 for 6-digit questions) is always "+" or "-" representing a positive or negative answer
 - Model must pay attention to the **operator** token (+ or -) to understand whether to do a addition or subtraction calculation
 - Model must accurately predict three distinct classes of questions:
-  - Addition (Answer is positive. An+1 is "+") 
-  - Subtraction where D >= D' (Answer is positive. An+1 is "+")    
-  - Subtraction where D < D' (Answer is negative. An+1 is "-")
+  - Addition : Answer is positive. A_max is "+" 
+  - Subtraction where D >= D' : Answer is positive. A_max is "+"    
+  - Subtraction where D < D' : Answer is negative. A_max is "-"
 - For subtraction questions:
   - The model must determine if D < D' before token A_max
   - D < D' is calculated as Dn < D'n or (Dn = D'n and (Dn-1 < D'n-1 or (Dn-2 = D'n-1 and ( ...
@@ -55,15 +55,15 @@ Questions/Thoughts:
 Our second hypothesis is that the model's algorithm steps are:
 - H1: Store the question operator
 - H2: If operator is -, calculates if D > D' using unknown functions XXX, YYY, ZZZ
-- H3: If operator is +, uses TriCase, TriAdd as per Paper 2 to give Dn.C and Dn.Cm
-- H4: Calculate An+1 as : + if operator is + else + if D > D' else -
+- H3: If operator is +, uses addition-specific TriCase, TriAdd as per Paper 2 to give Dn.C and Dn.Cm
+- H4: Calculate A_max as : + if operator is + else + if D > D' else -
 - H5: Calculate An as : Dn.Cm if operator is + else XXXn.YYYm if D > D' else XXXn.ZZZm
 - H6: From An-1, model calculates An-2 as:
   - H7: Attention head calculates combined BA/BS/TT output
   - H8: Attention head calculates combined MC/BO/UU output.
-  - H9: If operator is +, attention head selects BA, MC and Dn.Cm. MLP0 layer combines to give An-2 
-  - H10: If operator is -, and D > D', attention head selects BS, BO and XXXn.YYYm. MLP1 layer combines to give An-2
-  - H11: If operator is -, and not D > D', attention head selects TT, UU and XXXn.ZZZm. MLP2 layer combines to give An-2
+  - H9: If operator is +, (and Amax is +), attention head selects BA, MC and Dn.Cm. MLP0 layer combines to give An-2 
+  - H10: If operator is -, and Amax is +, attention head selects BS, BO and XXXn.YYYm. MLP1 layer combines to give An-2
+  - H11: If operator is -, and Amax is -, attention head selects TT, UU and XXXn.ZZZm. MLP2 layer combines to give An-2
    
 Questions/Thoughts:
 - This hypothesis is more parallel (a good thing)
