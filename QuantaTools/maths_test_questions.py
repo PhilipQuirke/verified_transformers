@@ -643,7 +643,7 @@ def test_correctness_on_num_questions(cfg, num_questions=1000000):
     print("Subtraction:")
     cfg.perc_sub = 100
     cfg.perc_mult = 0
-    test_correctness_on_num_questions_core(cfg)
+    test_correctness_on_num_questions_core(cfg, num_questions=num_questions)
     print()
 
   cfg.perc_sub = store_perc_sub
