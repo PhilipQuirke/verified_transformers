@@ -1,8 +1,8 @@
 # model_*.py: Contains the configuration of the transformer model being trained/analysed
 from .model_config import ModelConfig
 from .model_token_to_char import token_to_char, tokens_to_string
-from .model_loss import logits_to_tokens_loss, loss_fn, one_million_questions
-
+from .model_loss import logits_to_tokens_loss, loss_fn
+from .model_testing import one_million_questions
 
 # useful_*.py: Contains data on the useful token positions and useful nodes (attention heads and MLP neurons) that the model uses in predictions
 from .useful_config import UsefulConfig 
