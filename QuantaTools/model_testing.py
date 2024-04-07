@@ -7,7 +7,7 @@ def one_million_questions_core(cfg):
   acfg.verbose = False
 
   cfg.analysis_seed = 345621 # Randomly chosen
-  local_ds = maths_data_generator() # Re-initialise the data generator
+  local_ds = maths_data_generator(cfg=cfg) # Re-initialise the data generator
 
   the_successes = 0
   the_fails = 0
