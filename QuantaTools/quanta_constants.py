@@ -45,7 +45,8 @@ class QType(Enum):
     
     # Types of mathematical questions 
     MATH_ADD = "Math.Add" 
-    MATH_SUB = "Math.Sub"
+    MATH_SUB = "Math.Sub" # Subtraction with a negative answer
+    MATH_NEG = "Math.Neg" # Subtraction with a negative answer
     MATH_MUL = "Math.Mul"
   
     # Types of logic questions (future)

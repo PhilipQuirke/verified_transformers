@@ -59,38 +59,82 @@ def get_maths_question_complexity(cfg, question):
     if operator == MathsToken.MINUS:
         a = tokens_to_unsigned_int( question, 0, cfg.n_digits )
         b = tokens_to_unsigned_int( question, cfg.n_digits + 1, cfg.n_digits )
-        if a - b < 0:
-            return QType.MATH_SUB, MathsBehavior.SUB_NG_TAG
+        if a - b >= 0:
+            # Answer is zero or positive. Return SUB_M0_TAG to SUB_M4_TAG
+            
+            # Locate the BO and MZ digits (if any)
+            bo = torch.zeros(cfg.n_digits).to(torch.int64)
+            mz = torch.zeros(cfg.n_digits).to(torch.int64)
+            for dn in range(cfg.n_digits):
+                ddn = dn + cfg.n_digits + 1
+                if inputs[dn] - inputs[ddn] < 0:
+                    bo[cfg.n_digits-1-dn] = 1
+                if inputs[dn] - inputs[ddn] == 0:
+                    mz[cfg.n_digits-1-dn] = 1
 
-        # Locate the BO and MZ digits (if any)
-        bo = torch.zeros(cfg.n_digits).to(torch.int64)
-        mz = torch.zeros(cfg.n_digits).to(torch.int64)
-        for dn in range(cfg.n_digits):
-            if inputs[dn] - inputs[dn + cfg.n_digits + 1] < 0:
-                bo[cfg.n_digits-1-dn] = 1
-            if inputs[dn] - inputs[dn + cfg.n_digits +1] == 0:
-                mz[cfg.n_digits-1-dn] = 1
+            # Evaluate BaseSub questions - when no column generates a Borrow One
+            if torch.sum(bo) == 0:
+                return QType.MATH_SUB, MathsBehavior.SUB_M0_TAG
 
-        # Evaluate BaseSub questions - when no column generates a Borrow One
-        if torch.sum(bo) == 0:
-            return QType.MATH_SUB, MathsBehavior.SUB_S0_TAG
+            # Evaluate subtraction "cascade multiple steps" questions
+            for dn in range(cfg.n_digits-3):
+                if bo[dn] == 1 and mz[dn+1] == 1 and mz[dn+2] == 1 and mz[dn+3] == 1:
+                    return QType.MATH_SUB, MathsBehavior.SUB_M4_TAG # BO cascades 3 or more digits
 
-        # Evaluate subtraction "cascade multiple steps" questions
-        for dn in range(cfg.n_digits-3):
-            if bo[dn] == 1 and mz[dn+1] == 1 and mz[dn+2] == 1 and mz[dn+3] == 1:
-                return QType.MATH_SUB, "M4+" # BO cascades 3 or more digits
+            # Evaluate subtraction "cascade multiple steps" questions
+            for dn in range(cfg.n_digits-2):
+                if bo[dn] == 1 and mz[dn+1] == 1 and mz[dn+2] == 1:
+                    return QType.MATH_SUB, MathsBehavior.SUB_M3_TAG # BO cascades 2 or more digits
 
-        # Evaluate subtraction "cascade multiple steps" questions
-        for dn in range(cfg.n_digits-2):
-            if bo[dn] == 1 and mz[dn+1] == 1 and mz[dn+2] == 1:
-                return QType.MATH_SUB, MathsBehavior.SUB_S3_TAG # BO cascades 2 or more digits
+            # Evaluate subtraction "cascade 1" questions
+            for dn in range(cfg.n_digits-1):
+                if bo[dn] == 1 and mz[dn+1] == 1:
+                    return QType.MATH_SUB, MathsBehavior.SUB_M2_TAG # BO cascades 1 digit
 
-        # Evaluate subtraction "cascade 1" questions
-        for dn in range(cfg.n_digits-1):
-            if bo[dn] == 1 and mz[dn+1] == 1:
-                return QType.MATH_SUB, MathsBehavior.SUB_S2_TAG # BO cascades 1 digit
+            return QType.MATH_SUB, MathsBehavior.SUB_M1_TAG
+        else:
+            # Answer is negative. Return SUB_N1_TAG to SUB_N4_TAG
 
-        return QType.MATH_SUB, MathsBehavior.SUB_S1_TAG
+            # Locate the BO and MZ digits (if any)
+            bo = torch.zeros(cfg.n_digits).to(torch.int64)
+            mz = torch.zeros(cfg.n_digits).to(torch.int64)
+            max_question_digit = 0
+            for dn in range(cfg.n_digits):
+                ddn = dn + cfg.n_digits + 1   
+                an = cfg.n_digits - 1 - dn
+                if inputs[dn] - inputs[ddn] < 0: 
+                    bo[an] = 1
+                if inputs[dn] - inputs[ddn] == 0:
+                    mz[an] = 1
+                if inputs[dn] > 0 or inputs[ddn] > 0:
+                    max_question_digit = max(max_question_digit,an)
+            # MakeZeros are not interesting beyond the max_question_digit
+            dn = max_question_digit + 1
+            while dn < cfg.n_digits:
+                mz[dn] = 0
+                dn += 1
+
+            # To generate a negative answer, at least one column must generates a Borrow One
+            if torch.sum(bo) == 0:
+                print("get_question_complexity OP? exception", question)
+                return QType.UNKNOWN, MathsBehavior.UNKNOWN
+
+            # Evaluate subtraction "cascade multiple steps" questions
+            for dn in range(cfg.n_digits-3):
+                if max_question_digit >= dn+3 and bo[dn] == 1 and mz[dn+1] == 1 and mz[dn+2] == 1 and mz[dn+3] == 1:
+                    return QType.MATH_NEG, MathsBehavior.SUB_N4_TAG # BO cascades 3 or more digits
+
+            # Evaluate subtraction "cascade multiple steps" questions
+            for dn in range(cfg.n_digits-2):
+                if max_question_digit >= dn+2 and bo[dn] == 1 and mz[dn+1] == 1 and mz[dn+2] == 1:
+                    return QType.MATH_NEG, MathsBehavior.SUB_N3_TAG # BO cascades 2 or more digits
+
+            # Evaluate subtraction "cascade 1" questions
+            for dn in range(cfg.n_digits-1):
+                if max_question_digit >= dn and bo[dn] == 1 and mz[dn+1] == 1:
+                    return QType.MATH_NEG, MathsBehavior.SUB_N2_TAG # BO cascades 1 digit
+
+            return QType.MATH_NEG, MathsBehavior.SUB_N1_TAG
 
 
     # Should never get here
@@ -114,7 +158,7 @@ def get_maths_min_complexity(_, node, major_tag, minor_tag, num_shades):
 # Calculate a table of the known quanta for the specified position for each useful node
 def calc_maths_quanta_for_position_nodes(cfg, position):
 
-    columns = ["Posn meaning", "Node name", "Answer impact", "Algo purpose", "Attends to", "Min Add Complex", "Min Sub Complex", "Fail %"]
+    columns = ["Posn meaning", "Node name", "Answer impact", "Algo purpose", "Attends to", "Min Add Complex", "Min Sub Complex", "Min Neg Complex", "Fail %"]
     text_data = None
     shade_data = None
 
@@ -127,6 +171,7 @@ def calc_maths_quanta_for_position_nodes(cfg, position):
         node_attention, attention_shade = get_quanta_attention( cfg, node, QType.ATTN.value, "", ATTN_SHADES )
         node_add_complexity, add_complexity_shade = get_maths_min_complexity( cfg, node, QType.MATH_ADD.value, "", MATH_ADD_SHADES)
         node_sub_complexity, sub_complexity_shade = get_maths_min_complexity( cfg, node, QType.MATH_SUB.value, "", MATH_SUB_SHADES)
+        node_neg_complexity, neg_complexity_shade = get_maths_min_complexity( cfg, node, QType.MATH_NEG.value, "", MATH_SUB_SHADES)
         node_fail_perc, fail_perc_shade = get_quanta_fail_perc( cfg, node, QType.FAIL.value, "", FAIL_SHADES)
 
         shade_array = [0, 0, 
@@ -135,13 +180,14 @@ def calc_maths_quanta_for_position_nodes(cfg, position):
             1.0 * attention_shade / ATTN_SHADES, 
             1.0 * add_complexity_shade / MATH_ADD_SHADES, 
             1.0 * sub_complexity_shade / MATH_SUB_SHADES, 
+            1.0 * neg_complexity_shade / MATH_SUB_SHADES, 
             1.0 * fail_perc_shade / FAIL_SHADES]
         if shade_data is None:
             shade_data = [shade_array]            
         else:
             shade_data += [shade_array]
 
-        text_array = [position_meaning, node_name, node_impact, node_algorithm_purpose, node_attention, node_add_complexity, node_sub_complexity, node_fail_perc]
+        text_array = [position_meaning, node_name, node_impact, node_algorithm_purpose, node_attention, node_add_complexity, node_sub_complexity, node_neg_complexity, node_fail_perc]
         if text_data is None:
             text_data = [text_array]
         else:
@@ -149,7 +195,7 @@ def calc_maths_quanta_for_position_nodes(cfg, position):
             
 
     if not text_data is None:
-        _, ax = plt.subplots(figsize=(16,2))
+        _, ax = plt.subplots(figsize=(17,2))
         ax.axis('tight')
         ax.axis('off')
 
@@ -169,7 +215,7 @@ def calc_maths_quanta_for_position_nodes(cfg, position):
         for row in range(len(text_data)):
             for col in range(2, len(columns)):
                 if text_data[row][col] != "":
-                    the_color_map = specific_map if col <= 4 or col == 7 else standard_map 
+                    the_color_map = specific_map if col <= 4 or col == 8 else standard_map 
                     table[(row+1, col)].set_facecolor(pale_color(the_color_map(shade_data[row][col])))
 
 

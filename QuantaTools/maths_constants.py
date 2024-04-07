@@ -30,11 +30,16 @@ class MathsBehavior(Enum):
 
     # Minor "maths" tags related to major tag QType.MATH_SUB:
     # Subtraction operation "complexity" non-overlapping minor tags
-    SUB_S0_TAG = "M0" # Easy. No BorrowOne. Answer is positive
-    SUB_S1_TAG = "M1"
-    SUB_S2_TAG = "M2"
-    SUB_S3_TAG = "M3" # Hard. Multiple cascades of BorrowOne. Answer is positive
-    SUB_NG_TAG = "NG" # Hard. Subtraction question has negative answer
+    SUB_M0_TAG = "M0"  # Answer >= 0. No BorrowOne. Easy
+    SUB_M1_TAG = "M1"  # Answer > 0. Has one BorrowOne.  
+    SUB_M2_TAG = "M2"  # Answer > 0. 
+    SUB_M3_TAG = "M3"  # Answer > 0. 
+    SUB_M4_TAG = "M4+" # Answer > 0. Has multiple cascades of BorrowOne. Hard
+    # Minor "maths" tags related to major tag QType.MATH_NEG:
+    SUB_N1_TAG = "N1"  # Answer < 0. Includes one BorrowOne. E.g. 100-200
+    SUB_N2_TAG = "N2"  # Answer < 0. Includes two BorrowOnes. E.g. 110-200
+    SUB_N3_TAG = "N3"  # Answer < 0. Has multiple cascades of BorrowOne. Hard. E.g. 111-200    
+    SUB_N4_TAG = "N4+" # Answer < 0. Has multiple cascades of BorrowOne. Hard. E.g. 1111-2000   
 
     UNKNOWN = "Unknown"
     

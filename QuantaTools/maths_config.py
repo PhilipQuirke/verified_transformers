@@ -13,7 +13,7 @@ class MathsConfig(AlgoConfig):
 
         # Percent of questions that are multiplication, subtraction (rest are addition questions).
         self.perc_mult : int = 0 # e.g. 20
-        self.perc_sub : int = 0 # e.g. 80
+        self.perc_sub : int = 0 # e.g. 80 
 
         # Number of digits in the question e.g. 123456+123456=+0246912
         self.n_digits : int = 6

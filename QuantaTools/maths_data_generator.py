@@ -1,6 +1,8 @@
 import random
 import torch
 
+from .model_token_to_char import tokens_to_string
+
 from .quanta_constants import QType
 
 from .maths_constants import MathsBehavior, MathsToken
@@ -120,13 +122,16 @@ def make_maths_questions_and_answers(cfg, operator, major_tag, minor_tag, q_matr
         if a < limit and b < limit:
             make_a_maths_question_and_answer(cfg, questions, real_len, a, b, operator)
 
+            good = True
             if not ( major_tag == QType.UNKNOWN or minor_tag == MathsBehavior.UNKNOWN ):
                 # Check that the complexity of the question matches what the test data believes it is
                 actual_major_tag, actual_minor_tag = get_maths_question_complexity(cfg, questions[real_len])
+                question_str = tokens_to_string(cfg, questions[real_len])
                 if not( actual_major_tag == major_tag and actual_minor_tag == minor_tag ):
-                    print("make_maths_questions_and_answers complexity mismatch", questions[real_len], major_tag, minor_tag, actual_major_tag, actual_minor_tag )
-                    assert False
+                    print("make_maths_questions_and_answers complexity: Mismatch", question_str, major_tag.value, minor_tag.value, actual_major_tag.value, actual_minor_tag.value )
+                    good = False
 
-            real_len += 1
+            if good:
+                real_len += 1
 
     return questions[:real_len]

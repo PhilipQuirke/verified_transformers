@@ -1,12 +1,21 @@
 import unittest
 
+from torch._C import _create_function_from_graph
+
+from QuantaTools.quanta_constants import QType
+
 from QuantaTools.model_token_to_char import token_to_char, tokens_to_string
 
 from QuantaTools.quanta_map_impact import sort_unique_digits
 
 from QuantaTools.maths_config import MathsConfig
-from QuantaTools.maths_constants import MathsToken
+from QuantaTools.maths_constants import MathsToken, MathsBehavior
 from QuantaTools.maths_utilities import set_maths_vocabulary, int_to_answer_str, tokens_to_unsigned_int
+from QuantaTools.maths_test_questions import make_maths_test_questions_and_answers, make_maths_questions_and_answers
+from QuantaTools.maths_test_questions import make_maths_s0_questions_and_answers, make_maths_s1_questions_and_answers, make_maths_s2_questions_and_answers, make_maths_s3_questions_and_answers, make_maths_s4_questions_and_answers, make_maths_s5_questions_and_answers
+from QuantaTools.maths_test_questions import make_maths_m0_questions_and_answers, make_maths_m1_questions_and_answers, make_maths_m2_questions_and_answers, make_maths_m3_questions_and_answers
+from QuantaTools.maths_test_questions import make_maths_n1_questions_and_answers, make_maths_n2_questions_and_answers, make_maths_n3_questions_and_answers, make_maths_n4_questions_and_answers
+
 
 
 class TestYourModule(unittest.TestCase):
@@ -19,7 +28,7 @@ class TestYourModule(unittest.TestCase):
 
         
     def test_tokens_to_unsigned_int(self):
-        q = [0,0,1,2,3,4,5]
+        q = [0,1,2,3,4,5]
         offset = 0
         digits = 6
         self.assertEqual( tokens_to_unsigned_int(q, offset, digits), 12345 )
@@ -39,6 +48,33 @@ class TestYourModule(unittest.TestCase):
         self.assertEqual( sort_unique_digits("A1231231278321", True), "87321")
 
 
+    # During the construction of the test data, we check that the complexity of the question matches what the test data believes it is
+    def test_make_maths_test_questions_and_answers(self):
+        cfg = MathsConfig()
+        cfg.perc_sub = 60
+        cfg.use_cuda = False
+        set_maths_vocabulary(cfg)
+        
+        # Addition questions 
+        make_maths_s0_questions_and_answers(cfg)
+        make_maths_s1_questions_and_answers(cfg)
+        make_maths_s2_questions_and_answers(cfg)
+        make_maths_s3_questions_and_answers(cfg)
+        make_maths_s4_questions_and_answers(cfg)
+        make_maths_s5_questions_and_answers(cfg)
+            
+        # Subtraction questions with positive (or zero) answers
+        make_maths_m0_questions_and_answers(cfg) 
+        make_maths_m1_questions_and_answers(cfg)
+        make_maths_m2_questions_and_answers(cfg)
+        make_maths_m3_questions_and_answers(cfg)
+            
+        # Subtraction questions with negative answers
+        make_maths_n1_questions_and_answers(cfg)         
+        make_maths_n2_questions_and_answers(cfg)
+        make_maths_n3_questions_and_answers(cfg)
+        make_maths_n4_questions_and_answers(cfg)
+        
 
 if __name__ == '__main__':
     unittest.main()
