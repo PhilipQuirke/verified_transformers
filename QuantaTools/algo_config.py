@@ -50,7 +50,6 @@ class AlgoConfig(UsefulConfig):
         else:
             print("Clause invalid:", clause_name)
             self.num_algo_invalid_clauses += 1
-        
 
     # Show the fraction of hypothesis clauses that were valid
     def print_algo_clause_results(self):
