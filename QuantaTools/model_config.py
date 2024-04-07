@@ -47,6 +47,9 @@ class ModelConfig():
         self.token_position_meanings = []
   
         self.initialize_token_positions( 12, 7, True ) # Random values (based on 5 digit addition)
+        
+        # Should we use the GPU (if any) to speed up processing?
+        self.use_cuda = True
     
  
     def initialize_token_positions(self, num_question_positions, num_answer_positions, answer_meanings_ascend ):
