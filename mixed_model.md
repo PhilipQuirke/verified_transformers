@@ -11,9 +11,9 @@ We investigated model ins1_mix_d6_l3_h4_t40K which answers 6-digit addition and 
 - The first answer token is An+1 (aka A_max, aka **sign**, A7 for 6-digit questions). It is always "+" or "-" representing a positive or negative answer
 - Model must pay attention to the **operator** token (+ or -) to understand whether to do a addition or subtraction calculation
 - Model must accurately predict three distinct classes of questions:
-  - Addition : Answer is positive. A_max is "+" 
-  - Subtraction where D >= D' : Answer is positive. A_max is "+". Aka positive-answer-subtraction.    
-  - Subtraction where D < D' : Answer is negative. A_max is "-". Aka negative-answer-subtraction.
+  - Addition : Answer is positive. A_max is "+". Aka ADD
+  - Subtraction where D >= D' : Answer is positive. A_max is "+". Aka positive-answer-subtraction. Aka SUB 
+  - Subtraction where D < D' : Answer is negative. A_max is "-". Aka negative-answer-subtraction. Aka NEG
 - For subtraction questions:
   - The model must determine if D < D' before token A_max
   - D < D' is calculated as Dn < D'n or (Dn = D'n and (Dn-1 < D'n-1 or (Dn-2 = D'n-1 and ( ...
@@ -26,9 +26,9 @@ We investigated model ins1_mix_d6_l3_h4_t40K which answers 6-digit addition and 
 
 ## Hypothesis 1 (Deprecated)
 Our first hypothesis was that the model handles three classes of questions as follows:
-- Addition: Uses same tasks (BA, MC, US, DnCm) as addition model.
-- Subtraction with a positive answer: Uses tasks that mirror the addition tasks (BS, BO, MZ, etc)
-- Subtraction with a negative answer: Using the mathematics rule A-B = -(B-A), uses above case to do the bulk of the work 
+- ADD: Addition in this mixed model uses the same tasks (BA, MC, US, DnCm) as addition model.
+- SUB: Subtraction with a positive answer uses tasks that mirror the addition tasks (BS, BO, MZ, etc)
+- NEG: Subtraction with a negative answer uses the mathematics rule A-B = -(B-A), uses above case to do the bulk of the work 
 
 Specifically, our hypothesis is that the model's algorithm steps are:
 - H1: Pays attention to the +- question operator (using OP task)
@@ -59,26 +59,26 @@ Overall we prefer hypothesis 2
 
 ## Hypothesis 2
 Our second hypothesis is that the model handles three classes of questions as peers:
-- Addition: Uses same tasks (BA, MC, US, DnCm) as addition model.
-- Subtraction with positive answer: Uses tasks that mirror the addition tasks (BS, BO, MZ, etc)
-- Subtraction with negative answer: Using a third set of tasks (NS, TBA, TBA, etc)
-- 
+- ADD: Addition in mixed model uses same tasks (BA, MC, US, DnCm) as addition model.
+- SUB: Subtraction with positive answer uses tasks that mirror the addition tasks (BS, BO, MZ, etc)
+- NEG: Subtraction with negative answer usies a third set of tasks (NS, TBA, TBA, etc)
+
 Our second hypothesis is that the model's algorithm steps for n-digit are:
 - H1: Store the question operator (+ or -)
 - H2A: If operator is +, uses addition-specific TriCase, TriAdd as per Paper 2 to give Dn.C and Dn.Cm
-- H2B: If operator is -, calculate if D > D' using unknown functions XXX, YYY, ZZZ similar toTriCase, TriAdd
+- H2B: If operator is -, calculate if D > D' using unknown functions TBA, TBA similar toTriCase, TriAdd
 - H3: Calculate A_max as : + if operator is + else + if D > D' else -
-- H4: Calculate An as : Dn.Cm if operator is + else XXXn.YYYm if D > D' else XXXn.ZZZm
+- H4: Calculate An as : Dn.Cm if operator is + else TBAn.TBAm if D > D' else TBAn.TBAm
 - H5: From token position An-1, model calculates answer digit An-2 as:
   - H5A: Attention head calculates combined BA/BS/NS output
-  - H5B: Attention head calculates combined MC/BO/UU output.
+  - H5B: Attention head calculates combined MC/BO/TBA output.
   - H5C: If operator is +, (so Amax is +), attention head selects BA, MC and Dn.Cm. MLP0 layer combines to give An-2 
-  - H5D: If operator is -, and Amax is +, attention head selects BS, BO and XXXn.YYYm. MLP1 layer combines to give An-2
-  - H5E: If operator is -, and Amax is -, attention head selects NS, UU and XXXn.ZZZm. MLP2 layer combines to give An-2
+  - H5D: If operator is -, and Amax is +, attention head selects BS, BO and BAn.TBAm. MLP1 layer combines to give An-2
+  - H5E: If operator is -, and Amax is -, attention head selects NS, UU and BAn.TBAm. MLP2 layer combines to give An-2
    
 Questions/Thoughts:
 - This hypothesis is more parallel (a good thing)
-- This hypothesis treats addition, positive-answer-subtraction and negative-answer-subtraction as three "peer" question classes (a good thing).
+- This hypothesis treats ADD, SUB and NEG as three "peer" question classes (a good thing).
 - We assume that the mixed model has upgraded the BA nodes to be BA/BS/NS nodes that calculate 3 "answers" for each pair of input digits. Later:
   - An addition-specific node promotes (selects) the BA answer when the operator is "+"
   - A positive-answer-subtraction-specific node promotes the BS answer when the operator is "-" and D > D'
@@ -86,4 +86,26 @@ Questions/Thoughts:
 - We assume that the mixed model has upgraded the Dn.C and Dn.Cm nodes in a similar way to cope with the 3 cases
   - We assume that some nodes promotes (selects) the desired answer (paralleling the BA/BS/NS promotion technique)
 
-Part 27 in VerifiedArithmeticAnalyse.ipynb investigates this hypothesis.
+## Hypothesis 2: Calculating A2
+Part 27A "Calculating answer digit A2 in token position A3" in VerifiedArithmeticAnalyse.ipynb investigates step H5
+
+From the quanta map information:
+- Two attention heads (P18L0H1 and P18L0H2) form a virtual node together and performs the A2.BA, A2.BS and A2.NS tasks.
+  - Its output is used (shared) in Add, Sub and Neg question predictions.
+  - TODO: How is the output data represented?   
+- A attention head (P18L0H0) performs the A1.MC and A1.BO tasks.
+  - TODO: Create a "NEG" version of the BO task, and test to see if this node does this task too. 
+  - Its output is used (shared) in Add, Sub and (maybe) Neg question predictions.
+  - TODO: How is the output data represented?   
+- Two attention heads are specific to Add (e.g. P18L1H2, P18L1H3).
+  - Both attend to the = token, which is when the sign (+ or -) is calculated.
+  - TODO: Is this where the output from the P18L0H* are "filtered" to promote ADD-specific data?
+  - (There are no heads, used in addition, that attend to the operator token.)
+  - One head (P18L1H3) attends to A3, likely accessing information calculated in P18L0H*
+- Three attention heads are specific to Sub+Neg (e.g. P18L0H3, P18L1H0, P18L1H1).
+  - One head (P18L0H3) attend to the Op (+/-) token.
+  - One head (P18L1H1) attends to the = token, which is when the sign (+ or -) is calculated.
+  - One head (P18L1H0) attends to A3, likely accessing information calculated in P18L0H*
+
+
+
