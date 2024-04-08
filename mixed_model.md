@@ -86,17 +86,21 @@ Questions/Thoughts:
 - We assume that the mixed model has upgraded the Dn.C and Dn.Cm nodes in a similar way to cope with the 3 cases
   - We assume that some nodes promotes (selects) the desired answer (paralleling the BA/BS/NS promotion technique)
 
-## Hypothesis 2: Calculating A2
-Part 27A "Calculating answer digit A2 in token position A3" in VerifiedArithmeticAnalyse.ipynb investigates step H5
+## Hypothesis 2 step H5: Calculating A2
+Part 27A "Calculating answer digit A2 in token position A3" in VerifiedArithmeticAnalyse.ipynb investigates Hypothesis 2 step H5
 
 From the quanta map information:
 - Two attention heads (P18L0H1 and P18L0H2) form a virtual node together and performs the A2.BA, A2.BS and A2.NS tasks.
   - Its output is used (shared) in Add, Sub and Neg question predictions.
   - TODO: How is the output data represented?   
-- A attention head (P18L0H0) performs the A1.MC and A1.BO tasks.
+- One attention head (P18L0H0) performs the A1.MC and A1.BO tasks.
   - TODO: Create a "NEG" version of the BO task, and test to see if this node does this task too. 
   - Its output is used (shared) in Add, Sub and (maybe) Neg question predictions.
-  - TODO: How is the output data represented?   
+  - TODO: How is the output data represented?
+- With BA/BS/NS and MC/BO/TBA data available, the model needs perfectly accurate DnCm/TBA/TBA information:
+  - Assume the perfectly accurate DnCm/TBA/TBA information is calculated in early token positions.    
+  - To be accurate, at this token position (P18), the model must pull in D2C3/TBA/TBA information.
+  - TODO: Which nodes pull in the D2C3/TBA/TBA information?    
 - Two attention heads are specific to Add (e.g. P18L1H2, P18L1H3).
   - Both attend to the = token, which is when the sign (+ or -) is calculated.
   - TODO: Is this where the output from the P18L0H* are "filtered" to promote ADD-specific data?
