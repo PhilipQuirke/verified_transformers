@@ -24,8 +24,13 @@ We investigation model ins1_mix_d6_l3_h4_t40K which answers 6-digit question. So
   - Uses tasks Base Add (BA), Make Carry 1 (MC) and Use Sum 9 (US)
   - Determines if the first numeric token of the answer (An) is 1 or 0 just in time at token position An+1
 
-## Hypothesis 1
-Our first hypothesis was that the model's algorithm steps are:
+## Hypothesis 1 (Deprecated)
+Our first hypothesis was that the model handles three classes of questions as follows:
+- Addition: Uses same tasks (BA, MC, US, DnCm) as addition model.
+- Subtraction with positive answer: Uses tasks that mirror the addition tasks (BS, BO, MZ, etc)
+- Subtraction with negative answer: Using the mathematics rule A-B = -(B-A), uses above case to do the bulk of the work 
+
+Specifically, our hypothesis is that the model's algorithm steps are:
 - H1: Pays attention to the +- question operator (using OP task)
 - If operator is "+" then
   - H2: Does addition using BA, MC, US & TC tasks
@@ -49,28 +54,34 @@ Questions/Thoughts:
 - H6 seems unlikely as it requires two passes.
   - H6 implies the model learns positive-answer-subtraction before learns negative-answer-subtraction. This seems unlikely. Models prefer to learn in parallel
   - Has model learnt a single pass approach? Seems more likely as the layer 0 attention heads are used for BA/MC and BS/BO etc. What is that method?
-- Overall we prefer hypothesis 2    
+
+Overall we prefer hypothesis 2    
 
 ## Hypothesis 2
-Our second hypothesis is that the model's algorithm steps are:
-- H1: Store the question operator
-- H2: If operator is -, calculates if D > D' using unknown functions XXX, YYY, ZZZ
-- H3: If operator is +, uses addition-specific TriCase, TriAdd as per Paper 2 to give Dn.C and Dn.Cm
-- H4: Calculate A_max as : + if operator is + else + if D > D' else -
-- H5: Calculate An as : Dn.Cm if operator is + else XXXn.YYYm if D > D' else XXXn.ZZZm
-- H6: From An-1, model calculates An-2 as:
-  - H7: Attention head calculates combined BA/BS/TT output
-  - H8: Attention head calculates combined MC/BO/UU output.
-  - H9: If operator is +, (and Amax is +), attention head selects BA, MC and Dn.Cm. MLP0 layer combines to give An-2 
-  - H10: If operator is -, and Amax is +, attention head selects BS, BO and XXXn.YYYm. MLP1 layer combines to give An-2
-  - H11: If operator is -, and Amax is -, attention head selects TT, UU and XXXn.ZZZm. MLP2 layer combines to give An-2
+Our second hypothesis is that the model handles three classes of questions as peers:
+- Addition: Uses same tasks (BA, MC, US, DnCm) as addition model.
+- Subtraction with positive answer: Uses tasks that mirror the addition tasks (BS, BO, MZ, etc)
+- Subtraction with negative answer: Using a third set of tasks (NS, TBA, TBA, etc)
+- 
+Our second hypothesis is that the model's algorithm steps for n-digit are:
+- H1: Store the question operator (+ or -)
+- H2A: If operator is +, uses addition-specific TriCase, TriAdd as per Paper 2 to give Dn.C and Dn.Cm
+- H2B: If operator is -, calculate if D > D' using unknown functions XXX, YYY, ZZZ similar toTriCase, TriAdd
+- H3: Calculate A_max as : + if operator is + else + if D > D' else -
+- H4: Calculate An as : Dn.Cm if operator is + else XXXn.YYYm if D > D' else XXXn.ZZZm
+- H5: From token position An-1, model calculates answer digit An-2 as:
+  - H5A: Attention head calculates combined BA/BS/NS output
+  - H5B: Attention head calculates combined MC/BO/UU output.
+  - H5C: If operator is +, (so Amax is +), attention head selects BA, MC and Dn.Cm. MLP0 layer combines to give An-2 
+  - H5D: If operator is -, and Amax is +, attention head selects BS, BO and XXXn.YYYm. MLP1 layer combines to give An-2
+  - H5E: If operator is -, and Amax is -, attention head selects NS, UU and XXXn.ZZZm. MLP2 layer combines to give An-2
    
 Questions/Thoughts:
 - This hypothesis is more parallel (a good thing)
 - This hypothesis treats addition, positive-answer-subtraction and negative-answer-subtraction as three "peer" question classes (a good thing).
-- We assume that the mixed model has upgraded the BA nodes to be BA/BS/TT nodes that calculate 3 "answers" for each pair of input digits. Later:
+- We assume that the mixed model has upgraded the BA nodes to be BA/BS/NS nodes that calculate 3 "answers" for each pair of input digits. Later:
   - An addition-specific node promotes (selects) the BA answer when the operator is "+"
   - A positive-answer-subtraction-specific node promotes the BS answer when the operator is "-" and D > D'
-  - A negative-answer-subtraction-specific node promotes the TT answer when the operator is "-" and D < D'
+  - A negative-answer-subtraction-specific node promotes the NS answer when the operator is "-" and D < D'
 - We assume that the mixed model has upgraded the Dn.C and Dn.Cm nodes in a similar way to cope with the 3 cases
-  - We assume that some nodes promotes (selects) the desired answer (paralleling the BA/BS/TT promotion technique) 
+  - We assume that some nodes promotes (selects) the desired answer (paralleling the BA/BS/NS promotion technique) 
