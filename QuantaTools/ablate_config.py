@@ -11,6 +11,7 @@ class AblateConfig():
         self.reset_intervention()
         self.reset_intervention_totals()
         self.show_test_failures = False
+        self.show_test_successes = False
 
 
     def reset_ablate(self):
@@ -59,6 +60,9 @@ class AblateConfig():
         self.intervened_answer = ""
         self.intervened_impact = NO_IMPACT_TAG
 
+        # Auto-generated description of the ablation experiment 
+        self.ablate_description = ""
+        
         self.abort = False
 
 
