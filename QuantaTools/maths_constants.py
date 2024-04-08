@@ -18,6 +18,7 @@ class MathsBehavior(Enum):
     # PCA says the node outputs is interpretable aligned to the T8,T9,T10 questions, giving 2 or 3 distinct output clusters
     PCA_ADD_TAG = "PA"
     PCA_SUB_TAG = "PS"
+    PCA_NEG_TAG = "PN"
 
     # Minor "maths" tags related to major tag QType.MATH_ADD:
     # Addition operation "complexity" non-overlapping minor tags
@@ -53,10 +54,12 @@ class MathsAlgorithm(Enum):
     ADD_US_TAG = "US" # Addition - Use Sum 9 (Dn, D'n)
     ADD_AC_TAG = "AC" # Addition - TriCase (Dn, D'n)
   
-    SUB_BS_TAG = "BS" # Subtraction - Base Sub (Dn, D'n)
-    SUB_BO_TAG = "BO" # Subtraction - Borrow One (Dn, D'n)
-    SUB_SZ_TAG = "SZ" # Subtraction - Sum Zero (Dn, D'n)
-    SUB_SC_TAG = "SC" # Subtraction - TriCase (Dn, D'n)
+    SUB_BS_TAG = "BS" # Positive-answer Subtraction - Base Sub (Dn, D'n)
+    SUB_BO_TAG = "BO" # Positive-answer Subtraction - Borrow One (Dn, D'n)
+    SUB_SZ_TAG = "SZ" # Positive-answer Subtraction - Sum Zero (Dn, D'n)
+    SUB_SC_TAG = "SC" # Positive-answer Subtraction - TriCase (Dn, D'n)
+
+    NEG_NS_TAG = "NS" # Negative-answer Subtraction - Neg Sub (Dn, D'n)
   
     MIX_OP_TAG = "OP" # Add/Sub - Attends to operation token (in the middle of the question)
     MIX_SG_TAG = "SG" # Add/Sub - Attends to answer sign (+/-) token (at the start of the answer)
