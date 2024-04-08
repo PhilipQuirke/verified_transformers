@@ -2,18 +2,18 @@
 What algorithm has a trained mixed (addition and subtraction) model learnt that allows to perform both addition and subtraction accurately?
 
 ## Initial facts and working assumptions
-We investigation model ins1_mix_d6_l3_h4_t40K which answers 6-digit question. Some initial thoughts:
+We investigated model ins1_mix_d6_l3_h4_t40K which answers 6-digit addition and subtraction question. Some initial thoughts:
 - Read section 4.3 of https://arxiv.org/pdf/2402.02619.pdf
 - For an n digit question the answer is n+2 tokens long e.g. 66666+66666=+1333332
   - We name the answer tokens An+1 to A0 
 - We assume model is accurate (We know it can do 1M Qs for add and sub. This is evidence not proof of accuracy)
-  - We assume each answer token is accurate    
-- The first answer token is An+1 (aka A_max, A7 for 6-digit questions) is always "+" or "-" representing a positive or negative answer
+  - So we assume each answer token is accurate    
+- The first answer token is An+1 (aka A_max, aka **sign**, A7 for 6-digit questions). It is always "+" or "-" representing a positive or negative answer
 - Model must pay attention to the **operator** token (+ or -) to understand whether to do a addition or subtraction calculation
 - Model must accurately predict three distinct classes of questions:
   - Addition : Answer is positive. A_max is "+" 
-  - Subtraction where D >= D' : Answer is positive. A_max is "+"    
-  - Subtraction where D < D' : Answer is negative. A_max is "-"
+  - Subtraction where D >= D' : Answer is positive. A_max is "+". Aka positive-answer-subtraction.    
+  - Subtraction where D < D' : Answer is negative. A_max is "-". Aka negative-answer-subtraction.
 - For subtraction questions:
   - The model must determine if D < D' before token A_max
   - D < D' is calculated as Dn < D'n or (Dn = D'n and (Dn-1 < D'n-1 or (Dn-2 = D'n-1 and ( ...
@@ -27,8 +27,8 @@ We investigation model ins1_mix_d6_l3_h4_t40K which answers 6-digit question. So
 ## Hypothesis 1 (Deprecated)
 Our first hypothesis was that the model handles three classes of questions as follows:
 - Addition: Uses same tasks (BA, MC, US, DnCm) as addition model.
-- Subtraction with positive answer: Uses tasks that mirror the addition tasks (BS, BO, MZ, etc)
-- Subtraction with negative answer: Using the mathematics rule A-B = -(B-A), uses above case to do the bulk of the work 
+- Subtraction with a positive answer: Uses tasks that mirror the addition tasks (BS, BO, MZ, etc)
+- Subtraction with a negative answer: Using the mathematics rule A-B = -(B-A), uses above case to do the bulk of the work 
 
 Specifically, our hypothesis is that the model's algorithm steps are:
 - H1: Pays attention to the +- question operator (using OP task)
@@ -84,4 +84,6 @@ Questions/Thoughts:
   - A positive-answer-subtraction-specific node promotes the BS answer when the operator is "-" and D > D'
   - A negative-answer-subtraction-specific node promotes the NS answer when the operator is "-" and D < D'
 - We assume that the mixed model has upgraded the Dn.C and Dn.Cm nodes in a similar way to cope with the 3 cases
-  - We assume that some nodes promotes (selects) the desired answer (paralleling the BA/BS/NS promotion technique) 
+  - We assume that some nodes promotes (selects) the desired answer (paralleling the BA/BS/NS promotion technique)
+
+Part 27 in VerifiedArithmeticAnalyse.ipynb investigates this hypothesis.
