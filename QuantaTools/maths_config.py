@@ -85,3 +85,10 @@ class MathsConfig(AlgoConfig):
     # Return string like "ins1_mix_d6_l3_h4_t40K"
     def file_config_prefix(self):
         return self.insert_config_description() + self.op_config_description() + self.long_config_description()
+    
+
+    # Return integer 444444 for 6 digit number
+    def repeat_digit(self, digit):
+        return int(str(digit) * self.n_digits)
+
+

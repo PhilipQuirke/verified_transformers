@@ -74,7 +74,14 @@ class TestYourModule(unittest.TestCase):
         make_maths_n2_questions_and_answers(cfg)
         make_maths_n3_questions_and_answers(cfg)
         make_maths_n4_questions_and_answers(cfg)
+      
+  
+    def test_repeat_digit(self):
+        cfg = MathsConfig()
+        cfg.n_digits = 6
         
+        self.assertEqual( cfg.repeat_digit(4), 444444)
+
 
 if __name__ == '__main__':
     unittest.main()
