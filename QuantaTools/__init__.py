@@ -48,5 +48,7 @@ from .maths_algo_search import run_intervention_core, run_strong_intervention, r
     add_ss_tag, add_ss_prereqs, add_ss_test, \
     add_sc_tag, add_sc_prereqs, add_sc_test, \
     add_sa_tag, add_sa_prereqs, add_sa_test, \
-    add_st_tag, add_st_prereqs, add_st_test    
+    add_st_tag, add_st_prereqs, add_st_test, \
+    sub_md_tag, sub_md_prereqs, sub_md_test, \
+    sub_mb_tag, sub_mb_prereqs, sub_mb_test
     

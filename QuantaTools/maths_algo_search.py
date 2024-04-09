@@ -192,11 +192,11 @@ def add_sa_tag(impact_digit):
 
 # Node rerequisites for addition "Simple Add" (SA) task
 def add_sa_prereqs(cfg, position, impact_digit):
-    # Impacts An and pays attention to Dn and D'n
+    # Pays attention to Dn and D'n. Impacts An
     return math_common_prereqs(cfg, position, impact_digit, impact_digit)
 
 
-def add_sa_test1(cfg, acfg, alter_digit):
+def add_sa_test1(cfg, alter_digit):
     # 222222 + 111111 = +333333. No Dn.SC
     store_question = [cfg.repeat_digit(2), cfg.repeat_digit(1)]
 
@@ -209,7 +209,7 @@ def add_sa_test1(cfg, acfg, alter_digit):
     return store_question, clean_question, intervened_answer
 
 
-def add_sa_test2(cfg, acfg, alter_digit):
+def add_sa_test2(cfg, alter_digit):
     # 222222 + 666666 = +888888. No Dn.SC
     store_question = [cfg.repeat_digit(2), cfg.repeat_digit(6)]
 
@@ -226,10 +226,10 @@ def add_sa_test2(cfg, acfg, alter_digit):
 def add_sa_test(cfg, acfg, node_locations, alter_digit, strong):
     intervention_impact = answer_name(alter_digit)
 
-    store_question, clean_question, intervened_answer = add_sa_test1(cfg, acfg, alter_digit)
+    store_question, clean_question, intervened_answer = add_sa_test1(cfg, alter_digit)
     success1, _, impact_success1 = run_strong_intervention(cfg, acfg, node_locations, store_question, clean_question, MathsToken.PLUS, intervention_impact, intervened_answer)
 
-    store_question, clean_question, intervened_answer = add_sa_test2(cfg, acfg, alter_digit)
+    store_question, clean_question, intervened_answer = add_sa_test2(cfg, alter_digit)
     success2, _, impact_success2 = run_strong_intervention(cfg, acfg, node_locations, store_question, clean_question, MathsToken.PLUS, intervention_impact, intervened_answer)
 
     success = (success1 and success2) if strong else (impact_success1 and impact_success2)
@@ -272,3 +272,98 @@ def add_st_test(cfg, acfg, node_locations, focus_digit, strong):
         print("Test confirmed", description, "Impact:", acfg.intervened_impact, "" if strong else "Weak")
 
     return success
+
+
+# Tag for positive-answer subtraction "Difference" (MD) tasks e.g. 666666-222222=+0444444 where D3 >= D'3
+def sub_md_tag(impact_digit):
+    return answer_name(impact_digit) + "." + MathsAlgorithm.SUB_D_TAG.value
+
+
+# Prerequisites for positive-answer subtraction "Difference" (MD) tasks 
+def sub_md_prereqs(cfg, position, impact_digit):
+    # Pays attention to Dn and D'n. Impacts An
+    return math_common_prereqs(cfg, position, impact_digit, impact_digit)
+
+
+def sub_md_test1(cfg, alter_digit):
+    # 333333 - 111111 = +222222. No Dn.MB
+    store_question = [cfg.repeat_digit(3), cfg.repeat_digit(1)]
+
+    # 999999 - 444444 = +555555. No DN.MB
+    clean_question = [cfg.repeat_digit(9), cfg.repeat_digit(4)]
+
+    # When we intervene we expect answer +555255
+    intervened_answer = clean_question[0] - clean_question[1] + (2-5) * 10 ** alter_digit
+
+    return store_question, clean_question, intervened_answer
+
+
+def sub_md_test2(cfg, alter_digit):
+    # 666666 - 222222 = +444444. No DN.MB
+    store_question = [cfg.repeat_digit(6), cfg.repeat_digit(2)]
+
+    # 999999 - 333333 = +666666. No DN.MB
+    clean_question = [cfg.repeat_digit(9), cfg.repeat_digit(3)]
+
+    # When we intervene we expect answer +666466
+    intervened_answer = clean_question[0] - clean_question[1] + (4-6) * 10 ** alter_digit
+
+    return store_question, clean_question, intervened_answer
+
+
+# Intervention ablation test for positive-answer subtraction "Difference" (MD) tasks 
+def sub_md_test(cfg, acfg, node_locations, alter_digit, strong):
+    intervention_impact = answer_name(alter_digit)
+
+    store_question, clean_question, intervened_answer = sub_md_test1(cfg, alter_digit)
+    success1, _, impact_success1 = run_strong_intervention(cfg, node_locations, store_question, clean_question, MathsToken.MINUS, intervention_impact, intervened_answer)
+
+    store_question, clean_question, intervened_answer = sub_md_test2(cfg, alter_digit)
+    success2, _, impact_success2 = run_strong_intervention(cfg, node_locations, store_question, clean_question, MathsToken.MINUS, intervention_impact, intervened_answer)
+
+    success = (success1 and success2) if strong else (impact_success1 and impact_success2)
+
+    if success:
+        print( "Test confirmed", acfg.node_names(), "perform D"+str(alter_digit)+".MD = (D"+str(alter_digit)+" + D'"+str(alter_digit)+") % 10 impacting "+intervention_impact+" accuracy.", "" if strong else "Weak")
+
+    return success
+
+
+# Tag for positive-answer subtraction "Borrow One" (MB) task e.g. 222222-111311=+0110911 where D2 > D'2
+def sub_mb_tag(impact_digit):
+    return answer_name(impact_digit-1)  + "." + MathsAlgorithm.SUB_B_TAG.value    
+
+
+# Prerequisites for positive-answer subtraction "Borrow One" (MB) task
+def sub_mb_prereqs(cfg, position, impact_digit):
+    # Pays attention to Dn-1 and D'n-1. Impacts An    
+    return math_common_prereqs(cfg,  position, impact_digit-1, impact_digit)
+
+
+# Intervention ablation test for positive-answer subtraction "Borrow One" (MB) task
+def sub_mb_test(cfg, acfg, node_locations, impact_digit, strong):
+    alter_digit = impact_digit - 1
+
+    if alter_digit < 0 or alter_digit >= cfg.n_digits:
+        acfg.reset_intervention()
+        return False
+
+    intervention_impact = answer_name(impact_digit)
+
+    # 222222 - 111311 = +0110911. Has Dn.MB
+    store_question = [cfg.repeat_digit(2), cfg.repeat_digit(1)]
+    store_question[1] += (3 - 1) * (10 ** alter_digit)
+
+    # 777777 - 444444 = +0333333. No Dn.MB
+    clean_question = [cfg.repeat_digit(7), cfg.repeat_digit(4)]
+
+    # When we intervene we expect answer +0332333
+    intervened_answer = clean_question[0] - clean_question[1] - 10 ** (alter_digit+1)
+
+    success, _, _ = run_strong_intervention(cfg, acfg, node_locations, store_question, clean_question, MathsToken.MINUS, intervention_impact, intervened_answer)
+
+    if success:
+        print( "Test confirmed", acfg.node_names(), "perform D"+str(alter_digit)+".MB impacting "+intervention_impact+" accuracy.", "" if strong else "Weak")
+        
+    return success
+
