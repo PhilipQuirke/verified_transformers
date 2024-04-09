@@ -83,7 +83,7 @@ def run_weak_intervention(cfg, acfg, node_locations, store_question, clean_quest
 
 
 # A test function that always suceeds 
-def succeed_test(node_locations, alter_digit, strong):
+def succeed_test(cfg, acfg, node_locations, alter_digit, strong):
     print( "Test confirmed", node_locations[0].name(), node_locations[1].name() if len(node_locations)>1 else "", "" if strong else "Weak")
     return True
 
