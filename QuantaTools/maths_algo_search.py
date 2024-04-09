@@ -224,6 +224,8 @@ def add_sa_test2(cfg, alter_digit):
 
 # Intervention ablation test for addition "Simple Add" (SA) task
 def add_sa_test(cfg, acfg, node_locations, alter_digit, strong):
+    # Note: MD and SA give the same result when D'=0 or D=D'=5. We avoid ablation tests like this.
+
     intervention_impact = answer_name(alter_digit)
 
     store_question, clean_question, intervened_answer = add_sa_test1(cfg, alter_digit)
@@ -313,13 +315,15 @@ def sub_md_test2(cfg, alter_digit):
 
 # Intervention ablation test for positive-answer subtraction "Difference" (MD) tasks 
 def sub_md_test(cfg, acfg, node_locations, alter_digit, strong):
+    # Note: MD and SA give the same result when D'=0 or D=D'=5. We avoid ablation tests like this.
+    
     intervention_impact = answer_name(alter_digit)
 
     store_question, clean_question, intervened_answer = sub_md_test1(cfg, alter_digit)
-    success1, _, impact_success1 = run_strong_intervention(cfg, node_locations, store_question, clean_question, MathsToken.MINUS, intervention_impact, intervened_answer)
+    success1, _, impact_success1 = run_strong_intervention(cfg, acfg, node_locations, store_question, clean_question, MathsToken.MINUS, intervention_impact, intervened_answer)
 
     store_question, clean_question, intervened_answer = sub_md_test2(cfg, alter_digit)
-    success2, _, impact_success2 = run_strong_intervention(cfg, node_locations, store_question, clean_question, MathsToken.MINUS, intervention_impact, intervened_answer)
+    success2, _, impact_success2 = run_strong_intervention(cfg, acfg, node_locations, store_question, clean_question, MathsToken.MINUS, intervention_impact, intervened_answer)
 
     success = (success1 and success2) if strong else (impact_success1 and impact_success2)
 

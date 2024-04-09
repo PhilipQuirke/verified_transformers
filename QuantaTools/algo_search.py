@@ -66,7 +66,14 @@ def search_and_tag_digit(cfg, acfg, prerequisites_function, the_impact_digit, te
 
 
 # For each answer digit, for each useful position, search the related useful node(s), using the test_function, for the expected impact on the_impact_digit. We may do 2 passes.
-def search_and_tag(cfg, acfg, prerequisites_function, test_function, tag_function, do_pair_search, do_weak_search, from_position = -1, to_position = -1):
+def search_and_tag(cfg, acfg, \
+                   prerequisites_function, # Prerequisites a useful node must satisfy to be interesting \
+                   test_function, # The test function applied to interesting nodes \ 
+                   tag_function, # The tag applied to interesting nodes that pass the test \
+                   do_pair_search : bool = False, # Search for "pairs" of interesting nodes that satisfy the test \
+                   do_weak_search : bool = False, # Succeed in search even if expected impact is not found \
+                   from_position : int = -1, \
+                   to_position : int = -1):
     acfg.reset_intervention_totals()
 
     for the_impact_digit in range(cfg.num_answer_positions):
