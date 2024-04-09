@@ -56,7 +56,6 @@
     <Compile Include="QuantaTools\quanta_constants.py" />
     <Compile Include="QuantaTools\useful_config.py" />
     <Compile Include="QuantaTools\useful_node.py" />
-    <Compile Include="QuantaTools\useful_test.py" />
     <Compile Include="QuantaTools\__init__.py" />
     <Compile Include="setup.py" />
     <Compile Include="Tests\tests.py">

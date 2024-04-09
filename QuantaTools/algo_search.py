@@ -51,7 +51,12 @@ def search_and_tag_digit(cfg, acfg, prerequisites_function, the_impact_digit, te
                 the_filters = prerequisites_function(position, the_impact_digit)
                 #print( "Filters:", the_filters.describe()) # Debugging
                 
+                # Filter useful nodes as per callers prerequisites
                 test_nodes = filter_nodes( cfg.useful_nodes, the_filters)
+                
+                # Do not test nodes that already have the search tag assigned (perhaps from a previous search run)
+                test_nodes = filter_nodes( test_nodes, FilterAlgo(the_tag, QCondition.NOT))
+
                 acfg.num_filtered_nodes += len(test_nodes.nodes)
                 
                 if search_and_tag_digit_position(acfg,  the_impact_digit, test_nodes, test_function, strong, the_tag, do_pair_search ):
