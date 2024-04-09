@@ -33,6 +33,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="QuantaTools\algo_search.py" />
+    <Compile Include="QuantaTools\maths_algo_search.py" />
     <Compile Include="QuantaTools\maths_complexity.py" />
     <Compile Include="QuantaTools\maths_config.py" />
     <Compile Include="QuantaTools\maths_data_generator.py" />
