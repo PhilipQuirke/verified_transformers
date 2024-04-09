@@ -8,11 +8,11 @@ from .algo_config import AlgoConfig
 
 
 # Search the specified useful node(s), using the test_function, for the expected impact on the_impact_digit
-def search_and_tag_digit_position(acfg, the_impact_digit, the_test_nodes, test_function, strong, the_tag, do_pair_search ):
+def search_and_tag_digit_position(cfg, acfg, the_impact_digit, the_test_nodes, test_function, strong, the_tag, do_pair_search ):
 
     # Try single nodes first
     for node in the_test_nodes.nodes:
-        if test_function( [node], the_impact_digit, strong):
+        if test_function(cfg, acfg, [node], the_impact_digit, strong):
             full_tag = the_tag + ("" if strong else "." + acfg.intervened_impact)
             acfg.num_tags_added += node.add_tag(QType.ALGO.value, full_tag)
             return True
@@ -23,7 +23,7 @@ def search_and_tag_digit_position(acfg, the_impact_digit, the_test_nodes, test_f
         for pair in node_pairs:
             # Only if the 2 nodes are in the same layer can they can act in parallel and so "sum" to give a virtual attention head
             if pair[0].layer == pair[1].layer and pair[0].is_head == pair[1].is_head:
-                if test_function( [pair[0], pair[1]], the_impact_digit, strong):
+                if test_function(cfg, acfg, [pair[0], pair[1]], the_impact_digit, strong):
                     full_tag = the_tag + ("" if strong else "." + acfg.intervened_impact)
                     acfg.num_tags_added += pair[0].add_tag(QType.ALGO.value, full_tag)
                     acfg.num_tags_added += pair[1].add_tag(QType.ALGO.value, full_tag)
@@ -48,7 +48,7 @@ def search_and_tag_digit(cfg, acfg, prerequisites_function, the_impact_digit, te
         if strong or do_weak_search:
 
             for position in range(from_position, to_position+1):
-                the_filters = prerequisites_function(position, the_impact_digit)
+                the_filters = prerequisites_function(cfg, position, the_impact_digit)
                 #print( "Filters:", the_filters.describe()) # Debugging
                 
                 # Filter useful nodes as per callers prerequisites
@@ -59,7 +59,7 @@ def search_and_tag_digit(cfg, acfg, prerequisites_function, the_impact_digit, te
 
                 acfg.num_filtered_nodes += len(test_nodes.nodes)
                 
-                if search_and_tag_digit_position(acfg,  the_impact_digit, test_nodes, test_function, strong, the_tag, do_pair_search ):
+                if search_and_tag_digit_position(cfg, acfg, the_impact_digit, test_nodes, test_function, strong, the_tag, do_pair_search ):
                     return True
 
     return False

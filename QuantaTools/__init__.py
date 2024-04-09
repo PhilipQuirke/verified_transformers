@@ -45,4 +45,5 @@ from .maths_test_questions import make_maths_test_questions_and_answers, test_ma
     make_maths_tricase_questions, test_correctness_on_num_questions
 from .maths_algo_search import run_intervention_core, run_strong_intervention, run_weak_intervention, \
     succeed_test, math_common_prereqs, \
-    add_ss_tag, add_ss_prereqs, add_ss_test
+    add_ss_tag, add_ss_prereqs, add_ss_test, \
+    add_sc_tag, add_sc_prereqs, add_sc_test

@@ -9,7 +9,7 @@ from .quanta_constants import QType, NO_IMPACT_TAG
 from .quanta_map_impact import get_question_answer_impact, sort_unique_digits
 from .quanta_filter import FilterNode, FilterAnd, FilterOr, FilterHead, FilterNeuron, FilterContains, FilterPosition, FilterAttention, FilterImpact, FilterPCA, FilterAlgo, filter_nodes
 
-from .ablate_config import AblateConfig, acfg
+from .ablate_config import AblateConfig
 from .ablate_hooks import a_predict_questions, a_run_attention_intervention
 
 from .maths_constants import MathsToken, MathsBehavior, MathsAlgorithm 
@@ -18,7 +18,7 @@ from .maths_complexity import get_maths_question_complexity
 from .maths_utilities import int_to_answer_str
 
 
-def run_intervention_core(cfg, node_locations, store_question, clean_question, operation, expected_answer_impact, expected_answer_int, strong):
+def run_intervention_core(cfg, acfg, node_locations, store_question, clean_question, operation, expected_answer_impact, expected_answer_int, strong):
     assert(len(node_locations) > 0)
     assert(store_question[0] < + 10 ** cfg.n_digits)
     assert(store_question[1] > - 10 ** cfg.n_digits)
@@ -47,10 +47,10 @@ def run_intervention_core(cfg, node_locations, store_question, clean_question, o
 
 
 # Run an intervention where we have a precise expectation of the intervention impact
-def run_strong_intervention(cfg, node_locations, store_question, clean_question, operation, expected_answer_impact, expected_answer_int):
+def run_strong_intervention(cfg, acfg, node_locations, store_question, clean_question, operation, expected_answer_impact, expected_answer_int):
 
     # These are the actual model prediction outputs (while applying our node-level intervention).
-    run_intervention_core(cfg, node_locations, store_question, clean_question, operation, expected_answer_impact, expected_answer_int, True)
+    run_intervention_core(cfg, acfg, node_locations, store_question, clean_question, operation, expected_answer_impact, expected_answer_int, True)
 
     answer_success = (acfg.intervened_answer == acfg.expected_answer)
     impact_success = (acfg.intervened_impact == acfg.expected_impact)
@@ -65,12 +65,12 @@ def run_strong_intervention(cfg, node_locations, store_question, clean_question,
 
 
 # Run an intervention where we expect the intervention to have a non-zero impact but we cant precisely predict the answer impact
-def run_weak_intervention(cfg, node_locations, store_question, clean_question, operation):
+def run_weak_intervention(cfg, acfg, node_locations, store_question, clean_question, operation):
 
     # Calculate the test (clean) question answer e.g. "+006671"
     expected_answer_int = clean_question[0]+clean_question[1] if operation == MathsToken.PLUS else clean_question[0]-clean_question[1]
 
-    run_intervention_core(cfg, node_locations, store_question, clean_question, operation, NO_IMPACT_TAG, expected_answer_int, False)
+    run_intervention_core(cfg, acfg, node_locations, store_question, clean_question, operation, NO_IMPACT_TAG, expected_answer_int, False)
 
     success = not ((acfg.intervened_answer == acfg.expected_answer) or (acfg.intervened_impact == NO_IMPACT_TAG))
 
@@ -98,18 +98,18 @@ def math_common_prereqs(cfg, position, attend_digit, impact_digit):
         FilterImpact(answer_name(impact_digit))) # Impacts Am
 
 
-# Tag for addition "Use Sum 9" (SS) tasks e.g. 34633+55555=+090188 where D4 and D'4 sum to 9 (4+5), and D3 + D'3 > 10
+# Tag for addition "Use Sum 9" (SS) task e.g. 34633+55555=+090188 where D4 and D'4 sum to 9 (4+5), and D3 + D'3 > 10
 def add_ss_tag(impact_digit):
     return answer_name(impact_digit-1)  + "." + MathsAlgorithm.ADD_S_TAG.value
 
 
-# These rules are prerequisites for (not proof of) an sddition Use Sum 9 node
+# Node rerequisites for addition "Use Sum 9" (SS) task
 def add_ss_prereqs(cfg, position, impact_digit):
     # Impacts An and pays attention to Dn-2 and D'n-2
     return math_common_prereqs(cfg, position, impact_digit-2, impact_digit)
 
 
-# Search for addition "Use Sum 9" (SS) tasks e.g. 34633+55555=+090188 where D4 and D'4 sum to 9 (4+5), and D3 + D'3 > 10
+# Intervention ablation test for addition "Use Sum 9" (SS) task
 def add_ss_test(cfg, acfg, node_locations, alter_digit, strong):
     if alter_digit < 2 or alter_digit > cfg.n_digits:
         acfg.reset_intervention()
@@ -138,9 +138,49 @@ def add_ss_test(cfg, acfg, node_locations, alter_digit, strong):
         assert intervened_answer == 80188
 
 
-    success, _, _ = run_strong_intervention(cfg, node_locations, store_question, clean_question, MathsToken.PLUS, intervention_impact, intervened_answer)
+    success, _, _ = run_strong_intervention(cfg, acfg, node_locations, store_question, clean_question, MathsToken.PLUS, intervention_impact, intervened_answer)
 
     if success:
         print( "Test confirmed", acfg.node_names(), "perform D"+str(alter_digit)+".SS impacting "+intervention_impact+" accuracy.", "" if strong else "Weak")
+
+    return success
+
+
+# Tag for addition "Make Carry 1" (SC) task e.g. 222222+666966=+0889188 where D2 + D'2 > 10
+def add_sc_tag(impact_digit):
+    return answer_name(impact_digit-1)  + "." + MathsAlgorithm.ADD_C_TAG.value
+
+
+
+# Node rerequisites for addition "Make Carry 1" (SC) task
+def add_sc_prereqs(cfg, position, impact_digit):
+    # Impacts An and pays attention to Dn-1 and D'n-1
+    return math_common_prereqs(cfg, position, impact_digit-1, impact_digit)
+
+
+# Intervention ablation test for addition "Make Carry 1" (SC) task
+def add_sc_test(cfg, acfg, node_locations, impact_digit, strong):
+    alter_digit = impact_digit - 1
+
+    if alter_digit < 0 or alter_digit >= cfg.n_digits:
+        acfg.reset_intervention()
+        return False
+
+    intervention_impact = qt.answer_name(impact_digit)
+
+    # 222222 + 666966 = 889188. Has Dn.SC
+    store_question = [cfg.repeat_digit(2), cfg.repeat_digit(6)]
+    store_question[1] += (9 - 6) * (10 ** alter_digit)
+
+    # 333333 + 555555 = 888888. No Dn.SC
+    clean_question = [cfg.repeat_digit(3), cfg.repeat_digit(5)]
+
+    # When we intervene we expect answer 889888
+    intervened_answer = clean_question[0] + clean_question[1] + 10 ** (alter_digit+1)
+
+    success, _, _ = run_strong_intervention(cfg, acfg, node_locations, store_question, clean_question, qt.MathsToken.PLUS, intervention_impact, intervened_answer)
+
+    if success:
+        print( "Test confirmed", acfg.node_names(), "perform D"+str(alter_digit)+".SC impacting "+intervention_impact+" accuracy.", "" if strong else "Weak")
 
     return success
