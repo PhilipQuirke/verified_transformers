@@ -73,6 +73,10 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
     distinct_row_names = sorted(distinct_row_names)
     distinct_positions = sorted(distinct_positions)
 
+    if len(distinct_row_names) == 0 or len(distinct_positions) == 0:
+        return None, quanta_results, 0
+
+
     # Show standard_quanta (common across all potentional models) in blue num_shades and model-specific quanta in green num_shades 
     colormap = create_colormap(standard_quanta)
   
