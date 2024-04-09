@@ -105,7 +105,7 @@ def add_ss_tag(impact_digit):
 
 # Node rerequisites for addition "Use Sum 9" (SS) task
 def add_ss_prereqs(cfg, position, impact_digit):
-    # Impacts An and pays attention to Dn-2 and D'n-2
+    # Pays attention to Dn-2 and D'n-2. Impacts An
     return math_common_prereqs(cfg, position, impact_digit-2, impact_digit)
 
 
@@ -151,10 +151,9 @@ def add_sc_tag(impact_digit):
     return answer_name(impact_digit-1)  + "." + MathsAlgorithm.ADD_C_TAG.value
 
 
-
 # Node rerequisites for addition "Make Carry 1" (SC) task
 def add_sc_prereqs(cfg, position, impact_digit):
-    # Impacts An and pays attention to Dn-1 and D'n-1
+    # Pays attention to Dn-1 and D'n-1. Impacts An
     return math_common_prereqs(cfg, position, impact_digit-1, impact_digit)
 
 
@@ -166,7 +165,7 @@ def add_sc_test(cfg, acfg, node_locations, impact_digit, strong):
         acfg.reset_intervention()
         return False
 
-    intervention_impact = qt.answer_name(impact_digit)
+    intervention_impact = answer_name(impact_digit)
 
     # 222222 + 666966 = 889188. Has Dn.SC
     store_question = [cfg.repeat_digit(2), cfg.repeat_digit(6)]
@@ -178,9 +177,65 @@ def add_sc_test(cfg, acfg, node_locations, impact_digit, strong):
     # When we intervene we expect answer 889888
     intervened_answer = clean_question[0] + clean_question[1] + 10 ** (alter_digit+1)
 
-    success, _, _ = run_strong_intervention(cfg, acfg, node_locations, store_question, clean_question, qt.MathsToken.PLUS, intervention_impact, intervened_answer)
+    success, _, _ = run_strong_intervention(cfg, acfg, node_locations, store_question, clean_question, MathsToken.PLUS, intervention_impact, intervened_answer)
 
     if success:
         print( "Test confirmed", acfg.node_names(), "perform D"+str(alter_digit)+".SC impacting "+intervention_impact+" accuracy.", "" if strong else "Weak")
 
     return success
+
+
+# Tag for addition "Simple Add" (SA) task e.g. 555555+111111=+0666666 where D3 + D'3 < 10
+def add_sa_tag(impact_digit):
+    return answer_name(impact_digit) + "." + MathsAlgorithm.ADD_A_TAG.value
+
+
+# Node rerequisites for addition "Simple Add" (SA) task
+def add_sa_prereqs(cfg, position, impact_digit):
+    # Impacts An and pays attention to Dn and D'n
+    return math_common_prereqs(cfg, position, impact_digit, impact_digit)
+
+
+def add_sa_test1(cfg, acfg, alter_digit):
+    # 222222 + 111111 = +333333. No Dn.SC
+    store_question = [cfg.repeat_digit(2), cfg.repeat_digit(1)]
+
+    # 555555 + 444444 = +999999. No Dn.SC
+    clean_question = [cfg.repeat_digit(5), cfg.repeat_digit(4)]
+
+    # When we intervene we expect answer +999399
+    intervened_answer = clean_question[0] + clean_question[1] + (3-9) * 10 ** alter_digit
+
+    return store_question, clean_question, intervened_answer
+
+
+def add_sa_test2(cfg, acfg, alter_digit):
+    # 222222 + 666666 = +888888. No Dn.SC
+    store_question = [cfg.repeat_digit(2), cfg.repeat_digit(6)]
+
+    # 555555 + 111111 = +666666. No Dn.SC
+    clean_question = [cfg.repeat_digit(5), cfg.repeat_digit(1)]
+
+    # When we intervene we expect answer +666866
+    intervened_answer = clean_question[0] + clean_question[1] + (8-6) * 10 ** alter_digit
+
+    return store_question, clean_question, intervened_answer
+
+
+# Intervention ablation test for addition "Simple Add" (SA) task
+def add_sa_test(cfg, acfg, node_locations, alter_digit, strong):
+    intervention_impact = answer_name(alter_digit)
+
+    store_question, clean_question, intervened_answer = add_sa_test1(cfg, acfg, alter_digit)
+    success1, _, impact_success1 = run_strong_intervention(cfg, acfg, node_locations, store_question, clean_question, MathsToken.PLUS, intervention_impact, intervened_answer)
+
+    store_question, clean_question, intervened_answer = add_sa_test2(cfg, acfg, alter_digit)
+    success2, _, impact_success2 = run_strong_intervention(cfg, acfg, node_locations, store_question, clean_question, MathsToken.PLUS, intervention_impact, intervened_answer)
+
+    success = (success1 and success2) if strong else (impact_success1 and impact_success2)
+
+    if success:
+        print( "Test confirmed:", acfg.node_names(), "perform D"+str(alter_digit)+"SA = (D"+str(alter_digit)+" + D'"+str(alter_digit)+") % 10 impacting "+intervention_impact+" accuracy.", "" if strong else "Weak", acfg.intervened_answer)
+
+    return success
+
