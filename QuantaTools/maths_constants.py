@@ -49,17 +49,20 @@ class MathsBehavior(Enum):
 # Minor "maths" tags related to major tag QType.ALGO:
 # A node may serve multiple purposes and so have more than 1 of these tags.
 class MathsAlgorithm(Enum):
-    ADD_BA_TAG = "BA" # Addition - Base Add (Dn, D'n)
-    ADD_MC_TAG = "MC" # Addition - Make Carry (Dn, D'n)
-    ADD_US_TAG = "US" # Addition - Use Sum 9 (Dn, D'n)
-    ADD_AC_TAG = "AC" # Addition - TriCase (Dn, D'n)
+    ADD_A_TAG = "SA" # Addition - Simple Add (Dn, D'n)
+    ADD_C_TAG = "SC" # Addition - Make Carry (Dn, D'n)
+    ADD_S_TAG = "SS" # Addition - Use Sum 9 (Dn, D'n)
+    ADD_T_TAG = "ST" # Addition - TriCase (Dn, D'n)
   
-    SUB_BS_TAG = "BS" # Positive-answer Subtraction - Base Sub (Dn, D'n)
-    SUB_BO_TAG = "BO" # Positive-answer Subtraction - Borrow One (Dn, D'n)
-    SUB_SZ_TAG = "SZ" # Positive-answer Subtraction - Sum Zero (Dn, D'n)
-    SUB_SC_TAG = "SC" # Positive-answer Subtraction - TriCase (Dn, D'n)
+    SUB_D_TAG = "MD" # Positive-answer Subtraction - Simple Difference (Dn, D'n)
+    SUB_B_TAG = "MB" # Positive-answer Subtraction - Borrow One (Dn, D'n)
+    SUB_Z_TAG = "MZ" # Positive-answer Subtraction - Sum Zero (Dn, D'n)
+    SUB_T_TAG = "MT" # Positive-answer Subtraction - TriCase (Dn, D'n)
 
-    NEG_NS_TAG = "NS" # Negative-answer Subtraction - Neg Sub (Dn, D'n)
+    NEG_D_TAG = "ND" # Negative-answer Subtraction - Simple Difference (Dn, D'n)
+    NEG_B_TAG = "NB" # Negative-answer Subtraction - Borrow One (Dn, D'n)
+    NEG_Z_TAG = "NZ" # Negative-answer Subtraction - Sum Zero (Dn, D'n)
+    NEG_T_TAG = "NT" # Negative-answer Subtraction - TriCase (Dn, D'n)
   
-    MIX_OP_TAG = "OP" # Add/Sub - Attends to operation token (in the middle of the question)
-    MIX_SG_TAG = "SG" # Add/Sub - Attends to answer sign (+/-) token (at the start of the answer)
+    MIX_O_TAG = "OP" # Add/Sub - Attends to operation token (in the middle of the question)
+    MIX_S_TAG = "SG" # Add/Sub - Attends to answer sign (+/-) token (at the start of the answer)
