@@ -98,12 +98,49 @@ def math_common_prereqs(cfg, position, attend_digit, impact_digit):
         FilterImpact(answer_name(impact_digit))) # Impacts Am
 
 
+# Tag for addition "Use Sum 9" (SS) tasks e.g. 34633+55555=+090188 where D4 and D'4 sum to 9 (4+5), and D3 + D'3 > 10
 def add_ss_tag(impact_digit):
     return answer_name(impact_digit-1)  + "." + MathsAlgorithm.ADD_S_TAG.value
 
 
-# These rules are prerequisites for (not proof of) an Addition UseSum9 node
-def add_ss_prereqs(position, impact_digit):
+# These rules are prerequisites for (not proof of) an sddition Use Sum 9 node
+def add_ss_prereqs(cfg, position, impact_digit):
     # Impacts An and pays attention to Dn-2 and D'n-2
-    return math_common_prereqs( position, impact_digit-2, impact_digit)
+    return math_common_prereqs(cfg, position, impact_digit-2, impact_digit)
 
+
+# Search for addition "Use Sum 9" (SS) tasks e.g. 34633+55555=+090188 where D4 and D'4 sum to 9 (4+5), and D3 + D'3 > 10
+def add_ss_test(cfg, acfg, node_locations, alter_digit, strong):
+    if alter_digit < 2 or alter_digit > cfg.n_digits:
+        acfg.reset_intervention()
+        return False
+
+    intervention_impact = answer_name(alter_digit)
+
+    # 25222 + 44444 = 69666. Has no Dn-2.SC but has Dn-1.SS so not a UseSum9 case
+    store_question = [cfg.repeat_digit(2), cfg.repeat_digit(4)]
+    store_question[0] += (5-2) * 10 ** (alter_digit - 1)
+
+    # 34633 + 55555 = 90188. Has Dn-2.SC and Dn-1.SS so is a UseSum9 case
+    clean_question = [cfg.repeat_digit(3), cfg.repeat_digit(5)]
+    clean_question[0] += (4-3) * 10 ** (alter_digit - 1)
+    clean_question[0] += (6-3) * 10 ** (alter_digit - 2)
+
+    # When we intervene we expect answer 80188
+    intervened_answer = clean_question[0] + clean_question[1] - 10 ** (alter_digit)
+
+
+    # Unit test
+    if cfg.n_digits == 5 and alter_digit == 4:
+        assert store_question[0] == 25222
+        assert clean_question[0] == 34633
+        assert clean_question[0] + clean_question[1] == 90188
+        assert intervened_answer == 80188
+
+
+    success, _, _ = run_strong_intervention(cfg, node_locations, store_question, clean_question, MathsToken.PLUS, intervention_impact, intervened_answer)
+
+    if success:
+        print( "Test confirmed", acfg.node_names(), "perform D"+str(alter_digit)+".SS impacting "+intervention_impact+" accuracy.", "" if strong else "Weak")
+
+    return success
