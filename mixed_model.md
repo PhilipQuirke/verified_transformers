@@ -89,7 +89,7 @@ Questions/Thoughts:
 ## Hypothesis 2 step H5: Calculating A2
 Part 27A "Calculating answer digit A2 in token position A3" in VerifiedArithmeticAnalyse.ipynb investigates Hypothesis 2 step H5 generating this quanta map:
 
-![A2QuantaMpa](./assets/ins1_mix_d6_l3_h4_t40K_s372001QuantaAtP18.svg?raw=true "A2 Quanta Map")
+![A2QuantaMap](./assets/ins1_mix_d6_l3_h4_t40K_s372001QuantaAtP18.svg?raw=true "A2 Quanta Map")
 
 From this quanta map, we see:
 - Two attention heads (P18L0H1 and P18L0H2) form a virtual node together and performs the A2.BA, A2.BS and A2.NS tasks.
@@ -113,3 +113,4 @@ From this quanta map, we see:
   - One head (P18L1H1) attends to the = token, which is when the sign (+ or -) is calculated.
   - One head (P18L1H0) attends to A3, likely accessing information calculated in P18L0H*
 
+![Hypo2_A2Calc](./assets/Hypothesis2_A2_Calc.png?raw=true "Hypothesis2 A2 Calc")
