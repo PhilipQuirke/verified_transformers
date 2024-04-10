@@ -23,3 +23,6 @@ In VerifiedArithmeticTrain.ipynb Colab notebook, we pick a single useful node (e
 The library runs the PCA over many nodes, adding tags to interpretable nodes, and producing output like this:  
 
 ![PcaResults](./assets/ins1_mix_d6_l3_h4_t40K_s372001PcaTr.svg?raw=true "PCA Results")
+
+## Planned Enhancement
+Refer https://github.com/PhilipQuirke/verified_transformers/issues/27
