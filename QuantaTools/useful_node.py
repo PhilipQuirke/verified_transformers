@@ -153,7 +153,7 @@ class UsefulNode(NodeLocation):
         assert str(major_tag) != ""
 
         for tag in self.tags:
-            # We use contains(minor) as the ATTENTION_MAJOR_TAG minor tag is "P14=25" (i.e 25 percent)
+            # We use contains(minor) as the QType.ATTN minor tag is "P14=25" (i.e 25 percent)
             if tag.startswith(str(major_tag)) and minor_tag in tag:
                 return True
 

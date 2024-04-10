@@ -141,7 +141,7 @@ def add_ss_test(cfg, acfg, node_locations, alter_digit, strong):
     success, _, _ = run_strong_intervention(cfg, acfg, node_locations, store_question, clean_question, MathsToken.PLUS, intervention_impact, intervened_answer)
 
     if success:
-        print( "Test confirmed", acfg.node_names(), "perform D"+str(alter_digit)+".SS impacting "+intervention_impact+" accuracy.", "" if strong else "Weak")
+        print( "Test confirmed", acfg.node_names(), "perform A"+str(alter_digit)+".SS impacting "+intervention_impact+" accuracy.", "" if strong else "Weak")
 
     return success
 
@@ -180,7 +180,7 @@ def add_sc_test(cfg, acfg, node_locations, impact_digit, strong):
     success, _, _ = run_strong_intervention(cfg, acfg, node_locations, store_question, clean_question, MathsToken.PLUS, intervention_impact, intervened_answer)
 
     if success:
-        print( "Test confirmed", acfg.node_names(), "perform D"+str(alter_digit)+".SC impacting "+intervention_impact+" accuracy.", "" if strong else "Weak")
+        print( "Test confirmed", acfg.node_names(), "perform A"+str(alter_digit)+".SC impacting "+intervention_impact+" accuracy.", "" if strong else "Weak")
 
     return success
 
@@ -237,7 +237,7 @@ def add_sa_test(cfg, acfg, node_locations, alter_digit, strong):
     success = (success1 and success2) if strong else (impact_success1 and impact_success2)
 
     if success:
-        print( "Test confirmed:", acfg.node_names(), "perform D"+str(alter_digit)+"SA = (D"+str(alter_digit)+" + D'"+str(alter_digit)+") % 10 impacting "+intervention_impact+" accuracy.", "" if strong else "Weak", acfg.intervened_answer)
+        print( "Test confirmed:", acfg.node_names(), "perform A"+str(alter_digit)+"SA = (D"+str(alter_digit)+" + D'"+str(alter_digit)+") % 10 impacting "+intervention_impact+" accuracy.", "" if strong else "Weak", acfg.intervened_answer)
 
     return success
 
@@ -328,7 +328,7 @@ def sub_md_test(cfg, acfg, node_locations, alter_digit, strong):
     success = (success1 and success2) if strong else (impact_success1 and impact_success2)
 
     if success:
-        print( "Test confirmed", acfg.node_names(), "perform D"+str(alter_digit)+".MD = (D"+str(alter_digit)+" + D'"+str(alter_digit)+") % 10 impacting "+intervention_impact+" accuracy.", "" if strong else "Weak")
+        print( "Test confirmed", acfg.node_names(), "perform A"+str(alter_digit)+".MD = (D"+str(alter_digit)+" + D'"+str(alter_digit)+") % 10 impacting "+intervention_impact+" accuracy.", "" if strong else "Weak")
 
     return success
 
@@ -367,7 +367,7 @@ def sub_mb_test(cfg, acfg, node_locations, impact_digit, strong):
     success, _, _ = run_strong_intervention(cfg, acfg, node_locations, store_question, clean_question, MathsToken.MINUS, intervention_impact, intervened_answer)
 
     if success:
-        print( "Test confirmed", acfg.node_names(), "perform D"+str(alter_digit)+".MB impacting "+intervention_impact+" accuracy.", "" if strong else "Weak")
+        print( "Test confirmed", acfg.node_names(), "perform A"+str(alter_digit)+".MB impacting "+intervention_impact+" accuracy.", "" if strong else "Weak")
         
     return success
 
