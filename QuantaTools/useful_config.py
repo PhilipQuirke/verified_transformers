@@ -40,7 +40,7 @@ class UsefulConfig(ModelConfig):
 
 
     # Add/update a useful node location, adding the specifying major and minor tags
-    def add_useful_node_tag(self, the_location, major_tag, minor_tag ):
+    def add_useful_node_tag(self, the_location, major_tag : str, minor_tag : str ):
         assert the_location.position >= 0
         assert the_location.layer >= 0
         assert the_location.num >= 0

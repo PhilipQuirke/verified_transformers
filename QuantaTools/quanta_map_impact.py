@@ -50,7 +50,7 @@ def compact_answer_if_sequential(cfg, s):
     return s
 
 
-def get_quanta_impact( cfg, node, major_tag, minor_tag, num_shades ):
+def get_quanta_impact( cfg, node, major_tag : str, minor_tag : str, num_shades : int ):
 
     cell_text = ""
     color_index = 0

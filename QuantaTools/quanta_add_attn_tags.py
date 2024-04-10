@@ -4,7 +4,7 @@ from .quanta_constants import QType
 
 
 def add_node_attention_tags(cfg, questions):
-    cfg.useful_nodes.reset_node_tags(QType.ATTN)
+    cfg.useful_nodes.reset_node_tags(QType.ATTN.value)
 
     _, cache = cfg.main_model.run_with_cache(questions)
 

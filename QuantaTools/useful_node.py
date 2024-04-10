@@ -1,5 +1,4 @@
 import json
-from os import minor
 import re
 from typing import List
 
@@ -100,10 +99,10 @@ class UsefulNode(NodeLocation):
 
 
     # Add a tag to this (if not already present). Returns number of tags added as 0 or 1
-    def add_tag(self, major_tag, minor_tag):
-        assert str(major_tag) != ""
+    def add_tag(self, major_tag : str, minor_tag : str):
+        assert major_tag != ""
     
-        tag = str(major_tag) + ":" + minor_tag
+        tag = major_tag + ":" + minor_tag
         if tag != "" and (not (tag in self.tags)):
             self.tags += [tag]
             return 1
@@ -112,10 +111,10 @@ class UsefulNode(NodeLocation):
 
 
     # Return tags with the matching major and minor versions
-    def filter_tags(self, major_tag, minor_tag = ""):
-        assert str(major_tag) != ""
+    def filter_tags(self, major_tag : str, minor_tag : str = ""):
+        assert major_tag != ""
 
-        filtered_strings = [s for s in self.tags if s.startswith(str(major_tag))]
+        filtered_strings = [s for s in self.tags if s.startswith(major_tag)]
 
         minor_tags = [s.split(":")[1] for s in filtered_strings]
 
@@ -126,7 +125,7 @@ class UsefulNode(NodeLocation):
 
 
     # Return minimum tag with the matching major and minor versions
-    def min_tag_suffix(self, major_tag, minor_tag = ""):
+    def min_tag_suffix(self, major_tag : str, minor_tag : str = ""):
         assert str(major_tag) != ""
 
         minor_tags = self.filter_tags(major_tag)
@@ -208,7 +207,7 @@ class UsefulNodeList():
     
 
     # Print the node names and tags matching major_tag and minor_tag (if specified).
-    def print_node_tags(self, major_tag = "", minor_tag = "", show_empty_tags = True):
+    def print_node_tags(self, major_tag : str = "", minor_tag : str = "", show_empty_tags : bool = True):
         for node in self.nodes:
             tags = node.tags if str(major_tag) == "" else node.filter_tags(major_tag, minor_tag)
             if show_empty_tags or len(tags) > 0 :
@@ -231,7 +230,7 @@ class UsefulNodeList():
 
 
     # Add the tag to the node location (creating a node if necessary). Returns number of tags added as 0 or 1
-    def add_node_tag( self, nodelocation, major_tag, minor_tag ):
+    def add_node_tag( self, nodelocation, major_tag : str, minor_tag : str ):
 
         the_node = self.get_node( nodelocation )
         if the_node == None:

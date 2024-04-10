@@ -1,7 +1,7 @@
 
 
 # Either the node has or doesnt have matching tag(s). Return the matching tag(s) if any
-def get_quanta_binary(_, node, major_tag, minor_tag, __):
+def get_quanta_binary(_, node, major_tag : str, minor_tag : str, __):
 
     cell_text = ""
 
