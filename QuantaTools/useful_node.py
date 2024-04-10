@@ -1,4 +1,5 @@
 import json
+from os import minor
 import re
 from typing import List
 
@@ -89,11 +90,13 @@ class UsefulNode(NodeLocation):
 
   
     # Remove some/all tags from this 
-    def reset_tags(self, major_tag):
-        if str(major_tag) == "":
+    def reset_tags(self, major_tag : str, minor_tag : str):
+        if major_tag == "":
             self.tags = []
         else:
-            self.tags = [s for s in self.tags if not s.startswith(str(major_tag))]
+            self.tags = [s for s in self.tags if not s.startswith(major_tag)]
+            if minor_tag != "":
+                self.tags = [s for s in self.tags if not s.startswith(major_tag + "." + minor_tag)]
 
 
     # Add a tag to this (if not already present). Returns number of tags added as 0 or 1
@@ -213,9 +216,9 @@ class UsefulNodeList():
 
 
     # Delete all tags matching major_tag (if specified) from all nodes. Else delete all tags.
-    def reset_node_tags( self, major_tag = "" ):
+    def reset_node_tags( self, major_tag : str = "", minor_tag : str = "" ):
         for node in self.nodes:
-            node.reset_tags(major_tag)
+            node.reset_tags(major_tag, minor_tag)
 
 
     # Get the node at the specified location. May return None.    
