@@ -113,4 +113,5 @@ From this quanta map, we see:
   - One head (P18L1H1) attends to the = token, which is when the sign (+ or -) is calculated.
   - One head (P18L1H0) attends to A3, likely accessing information calculated in P18L0H*
 
+Specifically, our hypothesis is that the model's algorithm steps are:
 ![Hypo2_A2Calc](./assets/Hypothesis2_A2_Calc.png?raw=true "Hypothesis2 A2 Calc")
