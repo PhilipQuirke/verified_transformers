@@ -93,7 +93,7 @@ class UsefulNode(NodeLocation):
         if major_tag == "":
             self.tags = []
         elif minor_tag != "":
-            self.tags = [s for s in self.tags if not s.startswith(major_tag + "." + minor_tag)]
+            self.tags = [s for s in self.tags if not (s.startswith(major_tag) or (minor_tag in s[len(major_tag):])) ]
         else:
             self.tags = [s for s in self.tags if not s.startswith(major_tag)]
 
