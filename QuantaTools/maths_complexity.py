@@ -93,7 +93,7 @@ def get_maths_question_complexity(cfg, question):
 
             return QType.MATH_SUB, MathsBehavior.SUB_M1_TAG
         else:
-            # Answer is negative. Return SUB_N1_TAG to SUB_N4_TAG
+            # Answer is negative. Return NEG_N1_TAG to NEG_N4_TAG
 
             # Locate the BO and MZ digits (if any)
             bo = torch.zeros(cfg.n_digits).to(torch.int64)
@@ -122,19 +122,19 @@ def get_maths_question_complexity(cfg, question):
             # Evaluate subtraction "cascade multiple steps" questions
             for dn in range(cfg.n_digits-3):
                 if max_question_digit >= dn+3 and bo[dn] == 1 and mz[dn+1] == 1 and mz[dn+2] == 1 and mz[dn+3] == 1:
-                    return QType.MATH_NEG, MathsBehavior.SUB_N4_TAG # BO cascades 3 or more digits
+                    return QType.MATH_NEG, MathsBehavior.NEG_N4_TAG # BO cascades 3 or more digits
 
             # Evaluate subtraction "cascade multiple steps" questions
             for dn in range(cfg.n_digits-2):
                 if max_question_digit >= dn+2 and bo[dn] == 1 and mz[dn+1] == 1 and mz[dn+2] == 1:
-                    return QType.MATH_NEG, MathsBehavior.SUB_N3_TAG # BO cascades 2 or more digits
+                    return QType.MATH_NEG, MathsBehavior.NEG_N3_TAG # BO cascades 2 or more digits
 
             # Evaluate subtraction "cascade 1" questions
             for dn in range(cfg.n_digits-1):
                 if max_question_digit >= dn and bo[dn] == 1 and mz[dn+1] == 1:
-                    return QType.MATH_NEG, MathsBehavior.SUB_N2_TAG # BO cascades 1 digit
+                    return QType.MATH_NEG, MathsBehavior.NEG_N2_TAG # BO cascades 1 digit
 
-            return QType.MATH_NEG, MathsBehavior.SUB_N1_TAG
+            return QType.MATH_NEG, MathsBehavior.NEG_N1_TAG
 
 
     # Should never get here

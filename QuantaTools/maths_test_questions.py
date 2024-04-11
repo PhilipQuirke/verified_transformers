@@ -302,7 +302,7 @@ def make_maths_m3_questions_and_answers(cfg):
 # Subtraction questions. Negative answer. Includes one BorrowOne. E.g. 100-200
 def make_maths_n1_questions_and_answers(cfg):
     return make_maths_questions_and_answers(cfg,  
-        MathsToken.MINUS, QType.MATH_NEG, MathsBehavior.SUB_N1_TAG,
+        MathsToken.MINUS, QType.MATH_NEG, MathsBehavior.NEG_N1_TAG,
         [[1, 2],
         [4, 6],
         [10, 20],
@@ -318,7 +318,7 @@ def make_maths_n1_questions_and_answers(cfg):
 # Subtraction questions. Negative answer. Includes two BorrowOnes. E.g. 110-170
 def make_maths_n2_questions_and_answers(cfg):
     return make_maths_questions_and_answers(cfg,  
-        MathsToken.MINUS, QType.MATH_NEG, MathsBehavior.SUB_N2_TAG,
+        MathsToken.MINUS, QType.MATH_NEG, MathsBehavior.NEG_N2_TAG,
         [[11, 13],
         [41, 47],
         [110, 130],
@@ -333,7 +333,7 @@ def make_maths_n2_questions_and_answers(cfg):
 # Subtraction questions. Negative answer. Includes three BorrowOnes. E.g. 111-117
 def make_maths_n3_questions_and_answers(cfg):
     return make_maths_questions_and_answers(cfg,  
-    MathsToken.MINUS, QType.MATH_NEG, MathsBehavior.SUB_N3_TAG,
+    MathsToken.MINUS, QType.MATH_NEG, MathsBehavior.NEG_N3_TAG,
         [[111, 117],
         [432, 438],
         [1110, 1170],
@@ -346,7 +346,7 @@ def make_maths_n3_questions_and_answers(cfg):
 # Subtraction questions. Negative answer. Includes 4 BorrowOnes. E.g. 1111-1117
 def make_maths_n4_questions_and_answers(cfg):
     return make_maths_questions_and_answers(cfg, 
-        MathsToken.MINUS, QType.MATH_NEG, MathsBehavior.SUB_N4_TAG,
+        MathsToken.MINUS, QType.MATH_NEG, MathsBehavior.NEG_N4_TAG,
         [[3111, 3117],
         [3432, 3438],
         [31110, 31170],

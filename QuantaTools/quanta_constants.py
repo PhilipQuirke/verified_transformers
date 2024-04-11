@@ -27,9 +27,6 @@ class QType(Enum):
     # What answer digits (e.g. "A543") were impacted when we ablated a specific node.
     IMPACT = "Impact"
   
-    # What does Principal Component Analysis say about the node?
-    PCA = "PCA"
-  
     # What algorithmic purpose is this node serving?
     ALGO = "Algo"
 

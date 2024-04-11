@@ -14,11 +14,6 @@ class MathsToken:
 
 # These are maths behaviors: quanta we can evaluate for each node based just on that node
 class MathsBehavior(Enum):
-    # Minor "maths" tags related to major tag QType.PCA:
-    # PCA says the node outputs is interpretable aligned to the T8,T9,T10 questions, giving 2 or 3 distinct output clusters
-    PCA_ADD_TAG = "PA"
-    PCA_SUB_TAG = "PS"
-    PCA_NEG_TAG = "PN"
 
     # Minor "maths" tags related to major tag QType.MATH_ADD:
     # Addition operation "complexity" non-overlapping minor tags
@@ -28,24 +23,27 @@ class MathsBehavior(Enum):
     ADD_S3_TAG = "S3"
     ADD_S4_TAG = "S4"
     ADD_S5_TAG = "S5" # Hard. Multiple cascades of MakeCarry1
+    ADD_PCA_TAG = "SP" # PCA is clustered aligned to the T8,T9,T10 question grouping
 
-    # Minor "maths" tags related to major tag QType.MATH_SUB:
-    # Subtraction operation "complexity" non-overlapping minor tags
+    # Minor "maths" tags related to major tag QType.MATH_SUB (positive-answer subtraction):
     SUB_M0_TAG = "M0"  # Answer >= 0. No BorrowOne. Easy
     SUB_M1_TAG = "M1"  # Answer > 0. Has one BorrowOne.  
     SUB_M2_TAG = "M2"  # Answer > 0. 
     SUB_M3_TAG = "M3"  # Answer > 0. 
     SUB_M4_TAG = "M4+" # Answer > 0. Has multiple cascades of BorrowOne. Hard
-    # Minor "maths" tags related to major tag QType.MATH_NEG:
-    SUB_N1_TAG = "N1"  # Answer < 0. Includes one BorrowOne. E.g. 100-200
-    SUB_N2_TAG = "N2"  # Answer < 0. Includes two BorrowOnes. E.g. 110-200
-    SUB_N3_TAG = "N3"  # Answer < 0. Has multiple cascades of BorrowOne. Hard. E.g. 111-200    
-    SUB_N4_TAG = "N4+" # Answer < 0. Has multiple cascades of BorrowOne. Hard. E.g. 1111-2000   
+    SUB_PCA_TAG = "MP" # PCA is clustered aligned to the T8,T9,T10 question grouping
+    
+    # Minor "maths" tags related to major tag QType.MATH_NEG (negative-answer subtraction):
+    NEG_N1_TAG = "N1"  # Answer < 0. Includes one BorrowOne. E.g. 100-200
+    NEG_N2_TAG = "N2"  # Answer < 0. Includes two BorrowOnes. E.g. 110-200
+    NEG_N3_TAG = "N3"  # Answer < 0. Has multiple cascades of BorrowOne. Hard. E.g. 111-200    
+    NEG_N4_TAG = "N4+" # Answer < 0. Has multiple cascades of BorrowOne. Hard. E.g. 1111-2000   
+    NEG_PCA_TAG = "NP" # PCA is clustered aligned to the T8,T9,T10 question grouping
 
     UNKNOWN = "Unknown"
     
 
-# These are maths algorthmic purposes: interpretations we assign to each node, partially based on its behavior
+# Maths algorithmic purposes: interpretations we assign to each node's calculation, partially based on its behavior
 # Minor "maths" tags related to major tag QType.ALGO:
 # A node may serve multiple purposes and so have more than 1 of these tags.
 class MathsAlgorithm(Enum):

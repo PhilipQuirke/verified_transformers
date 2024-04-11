@@ -134,15 +134,9 @@ class FilterImpact(FilterContains):
         super().__init__(QType.IMPACT, minor_tag, filter_strength)
 
 
-class FilterPCA(FilterContains):
-    def __init__(self, minor_tag, filter_strength = QCondition.MUST):
-        super().__init__(QType.PCA, minor_tag, filter_strength)
-
-
 class FilterAlgo(FilterContains):
     def __init__(self, minor_tag, filter_strength = QCondition.MUST):
         super().__init__(QType.ALGO, minor_tag, filter_strength)
-
 
 
 # Filters the list of nodes using the specified filter criteria and returns a (likely smaller) list of nodes.

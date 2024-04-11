@@ -7,7 +7,7 @@ from .useful_node import position_name, location_name, answer_name, NodeLocation
 
 from .quanta_constants import QType, QCondition, NO_IMPACT_TAG
 from .quanta_map_impact import get_question_answer_impact, sort_unique_digits
-from .quanta_filter import FilterNode, FilterAnd, FilterOr, FilterHead, FilterNeuron, FilterContains, FilterPosition, FilterAttention, FilterImpact, FilterPCA, FilterAlgo, filter_nodes
+from .quanta_filter import FilterNode, FilterAnd, FilterOr, FilterHead, FilterNeuron, FilterContains, FilterPosition, FilterAttention, FilterImpact, FilterAlgo, filter_nodes
 
 from .ablate_config import AblateConfig
 from .ablate_hooks import a_predict_questions, a_run_attention_intervention
@@ -254,7 +254,7 @@ def add_st_prereqs(cfg, position, focus_digit):
         FilterPosition(position_name(position)),
         FilterAttention(cfg.dn_to_position_name(focus_digit)), # Attends to Dn
         FilterAttention(cfg.ddn_to_position_name(focus_digit)), # Attends to D'n
-        FilterPCA(MathsBehavior.PCA_ADD_TAG.value, QCondition.CONTAINS), # Node PCA is interpretable (bigram or trigram output) with respect to addition T8,T9,T10
+        FilterContains(QType.MATH_ADD, MathsBehavior.ADD_PCA_TAG.value), # Node PCA is interpretable (bigram or trigram output) with respect to addition T8,T9,T10
         FilterContains(QType.MATH_ADD, "")) # Impacts addition questions
 
 
