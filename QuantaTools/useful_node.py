@@ -89,13 +89,13 @@ class UsefulNode(NodeLocation):
 
   
     # Remove some/all tags from this 
-    def reset_tags(self, major_tag : str, minor_tag : str):
+    def reset_tags(self, major_tag : str, minor_tag : str = ""):
         if major_tag == "":
             self.tags = []
-        elif minor_tag != "":
-            self.tags = [s for s in self.tags if not (s.startswith(major_tag) or (minor_tag in s[len(major_tag):])) ]
-        else:
+        elif minor_tag == "":
             self.tags = [s for s in self.tags if not s.startswith(major_tag)]
+        else:
+            self.tags = [s for s in self.tags if not (s.startswith(major_tag) and (minor_tag in s[len(major_tag):])) ]
 
 
     # Add a tag to this (if not already present). Returns number of tags added as 0 or 1
