@@ -92,10 +92,10 @@ class UsefulNode(NodeLocation):
     def reset_tags(self, major_tag : str, minor_tag : str):
         if major_tag == "":
             self.tags = []
+        elif minor_tag != "":
+            self.tags = [s for s in self.tags if not s.startswith(major_tag + "." + minor_tag)]
         else:
             self.tags = [s for s in self.tags if not s.startswith(major_tag)]
-            if minor_tag != "":
-                self.tags = [s for s in self.tags if not s.startswith(major_tag + "." + minor_tag)]
 
 
     # Add a tag to this (if not already present). Returns number of tags added as 0 or 1
@@ -126,7 +126,7 @@ class UsefulNode(NodeLocation):
 
     # Return minimum tag with the matching major and minor versions
     def min_tag_suffix(self, major_tag : str, minor_tag : str = ""):
-        assert str(major_tag) != ""
+        assert major_tag != ""
 
         minor_tags = self.filter_tags(major_tag)
 
