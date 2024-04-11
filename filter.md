@@ -11,7 +11,6 @@ The generic Filters are:
 - FilterContains: node tags must contain the specified text
 - FilterAttention: node must attend to the specified token and (optionally) with at least the specified percentage strength 
 - FilterImpact: node must impact the specified answer token(s)
-- FilterPCA: node must have a PCA tag - meaning the PCA results are interpretable
 - FilterAlgo: node must have the specified algorithm tag
 
 The library can be extended with topic-additional specific filter classes
