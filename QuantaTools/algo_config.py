@@ -25,6 +25,7 @@ class AlgoConfig(UsefulConfig):
         # Get the model nodes with a known algorithmic purpose
         return filter_nodes( self.useful_nodes, FilterAlgo("", QCondition.MUST) )
 
+
     # Does a useful node exist matching the filters? If so, return the position
     def test_algo_clause(self, node_list, the_filters):
         answer_position = -1
@@ -42,6 +43,7 @@ class AlgoConfig(UsefulConfig):
 
         return answer_position
 
+
     def test_algo_logic(self, clause_name, clause_valid):
 
         if clause_valid:
@@ -50,6 +52,7 @@ class AlgoConfig(UsefulConfig):
         else:
             print("Clause invalid:", clause_name)
             self.num_algo_invalid_clauses += 1
+
 
     # Show the fraction of hypothesis clauses that were valid
     def print_algo_clause_results(self):

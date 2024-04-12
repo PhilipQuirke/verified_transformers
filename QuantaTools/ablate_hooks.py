@@ -83,7 +83,7 @@ def a_calc_mean_values(cfg, the_questions):
     cfg.main_model.reset_hooks()
     cfg.main_model.set_use_attn_result(True)
     sample_logits, sample_cache = cfg.main_model.run_with_cache(the_questions.cuda())
-    print(sample_cache) # Gives names of datasets in the cache
+    print("Cache names", sample_cache) # Gives names of datasets in the cache
     sample_losses_raw, _ = logits_to_tokens_loss(cfg, sample_logits, the_questions.cuda())
     sample_loss_mean = utils.to_numpy(loss_fn(sample_losses_raw).mean())
     print("Sample Mean Loss", sample_loss_mean) # Loss < 0.04 is good

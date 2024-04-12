@@ -130,17 +130,17 @@ class FilterAttention(FilterContains):
         
 
 class FilterImpact(FilterContains):
-    def __init__(self, minor_tag, filter_strength = QCondition.MUST):
+    def __init__(self, minor_tag : str = "", filter_strength = QCondition.MUST):
         super().__init__(QType.IMPACT, minor_tag, filter_strength)
 
 
 class FilterAlgo(FilterContains):
-    def __init__(self, minor_tag, filter_strength = QCondition.MUST):
+    def __init__(self, minor_tag : str = "", filter_strength = QCondition.MUST):
         super().__init__(QType.ALGO, minor_tag, filter_strength)
 
 
 # Filters the list of nodes using the specified filter criteria and returns a (likely smaller) list of nodes.
-def filter_nodes( the_nodes : UsefulNodeList, the_filters: FilterNode):
+def filter_nodes(the_nodes : UsefulNodeList, the_filters: FilterNode):
     answer = UsefulNodeList()
     
     for test_node in the_nodes.nodes:
@@ -150,3 +150,19 @@ def filter_nodes( the_nodes : UsefulNodeList, the_filters: FilterNode):
     answer.sort_nodes()
     
     return answer
+
+
+# Show the fraction of useful nodes that have an assigned algorithmic purpose
+def print_algo_purpose_results(the_nodes : UsefulNodeList):
+    num_heads = the_nodes.useful_nodes.num_heads()
+    num_neurons = the_nodes.useful_nodes.num_neurons()
+
+    algo_nodes = filter_nodes( the_nodes, FilterAlgo() )
+    num_heads_with_purpose = algo_nodes.num_heads()
+    num_neurons_with_purpose = algo_nodes.num_neurons()
+
+    print()
+    print(f"{num_heads_with_purpose} of {num_heads} useful attention heads ({num_heads_with_purpose / num_heads * 100:.2f}%) have an algorithmic purpose assigned." )
+    print(f"{num_neurons_with_purpose} of {num_neurons} useful MLP neurons ({num_neurons_with_purpose / num_neurons * 100:.2f}%) have an algorithmic purpose assigned." )
+
+
