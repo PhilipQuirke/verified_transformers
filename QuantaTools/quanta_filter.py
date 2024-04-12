@@ -153,9 +153,10 @@ def filter_nodes(the_nodes : UsefulNodeList, the_filters: FilterNode):
 
 
 # Show the fraction of useful nodes that have an assigned algorithmic purpose
-def print_algo_purpose_results(the_nodes : UsefulNodeList):
-    num_heads = the_nodes.useful_nodes.num_heads()
-    num_neurons = the_nodes.useful_nodes.num_neurons()
+def print_algo_purpose_results(cfg):
+    the_nodes = cfg.useful_nodes
+    num_heads = the_nodes.num_heads()
+    num_neurons = the_nodes.num_neurons()
 
     algo_nodes = filter_nodes( the_nodes, FilterAlgo() )
     num_heads_with_purpose = algo_nodes.num_heads()
