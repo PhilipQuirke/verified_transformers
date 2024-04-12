@@ -57,6 +57,17 @@ class FilterOr(FilterNode):
         return answer    
 
 
+class FilterName(FilterNode):
+    def __init__(self, name:str):
+        self.name = name
+        
+    def evaluate(self, test_node):
+        return test_node.name() == self.name
+
+    def describe(self):
+        return "Name=" + self.name
+    
+
 class FilterHead(FilterNode):
 
     def evaluate(self, test_node):
