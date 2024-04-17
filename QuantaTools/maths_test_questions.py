@@ -665,7 +665,7 @@ def test_correctness_on_num_questions_core(cfg, num_questions=1000000):
 
       the_fails = test_maths_questions_by_impact(cfg, acfg, tokens, 0, False)
 
-      if the_fails>0:
+      if the_fails > 0:
         break
 
       the_successes = the_successes + cfg.batch_size
@@ -675,4 +675,7 @@ def test_correctness_on_num_questions_core(cfg, num_questions=1000000):
 
   print("successes", the_successes, "num_fails", the_fails)
   if the_fails > 0:
-    "WARNING: Model is not fully accurate. It failed the 1M Q test"
+      print("WARNING: Model is not fully accurate. It failed the 1M Q test")
+  else:
+      print("All tests succeeded.")
+

@@ -1,3 +1,5 @@
+from tqdm import tqdm_notebook
+
 from .useful_node import NodeLocation
 
 from .ablate_config import acfg
@@ -14,7 +16,7 @@ def ablate_mlp_hook_post(value, hook):
 
 # Ablate the MLP in each layer in each position. If the loss increases, the layer+MLP is useful to the model.
 def ablate_mlp_and_add_useful_node_tags(cfg, questions, test_questions_and_add_useful_node_tags):
-  for position in cfg.useful_positions:
+  for position in tqdm_notebook(cfg.useful_positions):
     for layer in range(cfg.n_layers):
       for num in range(cfg.mlp_slices()):
 
@@ -40,7 +42,7 @@ def ablate_head_attn_hook_z(value, hook):
 
 # Ablate each head in each layer in each position. If the loss increases, the position+layer+head is useful to the algorithm.
 def ablate_head_and_add_useful_node_tags(cfg, questions, test_questions_and_add_useful_node_tags):
-  for position in cfg.useful_positions:
+  for position in tqdm_notebook(cfg.useful_positions):
     for layer in range(cfg.n_layers):
       for attn_head in range(cfg.n_heads):
 
