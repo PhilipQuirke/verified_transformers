@@ -1,31 +1,33 @@
 # What is the mixed model algorithm?
-What algorithm has a trained mixed (addition and subtraction) model learnt that allows to perform both addition and subtraction accurately?
+We initialised a new model with an existing accurate 6-digit addition model (add_d6_l2_h3_t15K.pth) and trained it on "mixed" addition and subtraction 6-digit questions. The model (ins1_mix_d6_l3_h4_t40K.pth) can predict these questions accurately. What algorithm does it use?
 
 ## Initial facts and working assumptions
-We investigated model ins1_mix_d6_l3_h4_t40K which answers 6-digit addition and subtraction question. Some initial thoughts:
+Initial thoughts on model ins1_mix_d6_l3_h4_t40K that answers 6-digit addition and subtraction question:
 - Read section 4.3 of https://arxiv.org/pdf/2402.02619.pdf
 - For an n digit question the answer is n+2 tokens long e.g. 66666+66666=+1333332
   - We name the answer tokens An+1 to A0 
-- We assume model is accurate (We know it can do 1M Qs for add and sub. This is evidence not proof of accuracy)
+- We assume model is 100% accurate (We know it can do 1M Qs for add and sub. This is evidence not proof.)
   - So we assume each answer token is accurate    
-- The first answer token is An+1 (aka A_max, aka **sign**, A7 for 6-digit questions). It is always "+" or "-" representing a positive or negative answer
-- Model must pay attention to the **operator** token (+ or -) to understand whether to do a addition or subtraction calculation
+- Model must use the **operator** input token (+ or -) to understand whether to do a addition or subtraction calculation
+- The first answer token is the **sign**.
+  - This token is always "+" or "-" representing a positive or negative answer
+  - This token is An+1 or A_max. For a 6-digit question it is A7. 
 - Model must accurately predict three distinct classes of questions:
-  - Addition : Answer is positive. A_max is "+". Aka ADD
-  - Subtraction where D >= D' : Answer is positive. A_max is "+". Aka positive-answer-subtraction. Aka SUB 
-  - Subtraction where D < D' : Answer is negative. A_max is "-". Aka negative-answer-subtraction. Aka NEG
+  - Addition : Answer is positive. A_max is "+". Aka **ADD**
+  - Subtraction where D >= D' : Answer is positive. A_max is "+". Aka positive-answer-subtraction. Aka **SUB** 
+  - Subtraction where D < D' : Answer is negative. A_max is "-". Aka negative-answer-subtraction. Aka **NEG**
 - For subtraction questions:
-  - The model must determine if D < D' before token A_max
+  - The model must calculate if **D < D'** before token A_max
   - D < D' is calculated as Dn < D'n or (Dn = D'n and (Dn-1 < D'n-1 or (Dn-2 = D'n-1 and ( ...
-    - Addition has a parallel calculation to determine if An-1 is 1 or 0 
-  - Models seem to heavily prefer "just in time" algorithms. Assume D < D' is calculated **at** the "=" token.   
-- For addition questions:
-  - Assume model reuses the addition circuits (perhaps modified) that were inserted from add_d6_l2_h3_t15K before the mixed model training
-  - Uses tasks Base Add (BA), Make Carry 1 (MC) and Use Sum 9 (US)
+    - Addition has a similar calculation (TriCase, TriAdd) to calculate if An-1 is 1 or 0 
+  - Our models seem to heavily prefer "just in time" algorithms. Assume D < D' is calculated **at** the "=" token.   
+- For addition questions, assume the model:
+  - Reuses the addition circuits (perhaps modified) that were inserted from add_d6_l2_h3_t15K before
+  - Re-uses tasks Base Add (BA), Make Carry 1 (MC), Use Sum 9 (US), TriCase (C) and TriAdd (Cn) sub-tasks
   - Determines if the first numeric token of the answer (An) is 1 or 0 just in time at token position An+1
 
 ## Hypothesis 1 (Deprecated)
-Our first hypothesis was that the model handles three classes of questions as follows:
+Our first hypothesis was that the mixed model handles three classes of questions as follows:
 - ADD: Addition in this mixed model uses the same tasks (BA, MC, US, DnCm) as addition model.
 - SUB: Subtraction with a positive answer uses tasks that mirror the addition tasks (BS, BO, MZ, etc)
 - NEG: Subtraction with a negative answer uses the mathematics rule A-B = -(B-A), uses above case to do the bulk of the work 
@@ -46,11 +48,6 @@ Specifically, our hypothesis is that the model's algorithm steps are:
     - H6B: Applys D - D' = - (D' - D) transform a second time
 
 Questions/Thoughts:
-- This mixed-model BA nodes are BA+BS nodes in the mixed model. How does that work? (Note: BS and BA give same result in edge case when D'=0 or D=D'=5. Our tests avoid this.)
-- This mixed-model MC nodes are sometimes MC+BO nodes in the mixed model. How does that work?
-- Are mixed-model Dn.C and Dn.Cm nodes similarily shared? TBC
-- When does the model start paying attention to the operator (+/-)?
-- When/how does the model calculate D > D'?
 - H6 seems unlikely as it requires two passes.
   - H6 implies the model learns positive-answer-subtraction before learns negative-answer-subtraction. This seems unlikely. Models prefer to learn in parallel
   - Has model learnt a single pass approach? Seems more likely as the layer 0 attention heads are used for BA/MC and BS/BO etc. What is that method?
@@ -58,10 +55,18 @@ Questions/Thoughts:
 Overall we prefer hypothesis 2    
 
 ## Hypothesis 2
-Our second hypothesis is that the model handles three classes of questions as peers:
-- ADD: Addition in mixed model uses same tasks (BA, MC, US, DnCm) as addition model.
-- SUB: Subtraction with positive answer uses tasks that mirror the addition tasks (BS, BO, MZ, etc)
-- NEG: Subtraction with negative answer usies a third set of tasks (NS, TBA, TBA, etc)
+Our current hypothesis is that the model handles three classes of questions as peers:
+- **ADD:** Addition in mixed model uses same tasks (BA, MC, US, DnCm) as addition model.
+- **SUB:** Subtraction with positive answer uses tasks that mirror the addition tasks 
+- **NEG:** Subtraction with negative answer uses a third set of tasks 
+
+This lead us to change the Add sub-task abbreviations to give a more coherent set across the 3 question classes:
+
+PQR 
+
+We will need to update the text and all diagrams in Paper 2.
+
+
 
 Our second hypothesis is that the model's algorithm steps for n-digit are:
 - H1: Store the question operator (+ or -)
@@ -115,3 +120,11 @@ From this quanta map, we see:
 
 Specifically, our hypothesis is that the model's algorithm steps are:
 ![Hypo2_A2Calc](./assets/Hypothesis2_A2_Calc.png?raw=true "Hypothesis2 A2 Calc")
+
+
+Questions/Thoughts:
+- This mixed-model BA nodes are BA+BS nodes in the mixed model. How does that work? (Note: BS and BA give same result in edge case when D'=0 or D=D'=5. Our tests avoid this.)
+- This mixed-model MC nodes are sometimes MC+BO nodes in the mixed model. How does that work?
+- Are mixed-model Dn.C and Dn.Cm nodes similarily shared? TBC
+- When does the model start paying attention to the operator (+/-)?
+- When/how does the model calculate D > D'?
