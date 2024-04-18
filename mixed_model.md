@@ -60,36 +60,32 @@ Our current hypothesis is that the model handles three classes of questions as p
 - **SUB:** Subtraction with positive answer uses tasks that mirror the addition tasks 
 - **NEG:** Subtraction with negative answer uses a third set of tasks 
 
-This lead us to change the Add sub-task abbreviations to give a more coherent set across the 3 question classes:
+This lead us to change the Paper 1 sub-task abbreviations to give a coherent naming convention across the 3 question classes:
+![Hypo2_A2_Terms](./assets/Hypothesis2_Terminology.png?raw=true "Hypothesis 2 Terminology")
+TODO: In Paper 2, for consistency, update the text and all diagrams containing this terminology.
 
-PQR 
-
-We will need to update the text and all diagrams in Paper 2.
-
-
-
-Our second hypothesis is that the model's algorithm steps for n-digit are:
-- H1: Store the question operator (+ or -)
-- H2A: If operator is +, uses addition-specific TriCase, TriAdd as per Paper 2 to give Dn.C and Dn.Cm
-- H2B: If operator is -, calculate if D > D' using unknown functions TBA, TBA similar toTriCase, TriAdd
+Our current hypothesis is that the model's algorithm steps for n-digit are:
+- H1: Store the question operator **OP** (+ or -)
+- H2A: If operator is +, uses addition-specific TriCase, TriAdd as per Paper 2 to give Dn.ST and Dn.STm (previously called Dn.C and Dn.CM)
+- H2B: If operator is -, calculate if D > D' using functions MT (similar to addition's ST function)
 - H3: Calculate A_max as : + if operator is + else + if D > D' else -
-- H4: Calculate An as : Dn.Cm if operator is + else TBAn.TBAm if D > D' else TBAn.TBAm
+- H4: Calculate An as : Dn.STm if operator is + else Dn.MTm if D > D' else Dn.NTm
 - H5: From token position An-1, model calculates answer digit An-2 as:
-  - H5A: Attention head calculates combined BA/BS/NS output
-  - H5B: Attention head calculates combined MC/BO/TBA output.
-  - H5C: If operator is +, (so Amax is +), attention head selects BA, MC and Dn.Cm. MLP0 layer combines to give An-2 
-  - H5D: If operator is -, and Amax is +, attention head selects BS, BO and BAn.TBAm. MLP1 layer combines to give An-2
-  - H5E: If operator is -, and Amax is -, attention head selects NS, UU and BAn.TBAm. MLP2 layer combines to give An-2
+  - H5A: Attention head calculates combined SA/MD/ND output
+  - H5B: Attention head calculates combined SC/MB/NB output.
+  - H5C: If operator is +, (so Amax is +), attention head selects SA, SC and Dn.STm. MLP0 layer combines to give An-2 
+  - H5D: If operator is -, and Amax is +, attention head selects MD, MB and Dn.MTm. MLP1 layer combines to give An-2
+  - H5E: If operator is -, and Amax is -, attention head selects ND, NB and Dn.NTm. MLP2 layer combines to give An-2
    
 Questions/Thoughts:
 - This hypothesis is more parallel (a good thing)
 - This hypothesis treats ADD, SUB and NEG as three "peer" question classes (a good thing).
-- We assume that the mixed model has upgraded the BA nodes to be BA/BS/NS nodes that calculate 3 "answers" for each pair of input digits. Later:
-  - An addition-specific node promotes (selects) the BA answer when the operator is "+"
-  - A positive-answer-subtraction-specific node promotes the BS answer when the operator is "-" and D > D'
-  - A negative-answer-subtraction-specific node promotes the NS answer when the operator is "-" and D < D'
-- We assume that the mixed model has upgraded the Dn.C and Dn.Cm nodes in a similar way to cope with the 3 cases
-  - We assume that some nodes promotes (selects) the desired answer (paralleling the BA/BS/NS promotion technique)
+- We assume that the mixed model has upgraded the SA nodes to be SA/MD/ND nodes that calculate 3 "answers" for each pair of input digits. Later:
+  - An addition-specific node promotes (selects) the SA answer when the operator is "+"
+  - A positive-answer-subtraction-specific node promotes the MD answer when the operator is "-" and D > D'
+  - A negative-answer-subtraction-specific node promotes the ND answer when the operator is "-" and D < D'
+- We assume that the mixed model has upgraded the Dn.ST nodes in a similar way to cope with the 3 cases
+  - We assume that some nodes promotes (selects) the desired answer (paralleling the SA/MD/ND promotion technique)
 
 ## Hypothesis 2 step H5: Calculating A2
 Part 27A "Calculating answer digit A2 in token position A3" in VerifiedArithmeticAnalyse.ipynb investigates Hypothesis 2 step H5 generating this quanta map:
