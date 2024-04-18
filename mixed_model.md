@@ -62,7 +62,6 @@ Our current hypothesis is that the model handles three classes of questions as p
 
 This lead us to change the Paper 1 sub-task abbreviations to give a coherent naming convention across the 3 question classes:
 ![Hypo2_A2_Terms](./assets/Hypothesis2_Terminology.png?raw=true "Hypothesis 2 Terminology")
-TODO: In Paper 2, for consistency, update the text and all diagrams containing this terminology.
 
 Our current hypothesis is that the model's algorithm steps for n-digit are:
 - H1: Store the question operator **OP** (+ or -)
@@ -117,7 +116,7 @@ From this quanta map, we see:
 Specifically, our hypothesis is that the model's algorithm steps are:
 ![Hypo2_A2Calc](./assets/Hypothesis2_A2_Calc.png?raw=true "Hypothesis2 A2 Calc")
 
-
+TODO: In Paper 2, for consistency, update the text and all diagrams containing this terminology.
 Questions/Thoughts:
 - This mixed-model BA nodes are BA+BS nodes in the mixed model. How does that work? (Note: BS and BA give same result in edge case when D'=0 or D=D'=5. Our tests avoid this.)
 - This mixed-model MC nodes are sometimes MC+BO nodes in the mixed model. How does that work?
