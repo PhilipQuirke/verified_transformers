@@ -1,4 +1,4 @@
-![image](https://github.com/PhilipQuirke/verified_transformers/assets/10360349/828c2a49-c380-4f8d-b60b-d48b1ad26a40)# What is the mixed model algorithm?
+# What is the mixed model algorithm?
 We initialised a new model with an existing accurate 6-digit addition model (add_d6_l2_h3_t15K.pth) and trained it on "mixed" addition and subtraction 6-digit questions. The model (ins1_mix_d6_l3_h4_t40K.pth) can predict these questions accurately. What algorithm does it use?
 
 ## Initial facts and working assumptions
@@ -105,6 +105,7 @@ From this quanta map, we see:
   - (A deprecated Paper 2 hypothesis raised this possibility)
 - One attention head (P18L0H0) performs the A1.SC, A1.MB and A1.NB tasks.
   - Its output is used (shared) in Add, Sub and Neg question predictions.
+  - TODO: How is the output data represented?- 
 - The model needs perfectly accurate Dn.STm/MTm/NTm information:
   - Assume the perfectly accurate Dn.STm/MTm/NTm information is calculated in early token positions.    
   - To be accurate, at the P18 token position, the model must pull in D2.ST3/MT3/NT3 information.
