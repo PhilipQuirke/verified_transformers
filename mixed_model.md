@@ -1,4 +1,4 @@
-# What is the mixed model algorithm?
+![image](https://github.com/PhilipQuirke/verified_transformers/assets/10360349/828c2a49-c380-4f8d-b60b-d48b1ad26a40)# What is the mixed model algorithm?
 We initialised a new model with an existing accurate 6-digit addition model (add_d6_l2_h3_t15K.pth) and trained it on "mixed" addition and subtraction 6-digit questions. The model (ins1_mix_d6_l3_h4_t40K.pth) can predict these questions accurately. What algorithm does it use?
 
 ## Initial facts and working assumptions
@@ -83,8 +83,10 @@ Questions/Thoughts:
   - Another addition-specific node promotes (selects) the SA answer when the operator is "+"
   - A positive-answer-subtraction-specific node promotes the MD answer when the operator is "-" and D > D'
   - A negative-answer-subtraction-specific node promotes the ND answer when the operator is "-" and D < D'
+  - TODO: How is the output data represented?
 - Assume the mixed model learnt to "upgrade" the initialised Dn.STm nodes to be STm/MTm/NTm nodes that calculate 3 "answers" for each pair of input digits:
   - Another node promotes (selects) the desired answer 
+  - TODO: How is the output data represented?
 
 ## Hypothesis 2 step H5: Calculating A2
 Part 27A "Calculating answer digit A2 in token position A3" in VerifiedArithmeticAnalyse.ipynb investigates Hypothesis 2 step H5 generating this quanta map:
@@ -92,17 +94,21 @@ Part 27A "Calculating answer digit A2 in token position A3" in VerifiedArithmeti
 ![A2QuantaMap](./assets/ins1_mix_d6_l3_h4_t40K_s372001QuantaAtP18.svg?raw=true "A2 Quanta Map")
 
 From this quanta map, we see:
-- Two attention heads (P18L0H1 and P18L0H2) form a virtual node together and performs the A2.BA, A2.BS and A2.NS tasks.
+- Two attention heads (P18L0H1 and P18L0H2) form a virtual node together and performs the A2.SA, A2.SD and A2.ND tasks.
   - Its output is used (shared) in Add, Sub and Neg question predictions.
-  - TODO: How is the output data represented?   
-- One attention head (P18L0H0) performs the A1.MC and A1.BO tasks.
-  - TODO: Create a "NEG" version of the BO task, and test to see if this node does this task too. 
-  - Its output is used (shared) in Add, Sub and (maybe) Neg question predictions.
   - TODO: How is the output data represented?
-- With BA/BS/NS and MC/BO/TBA data available, the model needs perfectly accurate DnCm/TBA/TBA information:
-  - Assume the perfectly accurate DnCm/TBA/TBA information is calculated in early token positions.    
-  - To be accurate, at this token position (P18), the model must pull in D2C3/TBA/TBA information.
-  - TODO: Which nodes pull in the D2C3/TBA/TBA information?    
+- The SS (Use Sum 9), MZ and NZ (Sum to Zero) sub-tasks are **not** used in this model:
+  - The model has optimised them out - It now relies on the accurate Dn.STm/MTm/NTm values instead  
+  - (A deprecated Paper 2 hypothesis raised this possibility)
+- The SC (Carry 1), MB and NB (Borrow one) ssub-tasks are used in **some** answer digits: 
+  - The model has optimised out some instances - It now relies on the accurate Dn.STm/MTm/NTm values instead  
+  - (A deprecated Paper 2 hypothesis raised this possibility)
+- One attention head (P18L0H0) performs the A1.SC, A1.MB and A1.NB tasks.
+  - Its output is used (shared) in Add, Sub and Neg question predictions.
+- The model needs perfectly accurate Dn.STm/MTm/NTm information:
+  - Assume the perfectly accurate Dn.STm/MTm/NTm information is calculated in early token positions.    
+  - To be accurate, at the P18 token position, the model must pull in D2.ST3/MT3/NT3 information.
+  - TODO: Which nodes pull in the D2.ST3/MT3/NT3 information?    
 - Two attention heads are specific to Add (e.g. P18L1H2, P18L1H3).
   - Both attend to the = token, which is when the sign (+ or -) is calculated.
   - TODO: Is this where the output from the P18L0H* are "filtered" to promote ADD-specific data?
