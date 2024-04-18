@@ -79,12 +79,12 @@ Our current hypothesis is that the model's algorithm steps for n-digit are:
 Questions/Thoughts:
 - This hypothesis is more parallel (a good thing)
 - This hypothesis treats ADD, SUB and NEG as three "peer" question classes (a good thing).
-- We assume that the mixed model has upgraded the SA nodes to be SA/MD/ND nodes that calculate 3 "answers" for each pair of input digits. Later:
-  - An addition-specific node promotes (selects) the SA answer when the operator is "+"
+- Assume the mixed model learnt to "upgrade" the initialised SA nodes to be SA/MD/ND nodes that calculate 3 "answers" for each pair of input digits:
+  - Another addition-specific node promotes (selects) the SA answer when the operator is "+"
   - A positive-answer-subtraction-specific node promotes the MD answer when the operator is "-" and D > D'
   - A negative-answer-subtraction-specific node promotes the ND answer when the operator is "-" and D < D'
-- We assume that the mixed model has upgraded the Dn.ST nodes in a similar way to cope with the 3 cases
-  - We assume that some nodes promotes (selects) the desired answer (paralleling the SA/MD/ND promotion technique)
+- Assume the mixed model learnt to "upgrade" the initialised Dn.STm nodes to be STm/MTm/NTm nodes that calculate 3 "answers" for each pair of input digits:
+  - Another node promotes (selects) the desired answer 
 
 ## Hypothesis 2 step H5: Calculating A2
 Part 27A "Calculating answer digit A2 in token position A3" in VerifiedArithmeticAnalyse.ipynb investigates Hypothesis 2 step H5 generating this quanta map:
