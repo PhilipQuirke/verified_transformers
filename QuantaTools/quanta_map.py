@@ -54,9 +54,20 @@ def find_quanta_result_by_row_col(the_row_name, the_position, quanta_results):
     return None
   
 
-# Draw a cell in the specified color
-def show_quanta_add_patch(ax, j, row, cell_color):
-    ax.add_patch(plt.Rectangle((j, row), 1, 1, fill=True, color=cell_color))
+# Draw a cell background in the specified color
+def show_quanta_patch(ax, col_idx, row_idx, cell_color):
+    ax.add_patch(plt.Rectangle((col_idx, row_idx), 1, 1, fill=True, color=cell_color))
+
+
+# Draw the cell text
+def show_quanta_text(ax, col_idx, row_idx, cell_text, the_fontsize):
+    if cell_text != "":
+        ax.text(col_idx + 0.5, row_idx + 0.5, cell_text, ha='center', va='center', color='black', fontsize=the_fontsize)
+
+
+# Draw the cell border
+def show_quanta_border(ax, merge_start, col_idx, row_idx, cell_color):
+    ax.add_patch(patches.Rectangle((col_idx, merge_start), 1, row_idx - merge_start, edgecolor='black', facecolor=cell_color, lw=1))
 
 
 # Calculate (but do not draw) the quanta map with cell contents provided by get_node_details 
@@ -98,6 +109,7 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
     for the_position in distinct_positions:
         previous_text = None
         merge_start = None
+        cell_color = 'lightgrey'
         
         row_idx = len(distinct_row_names)-1
         for the_row_name in distinct_row_names:
@@ -113,10 +125,12 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
                 cell_color = colors[the_shade] if result.color_index >= 0 else 'lightgrey'
                 the_fontsize = base_fontsize if len(result.cell_text) < 4 else base_fontsize-1 if len(result.cell_text) < 5 else base_fontsize-2
                 cell_text = wrapper.fill(text=result.cell_text)
-                ax1.text(col_idx + 0.5, row_idx + 0.5, cell_text, ha='center', va='center', color='black', fontsize=the_fontsize)
+                #show_quanta_text( ax1, col_idx + 0.5, row_idx + 0.5, cell_text, the_fontsize)
             else:
                 cell_text = ""
                 cell_color = 'lightgrey'  # Color for empty cells
+
+            #show_quanta_patch(ax1, col_idx, row_idx, cell_color)          
         
             # Check if current cell text matches the previous cell text
             if combine_identical_cells and cell_text == previous_text and row_idx != len(distinct_row_names) - 1:
@@ -124,21 +138,21 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
 
             # Draw the previous sequence of similar cells
             if previous_text and merge_start is not None:
-                ax1.add_patch(patches.Rectangle((col_idx, merge_start), 1, row_idx - merge_start, edgecolor='black', facecolor=cell_color, lw=1))
-                ax1.text(col_idx + 0.5, (merge_start + row_idx) / 2, previous_text, ha='center', va='center', fontsize=base_fontsize, color='black')
+                show_quanta_border(ax1, merge_start, col_idx, row_idx, cell_color)
+                show_quanta_text( ax1, col_idx + 0.5, (merge_start + row_idx) / 2, previous_text, the_fontsize)
         
             # Update trackers
             merge_start = row_idx
             previous_text = cell_text
         
-            #show_quanta_add_patch(ax1, col_idx, row_idx, cell_color)          
             row_idx -= 1
             
 
         # Draw the last sequence of similar cells
         if previous_text:
-            ax1.add_patch(patches.Rectangle((col_idx, merge_start), 1, len(distinct_row_names) - merge_start, edgecolor='black', facecolor=cell_color, lw=1))
-            ax1.text(col_idx + 0.5, (merge_start + len(distinct_row_names)) / 2, previous_text, ha='center', va='center', fontsize=base_fontsize, color='black')
+            show_quanta_border(ax1, merge_start, col_idx, row_idx, cell_color)
+            #ax1.add_patch(patches.Rectangle((col_idx, merge_start), 1, len(distinct_row_names) - merge_start, edgecolor='black', facecolor=cell_color, lw=1))
+            show_quanta_text( ax1, col_idx + 0.5, (merge_start + len(distinct_row_names)) / 2, previous_text, the_fontsize)
 
         col_idx += 1
 
