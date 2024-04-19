@@ -93,10 +93,11 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
     wrapper = textwrap.TextWrapper(width=max_width)
 
     num_results = 0
-    show_row = len(distinct_row_names)-1
-    for the_row_name in distinct_row_names:
-        show_col = 0
-        for the_position in distinct_positions:
+    show_col = 0
+    for the_position in distinct_positions:
+        
+        show_row = len(distinct_row_names)-1
+        for the_row_name in distinct_row_names:
             cell_color = 'lightgrey'  # Color for empty cells
 
             if show_row == 0:
@@ -112,10 +113,10 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
                 wrapped_text = wrapper.fill(text=result.cell_text)
                 ax1.text(show_col + 0.5, show_row + 0.5, wrapped_text, ha='center', va='center', color='black', fontsize=the_fontsize)
 
-            show_quanta_add_patch(ax1, show_col, show_row, cell_color)
-            show_col += 1
-
-        show_row -= 1
+            show_quanta_add_patch(ax1, show_col, show_row, cell_color)          
+            show_row -= 1
+            
+        show_col += 1
 
 
     # Configure x axis
