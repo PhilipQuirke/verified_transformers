@@ -60,36 +60,33 @@ Our current hypothesis is that the model handles three classes of questions as p
 - **SUB:** Subtraction with positive answer uses tasks that mirror the addition tasks 
 - **NEG:** Subtraction with negative answer uses a third set of tasks 
 
-This lead us to change the Add sub-task abbreviations to give a more coherent set across the 3 question classes:
+This lead us to change the Paper 1 sub-task abbreviations to give a coherent naming convention across the 3 question classes:
+![Hypo2_A2_Terms](./assets/Hypothesis2_Terminology.png?raw=true "Hypothesis 2 Terminology")
 
-PQR 
-
-We will need to update the text and all diagrams in Paper 2.
-
-
-
-Our second hypothesis is that the model's algorithm steps for n-digit are:
-- H1: Store the question operator (+ or -)
-- H2A: If operator is +, uses addition-specific TriCase, TriAdd as per Paper 2 to give Dn.C and Dn.Cm
-- H2B: If operator is -, calculate if D > D' using unknown functions TBA, TBA similar toTriCase, TriAdd
+Our current hypothesis is that the model's algorithm steps for n-digit are:
+- H1: Store the question operator **OP** (+ or -)
+- H2A: If operator is +, uses addition-specific TriCase, TriAdd as per Paper 2 to give Dn.ST and Dn.STm (previously called Dn.C and Dn.CM)
+- H2B: If operator is -, calculate if D > D' using functions MT (similar to addition's ST function)
 - H3: Calculate A_max as : + if operator is + else + if D > D' else -
-- H4: Calculate An as : Dn.Cm if operator is + else TBAn.TBAm if D > D' else TBAn.TBAm
+- H4: Calculate An as : Dn.STm if operator is + else Dn.MTm if D > D' else Dn.NTm
 - H5: From token position An-1, model calculates answer digit An-2 as:
-  - H5A: Attention head calculates combined BA/BS/NS output
-  - H5B: Attention head calculates combined MC/BO/TBA output.
-  - H5C: If operator is +, (so Amax is +), attention head selects BA, MC and Dn.Cm. MLP0 layer combines to give An-2 
-  - H5D: If operator is -, and Amax is +, attention head selects BS, BO and BAn.TBAm. MLP1 layer combines to give An-2
-  - H5E: If operator is -, and Amax is -, attention head selects NS, UU and BAn.TBAm. MLP2 layer combines to give An-2
+  - H5A: Attention head calculates combined SA/MD/ND output
+  - H5B: Attention head calculates combined SC/MB/NB output.
+  - H5C: If operator is +, (so Amax is +), attention head selects SA, SC and Dn.STm. MLP0 layer combines to give An-2 
+  - H5D: If operator is -, and Amax is +, attention head selects MD, MB and Dn.MTm. MLP1 layer combines to give An-2
+  - H5E: If operator is -, and Amax is -, attention head selects ND, NB and Dn.NTm. MLP2 layer combines to give An-2
    
 Questions/Thoughts:
 - This hypothesis is more parallel (a good thing)
 - This hypothesis treats ADD, SUB and NEG as three "peer" question classes (a good thing).
-- We assume that the mixed model has upgraded the BA nodes to be BA/BS/NS nodes that calculate 3 "answers" for each pair of input digits. Later:
-  - An addition-specific node promotes (selects) the BA answer when the operator is "+"
-  - A positive-answer-subtraction-specific node promotes the BS answer when the operator is "-" and D > D'
-  - A negative-answer-subtraction-specific node promotes the NS answer when the operator is "-" and D < D'
-- We assume that the mixed model has upgraded the Dn.C and Dn.Cm nodes in a similar way to cope with the 3 cases
-  - We assume that some nodes promotes (selects) the desired answer (paralleling the BA/BS/NS promotion technique)
+- Assume the mixed model learnt to "upgrade" the initialised SA nodes to be SA/MD/ND nodes that calculate 3 "answers" for each pair of input digits:
+  - Another addition-specific node promotes (selects) the SA answer when the operator is "+"
+  - A positive-answer-subtraction-specific node promotes the MD answer when the operator is "-" and D > D'
+  - A negative-answer-subtraction-specific node promotes the ND answer when the operator is "-" and D < D'
+  - TODO: How is the output data represented?
+- Assume the mixed model learnt to "upgrade" the initialised Dn.STm nodes to be STm/MTm/NTm nodes that calculate 3 "answers" for each pair of input digits:
+  - Another node promotes (selects) the desired answer 
+  - TODO: How is the output data represented?
 
 ## Hypothesis 2 step H5: Calculating A2
 Part 27A "Calculating answer digit A2 in token position A3" in VerifiedArithmeticAnalyse.ipynb investigates Hypothesis 2 step H5 generating this quanta map:
@@ -97,17 +94,22 @@ Part 27A "Calculating answer digit A2 in token position A3" in VerifiedArithmeti
 ![A2QuantaMap](./assets/ins1_mix_d6_l3_h4_t40K_s372001QuantaAtP18.svg?raw=true "A2 Quanta Map")
 
 From this quanta map, we see:
-- Two attention heads (P18L0H1 and P18L0H2) form a virtual node together and performs the A2.BA, A2.BS and A2.NS tasks.
+- Two attention heads (P18L0H1 and P18L0H2) form a virtual node together and performs the A2.SA, A2.SD and A2.ND tasks.
   - Its output is used (shared) in Add, Sub and Neg question predictions.
-  - TODO: How is the output data represented?   
-- One attention head (P18L0H0) performs the A1.MC and A1.BO tasks.
-  - TODO: Create a "NEG" version of the BO task, and test to see if this node does this task too. 
-  - Its output is used (shared) in Add, Sub and (maybe) Neg question predictions.
   - TODO: How is the output data represented?
-- With BA/BS/NS and MC/BO/TBA data available, the model needs perfectly accurate DnCm/TBA/TBA information:
-  - Assume the perfectly accurate DnCm/TBA/TBA information is calculated in early token positions.    
-  - To be accurate, at this token position (P18), the model must pull in D2C3/TBA/TBA information.
-  - TODO: Which nodes pull in the D2C3/TBA/TBA information?    
+- The SS (Use Sum 9), MZ and NZ (Sum to Zero) sub-tasks are **not** used in this model:
+  - The model has optimised them out - It now relies on the accurate Dn.STm/MTm/NTm values instead  
+  - (A deprecated Paper 2 hypothesis raised this possibility)
+- The SC (Carry 1), MB and NB (Borrow one) ssub-tasks are used in **some** answer digits: 
+  - The model has optimised out some instances - It now relies on the accurate Dn.STm/MTm/NTm values instead  
+  - (A deprecated Paper 2 hypothesis raised this possibility)
+- One attention head (P18L0H0) performs the A1.SC, A1.MB and A1.NB tasks.
+  - Its output is used (shared) in Add, Sub and Neg question predictions.
+  - TODO: How is the output data represented?- 
+- The model needs perfectly accurate Dn.STm/MTm/NTm information:
+  - Assume the perfectly accurate Dn.STm/MTm/NTm information is calculated in early token positions.    
+  - To be accurate, at the P18 token position, the model must pull in D2.ST3/MT3/NT3 information.
+  - TODO: Which nodes pull in the D2.ST3/MT3/NT3 information?    
 - Two attention heads are specific to Add (e.g. P18L1H2, P18L1H3).
   - Both attend to the = token, which is when the sign (+ or -) is calculated.
   - TODO: Is this where the output from the P18L0H* are "filtered" to promote ADD-specific data?
@@ -121,7 +123,7 @@ From this quanta map, we see:
 Specifically, our hypothesis is that the model's algorithm steps are:
 ![Hypo2_A2Calc](./assets/Hypothesis2_A2_Calc.png?raw=true "Hypothesis2 A2 Calc")
 
-
+TODO: In Paper 2, for consistency, update the text and all diagrams containing this terminology.
 Questions/Thoughts:
 - This mixed-model BA nodes are BA+BS nodes in the mixed model. How does that work? (Note: BS and BA give same result in edge case when D'=0 or D=D'=5. Our tests avoid this.)
 - This mixed-model MC nodes are sometimes MC+BO nodes in the mixed model. How does that work?
