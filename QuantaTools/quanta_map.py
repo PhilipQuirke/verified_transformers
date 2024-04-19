@@ -115,6 +115,7 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
                 cell_text = wrapper.fill(text=result.cell_text)
                 ax1.text(col_idx + 0.5, row_idx + 0.5, cell_text, ha='center', va='center', color='black', fontsize=the_fontsize)
             else:
+                cell_text = ""
                 cell_color = 'lightgrey'  # Color for empty cells
         
             # Check if current cell text matches the previous cell text
