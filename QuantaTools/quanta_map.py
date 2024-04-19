@@ -62,13 +62,17 @@ def show_quanta_patch(ax, col_idx, row_idx, cell_color):
 # Draw one cell's text
 def show_quanta_text(ax, col_idx, row_idx, cell_text, base_fontsize):
     if cell_text != "":
-        the_fontsize = base_fontsize if len(cell_text) < 4 else base_fontsize-1 if len(cell_text) < 5 else base_fontsize-2      
-        ax.text(col_idx + 0.5, row_idx + 0.5, cell_text, ha='center', va='center', color='black', fontsize=the_fontsize)
+        the_fontsize = base_fontsize if len(cell_text) < 4 else base_fontsize-1 if len(cell_text) < 6 else base_fontsize-2      
+        #ax.text(col_idx + 0.5, row_idx + 0.5, cell_text, ha='center', va='center', color='black', fontsize=the_fontsize)
+        ax.text(col_idx + 0.5, row_idx, cell_text, ha='center', va='center', color='black', fontsize=the_fontsize)
 
 
-# Draw the border around 1 to say 8 cells in a vertical column
+# Draw a thin border around 2 to 8 cells in a vertical column
 def show_quanta_border(ax, col_idx, start_row, end_row):
-    ax.add_patch(patches.Rectangle((col_idx, start_row), 1, end_row - start_row, edgecolor='black', fill=False, lw=1))
+    num_cells = end_row - start_row
+    if num_cells > 1:
+        #ax.add_patch(patches.Rectangle((col_idx, start_row), 1, end_row - start_row, edgecolor='black', fill=False, lw=1))
+        ax.add_patch(patches.Rectangle((col_idx, start_row+1), 1, end_row - start_row, edgecolor='black', fill=False, lw=1))
 
 
 # Calculate (but do not draw) the quanta map with cell contents provided by get_node_details 
@@ -127,23 +131,24 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
             result = find_quanta_result_by_row_col(the_row_name, the_position, quanta_results)
             if result != None:
                 num_results += 1
-                cell_color = colors[max(0, min(result.color_index, num_shades-1))] if result.color_index >= 0 else 'lightgrey'
                 cell_text = wrapper.fill(text=result.cell_text)
+                if result.color_index >= 0:
+                    cell_color = colors[max(0, min(result.color_index, num_shades-1))] 
 
             show_quanta_patch(ax1, col_idx, row_idx, cell_color)          
         
             # Check if current cell text matches the previous cell text
-            if combine_identical_cells and cell_text == previous_text and row_idx != num_rows - 1:
+            if combine_identical_cells and cell_text == previous_text and row_idx != num_rows - 1 and cell_color != 'lightgrey':
                 continue
 
             # Draw the previous sequence of similar cells
-            if previous_text and merge_start_row is not None:
+            if previous_text:
                 show_quanta_border(ax1, col_idx, merge_start_row, row_idx)
                 show_quanta_text( ax1, col_idx, (merge_start_row + row_idx) / 2, previous_text, base_fontsize)
         
             # Update trackers
-            merge_start_row = row_idx
             previous_text = cell_text
+            merge_start_row = row_idx
         
             row_idx -= 1
             
