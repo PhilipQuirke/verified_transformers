@@ -24,5 +24,7 @@ The library runs the PCA over many nodes, adding tags to interpretable nodes, an
 
 ![PcaResults](./assets/ins1_mix_d6_l3_h4_t40K_s372001PcaTr.svg?raw=true "PCA Results")
 
+EVR is Explained Variance Ratio. This is a measure that indicates the proportion of the total variance in the data that is captured by each principal component.
+
 ## Planned Enhancement
 Refer https://github.com/PhilipQuirke/verified_transformers/issues/27

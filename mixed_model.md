@@ -3,48 +3,56 @@ We initialised a new model with an existing accurate 6-digit addition model (add
 
 ## Initial facts and working assumptions
 Initial thoughts on model ins1_mix_d6_l3_h4_t40K that answers 6-digit addition and subtraction question:
-- Read section 4.3 of https://arxiv.org/pdf/2402.02619.pdf
 - For an n digit question the answer is n+2 tokens long e.g. 66666+66666=+1333332
   - We name the answer tokens An+1 to A0 
 - We assume model is 100% accurate (We know it can do 1M Qs for add and sub. This is evidence not proof.)
   - So we assume each answer token is accurate    
-- Model must use the **operator** (+ or -) input token to understand whether to do a addition or subtraction calculation
-- The first answer token is the **sign**.
+- Model must use the operator **OPR** (+ or -) input token to understand whether to do a addition or subtraction calculation
+  - This token is Pn. For a 6-digit question it is P6. 
+- The first answer token is the sign **SGN**.
   - This token is always "+" or "-" representing a positive or negative answer
-  - This token is An+1 or A_max. For a 6-digit question it is A7. 
+  - This token is An+1. For a 6-digit question it is A7. 
 - Model must accurately predict three distinct classes of questions:
-  - Addition : Answer is positive. A_max is "+". Aka **ADD**
-  - Subtraction where D >= D' : Answer is positive. A_max is "+". Aka positive-answer-subtraction. Aka **SUB** 
-  - Subtraction where D < D' : Answer is negative. A_max is "-". Aka negative-answer-subtraction. Aka **NEG**
+  - **ADD**: Addition. Answer is positive. SGN is "+".  
+  - **SUB**: Subtraction where D >= D'. Answer is positive. SGN is "+". Aka positive-answer subtraction.  
+  - **NEG**: Subtraction where D < D'. Answer is negative. SGN is "-". Aka negative-answer subtraction.  
 - For subtraction questions:
-  - The model must calculate if **D < D'** before token A_max
+  - The model must calculate if **D < D'** before token SGN.
   - D < D' is calculated as Dn < D'n or (Dn = D'n and (Dn-1 < D'n-1 or (Dn-2 = D'n-1 and ( ...
     - Addition has a similar calculation (TriCase, TriAdd) to calculate if An-1 is 1 or 0 
   - Our models seem to heavily prefer "just in time" algorithms. Assume D < D' is calculated **at** the "=" token.   
 - For addition questions, assume the model:
   - Reuses the addition circuits (perhaps modified) that were inserted from add_d6_l2_h3_t15K before
-  - Re-uses tasks Base Add (BA), Make Carry 1 (MC), Use Sum 9 (US), TriCase (C) and TriAdd (Cn) sub-tasks
+  - Re-uses tasks Base Add (SA), Make Carry 1 (SC), Use Sum 9 (SS), TriCase (ST) and TriAdd (STn) sub-tasks
   - Determines if the first numeric token of the answer (An) is 1 or 0 just in time at token position An+1
+- (Section 4.3 of https://arxiv.org/pdf/2402.02619.pdf is out of date.)
+
+## New Terminology
+TThe Add/SUB/NEG categorisation led us to change the Paper 1 sub-task abbreviations to give a coherent naming convention across the 3 question classes. 
+The new sub-task abbreviations are:
+![Hypo2_A2_Terms](./assets/Hypothesis2_Terminology.png?raw=true "Hypothesis 2 Terminology")
+
+TODO: In Paper 2, for consistency, update the text and all diagrams to this new terminology.
 
 ## Hypothesis 1 (Deprecated)
 Our first hypothesis was that the mixed model handles three classes of questions as follows:
-- ADD: Addition in this mixed model uses the same tasks (BA, MC, US, DnCm) as addition model.
-- SUB: Subtraction with a positive answer uses tasks that mirror the addition tasks (BS, BO, MZ, etc)
+- ADD: Addition in this mixed model uses the same tasks (SA, SC, SS, ST) as addition model.
+- SUB: Subtraction with a positive answer uses tasks that mirror the addition tasks (MD, MB, MZ, MT)
 - NEG: Subtraction with a negative answer uses the mathematics rule A-B = -(B-A), uses above case to do the bulk of the work 
 
 Specifically, our hypothesis is that the model's algorithm steps are:
 - H1: Pays attention to the +- question operator (using OP task)
 - If operator is "+" then
-  - H2: Does addition using BA, MC, US & TC tasks
+  - H2: Does addition using SA, SC, SS and ST tasks
 - Else
-  - H3: Calculates if D > D' (using NG nodes)
+  - H3: Calculates if D > D' 
   - If D > D' then
-    - H4: Amax is "+"
-    - H4: Does subtraction using BS, BO, SZ & T?? tasks
+    - H4: SGN is "+"
+    - H4: Does subtraction using MD, MB, MZ, MT tasks
   - Else
-    - H5: Amax is =-"
+    - H5: SGN is =-"
     - H6A: Applys D - D' = - (D' - D) transform
-    - H4: Does subtraction using BS, BO, SZ & T?? tasks
+    - H4: Does subtraction using MD, MB, MZ, MT tasks
     - H6B: Applys D - D' = - (D' - D) transform a second time
 
 Questions/Thoughts:
@@ -54,22 +62,17 @@ Questions/Thoughts:
 
 Overall we prefer hypothesis 2    
 
-## Hypothesis 2
+## Hypothesis 2 
 Our current hypothesis is that the model handles three classes of questions as peers:
-- **ADD:** Addition in mixed model uses same tasks (BA, MC, US, DnCm) as addition model.
-- **SUB:** Subtraction with positive answer uses tasks that mirror the addition tasks 
-- **NEG:** Subtraction with negative answer uses a third set of tasks 
-
-This lead us to change the Paper 1 sub-task abbreviations to give a coherent naming convention across the 3 question classes:
-![Hypo2_A2_Terms](./assets/Hypothesis2_Terminology.png?raw=true "Hypothesis 2 Terminology")
-
-TODO: In Paper 2, for consistency, update the text and all diagrams containing this terminology.
+- **ADD:** Addition in mixed model uses same tasks (SA, SC, SS, ST) as addition model.
+- **SUB:** Subtraction with positive answer uses tasks that mirror the addition tasks (MD, MB, MZ, MT) 
+- **NEG:** Subtraction with negative answer uses a third set of tasks (ND, NB, NZ, NT) 
 
 Our current hypothesis is that the model's algorithm steps for n-digit are:
 - H1: Store the question operator **OPR** (+ or -)
 - H2A: If OPR is +, uses addition-specific TriCase, TriAdd as per Paper 2 to give Dn.ST and Dn.STm (previously called Dn.C and Dn.CM)
 - H2B: If OPR is -, calculate if D > D' using functions MT (similar to addition's ST function)
-- H3: Calculate the sign **SGN** (aka A_max) as : + if OPR is + else + if D > D' else -
+- H3: Calculate the sign **SGN** as : + if OPR is + else + if D > D' else -
 - H4: Calculate An as : Dn.STm if OPR is + else Dn.MTm if D > D' else Dn.NTm
 - H5: From token position An-1, model calculates answer digit An-2 as:
   - H5A: Attention head calculates combined SA/MD/ND output
@@ -89,6 +92,17 @@ Questions/Thoughts:
 - Assume the mixed model learnt to "upgrade" the initialised Dn.STm nodes to be STm/MTm/NTm nodes that calculate 3 "answers" for each pair of input digits:
   - Another node promotes (selects) the desired answer 
   - TODO: How is the output data represented?
+
+## Hypothesis 2 - Automated task detection
+
+The python library and VerifiedArithmeticAnalyse.ipynb (Party 22) contain automated routines to search the useful nodes of a given model to see if they perform one of the above tasks.
+In April 2024, automated searches for these tasks exist: SA, SC, SS, ST, MD, MB, MT, ND, NB, OPR, SGN.
+
+For the ins1_mix_d6_l3_h4_t40K model the search results are:
+- 39 of 72 useful attention heads (54.17%) have an algorithmic purpose assigned.
+- 0 of 26 useful MLP neurons (0.00%) have an algorithmic purpose assigned.
+
+![AlgorithmPurposePerNode](./assets/ins1_mix_d6_l3_h4_t40K_s372001AlgorithmPurposePerNode.svg?raw=true "AlgorithmPurposePerNode")
 
 ## Hypothesis 2 step H5: Calculating A2
 Part 27A "Calculating answer digit A2 in token position A3" in VerifiedArithmeticAnalyse.ipynb investigates Hypothesis 2 step H5 generating this quanta map:
@@ -125,9 +139,3 @@ From this quanta map, we see:
 Our hypothesis is that to predict A2 the model's algorithm steps, broken down by question class, are:
 ![Hypo2_A2Calc](./assets/Hypothesis2_A2_Calc.png?raw=true "Hypothesis2 A2 Calc")
 
-Questions/Thoughts:
-- This mixed-model BA nodes are BA+BS nodes in the mixed model. How does that work? (Note: BS and BA give same result in edge case when D'=0 or D=D'=5. Our tests avoid this.)
-- This mixed-model MC nodes are sometimes MC+BO nodes in the mixed model. How does that work?
-- Are mixed-model Dn.C and Dn.Cm nodes similarily shared? TBC
-- When does the model start paying attention to the OPR (+/-)?
-- When/how does the model calculate D > D'?
