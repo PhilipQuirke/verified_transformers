@@ -16,7 +16,7 @@ def set_maths_question_meanings(cfg):
     q_meanings = []
     for i in range(cfg.n_digits):
         q_meanings += ["D" + str(cfg.n_digits-i-1)]
-    q_meanings += ["Op"] # Stands in for operation +, - or *
+    q_meanings += ["OPR"] # Stands in for operation +, - or *
     for i in range(cfg.n_digits):
         q_meanings += ["D'" + str(cfg.n_digits-i-1)]
     q_meanings += ["="]
