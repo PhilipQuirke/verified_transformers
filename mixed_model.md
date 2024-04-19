@@ -3,7 +3,6 @@ We initialised a new model with an existing accurate 6-digit addition model (add
 
 ## Initial facts and working assumptions
 Initial thoughts on model ins1_mix_d6_l3_h4_t40K that answers 6-digit addition and subtraction question:
-- Read section 4.3 of https://arxiv.org/pdf/2402.02619.pdf
 - For an n digit question the answer is n+2 tokens long e.g. 66666+66666=+1333332
   - We name the answer tokens An+1 to A0 
 - We assume model is 100% accurate (We know it can do 1M Qs for add and sub. This is evidence not proof.)
@@ -26,6 +25,7 @@ Initial thoughts on model ins1_mix_d6_l3_h4_t40K that answers 6-digit addition a
   - Reuses the addition circuits (perhaps modified) that were inserted from add_d6_l2_h3_t15K before
   - Re-uses tasks Base Add (SA), Make Carry 1 (SC), Use Sum 9 (SS), TriCase (ST) and TriAdd (STn) sub-tasks
   - Determines if the first numeric token of the answer (An) is 1 or 0 just in time at token position An+1
+- (Section 4.3 of https://arxiv.org/pdf/2402.02619.pdf is out of date.)
 
 ## New Terminology
 TThe Add/SUB/NEG categorisation led us to change the Paper 1 sub-task abbreviations to give a coherent naming convention across the 3 question classes. 
