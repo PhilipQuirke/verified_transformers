@@ -125,9 +125,3 @@ From this quanta map, we see:
 Our hypothesis is that to predict A2 the model's algorithm steps, broken down by question class, are:
 ![Hypo2_A2Calc](./assets/Hypothesis2_A2_Calc.png?raw=true "Hypothesis2 A2 Calc")
 
-Questions/Thoughts:
-- This mixed-model BA nodes are BA+BS nodes in the mixed model. How does that work? (Note: BS and BA give same result in edge case when D'=0 or D=D'=5. Our tests avoid this.)
-- This mixed-model MC nodes are sometimes MC+BO nodes in the mixed model. How does that work?
-- Are mixed-model Dn.C and Dn.Cm nodes similarily shared? TBC
-- When does the model start paying attention to the OPR (+/-)?
-- When/how does the model calculate D > D'?
