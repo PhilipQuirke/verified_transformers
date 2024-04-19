@@ -54,17 +54,19 @@ Questions/Thoughts:
 
 Overall we prefer hypothesis 2    
 
-## Hypothesis 2
+## Hypothesis 2 - Summary
 Our current hypothesis is that the model handles three classes of questions as peers:
 - **ADD:** Addition in mixed model uses same tasks (BA, MC, US, DnCm) as addition model.
 - **SUB:** Subtraction with positive answer uses tasks that mirror the addition tasks 
 - **NEG:** Subtraction with negative answer uses a third set of tasks 
 
+## Hypothesis 2 - Terminology
 This lead us to change the Paper 1 sub-task abbreviations to give a coherent naming convention across the 3 question classes:
 ![Hypo2_A2_Terms](./assets/Hypothesis2_Terminology.png?raw=true "Hypothesis 2 Terminology")
 
 TODO: In Paper 2, for consistency, update the text and all diagrams containing this terminology.
 
+## Hypothesis 2 - Detail
 Our current hypothesis is that the model's algorithm steps for n-digit are:
 - H1: Store the question operator **OPR** (+ or -)
 - H2A: If OPR is +, uses addition-specific TriCase, TriAdd as per Paper 2 to give Dn.ST and Dn.STm (previously called Dn.C and Dn.CM)
@@ -89,6 +91,17 @@ Questions/Thoughts:
 - Assume the mixed model learnt to "upgrade" the initialised Dn.STm nodes to be STm/MTm/NTm nodes that calculate 3 "answers" for each pair of input digits:
   - Another node promotes (selects) the desired answer 
   - TODO: How is the output data represented?
+
+## Hypothesis 2 - Automated task detection
+
+The python library and VerifiedArithmeticAnalyse.ipynb (Party 22) contain automated routines to search the useful nodes of a given model to see if they perform one of the above tasks.
+In April 2024, automated searches for these tasks exist: SA, SC, SS, ST, MD, MB, MT, ND, NB, OPR, SGN.
+
+For the ins1_mix_d6_l3_h4_t40K model the search results are:
+- 39 of 72 useful attention heads (54.17%) have an algorithmic purpose assigned.
+- 0 of 26 useful MLP neurons (0.00%) have an algorithmic purpose assigned.
+
+![AlgorithmPurposePerNode](./assets/ins1_mix_d6_l3_h4_t40K_s372001AlgorithmPurposePerNode.svg?raw=true "AlgorithmPurposePerNode")
 
 ## Hypothesis 2 step H5: Calculating A2
 Part 27A "Calculating answer digit A2 in token position A3" in VerifiedArithmeticAnalyse.ipynb investigates Hypothesis 2 step H5 generating this quanta map:
