@@ -60,15 +60,16 @@ def show_quanta_patch(ax, col_idx, row_idx, cell_color):
 
 
 # Draw one cell's text
-def show_quanta_text(ax, col_idx, row_idx, cell_text, the_fontsize):
-    if cell_text and cell_text != "":
+def show_quanta_text(ax, col_idx, row_idx, cell_text, base_fontsize):
+    if cell_text != "":
+        the_fontsize = base_fontsize if len(cell_text) < 4 else base_fontsize-1 if len(cell_text) < 5 else base_fontsize-2      
         ax.text(col_idx + 0.5, row_idx + 0.5, cell_text, ha='center', va='center', color='black', fontsize=the_fontsize)
 
 
 # Draw the border around 1 to a few cells
-def show_quanta_border(ax, merge_start_row, col_idx, row_idx, cell_color):
+def show_quanta_border(ax, merge_start_row, col_idx, row_idx):
     #ax.add_patch(patches.Rectangle((col_idx, merge_start_row), 1, row_idx - merge_start_row, edgecolor='black', facecolor=cell_color, lw=1))
-    ax.add_patch(patches.Rectangle((col_idx, row_idx), 1, merge_start_row - row_idx, edgecolor='black', facecolor=cell_color, lw=1))
+    ax.add_patch(patches.Rectangle((col_idx, row_idx), 1, merge_start_row - row_idx, edgecolor='black', fill=False, lw=1))
 
 
 # Calculate (but do not draw) the quanta map with cell contents provided by get_node_details 
@@ -86,7 +87,9 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
     distinct_row_names = sorted(distinct_row_names)
     distinct_positions = sorted(distinct_positions)
 
-    if len(distinct_row_names) == 0 or len(distinct_positions) == 0:
+    num_rows = len(distinct_row_names)     
+    num_cols = len(distinct_positions)     
+    if num_rows == 0 or num_cols == 0:
         return None, quanta_results, 0
 
 
@@ -94,7 +97,7 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
     colormap = create_colormap(standard_quanta)
   
     # Create figure and axes
-    _, ax1 = plt.subplots(figsize=(2*len(distinct_positions)/3, 2*len(distinct_row_names)/3))  # Adjust the figure size as needed
+    _, ax1 = plt.subplots(figsize=(2*num_cols/3, 2*num_rows/3))  # Adjust the figure size as needed
 
     # Ensure cells are square
     ax1.set_aspect('equal', adjustable='box')
@@ -106,62 +109,58 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
     wrapper = textwrap.TextWrapper(width=max_width)
 
     num_results = 0
-    col_idx = 0
-    for the_position in distinct_positions:
-        previous_text = None
-        previous_color = 'lightgrey'
-        merge_start_row = None
-        cell_color = 'lightgrey'
-        
-        row_idx = len(distinct_row_names)-1
-        for the_row_name in distinct_row_names:
+    
+    # Iterate over positions (columns)
+    for col_idx, the_position in enumerate(distinct_positions):
 
-            if row_idx == 0:
-                horizontal_top_labels += [cfg.token_position_meanings[the_position]]
-                horizontal_bottom_labels += [position_name(the_position)]
+        horizontal_top_labels += [cfg.token_position_meanings[the_position]]
+        horizontal_bottom_labels += [position_name(the_position)]
+
+        previous_text = None
+        merge_start_row = None
+        
+        # Iterate over rows (layer + head or neuron) in reverse order      
+        row_idx = num_rows - 1
+        for the_row_name in distinct_row_names:
+            cell_text = ""
+            cell_color = 'lightgrey'  # Color for empty cells
 
             result = find_quanta_result_by_row_col(the_row_name, the_position, quanta_results)
             if result != None:
                 num_results += 1
-                the_shade = max(0, min(result.color_index, num_shades-1))
-                cell_color = colors[the_shade] if result.color_index >= 0 else 'lightgrey'
-                the_fontsize = base_fontsize if len(result.cell_text) < 4 else base_fontsize-1 if len(result.cell_text) < 5 else base_fontsize-2
+                cell_color = colors[max(0, min(result.color_index, num_shades-1))] if result.color_index >= 0 else 'lightgrey'
                 cell_text = wrapper.fill(text=result.cell_text)
-            else:
-                cell_text = ""
-                cell_color = 'lightgrey'  # Color for empty cells
 
             show_quanta_patch(ax1, col_idx, row_idx, cell_color)          
         
             # Check if current cell text matches the previous cell text
-            if combine_identical_cells and cell_text == previous_text and row_idx != len(distinct_row_names) - 1:
+            if combine_identical_cells and cell_text == previous_text and row_idx != num_rows - 1:
                 continue
 
             # Draw the previous sequence of similar cells
             if previous_text and merge_start_row is not None:
-                show_quanta_border(ax1, merge_start_row, col_idx, row_idx, previous_color)
-                show_quanta_text( ax1, col_idx, (merge_start_row + row_idx) / 2, previous_text, the_fontsize)
+                show_quanta_border(ax1, merge_start_row, col_idx, row_idx)
+                show_quanta_text( ax1, col_idx, (merge_start_row + row_idx) / 2, previous_text, base_fontsize)
         
             # Update trackers
             merge_start_row = row_idx
             previous_text = cell_text
-            previous_color = cell_color
         
             row_idx -= 1
             
 
         # Draw the last sequence of similar cells
         if previous_text:
-            show_quanta_border(ax1, merge_start_row, col_idx, row_idx, previous_color)
-            #ax1.add_patch(patches.Rectangle((col_idx, merge_start_row), 1, len(distinct_row_names) - merge_start_row, edgecolor='black', facecolor=cell_color, lw=1))
-            show_quanta_text( ax1, col_idx, (merge_start_row + len(distinct_row_names)) / 2, previous_text, the_fontsize)
+            show_quanta_border(ax1, merge_start_row, col_idx, row_idx)
+            #ax1.add_patch(patches.Rectangle((col_idx, merge_start_row), 1, num_rows - merge_start_row, edgecolor='black', facecolor=cell_color, lw=1))
+            show_quanta_text( ax1, col_idx, (merge_start_row + num_rows) / 2, previous_text, base_fontsize)
 
         col_idx += 1
 
 
     # Configure x axis
-    ax1.set_xlim(0, len(horizontal_top_labels))
-    ax1.set_xticks(np.arange(0.5, len(horizontal_top_labels), 1))
+    ax1.set_xlim(0, num_cols)
+    ax1.set_xticks(np.arange(0.5, num_cols, 1))
     ax1.set_xticklabels(horizontal_top_labels)
     ax1.xaxis.tick_top()
     ax1.xaxis.set_label_position('top')
@@ -171,7 +170,7 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
 
 
     # Add the extra row of labels (P0, P5, P8, ...) below the matrix
-    for index in range(len(horizontal_bottom_labels)):
+    for index in range(num_cols):
         label = horizontal_bottom_labels[index]
         ax1.text(index + 0.5, - 0.02, label, ha='center', va='top', fontsize=9, transform=ax1.get_xaxis_transform())
 
@@ -181,8 +180,8 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
 
     # Configure y axis
     distinct_row_names = distinct_row_names[::-1] # Reverse the order
-    ax1.set_ylim(0, len(distinct_row_names))
-    ax1.set_yticks(np.arange(0.5, len(distinct_row_names), 1))
+    ax1.set_ylim(0, num_rows)
+    ax1.set_yticks(np.arange(0.5, num_rows, 1))
     ax1.set_yticklabels(distinct_row_names)
     ax1.tick_params(axis='y', length=0)
     for label in ax1.get_yticklabels():
