@@ -66,10 +66,9 @@ def show_quanta_text(ax, col_idx, row_idx, cell_text, base_fontsize):
         ax.text(col_idx + 0.5, row_idx + 0.5, cell_text, ha='center', va='center', color='black', fontsize=the_fontsize)
 
 
-# Draw the border around 1 to a few cells
-def show_quanta_border(ax, merge_start_row, col_idx, row_idx):
-    #ax.add_patch(patches.Rectangle((col_idx, merge_start_row), 1, row_idx - merge_start_row, edgecolor='black', facecolor=cell_color, lw=1))
-    ax.add_patch(patches.Rectangle((col_idx, row_idx), 1, merge_start_row - row_idx, edgecolor='black', fill=False, lw=1))
+# Draw the border around 1 to say 8 cells in a vertical column
+def show_quanta_border(ax, col_idx, start_row, end_row):
+    ax.add_patch(patches.Rectangle((col_idx, start_row), 1, end_row - start_row, edgecolor='black', fill=False, lw=1))
 
 
 # Calculate (but do not draw) the quanta map with cell contents provided by get_node_details 
@@ -139,7 +138,7 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
 
             # Draw the previous sequence of similar cells
             if previous_text and merge_start_row is not None:
-                show_quanta_border(ax1, merge_start_row, col_idx, row_idx)
+                show_quanta_border(ax1, col_idx, merge_start_row, row_idx)
                 show_quanta_text( ax1, col_idx, (merge_start_row + row_idx) / 2, previous_text, base_fontsize)
         
             # Update trackers
@@ -151,11 +150,8 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
 
         # Draw the last sequence of similar cells
         if previous_text:
-            show_quanta_border(ax1, merge_start_row, col_idx, row_idx)
-            #ax1.add_patch(patches.Rectangle((col_idx, merge_start_row), 1, num_rows - merge_start_row, edgecolor='black', facecolor=cell_color, lw=1))
+            show_quanta_border(ax1, col_idx, merge_start_row, row_idx)
             show_quanta_text( ax1, col_idx, (merge_start_row + num_rows) / 2, previous_text, base_fontsize)
-
-        col_idx += 1
 
 
     # Configure x axis
