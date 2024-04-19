@@ -108,6 +108,7 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
     col_idx = 0
     for the_position in distinct_positions:
         previous_text = None
+        previous_color = None
         merge_start = None
         cell_color = 'lightgrey'
         
@@ -138,19 +139,20 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
 
             # Draw the previous sequence of similar cells
             if previous_text and merge_start is not None:
-                show_quanta_border(ax1, merge_start, col_idx, row_idx, cell_color)
+                show_quanta_border(ax1, merge_start, col_idx, row_idx, previous_color)
                 show_quanta_text( ax1, col_idx + 0.5, (merge_start + row_idx) / 2, previous_text, the_fontsize)
         
             # Update trackers
             merge_start = row_idx
             previous_text = cell_text
+            previous_color = cell_color
         
             row_idx -= 1
             
 
         # Draw the last sequence of similar cells
         if previous_text:
-            show_quanta_border(ax1, merge_start, col_idx, row_idx, cell_color)
+            show_quanta_border(ax1, merge_start, col_idx, row_idx, previous_color)
             #ax1.add_patch(patches.Rectangle((col_idx, merge_start), 1, len(distinct_row_names) - merge_start, edgecolor='black', facecolor=cell_color, lw=1))
             show_quanta_text( ax1, col_idx + 0.5, (merge_start + len(distinct_row_names)) / 2, previous_text, the_fontsize)
 
