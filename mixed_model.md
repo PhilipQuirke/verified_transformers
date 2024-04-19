@@ -27,25 +27,33 @@ Initial thoughts on model ins1_mix_d6_l3_h4_t40K that answers 6-digit addition a
   - Re-uses tasks Base Add (BA), Make Carry 1 (MC), Use Sum 9 (US), TriCase (C) and TriAdd (Cn) sub-tasks
   - Determines if the first numeric token of the answer (An) is 1 or 0 just in time at token position An+1
 
+## New Terminology
+TThe Add/SUB/NEG categorisation led us to change the Paper 1 sub-task abbreviations to give a coherent naming convention across the 3 question classes. 
+The new sub-task abbreviations are:
+![Hypo2_A2_Terms](./assets/Hypothesis2_Terminology.png?raw=true "Hypothesis 2 Terminology")
+
+TODO: In Paper 2, for consistency, update the text and all diagrams to this new terminology.
+
+
 ## Hypothesis 1 (Deprecated)
 Our first hypothesis was that the mixed model handles three classes of questions as follows:
-- ADD: Addition in this mixed model uses the same tasks (BA, MC, US, DnCm) as addition model.
-- SUB: Subtraction with a positive answer uses tasks that mirror the addition tasks (BS, BO, MZ, etc)
+- ADD: Addition in this mixed model uses the same tasks (SA, SC, SS, ST) as addition model.
+- SUB: Subtraction with a positive answer uses tasks that mirror the addition tasks (MD, MB, MZ, MT)
 - NEG: Subtraction with a negative answer uses the mathematics rule A-B = -(B-A), uses above case to do the bulk of the work 
 
 Specifically, our hypothesis is that the model's algorithm steps are:
 - H1: Pays attention to the +- question operator (using OP task)
 - If operator is "+" then
-  - H2: Does addition using BA, MC, US & TC tasks
+  - H2: Does addition using SA, SC, SS and ST tasks
 - Else
-  - H3: Calculates if D > D' (using NG nodes)
+  - H3: Calculates if D > D' 
   - If D > D' then
-    - H4: Amax is "+"
-    - H4: Does subtraction using BS, BO, SZ & T?? tasks
+    - H4: SGN is "+"
+    - H4: Does subtraction using MD, MB, MZ, MT tasks
   - Else
-    - H5: Amax is =-"
+    - H5: SGN is =-"
     - H6A: Applys D - D' = - (D' - D) transform
-    - H4: Does subtraction using BS, BO, SZ & T?? tasks
+    - H4: Does subtraction using MD, MB, MZ, MT tasks
     - H6B: Applys D - D' = - (D' - D) transform a second time
 
 Questions/Thoughts:
@@ -55,19 +63,12 @@ Questions/Thoughts:
 
 Overall we prefer hypothesis 2    
 
-## Hypothesis 2 - Summary
+## Hypothesis 2 
 Our current hypothesis is that the model handles three classes of questions as peers:
 - **ADD:** Addition in mixed model uses same tasks (BA, MC, US, DnCm) as addition model.
 - **SUB:** Subtraction with positive answer uses tasks that mirror the addition tasks 
 - **NEG:** Subtraction with negative answer uses a third set of tasks 
 
-## Hypothesis 2 - Terminology
-This lead us to change the Paper 1 sub-task abbreviations to give a coherent naming convention across the 3 question classes:
-![Hypo2_A2_Terms](./assets/Hypothesis2_Terminology.png?raw=true "Hypothesis 2 Terminology")
-
-TODO: In Paper 2, for consistency, update the text and all diagrams containing this terminology.
-
-## Hypothesis 2 - Detail
 Our current hypothesis is that the model's algorithm steps for n-digit are:
 - H1: Store the question operator **OPR** (+ or -)
 - H2A: If OPR is +, uses addition-specific TriCase, TriAdd as per Paper 2 to give Dn.ST and Dn.STm (previously called Dn.C and Dn.CM)
