@@ -64,7 +64,7 @@ def show_quanta_text(ax, col_idx, row_idx, cell_text, base_fontsize):
     if cell_text != "":
         the_fontsize = base_fontsize if len(cell_text) < 4 else base_fontsize-1 if len(cell_text) < 6 else base_fontsize-2      
         #ax.text(col_idx + 0.5, row_idx + 0.5, cell_text, ha='center', va='center', color='black', fontsize=the_fontsize)
-        ax.text(col_idx + 0.5, row_idx, cell_text, ha='center', va='center', color='black', fontsize=the_fontsize)
+        ax.text(col_idx + 0.5, row_idx - 0.5, cell_text, ha='center', va='center', color='black', fontsize=the_fontsize)
 
 
 # Draw a thin border around 2 to 8 cells in a vertical column
@@ -138,7 +138,7 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
             show_quanta_patch(ax1, col_idx, row_idx, cell_color)          
         
             # Check if current cell text matches the previous cell text
-            if combine_identical_cells and cell_text == previous_text and row_idx != num_rows - 1 and cell_color != 'lightgrey':
+            if (cell_text == previous_text) and (row_idx != num_rows - 1) and (cell_color != 'lightgrey') and combine_identical_cells:
                 continue
 
             # Draw the previous sequence of similar cells
