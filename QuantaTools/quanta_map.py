@@ -61,7 +61,7 @@ def show_quanta_patch(ax, col_idx, row_idx, cell_color):
 
 # Draw the cell text
 def show_quanta_text(ax, col_idx, row_idx, cell_text, the_fontsize):
-    if cell_text != "":
+    if cell_text and cell_text != "":
         ax.text(col_idx + 0.5, row_idx + 0.5, cell_text, ha='center', va='center', color='black', fontsize=the_fontsize)
 
 
@@ -130,7 +130,7 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
                 cell_text = ""
                 cell_color = 'lightgrey'  # Color for empty cells
 
-            #show_quanta_patch(ax1, col_idx, row_idx, cell_color)          
+            show_quanta_patch(ax1, col_idx, row_idx, cell_color)          
         
             # Check if current cell text matches the previous cell text
             if combine_identical_cells and cell_text == previous_text and row_idx != len(distinct_row_names) - 1:
