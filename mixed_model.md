@@ -8,16 +8,17 @@ Initial thoughts on model ins1_mix_d6_l3_h4_t40K that answers 6-digit addition a
   - We name the answer tokens An+1 to A0 
 - We assume model is 100% accurate (We know it can do 1M Qs for add and sub. This is evidence not proof.)
   - So we assume each answer token is accurate    
-- Model must use the **operator** (+ or -) input token to understand whether to do a addition or subtraction calculation
-- The first answer token is the **sign**.
+- Model must use the operator **OPR** (+ or -) input token to understand whether to do a addition or subtraction calculation
+  - This token is Pn. For a 6-digit question it is P6. 
+- The first answer token is the sign **SGN**.
   - This token is always "+" or "-" representing a positive or negative answer
-  - This token is An+1 or A_max. For a 6-digit question it is A7. 
+  - This token is An+1. For a 6-digit question it is A7. 
 - Model must accurately predict three distinct classes of questions:
-  - Addition : Answer is positive. A_max is "+". Aka **ADD**
-  - Subtraction where D >= D' : Answer is positive. A_max is "+". Aka positive-answer-subtraction. Aka **SUB** 
-  - Subtraction where D < D' : Answer is negative. A_max is "-". Aka negative-answer-subtraction. Aka **NEG**
+  - **ADD** Addition : Answer is positive. SGN is "+".  
+  - **SUB** Subtraction where D >= D' : Answer is positive. SGN is "+". Aka positive-answer-subtraction.  
+  - **NEG** Subtraction where D < D' : Answer is negative. SGN is "-". Aka negative-answer-subtraction.  
 - For subtraction questions:
-  - The model must calculate if **D < D'** before token A_max
+  - The model must calculate if **D < D'** before token SGN
   - D < D' is calculated as Dn < D'n or (Dn = D'n and (Dn-1 < D'n-1 or (Dn-2 = D'n-1 and ( ...
     - Addition has a similar calculation (TriCase, TriAdd) to calculate if An-1 is 1 or 0 
   - Our models seem to heavily prefer "just in time" algorithms. Assume D < D' is calculated **at** the "=" token.   
@@ -71,7 +72,7 @@ Our current hypothesis is that the model's algorithm steps for n-digit are:
 - H1: Store the question operator **OPR** (+ or -)
 - H2A: If OPR is +, uses addition-specific TriCase, TriAdd as per Paper 2 to give Dn.ST and Dn.STm (previously called Dn.C and Dn.CM)
 - H2B: If OPR is -, calculate if D > D' using functions MT (similar to addition's ST function)
-- H3: Calculate the sign **SGN** (aka A_max) as : + if OPR is + else + if D > D' else -
+- H3: Calculate the sign **SGN** as : + if OPR is + else + if D > D' else -
 - H4: Calculate An as : Dn.STm if OPR is + else Dn.MTm if D > D' else Dn.NTm
 - H5: From token position An-1, model calculates answer digit An-2 as:
   - H5A: Attention head calculates combined SA/MD/ND output
