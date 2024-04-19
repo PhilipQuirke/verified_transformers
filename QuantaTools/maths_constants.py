@@ -62,5 +62,5 @@ class MathsAlgorithm(Enum):
     NEG_Z_TAG = "NZ" # Negative-answer Subtraction - Sum Zero (Dn, D'n)
     NEG_T_TAG = "NT" # Negative-answer Subtraction - TriCase (Dn, D'n)
   
-    MIX_O_TAG = "OP" # Add/Sub - Attends to operation token (in the middle of the question)
-    MIX_S_TAG = "SG" # Add/Sub - Attends to answer sign (+/-) token (at the start of the answer)
+    MIX_O_TAG = "OPR" # Add/Sub - Attends to operation token (in the middle of the question)
+    MIX_S_TAG = "SGN" # Add/Sub - Attends to answer sign (+/-) token (at the start of the answer)
