@@ -5,8 +5,8 @@
 - L = Layer  e.g. add_d6_**l**2_h3_t15K, P18**L1**H2
 - H = Attention head e.g. add_d6_l2_**h**3_t15K, P18L1**H**2
 - A = Answer Token e.g. A7, An, A0
-- PCA: Principal Component Analysis
-- EVR: Explained Variance Ratio
+- PCA = Principal Component Analysis
+- EVR = Explained Variance Ratio
 
 ## Mathematics Abbreviations and Prefixes
 - OPR = Addition or subtraction question operator i.e. + or -
