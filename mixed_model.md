@@ -14,17 +14,17 @@ Initial thoughts on model ins1_mix_d6_l3_h4_t40K that answers 6-digit addition a
   - This token is always "+" or "-" representing a positive or negative answer
   - This token is An+1. For a 6-digit question it is A7. 
 - Model must accurately predict three distinct classes of questions:
-  - **ADD** Addition : Answer is positive. SGN is "+".  
-  - **SUB** Subtraction where D >= D' : Answer is positive. SGN is "+". Aka positive-answer-subtraction.  
-  - **NEG** Subtraction where D < D' : Answer is negative. SGN is "-". Aka negative-answer-subtraction.  
+  - **ADD**: Addition. Answer is positive. SGN is "+".  
+  - **SUB**: Subtraction where D >= D'. Answer is positive. SGN is "+". Aka positive-answer subtraction.  
+  - **NEG**: Subtraction where D < D'. Answer is negative. SGN is "-". Aka negative-answer subtraction.  
 - For subtraction questions:
-  - The model must calculate if **D < D'** before token SGN
+  - The model must calculate if **D < D'** before token SGN.
   - D < D' is calculated as Dn < D'n or (Dn = D'n and (Dn-1 < D'n-1 or (Dn-2 = D'n-1 and ( ...
     - Addition has a similar calculation (TriCase, TriAdd) to calculate if An-1 is 1 or 0 
   - Our models seem to heavily prefer "just in time" algorithms. Assume D < D' is calculated **at** the "=" token.   
 - For addition questions, assume the model:
   - Reuses the addition circuits (perhaps modified) that were inserted from add_d6_l2_h3_t15K before
-  - Re-uses tasks Base Add (BA), Make Carry 1 (MC), Use Sum 9 (US), TriCase (C) and TriAdd (Cn) sub-tasks
+  - Re-uses tasks Base Add (SA), Make Carry 1 (SC), Use Sum 9 (SS), TriCase (ST) and TriAdd (STn) sub-tasks
   - Determines if the first numeric token of the answer (An) is 1 or 0 just in time at token position An+1
 
 ## New Terminology
@@ -33,7 +33,6 @@ The new sub-task abbreviations are:
 ![Hypo2_A2_Terms](./assets/Hypothesis2_Terminology.png?raw=true "Hypothesis 2 Terminology")
 
 TODO: In Paper 2, for consistency, update the text and all diagrams to this new terminology.
-
 
 ## Hypothesis 1 (Deprecated)
 Our first hypothesis was that the mixed model handles three classes of questions as follows:
@@ -65,9 +64,9 @@ Overall we prefer hypothesis 2
 
 ## Hypothesis 2 
 Our current hypothesis is that the model handles three classes of questions as peers:
-- **ADD:** Addition in mixed model uses same tasks (BA, MC, US, DnCm) as addition model.
-- **SUB:** Subtraction with positive answer uses tasks that mirror the addition tasks 
-- **NEG:** Subtraction with negative answer uses a third set of tasks 
+- **ADD:** Addition in mixed model uses same tasks (SA, SC, SS, ST) as addition model.
+- **SUB:** Subtraction with positive answer uses tasks that mirror the addition tasks (MD, MB, MZ, MT) 
+- **NEG:** Subtraction with negative answer uses a third set of tasks (ND, NB, NZ, NT) 
 
 Our current hypothesis is that the model's algorithm steps for n-digit are:
 - H1: Store the question operator **OPR** (+ or -)
