@@ -47,17 +47,17 @@ class MathsBehavior(Enum):
 # Minor "maths" tags related to major tag QType.ALGO:
 # A node may serve multiple purposes and so have more than 1 of these tags.
 class MathsAlgorithm(Enum):
-    ADD_A_TAG = "SA" # Addition - Simple Add (Dn, D'n)
+    ADD_A_TAG = "SA" # Addition - Base Add (Dn, D'n)
     ADD_C_TAG = "SC" # Addition - Make Carry (Dn, D'n)
     ADD_S_TAG = "SS" # Addition - Use Sum 9 (Dn, D'n)
     ADD_T_TAG = "ST" # Addition - TriCase (Dn, D'n)
   
-    SUB_D_TAG = "MD" # Positive-answer Subtraction - Simple Difference (Dn, D'n)
+    SUB_D_TAG = "MD" # Positive-answer Subtraction - Difference (Dn, D'n)
     SUB_B_TAG = "MB" # Positive-answer Subtraction - Borrow One (Dn, D'n)
     SUB_Z_TAG = "MZ" # Positive-answer Subtraction - Sum Zero (Dn, D'n)
     SUB_T_TAG = "MT" # Positive-answer Subtraction - TriCase (Dn, D'n)
 
-    NEG_D_TAG = "ND" # Negative-answer Subtraction - Simple Difference (Dn, D'n)
+    NEG_D_TAG = "ND" # Negative-answer Subtraction - Difference (Dn, D'n)
     NEG_B_TAG = "NB" # Negative-answer Subtraction - Borrow One (Dn, D'n)
     NEG_Z_TAG = "NZ" # Negative-answer Subtraction - Sum Zero (Dn, D'n)
     NEG_T_TAG = "NT" # Negative-answer Subtraction - TriCase (Dn, D'n)
