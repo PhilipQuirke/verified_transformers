@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
+import matplotlib.patches as patches
 import textwrap
 
 from .useful_node import position_name, NodeLocation, UsefulNodeList 
@@ -59,7 +60,7 @@ def show_quanta_add_patch(ax, j, row, cell_color):
 
 
 # Calculate (but do not draw) the quanta map with cell contents provided by get_node_details 
-def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : UsefulNodeList, major_tag : str, minor_tag : str, get_node_details, base_fontsize = 10, max_width = 10 ):
+def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : UsefulNodeList, major_tag : str, minor_tag : str, get_node_details, base_fontsize : int = 10, max_width : int = 10, combine_identical_cells : bool = True ):
   
     quanta_results = calc_quanta_results(cfg, the_nodes, major_tag, minor_tag, get_node_details, num_shades)
 
@@ -93,14 +94,15 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
     wrapper = textwrap.TextWrapper(width=max_width)
 
     num_results = 0
-    show_col = 0
+    col_idx = 0
     for the_position in distinct_positions:
+        previous_text = None
+        merge_start = None
         
-        show_row = len(distinct_row_names)-1
+        row_idx = len(distinct_row_names)-1
         for the_row_name in distinct_row_names:
-            cell_color = 'lightgrey'  # Color for empty cells
 
-            if show_row == 0:
+            if row_idx == 0:
                 horizontal_top_labels += [cfg.token_position_meanings[the_position]]
                 horizontal_bottom_labels += [position_name(the_position)]
 
@@ -110,13 +112,34 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
                 the_shade = max(0, min(result.color_index, num_shades-1))
                 cell_color = colors[the_shade] if result.color_index >= 0 else 'lightgrey'
                 the_fontsize = base_fontsize if len(result.cell_text) < 4 else base_fontsize-1 if len(result.cell_text) < 5 else base_fontsize-2
-                wrapped_text = wrapper.fill(text=result.cell_text)
-                ax1.text(show_col + 0.5, show_row + 0.5, wrapped_text, ha='center', va='center', color='black', fontsize=the_fontsize)
+                cell_text = wrapper.fill(text=result.cell_text)
+                ax1.text(col_idx + 0.5, row_idx + 0.5, cell_text, ha='center', va='center', color='black', fontsize=the_fontsize)
+            else:
+                cell_color = 'lightgrey'  # Color for empty cells
+        
+            # Check if current cell text matches the previous cell text
+            if combine_identical_cells and cell_text == previous_text and row_idx != len(distinct_row_names) - 1:
+                continue
 
-            show_quanta_add_patch(ax1, show_col, show_row, cell_color)          
-            show_row -= 1
+            # Draw the previous sequence of similar cells
+            if previous_text and merge_start is not None:
+                ax1.add_patch(patches.Rectangle((col_idx, merge_start), 1, row_idx - merge_start, edgecolor='black', facecolor=cell_color, lw=1))
+                ax1.text(col_idx + 0.5, (merge_start + row_idx) / 2, previous_text, ha='center', va='center', fontsize=base_fontsize, color='black')
+        
+            # Update trackers
+            merge_start = row_idx
+            previous_text = cell_text
+        
+            #show_quanta_add_patch(ax1, col_idx, row_idx, cell_color)          
+            row_idx -= 1
             
-        show_col += 1
+
+        # Draw the last sequence of similar cells
+        if previous_text:
+            ax1.add_patch(patches.Rectangle((col_idx, merge_start), 1, len(distinct_row_names) - merge_start, edgecolor='black', facecolor=cell_color, lw=1))
+            ax1.text(col_idx + 0.5, (merge_start + len(distinct_row_names)) / 2, previous_text, ha='center', va='center', fontsize=base_fontsize, color='black')
+
+        col_idx += 1
 
 
     # Configure x axis
