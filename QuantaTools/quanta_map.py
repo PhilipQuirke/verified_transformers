@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import matplotlib.patches as patches
-import textwrap
+#import textwrap
 
 from .useful_node import position_name, NodeLocation, UsefulNodeList 
 
@@ -62,8 +62,8 @@ def show_quanta_patch(ax, col : float, row : float, cell_color : str, width : in
 # Draw one cell's text
 def show_quanta_text(ax, col : float, row : float, text : str, base_fontsize : int):
     if (text != None) and (text != ""):
-        the_fontsize = base_fontsize if len(text) < 4 else base_fontsize-1 if len(text) < 6 else base_fontsize-2      
-        ax.text(col + 0.5, row + 0.5, text, ha='center', va='center', color='black', fontsize=the_fontsize)
+        #the_fontsize = base_fontsize if len(text) < 4 else base_fontsize-1 if len(text) < 6 else base_fontsize-2      
+        ax.text(col + 0.5, row + 0.5, text, ha='center', va='center', color='black', fontsize=base_fontsize)
 
 
 # Draw the previous sequence of similar cells
@@ -71,11 +71,7 @@ def show_quanta_cells(ax, col : float, start_row : float, end_row : float, text 
     num_cells = start_row - end_row + 1
 
     # Draw a thin border around 1 to 8 cells in a vertical column
-    ax.add_patch(patches.Rectangle((col, start_row+1), 
-        #0.98, # width. Draw RHS border within the cell to avoid overlap with the next cell to the right
-        1,                           
-        #-num_cells, edgecolor='black', fill=False, lw=1))
-        -num_cells, edgecolor='darkgray', fill=False, lw=1))
+    ax.add_patch(patches.Rectangle((col, start_row+1), 1, -num_cells, edgecolor='lightgrey', fill=False, lw=1))
 
     if num_cells <= 1:
         show_quanta_text( ax, col, start_row, text, base_fontsize)
@@ -108,7 +104,6 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
     colormap = create_colormap(standard_quanta)
   
     # Create figure and axes
-    #_, ax1 = plt.subplots(figsize=(2*num_cols/3, 2*num_rows/3))  # Adjust the figure size as needed
     _, ax1 = plt.subplots(figsize=(2*num_cols/3, 7*num_rows/12))  # Adjust the figure size as needed
 
     # Ensure cells are square
@@ -118,7 +113,7 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
     colors = [pale_color(colormap(i/num_shades)) for i in range(num_shades)]
     horizontal_top_labels = []
     horizontal_bottom_labels = []
-    wrapper = textwrap.TextWrapper(width=max_width)
+    #wrapper = textwrap.TextWrapper(width=max_width)
 
     num_results = 0
     
@@ -142,8 +137,7 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
             result = find_quanta_result_by_row_col(the_row_name, the_position, quanta_results)
             if (result != None) and (result.cell_text != None) and (result.cell_text != ""):
                 num_results += 1
-                # cell_text = wrapper.fill(text=result.cell_text)
-                cell_text = result.cell_text.replace(" ", "\n")
+                cell_text = result.cell_text.trim().replace(" ", "\n").replace(" ", "\n").replace(" ", "\n")
                 if result.color_index >= 0:
                     show_quanta_patch(ax1, col_idx, row_idx, colors[max(0, min(result.color_index, num_shades-1))])          
         
