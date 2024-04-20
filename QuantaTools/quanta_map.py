@@ -137,14 +137,17 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
                     cell_color = colors[max(0, min(result.color_index, num_shades-1))] 
                     show_quanta_patch(ax1, col_idx, row_idx, cell_color)          
         
-            # Check if current cell text matches the previous cell text
-            if combine_identical_cells and (cell_text) and (cell_text == previous_text) and (row_idx != num_rows - 1):
+            if combine_identical_cells and (cell_text) and (previous_text) and (cell_text == previous_text) and (row_idx != num_rows - 1):
                 continue
 
-            # Draw the previous sequence of similar cells
             if previous_text:
-                show_quanta_border(ax1, col_idx, merge_start_row, row_idx)
-                show_quanta_text( ax1, col_idx, (merge_start_row + row_idx) / 2.0, previous_text, base_fontsize)
+                # Draw the previous sequence of similar cells (excluding this row which is different)
+                merge_end_row = row_idx + 1
+                if merge_start_row == merge_end_row:
+                    show_quanta_text( ax1, col_idx, merge_start_row, previous_text, base_fontsize)
+                else:                
+                    show_quanta_border(ax1, col_idx, merge_start_row, merge_end_row)
+                    show_quanta_text( ax1, col_idx, 0.5 * (merge_start_row + merge_end_row), previous_text, base_fontsize)
                 previous_text = None
                 merge_start_row = None       
                 
