@@ -126,7 +126,7 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
         row_idx = num_rows - 1
         for the_row_name in distinct_row_names:
             cell_text = ""
-            cell_color = 'lightgrey'  # Color for empty cells
+            cell_color = "lightgrey"  # Color for empty cells
 
             result = find_quanta_result_by_row_col(the_row_name, the_position, quanta_results)
             if result != None:
@@ -138,7 +138,7 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
             show_quanta_patch(ax1, col_idx, row_idx, cell_color)          
         
             # Check if current cell text matches the previous cell text
-            if (cell_text == previous_text) and (row_idx != num_rows - 1) and (cell_color != 'lightgrey') and combine_identical_cells:
+            if (cell_text == previous_text) and (row_idx != num_rows - 1) and (cell_color != "lightgrey") and combine_identical_cells:
                 continue
 
             # Draw the previous sequence of similar cells
