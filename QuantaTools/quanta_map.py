@@ -74,7 +74,8 @@ def show_quanta_cells(ax, col : float, start_row : float, end_row : float, text 
     ax.add_patch(patches.Rectangle((col, start_row+1), 
         #0.98, # width. Draw RHS border within the cell to avoid overlap with the next cell to the right
         1,                           
-        -num_cells, edgecolor='black', fill=False, lw=1))
+        #-num_cells, edgecolor='black', fill=False, lw=1))
+        -num_cells, edgecolor='darkgray', fill=False, lw=1))
 
     if num_cells <= 1:
         show_quanta_text( ax, col, start_row, text, base_fontsize)
