@@ -137,7 +137,7 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
             result = find_quanta_result_by_row_col(the_row_name, the_position, quanta_results)
             if (result != None) and (result.cell_text != None) and (result.cell_text != ""):
                 num_results += 1
-                cell_text = result.cell_text.trim().replace(" ", "\n").replace(" ", "\n").replace(" ", "\n")
+                cell_text = result.cell_text.rstrip().replace(" ", "\n").replace(" ", "\n").replace(" ", "\n")
                 if result.color_index >= 0:
                     show_quanta_patch(ax1, col_idx, row_idx, colors[max(0, min(result.color_index, num_shades-1))])          
         
