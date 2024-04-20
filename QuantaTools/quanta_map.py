@@ -80,8 +80,12 @@ def show_quanta_cells(ax, col : float, start_row : float, end_row : float, text 
 
 
 # Calculate (but do not draw) the quanta map with cell contents provided by get_node_details 
-def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : UsefulNodeList, major_tag : str, minor_tag : str, get_node_details, base_fontsize : int = 10, max_width : int = 10, combine_identical_cells : bool = True ):
-  
+def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, \
+                    the_nodes : UsefulNodeList, major_tag : str, minor_tag : str, get_node_details, \
+                    base_fontsize : int = 10, max_width : int = 10, \
+                    combine_identical_cells : bool = True, \
+                    width_inches : int = -1, height_inches : int = -1 ):
+
     quanta_results = calc_quanta_results(cfg, the_nodes, major_tag, minor_tag, get_node_details, num_shades)
 
     distinct_row_names = set()
@@ -99,12 +103,16 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
     if num_rows == 0 or num_cols == 0:
         return None, quanta_results, 0
 
+    if width_inches == -1:
+        width_inches = 2*num_cols/3
+    if height_inches == -1:
+        height_inches = 7*num_rows/12
 
     # Show standard_quanta (common across all potentional models) in blue num_shades and model-specific quanta in green num_shades 
     colormap = create_colormap(standard_quanta)
   
     # Create figure and axes
-    _, ax1 = plt.subplots(figsize=(2*num_cols/3, 7*num_rows/12))  # Adjust the figure size as needed
+    _, ax1 = plt.subplots(figsize=(width_inches, height_inches))  # Adjust the figure size as needed
 
     # Ensure cells are square
     ax1.set_aspect('equal', adjustable='box')
