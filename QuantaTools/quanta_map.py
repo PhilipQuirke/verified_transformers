@@ -73,7 +73,9 @@ def show_quanta_cells(ax, col : float, start_row : float, end_row : float, text 
         show_quanta_text( ax, col, start_row, text, base_fontsize)
     else:                
         # Draw a thin border around 2 to 8 cells in a vertical column
-        ax.add_patch(patches.Rectangle((col, start_row+1), 1, -num_cells, edgecolor='black', fill=False, lw=1))
+        ax.add_patch(patches.Rectangle((col, start_row+1), 
+            0.98, # width. Draw RHS border within the cell to avoid overlap with the next cell to the right
+            -num_cells, edgecolor='black', fill=False, lw=1))
         
         show_quanta_text( ax, col, 0.5 * (start_row + end_row), text, base_fontsize)    
 
