@@ -54,9 +54,9 @@ def find_quanta_result_by_row_col(the_row_name, the_position, quanta_results):
     return None
   
 
-# Draw one cell background in the specified color
-def show_quanta_patch(ax, col_idx, row_idx, cell_color):
-    ax.add_patch(plt.Rectangle((col_idx, row_idx), 1, 1, fill=True, color=cell_color))
+# Draw the cell background in the specified color
+def show_quanta_patch(ax, col_idx, row_idx, cell_color, width = 1, height = 1):
+    ax.add_patch(plt.Rectangle((col_idx, row_idx), width, height, fill=True, color=cell_color))
 
 
 # Draw one cell's text
@@ -112,6 +112,9 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
 
     num_results = 0
     
+    show_quanta_patch(ax1, 0, 0, "lightgrey")  # Color for empty cells
+    
+
     # Iterate over positions (columns)
     for col_idx, the_position in enumerate(distinct_positions):
 
@@ -133,8 +136,7 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
                 cell_text = wrapper.fill(text=result.cell_text)
                 if result.color_index >= 0:
                     cell_color = colors[max(0, min(result.color_index, num_shades-1))] 
-
-            show_quanta_patch(ax1, col_idx, row_idx, cell_color)          
+                    show_quanta_patch(ax1, col_idx, row_idx, cell_color)          
         
             # Check if current cell text matches the previous cell text
             if combine_identical_cells and (cell_text != "") and (cell_text == previous_text) and (row_idx != num_rows - 1):
