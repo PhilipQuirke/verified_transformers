@@ -138,7 +138,7 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
             show_quanta_patch(ax1, col_idx, row_idx, cell_color)          
         
             # Check if current cell text matches the previous cell text
-            if (cell_text == previous_text) and (row_idx != num_rows - 1) and (cell_color != "lightgrey") and combine_identical_cells:
+            if combine_identical_cells and (cell_text != "") and (cell_text == previous_text) and (row_idx != num_rows - 1):
                 continue
 
             # Draw the previous sequence of similar cells
