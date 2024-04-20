@@ -30,7 +30,10 @@ Initial thoughts on model ins1_mix_d6_l3_h4_t40K that answers 6-digit addition a
 ## New Terminology
 TThe Add/SUB/NEG categorisation led us to change the Paper 1 sub-task abbreviations to give a coherent naming convention across the 3 question classes. 
 The new sub-task abbreviations are:
+
 ![Hypo2_A2_Terms](./assets/Hypothesis2_Terminology.png?raw=true "Hypothesis 2 Terminology")
+
+Note that the SS (Sums to 9) task is used by the 99%-accurate 1-layer addition model algorithm. This mixed model does not use SS. It replaces SS with the 100% accurate ST (TriCase) task.  
 
 TODO: In Paper 2, for consistency, update the text and all diagrams to this new terminology.
 
