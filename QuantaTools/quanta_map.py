@@ -73,9 +73,8 @@ def show_quanta_cells(ax, col : float, start_row : float, end_row : float, text 
         show_quanta_text( ax, col, start_row, text, base_fontsize)
     else:                
         # Draw a thin border around 2 to 8 cells in a vertical column
-        ax.add_patch(patches.Rectangle((col, start_row+1), 1, end_row - start_row, edgecolor='black', fill=False, lw=1))
+        ax.add_patch(patches.Rectangle((col, start_row+1), 1, num_cells, edgecolor='black', fill=False, lw=1))
         
-        print("Merging cells from row", start_row, "to", end_row, "in column", col, "with text", text)
         show_quanta_text( ax, col, 0.5 * (start_row + end_row), text, base_fontsize)    
 
 
@@ -104,7 +103,8 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
     colormap = create_colormap(standard_quanta)
   
     # Create figure and axes
-    _, ax1 = plt.subplots(figsize=(2*num_cols/3, 2*num_rows/3))  # Adjust the figure size as needed
+    #_, ax1 = plt.subplots(figsize=(2*num_cols/3, 2*num_rows/3))  # Adjust the figure size as needed
+    _, ax1 = plt.subplots(figsize=(3*num_cols/4, 7*num_rows/12))  # Adjust the figure size as needed
 
     # Ensure cells are square
     ax1.set_aspect('equal', adjustable='box')
