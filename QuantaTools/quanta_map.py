@@ -61,9 +61,9 @@ def show_quanta_patch(ax, col : float, row : float, cell_color : str, width : in
 
 # Draw one cell's text
 def show_quanta_text(ax, col : float, row : float, text : str, base_fontsize : int):
-    if (text) and (text != ""):
+    if (text != None) and (text != ""):
         the_fontsize = base_fontsize if len(text) < 4 else base_fontsize-1 if len(text) < 6 else base_fontsize-2      
-        ax.text(col + 0.5, row + 1, text, ha='center', va='center', color='black', fontsize=the_fontsize)
+        ax.text(col + 0.5, row + 0.5, text, ha='center', va='center', color='black', fontsize=the_fontsize)
 
 
 # Draw a thin border around 2 to 8 cells in a vertical column
@@ -130,30 +130,29 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
             cell_text = None
 
             result = find_quanta_result_by_row_col(the_row_name, the_position, quanta_results)
-            if result != None:
+            if (result != None) and (result.cell_text != None) and (result.cell_text != ""):
                 num_results += 1
                 cell_text = wrapper.fill(text=result.cell_text)
                 if result.color_index >= 0:
-                    cell_color = colors[max(0, min(result.color_index, num_shades-1))] 
-                    show_quanta_patch(ax1, col_idx, row_idx, cell_color)          
+                    show_quanta_patch(ax1, col_idx, row_idx, colors[max(0, min(result.color_index, num_shades-1))])          
         
-            if combine_identical_cells and (cell_text) and (previous_text) and (cell_text == previous_text) and (row_idx != num_rows - 1):
-                continue
+            if combine_identical_cells and (cell_text != None) and (previous_text != None) and (cell_text == previous_text) and (row_idx != num_rows - 1):
+                # Retain existing previous_text and merge_start_row values
+                pass 
 
-            if previous_text:
-                # Draw the previous sequence of similar cells (excluding this row which is different)
-                merge_end_row = row_idx + 1
-                if merge_start_row == merge_end_row:
-                    show_quanta_text( ax1, col_idx, merge_start_row, previous_text, base_fontsize)
-                else:                
-                    show_quanta_border(ax1, col_idx, merge_start_row, merge_end_row)
-                    show_quanta_text( ax1, col_idx, 0.5 * (merge_start_row + merge_end_row), previous_text, base_fontsize)
-                previous_text = None
-                merge_start_row = None       
+            else:
+                if previous_text:
+                    # Draw the previous sequence of similar cells (excluding this row which is different)
+                    merge_end_row = row_idx + 1
+                    if merge_start_row == merge_end_row:
+                        show_quanta_text( ax1, col_idx, merge_start_row, previous_text, base_fontsize)
+                    else:                
+                        show_quanta_border(ax1, col_idx, merge_start_row, merge_end_row)
+                        show_quanta_text( ax1, col_idx, 0.5 * (merge_start_row + merge_end_row), previous_text, base_fontsize)    
                 
-            # Update trackers
-            previous_text = cell_text
-            merge_start_row = row_idx
+                # Update trackers
+                previous_text = cell_text
+                merge_start_row = row_idx
         
             row_idx -= 1
             
