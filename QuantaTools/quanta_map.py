@@ -69,14 +69,16 @@ def show_quanta_text(ax, col : float, row : float, text : str, base_fontsize : i
 # Draw the previous sequence of similar cells
 def show_quanta_cells(ax, col : float, start_row : float, end_row : float, text : str, base_fontsize : int):      
     num_cells = start_row - end_row + 1
+
+    # Draw a thin border around 1 to 8 cells in a vertical column
+    ax.add_patch(patches.Rectangle((col, start_row+1), 
+        #0.98, # width. Draw RHS border within the cell to avoid overlap with the next cell to the right
+        1,                           
+        -num_cells, edgecolor='black', fill=False, lw=1))
+
     if num_cells <= 1:
         show_quanta_text( ax, col, start_row, text, base_fontsize)
     else:                
-        # Draw a thin border around 2 to 8 cells in a vertical column
-        ax.add_patch(patches.Rectangle((col, start_row+1), 
-            0.98, # width. Draw RHS border within the cell to avoid overlap with the next cell to the right
-            -num_cells, edgecolor='black', fill=False, lw=1))
-        
         show_quanta_text( ax, col, 0.5 * (start_row + end_row), text, base_fontsize)    
 
 
@@ -139,7 +141,8 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
             result = find_quanta_result_by_row_col(the_row_name, the_position, quanta_results)
             if (result != None) and (result.cell_text != None) and (result.cell_text != ""):
                 num_results += 1
-                cell_text = wrapper.fill(text=result.cell_text)
+                # cell_text = wrapper.fill(text=result.cell_text)
+                cell_text = result.cell_text.replace(" ", "\n")
                 if result.color_index >= 0:
                     show_quanta_patch(ax1, col_idx, row_idx, colors[max(0, min(result.color_index, num_shades-1))])          
         
