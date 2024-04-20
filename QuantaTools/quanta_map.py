@@ -66,12 +66,16 @@ def show_quanta_text(ax, col : float, row : float, text : str, base_fontsize : i
         ax.text(col + 0.5, row + 0.5, text, ha='center', va='center', color='black', fontsize=the_fontsize)
 
 
-# Draw a thin border around 2 to 8 cells in a vertical column
-def show_quanta_border(ax, col : float, start_row : float, end_row : float):
+# Draw the previous sequence of similar cells
+def show_quanta_cells(ax, col : float, start_row : float, end_row : float, text : str, base_fontsize : int):      
     num_cells = end_row - start_row + 1
-    if num_cells > 1:
-        print( "Border around", num_cells, "cells at", col, start_row, end_row)
+    if num_cells <= 1:
+        show_quanta_text( ax, col, start_row, text, base_fontsize)
+    else:                
+        # Draw a thin border around 2 to 8 cells in a vertical column
         ax.add_patch(patches.Rectangle((col, start_row+1), 1, end_row - start_row, edgecolor='black', fill=False, lw=1))
+        
+        show_quanta_text( ax, col, 0.5 * (start_row + end_row), text, base_fontsize)    
 
 
 # Calculate (but do not draw) the quanta map with cell contents provided by get_node_details 
@@ -141,14 +145,10 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
                 pass 
 
             else:
-                if previous_text:
+                if previous_text != None:
                     # Draw the previous sequence of similar cells (excluding this row which is different)
                     merge_end_row = row_idx + 1
-                    if merge_start_row == merge_end_row:
-                        show_quanta_text( ax1, col_idx, merge_start_row, previous_text, base_fontsize)
-                    else:                
-                        show_quanta_border(ax1, col_idx, merge_start_row, merge_end_row)
-                        show_quanta_text( ax1, col_idx, 0.5 * (merge_start_row + merge_end_row), previous_text, base_fontsize)    
+                    show_quanta_cells(ax1, col_idx, merge_start_row, merge_end_row, previous_text, base_fontsize)  
                 
                 # Update trackers
                 previous_text = cell_text
@@ -156,11 +156,9 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
         
             row_idx -= 1
             
-
-        # Draw the last sequence of similar cells
-        if previous_text:
-            show_quanta_border(ax1, col_idx, merge_start_row, row_idx)
-            show_quanta_text( ax1, col_idx, (merge_start_row + num_rows) / 2, previous_text, base_fontsize)
+        if previous_text != None:
+            # Draw the last cell(s)
+            show_quanta_cells(ax1, col_idx, merge_start_row, 0, previous_text, base_fontsize)  
 
 
     # Configure x axis
