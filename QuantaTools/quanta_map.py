@@ -105,9 +105,11 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, \
     square_cells = True
     if width_inches == -1:
         width_inches = 2*num_cols/3
+    else:
         square_cells = False
     if height_inches == -1:
         height_inches = 7*num_rows/12
+    else:
         square_cells = False
         
     # Create figure and axes
