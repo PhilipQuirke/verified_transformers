@@ -60,31 +60,29 @@ def show_quanta_patch(ax, col : float, row : float, cell_color : str, width : in
 
 
 # Draw one cell's text
-def show_quanta_text(ax, col : float, row : float, text : str, base_fontsize : int):
-    if (text != None) and (text != ""):
-        #the_fontsize = base_fontsize if len(text) < 4 else base_fontsize-1 if len(text) < 6 else base_fontsize-2      
-        ax.text(col + 0.5, row + 0.5, text, ha='center', va='center', color='black', fontsize=base_fontsize)
+def show_quanta_text(ax, col : float, row : float, text : str, fontsize : int):
+    if (text != None) and (text != ""): 
+        ax.text(col + 0.5, row + 0.5, text, ha='center', va='center', color='black', fontsize=fontsize)
 
 
 # Draw the previous sequence of similar cells
-def show_quanta_cells(ax, col : float, start_row : float, end_row : float, text : str, base_fontsize : int):      
+def show_quanta_cells(ax, col : float, start_row : float, end_row : float, text : str, fontsize : int):      
     num_cells = start_row - end_row + 1
 
     # Draw a thin border around 1 to 8 cells in a vertical column
     ax.add_patch(patches.Rectangle((col, start_row+1), 1, -num_cells, edgecolor='lightgrey', fill=False, lw=1))
 
     if num_cells <= 1:
-        show_quanta_text( ax, col, start_row, text, base_fontsize)
+        show_quanta_text( ax, col, start_row, text, fontsize)
     else:                
-        show_quanta_text( ax, col, 0.5 * (start_row + end_row), text, base_fontsize)    
+        show_quanta_text( ax, col, 0.5 * (start_row + end_row), text, fontsize)    
 
 
 # Calculate (but do not draw) the quanta map with cell contents provided by get_node_details 
 def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, \
                     the_nodes : UsefulNodeList, major_tag : str, minor_tag : str, get_node_details, \
-                    base_fontsize : int = 10, max_width : int = 10, \
+                    cell_fontsize : int = 10, \
                     combine_identical_cells : bool = True, \
-                    square_cells : bool = True, \
                     width_inches : int = -1, height_inches : int = -1 ):
 
     quanta_results = calc_quanta_results(cfg, the_nodes, major_tag, minor_tag, get_node_details, num_shades)
@@ -104,11 +102,14 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, \
     if num_rows == 0 or num_cols == 0:
         return None, quanta_results, 0
 
+    square_cells = True
     if width_inches == -1:
         width_inches = 2*num_cols/3
+        square_cells = False
     if height_inches == -1:
         height_inches = 7*num_rows/12
-
+        square_cells = False
+        
     # Create figure and axes
     _, ax1 = plt.subplots(figsize=(width_inches, height_inches))  # Adjust the figure size as needed
 
@@ -124,7 +125,7 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, \
     colors = [pale_color(colormap(i/num_shades)) for i in range(num_shades)]
     horizontal_top_labels = []
     horizontal_bottom_labels = []
-    #wrapper = textwrap.TextWrapper(width=max_width)
+    #wrapper = textwrap.TextWrapper(width=cell_max_char_width)
 
     num_results = 0
     
@@ -160,7 +161,7 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, \
                 if previous_text != None:
                     # Draw the previous sequence of similar cells (excluding this row which is different)
                     merge_end_row = row_idx + 1
-                    show_quanta_cells(ax1, col_idx, merge_start_row, merge_end_row, previous_text, base_fontsize)  
+                    show_quanta_cells(ax1, col_idx, merge_start_row, merge_end_row, previous_text, cell_fontsize)  
                 
                 # Update trackers
                 previous_text = cell_text
@@ -170,7 +171,7 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, \
             
         if previous_text != None:
             # Draw the last cell(s)
-            show_quanta_cells(ax1, col_idx, merge_start_row, 0, previous_text, base_fontsize)  
+            show_quanta_cells(ax1, col_idx, merge_start_row, 0, previous_text, cell_fontsize)  
 
 
     # Configure x axis
