@@ -35,7 +35,7 @@ The new sub-task abbreviations are:
 
 Note that the SS (Sums to 9) task is used by the 99%-accurate 1-layer addition model algorithm. This mixed model does not use SS. It replaces SS with the 100% accurate ST (TriCase) task.  
 
-TODO: In Paper 2, for consistency, update the text and all diagrams to this new terminology.
+TODO: In Paper 2, for consistency, update the text and all diagrams (Issue #30) to this new terminology. Review all use of US text.
 
 ## Hypothesis 1 (Deprecated)
 Our first hypothesis was that the mixed model handles three classes of questions as follows:
