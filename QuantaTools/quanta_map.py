@@ -55,23 +55,23 @@ def find_quanta_result_by_row_col(the_row_name, the_position, quanta_results):
   
 
 # Draw the cell background in the specified color
-def show_quanta_patch(ax, col_idx, row_idx, cell_color, width = 1, height = 1):
-    ax.add_patch(plt.Rectangle((col_idx, row_idx), width, height, fill=True, color=cell_color))
+def show_quanta_patch(ax, col : float, row : float, cell_color : str, width : int = 1, height : int = 1):
+    ax.add_patch(plt.Rectangle((col, row), width, height, fill=True, color=cell_color))
 
 
 # Draw one cell's text
-def show_quanta_text(ax, col_idx, row_idx, cell_text, base_fontsize):
-    if cell_text != "":
-        the_fontsize = base_fontsize if len(cell_text) < 4 else base_fontsize-1 if len(cell_text) < 6 else base_fontsize-2      
-        ax.text(col_idx + 0.5, row_idx + 1, cell_text, ha='center', va='center', color='black', fontsize=the_fontsize)
+def show_quanta_text(ax, col : float, row : float, text : str, base_fontsize : int):
+    if text != "":
+        the_fontsize = base_fontsize if len(text) < 4 else base_fontsize-1 if len(text) < 6 else base_fontsize-2      
+        ax.text(col + 0.5, row + 1, text, ha='center', va='center', color='black', fontsize=the_fontsize)
 
 
 # Draw a thin border around 2 to 8 cells in a vertical column
-def show_quanta_border(ax, col_idx, start_row, end_row):
-    num_cells = end_row - start_row
+def show_quanta_border(ax, col : float, start_row : float, end_row : float):
+    num_cells = end_row - start_row + 1
     if num_cells > 1:
-        #ax.add_patch(patches.Rectangle((col_idx, start_row), 1, end_row - start_row, edgecolor='black', fill=False, lw=1))
-        ax.add_patch(patches.Rectangle((col_idx, start_row+1), 1, end_row - start_row, edgecolor='black', fill=False, lw=1))
+        print( "Border around", num_cells, "cells at", col, start_row, end_row)
+        ax.add_patch(patches.Rectangle((col, start_row+1), 1, end_row - start_row, edgecolor='black', fill=False, lw=1))
 
 
 # Calculate (but do not draw) the quanta map with cell contents provided by get_node_details 
@@ -112,7 +112,7 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
 
     num_results = 0
     
-    show_quanta_patch(ax1, 0, 0, "lightgrey")  # Color for empty cells
+    show_quanta_patch(ax1, 0, 0, "lightgrey", num_cols, num_rows)  # Color for empty cells
     
 
     # Iterate over positions (columns)
@@ -145,7 +145,7 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
             # Draw the previous sequence of similar cells
             if previous_text:
                 show_quanta_border(ax1, col_idx, merge_start_row, row_idx)
-                show_quanta_text( ax1, col_idx, (merge_start_row + row_idx) / 2, previous_text, base_fontsize)
+                show_quanta_text( ax1, col_idx, (merge_start_row + row_idx) / 2.0, previous_text, base_fontsize)
         
             # Update trackers
             previous_text = cell_text
