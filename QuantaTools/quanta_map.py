@@ -104,6 +104,7 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
   
     # Create figure and axes
     #_, ax1 = plt.subplots(figsize=(2*num_cols/3, 2*num_rows/3))  # Adjust the figure size as needed
+    _, ax1 = plt.subplots(figsize=(2*num_cols/3, 7*num_rows/12))  # Adjust the figure size as needed
 
     # Ensure cells are square
     ax1.set_aspect('equal', adjustable='box')
