@@ -84,6 +84,7 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, \
                     the_nodes : UsefulNodeList, major_tag : str, minor_tag : str, get_node_details, \
                     base_fontsize : int = 10, max_width : int = 10, \
                     combine_identical_cells : bool = True, \
+                    square_cells : bool = True, \
                     width_inches : int = -1, height_inches : int = -1 ):
 
     quanta_results = calc_quanta_results(cfg, the_nodes, major_tag, minor_tag, get_node_details, num_shades)
@@ -108,16 +109,18 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, \
     if height_inches == -1:
         height_inches = 7*num_rows/12
 
-    # Show standard_quanta (common across all potentional models) in blue num_shades and model-specific quanta in green num_shades 
-    colormap = create_colormap(standard_quanta)
-  
     # Create figure and axes
     _, ax1 = plt.subplots(figsize=(width_inches, height_inches))  # Adjust the figure size as needed
 
-    # Ensure cells are square
-    ax1.set_aspect('equal', adjustable='box')
+    if square_cells:
+        # Ensure cells are square
+        ax1.set_aspect('equal', adjustable='box')
+    
     ax1.yaxis.set_tick_params(labelleft=True, labelright=False)
 
+    # Show standard_quanta (common across all potentional models) in blue num_shades and model-specific quanta in green num_shades 
+    colormap = create_colormap(standard_quanta)
+  
     colors = [pale_color(colormap(i/num_shades)) for i in range(num_shades)]
     horizontal_top_labels = []
     horizontal_bottom_labels = []
