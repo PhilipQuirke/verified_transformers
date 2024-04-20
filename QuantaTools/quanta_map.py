@@ -61,7 +61,7 @@ def show_quanta_patch(ax, col : float, row : float, cell_color : str, width : in
 
 # Draw one cell's text
 def show_quanta_text(ax, col : float, row : float, text : str, base_fontsize : int):
-    if text != "":
+    if (text) and (text != ""):
         the_fontsize = base_fontsize if len(text) < 4 else base_fontsize-1 if len(text) < 6 else base_fontsize-2      
         ax.text(col + 0.5, row + 1, text, ha='center', va='center', color='black', fontsize=the_fontsize)
 
@@ -127,8 +127,7 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
         # Iterate over rows (layer + head or neuron) in reverse order      
         row_idx = num_rows - 1
         for the_row_name in distinct_row_names:
-            cell_text = ""
-            cell_color = "lightgrey"  # Color for empty cells
+            cell_text = None
 
             result = find_quanta_result_by_row_col(the_row_name, the_position, quanta_results)
             if result != None:
@@ -139,14 +138,16 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, the_nodes : 
                     show_quanta_patch(ax1, col_idx, row_idx, cell_color)          
         
             # Check if current cell text matches the previous cell text
-            if combine_identical_cells and (cell_text != "") and (cell_text == previous_text) and (row_idx != num_rows - 1):
+            if combine_identical_cells and (cell_text) and (cell_text == previous_text) and (row_idx != num_rows - 1):
                 continue
 
             # Draw the previous sequence of similar cells
             if previous_text:
                 show_quanta_border(ax1, col_idx, merge_start_row, row_idx)
                 show_quanta_text( ax1, col_idx, (merge_start_row + row_idx) / 2.0, previous_text, base_fontsize)
-        
+                previous_text = None
+                merge_start_row = None       
+                
             # Update trackers
             previous_text = cell_text
             merge_start_row = row_idx
