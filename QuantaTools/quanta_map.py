@@ -68,13 +68,14 @@ def show_quanta_text(ax, col : float, row : float, text : str, base_fontsize : i
 
 # Draw the previous sequence of similar cells
 def show_quanta_cells(ax, col : float, start_row : float, end_row : float, text : str, base_fontsize : int):      
-    num_cells = end_row - start_row + 1
+    num_cells = start_row - end_row + 1
     if num_cells <= 1:
         show_quanta_text( ax, col, start_row, text, base_fontsize)
     else:                
         # Draw a thin border around 2 to 8 cells in a vertical column
         ax.add_patch(patches.Rectangle((col, start_row+1), 1, end_row - start_row, edgecolor='black', fill=False, lw=1))
         
+        print("Merging cells from row", start_row, "to", end_row, "in column", col, "with text", text)
         show_quanta_text( ax, col, 0.5 * (start_row + end_row), text, base_fontsize)    
 
 
