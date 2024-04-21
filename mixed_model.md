@@ -77,7 +77,7 @@ Our current hypothesis is that the model's algorithm steps for n-digit are:
   - H2A: Calculate Dn.STm using addition-specific TriCase/TriAdd functions as described in Paper 2. Useful if OPR is +
   - H2B: Calculate if D > D' using functions MT (similar to addition's STm function). Useful if OPR is -
 - H3: Calculate the first answer token **SGN** as : + if OPR is + else + if D > D' else -
-- H4: Calculate the first numeric answer tokan An as : Dn.STm if OPR is + else Dn.MTm if D > D' else Dn.NTm
+- H4: Calculate the first numeric answer token An as : Dn.STm if OPR is + else Dn.MTm if D > D' else Dn.NTm
 - H5: From token position An-1, model calculates (numeric) answer digit An-2 as:
   - H5A: Attention head calculates combined SA/MD/ND output
   - H5B: Attention head calculates combined SC/MB/NB output.
