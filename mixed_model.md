@@ -19,11 +19,11 @@ Initial thoughts on model ins1_mix_d6_l3_h4_t40K that answers 6-digit addition a
 - For subtraction questions:
   - The model must calculate if **D < D'** before token SGN.
   - D < D' is calculated as Dn < D'n or (Dn = D'n and (Dn-1 < D'n-1 or (Dn-2 = D'n-1 and ( ...
-    - Addition has a similar calculation (TriCase, TriAdd) to calculate if An-1 is 1 or 0 
+    - Addition has a similar calculation (Dn.STm) to calculate if An-1 is 1 or 0 
   - Our models seem to heavily prefer "just in time" algorithms. Assume D < D' is calculated **at** the "=" token.   
 - For addition questions, assume the model:
   - Reuses the addition circuits (perhaps modified) that were inserted from add_d6_l2_h3_t15K before
-  - Re-uses tasks Base Add (SA), Make Carry 1 (SC), Use Sum 9 (SS), TriCase (ST) and TriAdd (STn) sub-tasks
+  - Re-uses tasks Base Add (SA), Make Carry 1 (SC) and TriCase/TriAdd (STm) sub-tasks
   - Determines if the first numeric token of the answer (An) is 1 or 0 just in time at token position An+1
 - (Section 4.3 of https://arxiv.org/pdf/2402.02619.pdf is out of date.)
 
@@ -33,7 +33,7 @@ The new sub-task abbreviations are:
 
 ![Hypo2_A2_Terms](./assets/Hypothesis2_Terminology.png?raw=true "Hypothesis 2 Terminology")
 
-Note that the SS (Sums to 9) task is used by the 99%-accurate 1-layer addition model algorithm. This mixed model does not use SS. It replaces SS with the 100% accurate ST (TriCase) task.  
+Note that the SS (Sums to 9) task is used by the 99%-accurate 1-layer addition model algorithm. This mixed model does not use SS. It replaces SS with the 100% accurate STm (TriCase/TriAdd) task.  
 
 TODO: In Paper 2, for consistency, update the text and all diagrams (Issue #30) to this new terminology. Review all use of US text.
 
@@ -41,7 +41,7 @@ TODO: In Paper 2, for consistency, update the text and all diagrams (Issue #30) 
 Our first hypothesis was that the mixed model handles three classes of questions as follows:
 - ADD: Addition in this mixed model uses the same tasks (SA, SC, SS, ST) as addition model.
 - SUB: Subtraction with a positive answer uses tasks that mirror the addition tasks (MD, MB, MZ, MT)
-- NEG: Subtraction with a negative answer uses the mathematics rule A-B = -(B-A), uses above case to do the bulk of the work 
+- NEG: Subtraction with a negative answer uses the mathematics rule **A-B = -(B-A)**, uses above case to do the bulk of the work 
 
 Specifically, our hypothesis is that the model's algorithm steps are:
 - H1: Pays attention to the +- question operator (using OP task)
@@ -73,11 +73,12 @@ Our current hypothesis is that the model handles three classes of questions as p
 
 Our current hypothesis is that the model's algorithm steps for n-digit are:
 - H1: Store the question operator **OPR** (+ or -)
-- H2A: If OPR is +, uses addition-specific TriCase, TriAdd as per Paper 2 to give Dn.ST and Dn.STm (previously called Dn.C and Dn.CM)
-- H2B: If OPR is -, calculate if D > D' using functions MT (similar to addition's ST function)
-- H3: Calculate the sign **SGN** as : + if OPR is + else + if D > D' else -
-- H4: Calculate An as : Dn.STm if OPR is + else Dn.MTm if D > D' else Dn.NTm
-- H5: From token position An-1, model calculates answer digit An-2 as:
+- H2: In early tokens calculate the "essence of carry 1" and "essence of sign" (likely in same nodes producing polysemantic output)
+  - H2A: Calculate Dn.STm using addition-specific TriCase/TriAdd functions as described in Paper 2. Useful if OPR is +
+  - H2B: Calculate if D > D' using functions MT (similar to addition's STm function). Useful if OPR is -
+- H3: Calculate the first answer token **SGN** as : + if OPR is + else + if D > D' else -
+- H4: Calculate the first numeric answer tokan An as : Dn.STm if OPR is + else Dn.MTm if D > D' else Dn.NTm
+- H5: From token position An-1, model calculates (numeric) answer digit An-2 as:
   - H5A: Attention head calculates combined SA/MD/ND output
   - H5B: Attention head calculates combined SC/MB/NB output.
   - H5C: If OPR is +, (so SGN is +), attention head selects SA, SC and Dn.STm. MLP0 layer combines to give An-2 
