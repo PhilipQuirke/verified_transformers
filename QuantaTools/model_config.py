@@ -82,7 +82,7 @@ class ModelConfig():
         return self.d_mlp_multiplier * self.d_model
 
 
-    # Update n_digits, n_layers, n_heads, n_training_steps from model_name
+    # Update n_digits, n_layers, n_heads, n_training_steps, training_seed from model_name
     def parse_model_name(self):
 
         match = re.search(r"l(\d)_", self.model_name)
@@ -114,6 +114,10 @@ class ModelConfig():
         elif "ins3_" in self.model_name :
             self.insert_mode = 3 # Initialised with existing model. Trained & reset useful heads & MLPs every 100 epochs
      
+        match = re.search(r"_s(\d\d)", self.model_name)
+        if match:
+            self.training_seed = int(match.group(1))
+
 
     def short_config_description(self):       
         return f'_l{self.n_layers}_h{self.n_heads}'   
