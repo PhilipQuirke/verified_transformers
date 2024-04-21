@@ -114,7 +114,7 @@ class ModelConfig():
         elif "ins3_" in self.model_name :
             self.insert_mode = 3 # Initialised with existing model. Trained & reset useful heads & MLPs every 100 epochs
      
-        match = re.search(r"_s(\d\d)", self.model_name)
+        match = re.search(r"_s(\d\d\d\d\d\d)", self.model_name)
         if match:
             self.training_seed = int(match.group(1))
 
