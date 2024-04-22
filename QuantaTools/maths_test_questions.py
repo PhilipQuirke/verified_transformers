@@ -485,7 +485,7 @@ def test_maths_questions_by_impact(cfg, acfg, questions, position : int, ablate 
             if 'A' in impact_str:
                 num_fails += 1
 
-                if cfg.show_test_failures:
+                if acfg.show_test_failures:
                     print(tokens_to_string(cfg, q), "Q: ModelAnswer:", answer_str, "Impact:", impact_str, "Loss:", the_loss_mean )
 
     return num_fails
