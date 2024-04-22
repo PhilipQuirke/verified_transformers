@@ -25,12 +25,12 @@ class UsefulConfig(ModelConfig):
   
     # Returns the minimum useful token position
     def min_useful_position(self):
-        return min(self.useful_positions)
+        return min(self.useful_positions) if len(self.useful_positions) > 0 else -1
 
 
     # Returns the maximum useful token position
     def max_useful_position(self):
-        return max(self.useful_positions)
+        return max(self.useful_positions) if len(self.useful_positions) > 0 else -1
 
 
     # Add a token position that we know is used in calculations
