@@ -23,7 +23,7 @@ class ModelConfig():
         self.d_head : int = 170
         self.act_fn = 'relu'
  
-        # Batch size. Training often 64. Larger size used for speed during analysis
+        # Batch size. Training often uses 64. Larger size used for speed during analysis e.g. 1M Qs
         self.batch_size : int = 512 
   
         # Optimizer
