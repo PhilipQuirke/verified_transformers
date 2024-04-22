@@ -628,7 +628,7 @@ def test_correctness_on_num_questions(cfg, acfg, num_questions=1000000):
     store_perc_mult = cfg.perc_mult
 
     def print_config():
-        print("%Mult=", cfg.perc_mult, "%Sub=", cfg.perc_sub, "%Add=", cfg.perc_add(), "File", cfg.file_config_prefix())
+        print("%Add=", cfg.perc_add(), "%Sub=", cfg.perc_sub, "%Mult=", cfg.perc_mult, "File", cfg.file_config_prefix())
 
     print_config()
     print()
