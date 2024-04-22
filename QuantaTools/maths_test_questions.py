@@ -451,8 +451,8 @@ def test_maths_questions_by_complexity(cfg, acfg, varied_questions):
         org_size = varied_questions.shape[0]
         varied_questions = varied_questions[torch.tensor(correct_list)]
         new_size = varied_questions.shape[0]
-        print("RESOLUTION: Understand these failures. Enrich the training data to provide more examples. Retrain the model.")
-        print("INTERIM: Have reduced 'varied_questions' size from", org_size, "to", new_size, "so can continue.")
+        print("NEXT STEP: Understand the failure case(s). Enrich the training data to provide more examples. Retrain the model.")
+        print("WORKAROUND: Have reduced 'varied_questions' size from", org_size, "to", new_size, "so can continue.")
     
     return varied_questions
 
