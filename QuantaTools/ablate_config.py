@@ -16,7 +16,6 @@ class AblateConfig():
 
     def reset_ablate(self):
         self.threshold = 0.01
-        self.verbose = False
 
         # How many test questions are in the manually-curated varied_questions test set?
         self.num_varied_questions = 0
