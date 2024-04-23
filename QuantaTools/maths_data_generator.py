@@ -44,10 +44,15 @@ def maths_data_generator_core( cfg, batch_op ):
             else:
                 y_flat[indices_to_modify] = 9 - x_flat[indices_to_modify]
         else:
-            # Empirically, the model seems to struggle with the sign calculation.
-            # Minus signs are rarer than positive signs.
-            # Generate more negative answers by increasing the y value
-            y_flat[y_flat < 9] += 1
+            if random.randint(1, 100) == 1:
+                # For rare cases like 099111-099111=+0000000 some models predict -0000000. Generate more of these cases
+                y_flat = x_flat.clone()
+
+            else:
+                # Empirically, the model seems to struggle with the sign calculation.
+                # Minus signs are rarer than positive signs.
+                # Generate more negative answers by increasing the y value
+                y_flat[y_flat < 9] += 1
 
         # Reshape x and y back to its original shape
         x = x_flat.view(x.shape)
