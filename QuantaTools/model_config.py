@@ -23,13 +23,13 @@ class ModelConfig():
         self.d_head : int = 170
         self.act_fn = 'relu'
  
-        # Batch size. Training often 64. Larger size used for speed during analysis
+        # Batch size. Training often uses 64. Larger size used for speed during analysis e.g. 1M Qs
         self.batch_size : int = 512 
   
         # Optimizer
-        self.n_training_steps : int = 40000
-        self.weight_decay = 0.00008
-        self.lr = 0.1
+        self.n_training_steps : int = 15000
+        self.weight_decay = 0.1
+        self.lr = 0.00008
 
         # Before training was this model initialised with another existing model?
         self.insert_mode = 0 # 0=None 1=Init, 2=FreezeHeads 3=FreezeAll
@@ -82,7 +82,7 @@ class ModelConfig():
         return self.d_mlp_multiplier * self.d_model
 
 
-    # Update n_digits, n_layers, n_heads, n_training_steps from model_name
+    # Update n_digits, n_layers, n_heads, n_training_steps, training_seed from model_name
     def parse_model_name(self):
 
         match = re.search(r"l(\d)_", self.model_name)
@@ -114,6 +114,10 @@ class ModelConfig():
         elif "ins3_" in self.model_name :
             self.insert_mode = 3 # Initialised with existing model. Trained & reset useful heads & MLPs every 100 epochs
      
+        match = re.search(r"_s(\d\d\d\d\d\d)", self.model_name)
+        if match:
+            self.training_seed = int(match.group(1))
+
 
     def short_config_description(self):       
         return f'_l{self.n_layers}_h{self.n_heads}'   

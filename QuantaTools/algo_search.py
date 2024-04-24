@@ -70,8 +70,8 @@ def search_and_tag(cfg, acfg, \
                    prerequisites_function, # Prerequisites a useful node must satisfy to be interesting \
                    test_function, # The test function applied to interesting nodes \ 
                    tag_function, # The tag applied to interesting nodes that pass the test \
-                   do_pair_search : bool = False, # Search for "pairs" of interesting nodes that satisfy the test \
-                   do_weak_search : bool = False, # Succeed in search even if expected impact is not found \
+                   do_pair_search : bool = True, # Search for "pairs" of interesting nodes (as well as "single" nodes) that satisfy the test \
+                   do_weak_search : bool = False, # Succeed in search even if expected impact is not correct \
                    from_position : int = -1, \
                    to_position : int = -1):
     acfg.reset_intervention_totals()

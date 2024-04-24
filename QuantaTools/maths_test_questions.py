@@ -11,7 +11,7 @@ from .useful_node import NodeLocation
 from .quanta_constants import QType
 from .quanta_map_impact import get_question_answer_impact, sort_unique_digits
 
-from .ablate_config import AblateConfig, acfg
+from .ablate_config import AblateConfig
 from .ablate_hooks import a_predict_questions
 
 from .maths_constants import MathsToken, MathsBehavior
@@ -451,8 +451,8 @@ def test_maths_questions_by_complexity(cfg, acfg, varied_questions):
         org_size = varied_questions.shape[0]
         varied_questions = varied_questions[torch.tensor(correct_list)]
         new_size = varied_questions.shape[0]
-        print("RESOLUTION: Understand these failures. Enrich the training data to provide more examples. Retrain the model.")
-        print("INTERIM: Have reduced 'varied_questions' size from", org_size, "to", new_size, "so can continue.")
+        print("NEXT STEP: Understand the failure case(s). Enrich the training data to provide more examples. Retrain the model.")
+        print("WORKAROUND: Have reduced 'varied_questions' size from", org_size, "to", new_size, "so can continue.")
     
     return varied_questions
 
@@ -485,7 +485,7 @@ def test_maths_questions_by_impact(cfg, acfg, questions, position : int, ablate 
             if 'A' in impact_str:
                 num_fails += 1
 
-                if acfg.verbose :
+                if acfg.show_test_failures:
                     print(tokens_to_string(cfg, q), "Q: ModelAnswer:", answer_str, "Impact:", impact_str, "Loss:", the_loss_mean )
 
     return num_fails
@@ -525,7 +525,7 @@ def test_maths_questions_and_add_useful_node_tags(cfg, acfg, questions, node_loc
                 elif major_tag == QType.MATH_NEG:
                     neg_complexity_fails += minor_tag.value
                     
-                if acfg.verbose :
+                if acfg.show_test_failures :
                     print(tokens_to_string(cfg, q), "U: ModelAnswer:", answer_str, "Complexity:", major_tag, "Impact:", impact_str, "Loss:", the_loss_mean )
 
     if num_fails > 0:
@@ -623,59 +623,54 @@ def make_maths_tricase_questions(cfg):
             cfg.tricase_questions_dict[(answer_digit, operation)] = t_questions
 
 
-def test_correctness_on_num_questions(cfg, num_questions=1000000):
-  store_perc_sub = cfg.perc_sub
-  store_perc_mult = cfg.perc_mult
+def test_correctness_on_num_questions(cfg, acfg, num_questions=1000000):
+    store_perc_sub = cfg.perc_sub
+    store_perc_mult = cfg.perc_mult
 
-  def print_config():
-      print("%Mult=", cfg.perc_mult, "%Sub=", cfg.perc_sub, "%Add=", cfg.perc_add(), "File", cfg.file_config_prefix())
+    def print_config():
+        print("%Add=", cfg.perc_add(), "%Sub=", cfg.perc_sub, "%Mult=", cfg.perc_mult, "File", cfg.file_config_prefix())
 
-  print_config()
-  print()
-
-  if cfg.perc_add() > 0:
-    print("Addition:")
-    cfg.perc_sub = 0
-    cfg.perc_mult = 0
-    test_correctness_on_num_questions_core(cfg, num_questions=num_questions)
-
-  if store_perc_sub > 0:
-    print("Subtraction:")
-    cfg.perc_sub = 100
-    cfg.perc_mult = 0
-    test_correctness_on_num_questions_core(cfg, num_questions=num_questions)
+    print_config()
     print()
 
-  cfg.perc_sub = store_perc_sub
-  cfg.perc_mult = store_perc_mult
+    if cfg.perc_add() > 0:
+        print("Addition:")
+        cfg.perc_sub = 0
+        cfg.perc_mult = 0
+        test_correctness_on_num_questions_core(cfg, acfg, num_questions=num_questions)
+
+    if store_perc_sub > 0:
+        print("Subtraction:")
+        cfg.perc_sub = 100
+        cfg.perc_mult = 0
+        test_correctness_on_num_questions_core(cfg, acfg, num_questions=num_questions)
+        print()
+
+    cfg.perc_sub = store_perc_sub
+    cfg.perc_mult = store_perc_mult
 
 
-def test_correctness_on_num_questions_core(cfg, num_questions=1000000):
-  acfg.verbose = False
+def test_correctness_on_num_questions_core(cfg, acfg, num_questions=1000000):
+    cfg.analysis_seed = 345621  # Randomly chosen
+    local_ds = maths_data_generator(cfg=cfg)  # Re-initialise the data generator
 
-  cfg.analysis_seed = 345621  # Randomly chosen
-  local_ds = maths_data_generator(cfg=cfg)  # Re-initialise the data generator
+    the_successes = 0
+    the_fails = 0
 
-  the_successes = 0
-  the_fails = 0
+    num_batches = num_questions//cfg.batch_size
+    for epoch in tqdm(range(num_batches)):
+        tokens = next(local_ds)
 
-  num_batches = num_questions//cfg.batch_size
-  for epoch in tqdm(range(num_batches)):
-      tokens = next(local_ds)
+        the_fails = test_maths_questions_by_impact(cfg, acfg, tokens, 0, False)
 
-      the_fails = test_maths_questions_by_impact(cfg, acfg, tokens, 0, False)
+        if the_fails>0:
+            break
 
-      if the_fails > 0:
-        break
+        the_successes = the_successes + cfg.batch_size
 
-      the_successes = the_successes + cfg.batch_size
+        if epoch % 100 == 0:
+            print("Batch", epoch, "of", num_batches, "#Successes=", the_successes)
 
-      if epoch % 100 == 0:
-          print("Batch", epoch, "of", num_batches, "#Successes=", the_successes)
-
-  print("successes", the_successes, "num_fails", the_fails)
-  if the_fails > 0:
-      print("WARNING: Model is not fully accurate. It failed the 1M Q test")
-  else:
-      print("All tests succeeded.")
-
+    print("successes", the_successes, "num_fails", the_fails)
+    if the_fails > 0:
+        print("WARNING: Model is not fully accurate. It failed the 1M Q test")
