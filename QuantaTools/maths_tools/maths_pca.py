@@ -22,13 +22,20 @@ def pca_op_tag(the_digit, operation, strong):
     minor_tag_prefix = MathsBehavior.ADD_PCA_TAG if operation == MathsToken.PLUS else MathsBehavior.SUB_PCA_TAG
     return answer_name(the_digit)  + "." + minor_tag_prefix.value + ( "" if strong else ".Weak")
 
-# Use a different plotting function if you need.
-def manual_node_pca(cfg, ax, position, layer, num, operation, answer_digit, plotting_function=plot_pca_for_an):
-    node_location = NodeLocation(position, layer, True, num)
-    test_inputs = cfg.tricase_questions_dict[(answer_digit, operation)]
+def _build_title_and_error_message(cfg, node_location, operation, answer_digit):
     title = node_location.name() + ', A' + str(answer_digit)
     error_message = ("calc_pca_for_an Failed:" + node_location.name() + " " +
                      token_to_char(cfg, operation) + " " + answer_name(answer_digit))
+    return title, error_message
+
+# Use a different plotting function if you need.
+def manual_node_pca(cfg, ax, position, layer, num, operation, answer_digit, plotting_function=plot_pca_for_an, test_inputs=None):
+    node_location = NodeLocation(position, layer, True, num)
+    test_inputs = test_inputs or cfg.tricase_questions_dict[(answer_digit, operation)]
+
+    title, error_message = _build_title_and_error_message(
+        cfg=cfg, node_location=node_location, operation=operation, answer_digit=answer_digit
+    )
 
     pca, pca_attn_outputs, title = calc_pca_for_an(
         cfg=cfg, node_location=node_location, test_inputs=test_inputs, title=title, error_message=error_message
@@ -38,7 +45,7 @@ def manual_node_pca(cfg, ax, position, layer, num, operation, answer_digit, plot
     major_tag = QType.MATH_ADD if operation == MathsToken.PLUS else QType.MATH_SUB # Does not handle NEG case
     cfg.add_useful_node_tag( node_location, major_tag.value, pca_op_tag(answer_digit, operation, True) )
 
-def manual_nodes_pca(cfg, operation, nodes):
+def manual_nodes_pca(cfg, operation, nodes, test_inputs=None):
     print("Manual PCA tags for", cfg.model_name, "with operation", token_to_char(cfg, operation))
 
     cols = 4
@@ -52,10 +59,10 @@ def manual_nodes_pca(cfg, operation, nodes):
     for node in nodes:
         manual_node_pca(cfg=cfg, ax=axs[index // cols, index % cols], position=node[0],
                         layer=node[1], num=node[2], operation=operation, answer_digit=node[3],
-                        plotting_function=plot_pca_for_an)
+                        plotting_function=plot_pca_for_an, test_inputs=test_inputs)
         index += 1
 
-  # Remove any graphs we dont need (except last one)
+    # Remove any graphs we dont need (except last one)
     while index < rows * cols - 1:
         ax = axs[index // cols, index % cols]
         ax.remove()
@@ -71,51 +78,56 @@ def manual_nodes_pca(cfg, operation, nodes):
     save_plt_to_file(cfg=cfg, full_title='Pca Tr')
     plt.show()
 
-def auto_node_pca(cfg, ax, index, node_location, operation, answer_digit, perc_threshold):
+def auto_node_pca(cfg, ax, index, node_location, operation, answer_digit, perc_threshold=0.75, test_inputs=None):
+    test_inputs = test_inputs or cfg.tricase_questions_dict[(answer_digit, operation)]
+    title, error_message = _build_title_and_error_message(
+        cfg=cfg, node_location=node_location, operation=operation, answer_digit=answer_digit
+    )
+    pca, pca_attn_outputs, title = calc_pca_for_an(
+        cfg=cfg, node_location=node_location, title=title, error_message=error_message, test_inputs=test_inputs
+    )
+    if pca is not None:
+        perc = pca_evr_0_percent(pca)
+        if perc > perc_threshold:
+            plot_pca_for_an(ax, pca_attn_outputs, title)
 
-  pca, pca_attn_outputs, title = calc_pca_for_an(node_location, operation, answer_digit)
-  if pca is not None:
-    perc = pca_evr_0_percent(pca)
-    if perc > perc_threshold:
-      plot_pca_for_an(ax, pca_attn_outputs, title)
+            major_tag = QType.MATH_ADD if operation == MathsToken.PLUS else QType.MATH_SUB # Does not handle NEG case
+            cfg.add_useful_node_tag(node_location, major_tag.value, pca_op_tag(answer_digit, operation, False))
+            return True
 
-      major_tag = QType.MATH_ADD if operation == MathsToken.PLUS else QType.MATH_SUB # Does not handle NEG case
-      cfg.add_useful_node_tag(node_location, major_tag.value, pca_op_tag(answer_digit, operation, False))
-      return True
+    return False
 
-  return False
+def auto_find_pca_node(cfg, node_location, operation, perc_threshold, test_inputs=None):
+    fig, axs = plt.subplots(2, 4) # Allow up to 8 graphs
+    fig.set_figheight(4)
+    fig.set_figwidth(10)
 
+    index = 0
+    for answer_digit in range(cfg.n_digits+1):
+        ax = axs[index // 4, index % 4]
+        if auto_node_pca(
+                cfg=cfg, ax=ax, index=index, node_location=node_location, operation=operation,
+                answer_digit=answer_digit, perc_threshold=perc_threshold, test_inputs=test_inputs
+        ):
+            index += 1
 
-def auto_find_pca_node(cfg, node, op, perc_threshold):
-  fig, axs = plt.subplots(2, 4) # Allow up to 8 graphs
-  fig.set_figheight(4)
-  fig.set_figwidth(10)
+    # Remove any graphs we dont need after all
+    while index < 2 * 4:
+        ax = axs[index // 4, index % 4]
+        ax.remove()
+        index += 1
 
-  index = 0
-  for answer_digit in range(cfg.n_digits+1):
-    ax = axs[index // 4, index % 4]
-    if auto_node_pca(cfg, ax, index, node, op, answer_digit, perc_threshold):
-      index += 1
+    plt.tight_layout()
+    plt.show()
 
-  # Remove any graphs we dont need after all
-  while index < 2 * 4:
-    ax = axs[index // 4, index % 4]
-    ax.remove()
-    index += 1
-
-  plt.tight_layout()
-  plt.show()
-
-def auto_find_pca(cfg, operation, perc_threshold):
+def auto_find_pca(cfg, operation, perc_threshold=75, test_inputs=None):
     print("Automatic (weak) PCA tags for", cfg.model_name, "with operation", token_to_char(cfg, operation))
-    perc_threshold = 75
 
-    for node in cfg.useful_nodes.nodes:
-
+    for node_location in cfg.useful_nodes.nodes:
         # Exclude nodes with a (manual) PCA tag - for any answer digit(s)). Exclude MLP neurons.
         major_tag = QType.MATH_ADD if operation == MathsToken.PLUS else QType.MATH_SUB # Does not handle NEG case
         minor_tag_prefix = MathsBehavior.ADD_PCA_TAG if operation == MathsToken.PLUS else MathsBehavior.SUB_PCA_TAG
-        if node.is_head and not node.contains_tag(major_tag.value, minor_tag_prefix.value):
-            print("Doing PCA on node", node.name())
+        if node_location.is_head and not node_location.contains_tag(major_tag.value, minor_tag_prefix.value):
+            print("Doing PCA on node", node_location.name())
 
-            auto_find_pca_node(cfg, node, operation, perc_threshold)
+            auto_find_pca_node(cfg=cfg, node_location=node_location, operation=operation, perc_threshold=perc_threshold, test_inputs=None)

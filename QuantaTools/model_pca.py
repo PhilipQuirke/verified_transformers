@@ -6,7 +6,7 @@ def pca_evr_0_percent(pca):
 
 # Calculate one Principal Component Analysis
 def calc_pca_for_an(cfg, node_location, test_inputs, title, error_message):
-  assert node_location.is_head == True
+  assert node_location.is_head is True
 
   try:
     _, the_cache = cfg.main_model.run_with_cache(test_inputs)
