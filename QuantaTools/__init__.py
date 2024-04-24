@@ -35,16 +35,16 @@ from .algo_search import search_and_tag_digit_position, search_and_tag_digit, se
 
 
 # maths_*.py: Contains specializations of the above specific to arithmetic (addition and subtraction) transformer models
-from .math_tools.maths_config import MathsConfig
-from .math_tools.maths_constants import MathsToken, MathsBehavior, MathsAlgorithm
-from .math_tools.maths_utilities import set_maths_vocabulary, set_maths_question_meanings, int_to_answer_str, tokens_to_unsigned_int, \
+from .maths_tools.maths_config import MathsConfig
+from .maths_tools.maths_constants import MathsToken, MathsBehavior, MathsAlgorithm
+from .maths_tools.maths_utilities import set_maths_vocabulary, set_maths_question_meanings, int_to_answer_str, tokens_to_unsigned_int, \
     tokens_to_answer, insert_question_number, make_a_maths_question_and_answer
-from .math_tools.maths_complexity import get_maths_question_complexity, get_maths_min_complexity, calc_maths_quanta_for_position_nodes
-from .math_tools.maths_data_generator import maths_data_generator_core, maths_data_generator, make_maths_questions_and_answers
-from .math_tools.maths_test_questions import make_maths_test_questions_and_answers, test_maths_questions_by_complexity, \
+from .maths_tools.maths_complexity import get_maths_question_complexity, get_maths_min_complexity, calc_maths_quanta_for_position_nodes
+from .maths_tools.maths_data_generator import maths_data_generator_core, maths_data_generator, make_maths_questions_and_answers
+from .maths_tools.maths_test_questions import make_maths_test_questions_and_answers, test_maths_questions_by_complexity, \
     test_maths_questions_by_impact, test_maths_questions_and_add_useful_node_tags, TRICASE_QUESTIONS, \
     make_maths_tricase_questions, test_correctness_on_num_questions
-from .math_tools.maths_algo_search import run_intervention_core, run_strong_intervention, run_weak_intervention, \
+from .maths_tools.maths_algo_search import run_intervention_core, run_strong_intervention, run_weak_intervention, \
     succeed_test, math_common_prereqs, \
     add_ss_tag, add_ss_prereqs, add_ss_test, \
     add_sc_tag, add_sc_prereqs, add_sc_test, \
