@@ -50,7 +50,9 @@ def manual_nodes_pca(cfg, operation, nodes):
 
     index = 0
     for node in nodes:
-        manual_node_pca(axs[index // cols, index % cols], node[0], node[1], node[2], operation, node[3])
+        manual_node_pca(cfg=cfg, ax=axs[index // cols, index % cols], position=node[0],
+                        layer=node[1], num=node[2], operation=operation, answer_digit=node[3],
+                        plotting_function=plot_pca_for_an)
         index += 1
 
   # Remove any graphs we dont need (except last one)
