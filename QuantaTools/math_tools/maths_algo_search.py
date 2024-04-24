@@ -1,16 +1,16 @@
 
-from .model_loss import logits_to_tokens_loss, loss_fn
-from .model_token_to_char import tokens_to_string
+from QuantaTools.model_loss import logits_to_tokens_loss, loss_fn
+from QuantaTools.model_token_to_char import tokens_to_string
 
-from .useful_node import NodeLocation
-from .useful_node import position_name, location_name, answer_name, NodeLocation, UsefulNode, UsefulNodeList
+from QuantaTools.useful_node import NodeLocation
+from QuantaTools.useful_node import position_name, location_name, answer_name, NodeLocation, UsefulNode, UsefulNodeList
 
-from .quanta_constants import QType, QCondition, NO_IMPACT_TAG
-from .quanta_map_impact import get_question_answer_impact, sort_unique_digits
-from .quanta_filter import FilterNode, FilterAnd, FilterOr, FilterHead, FilterNeuron, FilterContains, FilterPosition, FilterAttention, FilterImpact, FilterAlgo, filter_nodes
+from QuantaTools.quanta_constants import QType, QCondition, NO_IMPACT_TAG
+from QuantaTools.quanta_map_impact import get_question_answer_impact, sort_unique_digits
+from QuantaTools.quanta_filter import FilterNode, FilterAnd, FilterOr, FilterHead, FilterNeuron, FilterContains, FilterPosition, FilterAttention, FilterImpact, FilterAlgo, filter_nodes
 
-from .ablate_config import AblateConfig
-from .ablate_hooks import a_predict_questions, a_run_attention_intervention
+from QuantaTools.ablate_config import AblateConfig
+from QuantaTools.ablate_hooks import a_predict_questions, a_run_attention_intervention
 
 from .maths_constants import MathsToken, MathsBehavior, MathsAlgorithm 
 from .maths_data_generator import maths_data_generator, maths_data_generator_core, make_maths_questions_and_answers

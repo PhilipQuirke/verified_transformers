@@ -3,16 +3,16 @@ import torch
 import transformer_lens.utils as utils
 from tqdm.notebook import tqdm
 
-from .model_loss import logits_to_tokens_loss, loss_fn
-from .model_token_to_char import tokens_to_string
+from QuantaTools.model_loss import logits_to_tokens_loss, loss_fn
+from QuantaTools.model_token_to_char import tokens_to_string
 
-from .useful_node import NodeLocation
+from QuantaTools.useful_node import NodeLocation
 
-from .quanta_constants import QType
-from .quanta_map_impact import get_question_answer_impact, sort_unique_digits
+from QuantaTools.quanta_constants import QType
+from QuantaTools.quanta_map_impact import get_question_answer_impact, sort_unique_digits
 
-from .ablate_config import AblateConfig
-from .ablate_hooks import a_predict_questions
+from QuantaTools.ablate_config import AblateConfig
+from QuantaTools.ablate_hooks import a_predict_questions
 
 from .maths_constants import MathsToken, MathsBehavior
 from .maths_data_generator import maths_data_generator, maths_data_generator_core, make_maths_questions_and_answers
