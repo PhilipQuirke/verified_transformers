@@ -52,5 +52,5 @@ from .maths_tools.maths_algo_search import run_intervention_core, run_strong_int
     add_st_tag, add_st_prereqs, add_st_test, \
     sub_md_tag, sub_md_prereqs, sub_md_test, \
     sub_mb_tag, sub_mb_prereqs, sub_mb_test
-from .maths_tools.maths_pca import manual_nodes_pca, manual_node_pca, auto_node_pca
+from .maths_tools.maths_pca import manual_nodes_pca, manual_node_pca, auto_find_pca, auto_node_pca
     
