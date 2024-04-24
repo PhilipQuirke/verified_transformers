@@ -84,3 +84,38 @@ def auto_node_pca(cfg, ax, index, node_location, operation, answer_digit, perc_t
       return True
 
   return False
+
+
+def auto_find_pca_node(cfg, node, op, perc_threshold):
+  fig, axs = plt.subplots(2, 4) # Allow up to 8 graphs
+  fig.set_figheight(4)
+  fig.set_figwidth(10)
+
+  index = 0
+  for answer_digit in range(cfg.n_digits+1):
+    ax = axs[index // 4, index % 4]
+    if auto_node_pca(cfg, ax, index, node, op, answer_digit, perc_threshold):
+      index += 1
+
+  # Remove any graphs we dont need after all
+  while index < 2 * 4:
+    ax = axs[index // 4, index % 4]
+    ax.remove()
+    index += 1
+
+  plt.tight_layout()
+  plt.show()
+
+def auto_find_pca(cfg, operation, perc_threshold):
+    print("Automatic (weak) PCA tags for", cfg.model_name, "with operation", token_to_char(cfg, operation))
+    perc_threshold = 75
+
+    for node in cfg.useful_nodes.nodes:
+
+        # Exclude nodes with a (manual) PCA tag - for any answer digit(s)). Exclude MLP neurons.
+        major_tag = QType.MATH_ADD if operation == MathsToken.PLUS else QType.MATH_SUB # Does not handle NEG case
+        minor_tag_prefix = MathsBehavior.ADD_PCA_TAG if operation == MathsToken.PLUS else MathsBehavior.SUB_PCA_TAG
+        if node.is_head and not node.contains_tag(major_tag.value, minor_tag_prefix.value):
+            print("Doing PCA on node", node.name())
+
+            auto_find_pca_node(cfg, node, operation, perc_threshold)
