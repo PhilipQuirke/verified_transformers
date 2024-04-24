@@ -13,7 +13,7 @@ from .maths_test_questions import TRICASE_QUESTIONS
 # Plot the PCA of PnLnHn's attention pattern, using T8, T9, T10 questions that differ in the An digit
 def plot_pca_for_an(ax, pca_attn_outputs, title):
     ax.scatter(pca_attn_outputs[:TRICASE_QUESTIONS, 0], pca_attn_outputs[:TRICASE_QUESTIONS, 1], color='red', label='T8 (0-8)') # t8 questions
-    ax.scatter(pca_attn_outputs[TRICASE_QUESTIONS:2*qt.TRICASE_QUESTIONS, 0], pca_attn_outputs[TRICASE_QUESTIONS:2*TRICASE_QUESTIONS, 1], color='green', label='T9') # t9 questions
+    ax.scatter(pca_attn_outputs[TRICASE_QUESTIONS:2*TRICASE_QUESTIONS, 0], pca_attn_outputs[TRICASE_QUESTIONS:2*TRICASE_QUESTIONS, 1], color='green', label='T9') # t9 questions
     ax.scatter(pca_attn_outputs[2*TRICASE_QUESTIONS:, 0], pca_attn_outputs[2*TRICASE_QUESTIONS:, 1], color='blue', label='T10 (10-18)') # t10 questions
     if title != "" :
         ax.set_title(title)
