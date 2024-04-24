@@ -9,8 +9,6 @@ def calc_pca_for_an(cfg, node_location, test_inputs, title, error_message):
   assert node_location.is_head == True
 
   try:
-    #test_inputs = cfg.tricase_questions_dict[(answer_digit, operation)]
-
     _, the_cache = cfg.main_model.run_with_cache(test_inputs)
 
     # Gather attention patterns for all the (randomly chosen) questions
@@ -29,10 +27,7 @@ def calc_pca_for_an(cfg, node_location, test_inputs, title, error_message):
     pca_attn_outputs = pca.transform(attn_outputs)
 
     full_title = title + ', EVR[0]=' + str(pca_evr_0_percent((pca))) + '%'
-    # title = node_location.name() + ', A'+str(answer_digit) + ', EVR[0]=' + str(pca_evr_0_percent(pca)) + '%'
-
     return pca, pca_attn_outputs, full_title
   except Exception as e:
       print(error_message, e)
-      #print( "calc_pca_for_an Failed:" + node_location.name() + " " + qt.token_to_char(cfg, operation) + " " + qt.answer_name(answer_digit), e)
       return None, None, None
