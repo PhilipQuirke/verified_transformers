@@ -5,7 +5,7 @@ from QuantaTools.model_token_to_char import token_to_char, tokens_to_string
 from QuantaTools.useful_node import NodeLocation, UsefulNode, UsefulNodeList
 
 from QuantaTools.quanta_constants import QType, MATH_ADD_SHADES, MATH_SUB_SHADES
-from QuantaTools.quanta_map_impact import sort_unique_digits
+from QuantaTools.quanta_map_impact import sort_unique_digits, get_quanta_impact
 
 from QuantaTools.maths_tools.maths_config import MathsConfig
 from QuantaTools.maths_tools.maths_constants import MathsToken, MathsBehavior
@@ -229,6 +229,15 @@ class TestMaths(unittest.TestCase):
         self.assertEqual( node_add_complexity, "S0")
         self.assertEqual( node_sub_complexity, "M0")
         self.assertEqual( node_neg_complexity, "N1")
+        
+        location = NodeLocation(18,0,True,0)
+        node = list.get_node( location )
+        node_add_complexity, _ = get_quanta_impact( cfg, node, QType.MATH_ADD.value, "S", MATH_ADD_SHADES)
+        node_sub_complexity, _ = get_quanta_impact( cfg, node, QType.MATH_SUB.value, "M", MATH_SUB_SHADES)
+        node_neg_complexity, _ = get_quanta_impact( cfg, node, QType.MATH_NEG.value, "N", MATH_SUB_SHADES)
+        self.assertEqual( node_add_complexity, "S123")
+        self.assertEqual( node_sub_complexity, "M123")
+        self.assertEqual( node_neg_complexity, "")
         
 
 if __name__ == '__main__':

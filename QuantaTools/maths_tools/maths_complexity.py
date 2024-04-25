@@ -158,7 +158,7 @@ def get_maths_min_complexity(_, node, major_tag : str, minor_tag : str, num_shad
 # Calculate a table of the known quanta for the specified position for each useful node
 def calc_maths_quanta_for_position_nodes(cfg, position):
 
-    columns = ["Node", "Impact", "Algorithm sub-task", "Attends to", "Min Add Complex", "Min Sub Complex", "Min Neg Complex", "Fail %"]
+    columns = ["Node", "Impact", "Algorithm sub-task", "Attends to", "Add Complex", "Sub Complex", "Neg Complex", "Fail %"]
     text_data = None
     shade_data = None
 
@@ -168,9 +168,9 @@ def calc_maths_quanta_for_position_nodes(cfg, position):
         node_impact, impact_shade = get_quanta_impact( cfg, node, QType.IMPACT.value, "", cfg.num_answer_positions )
         node_algorithm_purpose, algo_shade = get_quanta_binary( cfg, node, QType.ALGO.value, "", ALGO_SHADES)
         node_attention, attention_shade = get_quanta_attention( cfg, node, QType.ATTN.value, "", ATTN_SHADES )
-        node_add_complexity, add_complexity_shade = get_maths_min_complexity( cfg, node, QType.MATH_ADD.value, "S", MATH_ADD_SHADES)
-        node_sub_complexity, sub_complexity_shade = get_maths_min_complexity( cfg, node, QType.MATH_SUB.value, "M", MATH_SUB_SHADES)
-        node_neg_complexity, neg_complexity_shade = get_maths_min_complexity( cfg, node, QType.MATH_NEG.value, "N", MATH_SUB_SHADES)
+        node_add_complexity, add_complexity_shade = get_quanta_impact( cfg, node, QType.MATH_ADD.value, "S", MATH_ADD_SHADES)
+        node_sub_complexity, sub_complexity_shade = get_quanta_impact( cfg, node, QType.MATH_SUB.value, "M", MATH_SUB_SHADES)
+        node_neg_complexity, neg_complexity_shade = get_quanta_impact( cfg, node, QType.MATH_NEG.value, "N", MATH_SUB_SHADES)
         node_fail_perc, fail_perc_shade = get_quanta_fail_perc( cfg, node, QType.FAIL.value, "", FAIL_SHADES)
 
         shade_array = [0, 
@@ -194,7 +194,7 @@ def calc_maths_quanta_for_position_nodes(cfg, position):
             
 
     if not text_data is None:
-        _, ax = plt.subplots(figsize=(13,2))
+        _, ax = plt.subplots(figsize=(11,2))
         ax.axis('tight')
         ax.axis('off')
 
