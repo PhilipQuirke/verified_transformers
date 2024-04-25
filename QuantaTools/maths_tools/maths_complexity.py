@@ -158,13 +158,12 @@ def get_maths_min_complexity(_, node, major_tag : str, minor_tag : str, num_shad
 # Calculate a table of the known quanta for the specified position for each useful node
 def calc_maths_quanta_for_position_nodes(cfg, position):
 
-    columns = ["Posn meaning", "Node name", "Answer impact", "Algo purpose", "Attends to", "Min Add Complex", "Min Sub Complex", "Min Neg Complex", "Fail %"]
+    columns = ["Node name", "Impact", "Algo sub-task", "Attends to", "Min Add Complex", "Min Sub Complex", "Min Neg Complex", "Fail %"]
     text_data = None
     shade_data = None
 
     nodelist = filter_nodes(cfg.useful_nodes, FilterPosition(position_name(position)))
     for node in nodelist.nodes:
-        position_meaning = cfg.token_position_meanings[position]
         node_name = node.name()
         node_impact, impact_shade = get_quanta_impact( cfg, node, QType.IMPACT.value, "", cfg.num_answer_positions )
         node_algorithm_purpose, algo_shade = get_quanta_binary( cfg, node, QType.ALGO.value, "", ALGO_SHADES)
@@ -174,7 +173,7 @@ def calc_maths_quanta_for_position_nodes(cfg, position):
         node_neg_complexity, neg_complexity_shade = get_maths_min_complexity( cfg, node, QType.MATH_NEG.value, "N", MATH_SUB_SHADES)
         node_fail_perc, fail_perc_shade = get_quanta_fail_perc( cfg, node, QType.FAIL.value, "", FAIL_SHADES)
 
-        shade_array = [0, 0, 
+        shade_array = [0, 
             1.0 * impact_shade / cfg.num_answer_positions, 
             1.0 * algo_shade / ALGO_SHADES, 
             1.0 * attention_shade / ATTN_SHADES, 
@@ -187,7 +186,7 @@ def calc_maths_quanta_for_position_nodes(cfg, position):
         else:
             shade_data += [shade_array]
 
-        text_array = [position_meaning, node_name, node_impact, node_algorithm_purpose, node_attention, node_add_complexity, node_sub_complexity, node_neg_complexity, node_fail_perc]
+        text_array = [node_name, node_impact, node_algorithm_purpose, node_attention, node_add_complexity, node_sub_complexity, node_neg_complexity, node_fail_perc]
         if text_data is None:
             text_data = [text_array]
         else:
@@ -195,7 +194,7 @@ def calc_maths_quanta_for_position_nodes(cfg, position):
             
 
     if not text_data is None:
-        _, ax = plt.subplots(figsize=(17,2))
+        _, ax = plt.subplots(figsize=(14,2))
         ax.axis('tight')
         ax.axis('off')
 
@@ -217,6 +216,15 @@ def calc_maths_quanta_for_position_nodes(cfg, position):
                 if text_data[row][col] != "":
                     the_color_map = specific_map if col <= 4 or col == 8 else standard_map 
                     table[(row+1, col)].set_facecolor(pale_color(the_color_map(shade_data[row][col])))
+
+        # Set the width of specific columns
+        column_widths = {0: 0.1, 1: 0.09, 2: 0.16, 3: 0.1, 4: 0.15, 5: 0.15, 6: 0.15, 7: 0.1}  # Fractions of width
+        for col, width in column_widths.items():
+            table.auto_set_column_width(col=col)
+            table._cells[(0, col)].set_width(width)  # Set header width
+            for row in range(len(text_data)):
+                table._cells[(row+1, col)].set_width(width)  # Set data cell width for the column
+
 
 
 

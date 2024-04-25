@@ -67,6 +67,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="QuantaTools\maths_tools\" />
     <Folder Include="Tests\" />
     <Folder Include="QuantaTools" />
   </ItemGroup>

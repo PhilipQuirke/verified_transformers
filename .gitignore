@@ -8,3 +8,4 @@ notebooks/*
 .ipynb_checkpoints/
 /.vs
 /QuantaTools/__pycache__
+/QuantaTools/maths_tools/__pycache__
