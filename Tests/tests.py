@@ -2,18 +2,19 @@ import unittest
 
 from QuantaTools.model_token_to_char import token_to_char, tokens_to_string
 
-from QuantaTools.useful_node import UsefulNode
+from QuantaTools.useful_node import NodeLocation, UsefulNode, UsefulNodeList
 
-from QuantaTools.quanta_constants import QType
+from QuantaTools.quanta_constants import QType, MATH_ADD_SHADES, MATH_SUB_SHADES
 from QuantaTools.quanta_map_impact import sort_unique_digits
 
-from QuantaTools.maths_config import MathsConfig
-from QuantaTools.maths_constants import MathsToken, MathsBehavior
-from QuantaTools.maths_utilities import set_maths_vocabulary, int_to_answer_str, tokens_to_unsigned_int
-from QuantaTools.maths_test_questions import make_maths_test_questions_and_answers, make_maths_questions_and_answers
-from QuantaTools.maths_test_questions import make_maths_s0_questions_and_answers, make_maths_s1_questions_and_answers, make_maths_s2_questions_and_answers, make_maths_s3_questions_and_answers, make_maths_s4_questions_and_answers, make_maths_s5_questions_and_answers
-from QuantaTools.maths_test_questions import make_maths_m0_questions_and_answers, make_maths_m1_questions_and_answers, make_maths_m2_questions_and_answers, make_maths_m3_questions_and_answers
-from QuantaTools.maths_test_questions import make_maths_n1_questions_and_answers, make_maths_n2_questions_and_answers, make_maths_n3_questions_and_answers, make_maths_n4_questions_and_answers
+from QuantaTools.maths_tools.maths_config import MathsConfig
+from QuantaTools.maths_tools.maths_constants import MathsToken, MathsBehavior
+from QuantaTools.maths_tools.maths_utilities import set_maths_vocabulary, int_to_answer_str, tokens_to_unsigned_int
+from QuantaTools.maths_tools.maths_test_questions import make_maths_test_questions_and_answers, make_maths_questions_and_answers
+from QuantaTools.maths_tools.maths_test_questions import make_maths_s0_questions_and_answers, make_maths_s1_questions_and_answers, make_maths_s2_questions_and_answers, make_maths_s3_questions_and_answers, make_maths_s4_questions_and_answers, make_maths_s5_questions_and_answers
+from QuantaTools.maths_tools.maths_test_questions import make_maths_m0_questions_and_answers, make_maths_m1_questions_and_answers, make_maths_m2_questions_and_answers, make_maths_m3_questions_and_answers
+from QuantaTools.maths_tools.maths_test_questions import make_maths_n1_questions_and_answers, make_maths_n2_questions_and_answers, make_maths_n3_questions_and_answers, make_maths_n4_questions_and_answers
+from QuantaTools.maths_tools.maths_complexity import get_maths_min_complexity
 
 
 class TestUseful(unittest.TestCase):
@@ -114,6 +115,121 @@ class TestMaths(unittest.TestCase):
         
         self.assertEqual( cfg.repeat_digit(4), 444444)
 
+
+
+    def test_useful_node_list(self):
+        cfg = MathsConfig()
+        cfg.perc_sub = 60
+        cfg.use_cuda = False
+        set_maths_vocabulary(cfg)
+  
+        list = UsefulNodeList()
+
+        # Data from ins1_mix_d6_l3_h4_t40K_s372001 for P18L0
+        
+        location = NodeLocation(18,0,True,0)
+        list.add_node_tag( location, QType.FAIL.value, '6' )
+        list.add_node_tag( location, QType.IMPACT.value, 'A2' )
+        list.add_node_tag( location, QType.MATH_ADD.value, 'S123' )
+        list.add_node_tag( location, QType.MATH_SUB.value, 'M123' )
+        list.add_node_tag( location, QType.ATTN.value, 'P4=50' )
+        list.add_node_tag( location, QType.ATTN.value, 'P11=50' )
+        list.add_node_tag( location, QType.MATH_ADD.value, 'A0.SP.Weak' ) 
+        list.add_node_tag( location, QType.MATH_ADD.value, 'A2.SP.Weak' )      
+        list.add_node_tag( location, QType.MATH_SUB.value, 'A0.MP.Weak' )      
+        list.add_node_tag( location, QType.MATH_SUB.value, 'A2.MP.Weak' )      
+     
+        location = NodeLocation(18,0,True,1)
+        list.add_node_tag( location, QType.FAIL.value, '44' )
+        list.add_node_tag( location, QType.IMPACT.value, 'A2' )
+        list.add_node_tag( location, QType.MATH_ADD.value, 'S01234' )
+        list.add_node_tag( location, QType.MATH_SUB.value, 'M0123' )
+        list.add_node_tag( location, QType.MATH_NEG.value, 'N1234' )
+        list.add_node_tag( location, QType.ATTN.value, 'P3=52' )
+        list.add_node_tag( location, QType.ATTN.value, 'P10=48' )
+        list.add_node_tag( location, QType.MATH_ADD.value, 'A0.SP.Weak' ) 
+        list.add_node_tag( location, QType.MATH_ADD.value, 'A1.SP.Weak' )      
+        list.add_node_tag( location, QType.MATH_SUB.value, 'A0.MP.Weak' )      
+        list.add_node_tag( location, QType.MATH_SUB.value, 'A1.MP.Weak' )   
+
+        location = NodeLocation(18,0,True,2)
+        list.add_node_tag( location, QType.FAIL.value, '58' )
+        list.add_node_tag( location, QType.IMPACT.value, 'A2' )
+        list.add_node_tag( location, QType.MATH_ADD.value, 'S012345' )
+        list.add_node_tag( location, QType.MATH_SUB.value, 'M0123' )
+        list.add_node_tag( location, QType.MATH_NEG.value, 'N1234' )
+        list.add_node_tag( location, QType.ATTN.value, 'P10=51' )
+        list.add_node_tag( location, QType.ATTN.value, 'P3=47' )
+
+        location = NodeLocation(18,0,True,3)
+        list.add_node_tag( location, QType.FAIL.value, '12' )
+        list.add_node_tag( location, QType.IMPACT.value, 'A2' )
+        list.add_node_tag( location, QType.MATH_SUB.value, 'M0123' )
+        list.add_node_tag( location, QType.MATH_NEG.value, 'N1234' )
+        list.add_node_tag( location, QType.ATTN.value, 'P6=86' )
+        list.add_node_tag( location, QType.ATTN.value, 'P14=6' )
+        list.add_node_tag( location, QType.ATTN.value, 'P13=3' )
+        list.add_node_tag( location, QType.ATTN.value, 'P11=2' )
+        list.add_node_tag( location, QType.MATH_ADD.value, 'A2.SP' ) 
+        list.add_node_tag( location, QType.MATH_SUB.value, 'A0.MP.Weak' )      
+        list.add_node_tag( location, QType.MATH_SUB.value, 'A1.MP.Weak' )   
+        list.add_node_tag( location, QType.MATH_SUB.value, 'A2.MP.Weak' )      
+        list.add_node_tag( location, QType.MATH_SUB.value, 'A3.MP.Weak' )         
+        list.add_node_tag( location, QType.MATH_SUB.value, 'A4.MP.Weak' )      
+        list.add_node_tag( location, QType.MATH_SUB.value, 'A5.MP.Weak' )      
+  
+        location = NodeLocation(18,0,False,0)
+        list.add_node_tag( location, QType.FAIL.value, '50' )
+        list.add_node_tag( location, QType.IMPACT.value, 'A2' )
+        list.add_node_tag( location, QType.MATH_ADD.value, 'S012345' )         
+        list.add_node_tag( location, QType.MATH_SUB.value, 'M0123' )
+        list.add_node_tag( location, QType.MATH_NEG.value, 'N1234' )
+
+        location = NodeLocation(18,0,True,0)
+        node = list.get_node( location )
+        node_add_complexity, _ = get_maths_min_complexity( cfg, node, QType.MATH_ADD.value, "S", MATH_ADD_SHADES)
+        node_sub_complexity, _ = get_maths_min_complexity( cfg, node, QType.MATH_SUB.value, "M", MATH_SUB_SHADES)
+        node_neg_complexity, _ = get_maths_min_complexity( cfg, node, QType.MATH_NEG.value, "N", MATH_SUB_SHADES)
+        self.assertEqual( node_add_complexity, "S1")
+        self.assertEqual( node_sub_complexity, "M1")
+        self.assertEqual( node_neg_complexity, "")
+
+        location = NodeLocation(18,0,True,1)
+        node = list.get_node( location )        
+        node_add_complexity, _ = get_maths_min_complexity( cfg, node, QType.MATH_ADD.value, "S", MATH_ADD_SHADES)
+        node_sub_complexity, _ = get_maths_min_complexity( cfg, node, QType.MATH_SUB.value, "M", MATH_SUB_SHADES)
+        node_neg_complexity, _ = get_maths_min_complexity( cfg, node, QType.MATH_NEG.value, "N", MATH_SUB_SHADES)
+        self.assertEqual( node_add_complexity, "S0")
+        self.assertEqual( node_sub_complexity, "M0")
+        self.assertEqual( node_neg_complexity, "N1")
+
+        location = NodeLocation(18,0,True,2)
+        node = list.get_node( location )        
+        node_add_complexity, _ = get_maths_min_complexity( cfg, node, QType.MATH_ADD.value, "S", MATH_ADD_SHADES)
+        node_sub_complexity, _ = get_maths_min_complexity( cfg, node, QType.MATH_SUB.value, "M", MATH_SUB_SHADES)
+        node_neg_complexity, _ = get_maths_min_complexity( cfg, node, QType.MATH_NEG.value, "N", MATH_SUB_SHADES)
+        self.assertEqual( node_add_complexity, "S0")
+        self.assertEqual( node_sub_complexity, "M0")
+        self.assertEqual( node_neg_complexity, "N1")
+
+        location = NodeLocation(18,0,True,3)
+        node = list.get_node( location )        
+        node_add_complexity, _ = get_maths_min_complexity( cfg, node, QType.MATH_ADD.value, "S", MATH_ADD_SHADES)
+        node_sub_complexity, _ = get_maths_min_complexity( cfg, node, QType.MATH_SUB.value, "M", MATH_SUB_SHADES)
+        node_neg_complexity, _ = get_maths_min_complexity( cfg, node, QType.MATH_NEG.value, "N", MATH_SUB_SHADES)
+        self.assertEqual( node_add_complexity, "")
+        self.assertEqual( node_sub_complexity, "M0")
+        self.assertEqual( node_neg_complexity, "N1")
+        
+        location = NodeLocation(18,0,False,0)
+        node = list.get_node( location )        
+        node_add_complexity, _ = get_maths_min_complexity( cfg, node, QType.MATH_ADD.value, "S", MATH_ADD_SHADES)
+        node_sub_complexity, _ = get_maths_min_complexity( cfg, node, QType.MATH_SUB.value, "M", MATH_SUB_SHADES)
+        node_neg_complexity, _ = get_maths_min_complexity( cfg, node, QType.MATH_NEG.value, "N", MATH_SUB_SHADES)
+        self.assertEqual( node_add_complexity, "S0")
+        self.assertEqual( node_sub_complexity, "M0")
+        self.assertEqual( node_neg_complexity, "N1")
+        
 
 if __name__ == '__main__':
     unittest.main()
