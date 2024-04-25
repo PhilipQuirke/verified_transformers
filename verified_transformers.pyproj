@@ -33,13 +33,16 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="QuantaTools\algo_search.py" />
-    <Compile Include="QuantaTools\maths_algo_search.py" />
-    <Compile Include="QuantaTools\maths_complexity.py" />
-    <Compile Include="QuantaTools\maths_config.py" />
-    <Compile Include="QuantaTools\maths_data_generator.py" />
-    <Compile Include="QuantaTools\maths_test_questions.py" />
-    <Compile Include="QuantaTools\maths_utilities.py" />
-    <Compile Include="QuantaTools\maths_constants.py" />
+    <Compile Include="QuantaTools\model_pca.py" />
+    <Compile Include="QuantaTools\maths_tools\__init__.py" />
+    <Compile Include="QuantaTools\maths_tools\maths_algo_search.py" />
+    <Compile Include="QuantaTools\maths_tools\maths_complexity.py" />
+    <Compile Include="QuantaTools\maths_tools\maths_config.py" />
+    <Compile Include="QuantaTools\maths_tools\maths_data_generator.py" />
+    <Compile Include="QuantaTools\maths_tools\maths_pca.py" />
+    <Compile Include="QuantaTools\maths_tools\maths_test_questions.py" />
+    <Compile Include="QuantaTools\maths_tools\maths_utilities.py" />
+    <Compile Include="QuantaTools\maths_tools\maths_constants.py" />
     <Compile Include="QuantaTools\model_config.py" />
     <Compile Include="QuantaTools\model_loss.py">
       <SubType>Code</SubType>

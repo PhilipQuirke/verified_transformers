@@ -1,7 +1,7 @@
 import re
 
-from .useful_node import position_name 
-from .algo_config import AlgoConfig
+from QuantaTools.useful_node import position_name
+from QuantaTools.algo_config import AlgoConfig
 
 
 # Extends UsefulConfig with mathematics-specific info for "123456+123456=+0246912" style questions

@@ -10,6 +10,7 @@ from .useful_node import position_name, position_name_to_int, row_location_name,
 
 # quanta_*.py: Contains categorisations of model behavior (aka quanta). Applicable to all models
 from .quanta_constants import QCondition, QType, MAX_ATTN_TAGS, MIN_ATTN_PERC, NO_IMPACT_TAG, FAIL_SHADES, ATTN_SHADES, ALGO_SHADES, MATH_ADD_SHADES, MATH_SUB_SHADES
+from .quanta_file_utils import save_plt_to_file
 from .quanta_filter import FilterNode, FilterAnd, FilterOr, FilterName, FilterHead, FilterNeuron, FilterContains, FilterPosition, FilterAttention, FilterImpact, FilterAlgo, filter_nodes, print_algo_purpose_results
 
 
@@ -17,6 +18,9 @@ from .quanta_filter import FilterNode, FilterAnd, FilterOr, FilterName, FilterHe
 from .ablate_config import AblateConfig, acfg
 from .ablate_hooks import a_put_resid_post_hook, a_set_ablate_hooks, a_calc_mean_values, a_predict_questions, a_run_attention_intervention
 from .ablate_add_useful import ablate_mlp_and_add_useful_node_tags, ablate_head_and_add_useful_node_tags
+
+# model_pca.py: Ways to extract PCA information from model
+from .model_pca import calc_pca_for_an, pca_evr_0_percent
 
 
 # quanta_*.py: Contains ways to detect and graph model behavior (aka quanta) 
@@ -34,16 +38,16 @@ from .algo_search import search_and_tag_digit_position, search_and_tag_digit, se
 
 
 # maths_*.py: Contains specializations of the above specific to arithmetic (addition and subtraction) transformer models
-from .maths_config import MathsConfig
-from .maths_constants import MathsToken, MathsBehavior, MathsAlgorithm 
-from .maths_utilities import set_maths_vocabulary, set_maths_question_meanings, int_to_answer_str, tokens_to_unsigned_int, \
+from .maths_tools.maths_config import MathsConfig
+from .maths_tools.maths_constants import MathsToken, MathsBehavior, MathsAlgorithm
+from .maths_tools.maths_utilities import set_maths_vocabulary, set_maths_question_meanings, int_to_answer_str, tokens_to_unsigned_int, \
     tokens_to_answer, insert_question_number, make_a_maths_question_and_answer
-from .maths_complexity import get_maths_question_complexity, get_maths_min_complexity, calc_maths_quanta_for_position_nodes
-from .maths_data_generator import maths_data_generator_core, maths_data_generator, make_maths_questions_and_answers
-from .maths_test_questions import make_maths_test_questions_and_answers, test_maths_questions_by_complexity, \
+from .maths_tools.maths_complexity import get_maths_question_complexity, get_maths_min_complexity, calc_maths_quanta_for_position_nodes
+from .maths_tools.maths_data_generator import maths_data_generator_core, maths_data_generator, make_maths_questions_and_answers
+from .maths_tools.maths_test_questions import make_maths_test_questions_and_answers, test_maths_questions_by_complexity, \
     test_maths_questions_by_impact, test_maths_questions_and_add_useful_node_tags, TRICASE_QUESTIONS, \
     make_maths_tricase_questions, test_correctness_on_num_questions
-from .maths_algo_search import run_intervention_core, run_strong_intervention, run_weak_intervention, \
+from .maths_tools.maths_algo_search import run_intervention_core, run_strong_intervention, run_weak_intervention, \
     succeed_test, math_common_prereqs, \
     add_ss_tag, add_ss_prereqs, add_ss_test, \
     add_sc_tag, add_sc_prereqs, add_sc_test, \
@@ -51,4 +55,5 @@ from .maths_algo_search import run_intervention_core, run_strong_intervention, r
     add_st_tag, add_st_prereqs, add_st_test, \
     sub_md_tag, sub_md_prereqs, sub_md_test, \
     sub_mb_tag, sub_mb_prereqs, sub_mb_test
+from .maths_tools.maths_pca import manual_nodes_pca, manual_node_pca
     

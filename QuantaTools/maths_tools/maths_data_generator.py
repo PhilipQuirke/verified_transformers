@@ -1,9 +1,9 @@
 import random
 import torch
 
-from .model_token_to_char import tokens_to_string
+from QuantaTools.model_token_to_char import tokens_to_string
 
-from .quanta_constants import QType
+from QuantaTools.quanta_constants import QType
 
 from .maths_constants import MathsBehavior, MathsToken
 from .maths_complexity import get_maths_question_complexity
