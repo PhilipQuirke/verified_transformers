@@ -158,7 +158,7 @@ def get_maths_min_complexity(_, node, major_tag : str, minor_tag : str, num_shad
 # Calculate a table of the known quanta for the specified position for each useful node
 def calc_maths_quanta_for_position_nodes(cfg, position):
 
-    columns = ["Node name", "Impact", "Algo sub-task", "Attends to", "Min Add Complex", "Min Sub Complex", "Min Neg Complex", "Fail %"]
+    columns = ["Node", "Impact", "Algorithm sub-task", "Attends to", "Min Add Complex", "Min Sub Complex", "Min Neg Complex", "Fail %"]
     text_data = None
     shade_data = None
 
@@ -194,7 +194,7 @@ def calc_maths_quanta_for_position_nodes(cfg, position):
             
 
     if not text_data is None:
-        _, ax = plt.subplots(figsize=(14,2))
+        _, ax = plt.subplots(figsize=(13,2))
         ax.axis('tight')
         ax.axis('off')
 
@@ -207,6 +207,10 @@ def calc_maths_quanta_for_position_nodes(cfg, position):
         for col, _ in enumerate(columns):
             table[(0, col)].get_text().set_weight('bold')
 
+        # Automatically set the width for all columns
+        for col, _ in enumerate(columns):
+            table.auto_set_column_width(col=col)
+            
         standard_map = create_colormap( True ) # Light green color
         specific_map = create_colormap( False ) # Light blue color
 
@@ -217,13 +221,7 @@ def calc_maths_quanta_for_position_nodes(cfg, position):
                     the_color_map = specific_map if col <= 4 or col == 8 else standard_map 
                     table[(row+1, col)].set_facecolor(pale_color(the_color_map(shade_data[row][col])))
 
-        # Set the width of specific columns
-        column_widths = {0: 0.1, 1: 0.09, 2: 0.16, 3: 0.1, 4: 0.15, 5: 0.15, 6: 0.15, 7: 0.1}  # Fractions of width
-        for col, width in column_widths.items():
-            table.auto_set_column_width(col=col)
-            table._cells[(0, col)].set_width(width)  # Set header width
-            for row in range(len(text_data)):
-                table._cells[(row+1, col)].set_width(width)  # Set data cell width for the column
+
 
 
 
