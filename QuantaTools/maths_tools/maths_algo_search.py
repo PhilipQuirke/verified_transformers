@@ -251,11 +251,13 @@ def add_st_tag(focus_digit):
 def add_st_prereqs(cfg, position, focus_digit):
     return FilterAnd(
         FilterHead(),
-        FilterPosition(position_name(position)),
+        FilterPosition(position_name(cfg.n_digits), QCondition.MIN), # Occurs from the operator token
+        FilterPosition(position_name(cfg.num_question_positions), QCondition.MAX), # Occurs by the = token
         FilterAttention(cfg.dn_to_position_name(focus_digit)), # Attends to Dn
         FilterAttention(cfg.ddn_to_position_name(focus_digit)), # Attends to D'n
         FilterContains(QType.MATH_ADD, MathsBehavior.ADD_PCA_TAG.value), # Node PCA is interpretable (bigram or trigram output) with respect to addition T8,T9,T10
-        FilterContains(QType.MATH_ADD, MathsBehavior.ADD_COMPLEXITY_PREFIX)) # Impacts addition questions
+        FilterContains(QType.MATH_ADD, MathsBehavior.ADD_COMPLEXITY_PREFIX), # Impacts addition questions
+        FilterPosition(position_name(position))) # Is at token position Px
 
 
 # Intervention ablation test for addition An.ST with impact "A65432" to "A65" in early tokens.
