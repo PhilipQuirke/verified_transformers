@@ -46,10 +46,10 @@ class MathsBehavior(Enum):
     UNKNOWN = "Unknown"
     
 
-# Maths algorithmic purposes: interpretations we assign to each node's calculation, partially based on its behavior
+# Maths algorithmic sub-tasks: interpretations we assign to each node's calculation, partially based on its behavior
 # Minor "maths" tags related to major tag QType.ALGO:
 # A node may serve multiple purposes and so have more than 1 of these tags.
-class MathsAlgorithm(Enum):
+class MathsTask(Enum):
     ADD_A_TAG = "SA" # Addition - Base Add (Dn, D'n)
     ADD_C_TAG = "SC" # Addition - Make Carry (Dn, D'n)
     ADD_S_TAG = "SS" # Addition - Use Sum 9 (Dn, D'n)
