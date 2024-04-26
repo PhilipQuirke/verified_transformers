@@ -98,8 +98,10 @@ class FilterPosition(FilterNode):
             return (not test_node.position == self.position)
         if self.filter_strength == QCondition.MAY:
             return True 
-        if self.filter_strength == QCondition.MUST_BY:
+        if self.filter_strength == QCondition.MAX:
             return (test_node.position <= self.position)      
+        if self.filter_strength == QCondition.MIN:
+            return (test_node.position >= self.position)      
         return False
 
     def describe(self):

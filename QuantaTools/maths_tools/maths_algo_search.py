@@ -242,12 +242,12 @@ def add_sa_test(cfg, acfg, node_locations, alter_digit, strong):
     return success
 
 
-# Tag for addition An.ST (aka Dn.C in Paper 2) 
+# Tag for addition An.ST 
 def add_st_tag(focus_digit):
     return "A" + str(focus_digit) + "." + MathsTask.ADD_T_TAG.value
 
 
-# Prerequisites for addition An.ST (aka Dn.C in Paper 2) 
+# Prerequisites for addition An.ST 
 def add_st_prereqs(cfg, position, focus_digit):
     return FilterAnd(
         FilterHead(),
@@ -258,7 +258,7 @@ def add_st_prereqs(cfg, position, focus_digit):
         FilterContains(QType.MATH_ADD, MathsBehavior.ADD_COMPLEXITY_PREFIX)) # Impacts addition questions
 
 
-# Intervention ablation test for addition An.ST (aka Dn.C in Paper 2) with impact "A65432" to "A65" in early tokens.
+# Intervention ablation test for addition An.ST with impact "A65432" to "A65" in early tokens.
 def add_st_test(cfg, acfg, node_locations, focus_digit, strong):
     # 222222 + 777977 = 1000188. Has Dn.SC
     store_question = [cfg.repeat_digit(2), cfg.repeat_digit(7)]

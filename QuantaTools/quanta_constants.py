@@ -7,13 +7,14 @@ class QCondition(Enum):
     NOT = "not"  # The specified quanta value must NOT exist in the object
     CONTAINS = "contains" # The specified quanta value can equal the object value or a subset of the object value
     MAY = "may"  # The specified quanta value MAY exist (Indefinite. Used in a hypothesis)
-    MUST_BY = "must-by"  # The specified quanta value MUST exist in the object at or before the specified position       
+    MAX = "max"  # The specified quanta value MUST exist at or before the specified position       
+    MIN = "min"  # The specified quanta value MUST exist at or after the specified position       
 
 
 # Set of (independent) quanta "types". Each node tag contains exactly one of these quanta types
 class QType(Enum):
     # GENERIC QUANTA TYPES:
-    # Some quanata types apply to all models
+    # Some quanta types apply to all models
 
     # (Input or answer) token position tag
     POSN = "Posn"
