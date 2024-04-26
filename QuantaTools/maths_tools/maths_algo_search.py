@@ -100,7 +100,7 @@ def math_common_prereqs(cfg, position, attend_digit, impact_digit):
 
 # Tag for addition "Use Sum 9" (SS) task e.g. 34633+55555=+090188 where D4 and D'4 sum to 9 (4+5), and D3 + D'3 > 10
 def add_ss_tag(impact_digit):
-    return answer_name(impact_digit-1)  + "." + MathsTask.ADD_S_TAG.value
+    return answer_name(impact_digit-1)  + "." + MathsTask.SS_TAG.value
 
 
 # Node rerequisites for addition "Use Sum 9" (SS) task
@@ -148,7 +148,7 @@ def add_ss_test(cfg, acfg, node_locations, alter_digit, strong):
 
 # Tag for addition "Make Carry 1" (SC) task e.g. 222222+666966=+0889188 where D2 + D'2 > 10
 def add_sc_tag(impact_digit):
-    return answer_name(impact_digit-1)  + "." + MathsTask.ADD_C_TAG.value
+    return answer_name(impact_digit-1)  + "." + MathsTask.SC_TAG.value
 
 
 # Node rerequisites for addition "Make Carry 1" (SC) task
@@ -187,7 +187,7 @@ def add_sc_test(cfg, acfg, node_locations, impact_digit, strong):
 
 # Tag for addition "Simple Add" (SA) task e.g. 555555+111111=+0666666 where D3 + D'3 < 10
 def add_sa_tag(impact_digit):
-    return answer_name(impact_digit) + "." + MathsTask.ADD_A_TAG.value
+    return answer_name(impact_digit) + "." + MathsTask.SA_TAG.value
 
 
 # Node rerequisites for addition "Simple Add" (SA) task
@@ -244,7 +244,7 @@ def add_sa_test(cfg, acfg, node_locations, alter_digit, strong):
 
 # Tag for addition An.ST 
 def add_st_tag(focus_digit):
-    return "A" + str(focus_digit) + "." + MathsTask.ADD_T_TAG.value
+    return "A" + str(focus_digit) + "." + MathsTask.ST_TAG.value
 
 
 # Prerequisites for addition An.ST 
@@ -280,7 +280,7 @@ def add_st_test(cfg, acfg, node_locations, focus_digit, strong):
 
 # Tag for positive-answer subtraction "Difference" (MD) tasks e.g. 666666-222222=+0444444 where D3 >= D'3
 def sub_md_tag(impact_digit):
-    return answer_name(impact_digit) + "." + MathsTask.SUB_D_TAG.value
+    return answer_name(impact_digit) + "." + MathsTask.MD_TAG.value
 
 
 # Prerequisites for positive-answer subtraction "Difference" (MD) tasks 
@@ -337,7 +337,7 @@ def sub_md_test(cfg, acfg, node_locations, alter_digit, strong):
 
 # Tag for positive-answer subtraction "Borrow One" (MB) task e.g. 222222-111311=+0110911 where D2 > D'2
 def sub_mb_tag(impact_digit):
-    return answer_name(impact_digit-1)  + "." + MathsTask.SUB_B_TAG.value    
+    return answer_name(impact_digit-1)  + "." + MathsTask.MB_TAG.value    
 
 
 # Prerequisites for positive-answer subtraction "Borrow One" (MB) task
@@ -376,7 +376,7 @@ def sub_mb_test(cfg, acfg, node_locations, impact_digit, strong):
 
 # Tag for positive-answer subtraction "TriCase" task "MT"
 def sub_mt_tag(impact_digit):
-    return answer_name(impact_digit)  + "." + MathsTask.SUB_T_TAG.value
+    return answer_name(impact_digit)  + "." + MathsTask.MT_TAG.value
 
 
 def sub_mt_prereqs(cfg, position, focus_digit):
@@ -405,7 +405,7 @@ def sub_mt_test(cfg, acfg, node_locations, focus_digit, strong):
     clean_question = [cfg.repeat_digit(2), cfg.repeat_digit(2)]
     clean_question[1] += 2 * (10 ** focus_digit)
 
-    success = qt.run_weak_intervention(cfg, acfg, node_locations, store_question, clean_question, qt.MathsToken.MINUS)
+    success = run_weak_intervention(cfg, acfg, node_locations, store_question, clean_question, MathsToken.MINUS)
 
     if success:
         print("Test confirmed", acfg.node_names(), " perform D"+str(focus_digit)+".MT", "Impact:", acfg.intervened_impact, "" if strong else "Weak")

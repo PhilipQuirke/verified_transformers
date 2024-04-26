@@ -50,20 +50,20 @@ class MathsBehavior(Enum):
 # Minor "maths" tags related to major tag QType.ALGO:
 # A node may serve multiple purposes and so have more than 1 of these tags.
 class MathsTask(Enum):
-    ADD_A_TAG = "SA" # Addition - Base Add (Dn, D'n)
-    ADD_C_TAG = "SC" # Addition - Make Carry (Dn, D'n)
-    ADD_S_TAG = "SS" # Addition - Use Sum 9 (Dn, D'n)
-    ADD_T_TAG = "ST" # Addition - TriCase (Dn, D'n)
+    SA_TAG = "SA" # Addition - Base Add (Dn, D'n)
+    SC_TAG = "SC" # Addition - Make Carry (Dn, D'n)
+    SS_TAG = "SS" # Addition - Use Sum 9 (Dn, D'n)
+    ST_TAG = "ST" # Addition - TriCase (Dn, D'n)
   
-    SUB_D_TAG = "MD" # Positive-answer Subtraction - Difference (Dn, D'n)
-    SUB_B_TAG = "MB" # Positive-answer Subtraction - Borrow One (Dn, D'n)
-    SUB_Z_TAG = "MZ" # Positive-answer Subtraction - Sum Zero (Dn, D'n)
-    SUB_T_TAG = "MT" # Positive-answer Subtraction - TriCase (Dn, D'n)
+    MD_TAG = "MD" # Positive-answer Subtraction - Difference (Dn, D'n)
+    MB_TAG = "MB" # Positive-answer Subtraction - Borrow One (Dn, D'n)
+    MZ_TAG = "MZ" # Positive-answer Subtraction - Sum Zero (Dn, D'n)
+    MT_TAG = "MT" # Positive-answer Subtraction - TriCase (Dn, D'n)
 
-    NEG_D_TAG = "ND" # Negative-answer Subtraction - Difference (Dn, D'n)
-    NEG_B_TAG = "NB" # Negative-answer Subtraction - Borrow One (Dn, D'n)
-    NEG_Z_TAG = "NZ" # Negative-answer Subtraction - Sum Zero (Dn, D'n)
-    NEG_T_TAG = "NT" # Negative-answer Subtraction - TriCase (Dn, D'n)
+    ND_TAG = "ND" # Negative-answer Subtraction - Difference (Dn, D'n)
+    NB_TAG = "NB" # Negative-answer Subtraction - Borrow One (Dn, D'n)
+    NZ_TAG = "NZ" # Negative-answer Subtraction - Sum Zero (Dn, D'n)
+    NT_TAG = "NT" # Negative-answer Subtraction - TriCase (Dn, D'n)
   
-    MIX_O_TAG = "OPR" # Add/Sub - Attends to operation token (in the middle of the question)
-    MIX_S_TAG = "SGN" # Add/Sub - Attends to answer sign (+/-) token (at the start of the answer)
+    OPR_TAG = "OPR" # Add/Sub - Attends to operation token (in the middle of the question)
+    SGN_TAG = "SGN" # Add/Sub - Attends to answer sign (+/-) token (at the start of the answer)
