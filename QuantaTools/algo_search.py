@@ -32,7 +32,7 @@ def search_and_tag_digit_position(cfg, acfg, the_impact_digit, the_test_nodes, t
 
 
 # For each useful position, search the related useful node(s), using the test_function, for the expected impact on the_impact_digit.
-def search_and_tag_digit(cfg, acfg, prerequisites_function, the_impact_digit, test_function, tag_function, do_pair_search, do_weak_search ):
+def search_and_tag_digit(cfg, acfg, prerequisites_function, the_impact_digit, test_function, tag_function, do_pair_search, allow_impact_mismatch ):
 
     the_tag = tag_function(the_impact_digit)
 
@@ -40,9 +40,9 @@ def search_and_tag_digit(cfg, acfg, prerequisites_function, the_impact_digit, te
     to_position = cfg.max_useful_position()
 
     # In some models, we don't predict the intervened_answer correctly in test_function.
-    # So we may do a weak second pass and may add say "A5.BS.A632" tag to a node.
+    # So we may do a weak second pass 
     for strong in [True, False]:
-        if strong or do_weak_search:
+        if strong or allow_impact_mismatch:
 
             for position in range(from_position, to_position+1):
                 the_filters = prerequisites_function(cfg, position, the_impact_digit)
@@ -67,13 +67,13 @@ def search_and_tag(cfg, acfg, \
                    test_function, # The test function applied to interesting nodes \ 
                    tag_function, # The tag applied to interesting nodes that pass the test \
                    do_pair_search : bool = True, # Search for "pairs" of interesting nodes (as well as "single" nodes) that satisfy the test \
-                   do_weak_search : bool = False): # Succeed in search even if expected impact is not correct
+                   allow_impact_mismatch : bool = False): # Succeed in search even if expected impact is not correct
 
     acfg.reset_intervention_totals()
 
     for the_impact_digit in range(cfg.num_answer_positions):
         search_and_tag_digit(cfg, acfg, 
             prerequisites_function, the_impact_digit, test_function, tag_function,
-            do_pair_search, do_weak_search )
+            do_pair_search, allow_impact_mismatch )
 
     print(f"Filtering gave {acfg.num_filtered_nodes} candidate node(s). Ran {acfg.num_tests_run} intervention test(s). Added {acfg.num_tags_added} tag(s)")
