@@ -272,7 +272,7 @@ def add_st_test(cfg, acfg, node_locations, focus_digit, strong):
     success = run_weak_intervention(cfg, acfg, node_locations, store_question, clean_question, MathsToken.PLUS)
 
     if success:
-        description = acfg.node_names() + " perform A"+str(focus_digit)+".ST = TriCase(D"+str(focus_digit)+" + D'"+str(focus_digit)+")"
+        description = acfg.node_names() + " perform D"+str(focus_digit)+".ST = TriCase(D"+str(focus_digit)+" + D'"+str(focus_digit)+")"
         print("Test confirmed", description, "Impact:", acfg.intervened_impact, "" if strong else "Weak")
 
     return success
@@ -373,3 +373,41 @@ def sub_mb_test(cfg, acfg, node_locations, impact_digit, strong):
         
     return success
 
+
+# Tag for positive-answer subtraction "TriCase" task "MT"
+def sub_mt_tag(impact_digit):
+    return answer_name(impact_digit)  + "." + MathsTask.SUB_T_TAG.value
+
+
+def sub_mt_prereqs(cfg, position, focus_digit):
+    return FilterAnd(
+        FilterHead(),
+        FilterPosition(position_name(cfg.n_digits), QCondition.MIN), # Occurs in early tokens
+        FilterPosition(position_name(cfg.num_question_positions), QCondition.MAX), # Occurs in early tokens   
+        FilterAttention(cfg.dn_to_position_name(focus_digit)), # Attends to Dn
+        FilterAttention(cfg.ddn_to_position_name(focus_digit)), # Attends to D'n
+        FilterContains(QType.MATH_SUB, MathsBehavior.SUB_PCA_TAG.value), # Node PCA is interpretable (bigram or trigram output) with respect to subtraction T8,T9,T10
+        FilterContains(QType.MATH_SUB, MathsBehavior.SUB_COMPLEXITY_PREFIX.value), # Impacts positive-answer questions (cover M1 to M4)
+        FilterPosition(position_name(position)))
+
+
+# Test that if we ablate this node then a negative-answer-subtraction question answer swaps to its positive complement
+def sub_mt_test(cfg, acfg, node_locations, focus_digit, strong):
+
+    if focus_digit >= cfg.n_digits:
+        acfg.reset_intervention()
+        return False
+
+    # 555555 - 000000 = +0555555. Is a positive-answer-subtraction
+    store_question = [cfg.repeat_digit(5), cfg.repeat_digit(0)]
+
+    # 222222 - 222422 = -0000200. Is a negative-answer-subtraction question because of focus_digit
+    clean_question = [cfg.repeat_digit(2), cfg.repeat_digit(2)]
+    clean_question[1] += 2 * (10 ** focus_digit)
+
+    success = qt.run_weak_intervention(cfg, acfg, node_locations, store_question, clean_question, qt.MathsToken.MINUS)
+
+    if success:
+        print("Test confirmed", acfg.node_names(), " perform D"+str(focus_digit)+".MT", "Impact:", acfg.intervened_impact, "" if strong else "Weak")
+
+    return success
