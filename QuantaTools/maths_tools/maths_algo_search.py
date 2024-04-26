@@ -411,3 +411,25 @@ def sub_mt_test(cfg, acfg, node_locations, focus_digit, strong):
         print("Test confirmed", acfg.node_names(), " perform D"+str(focus_digit)+".MT", "Impact:", acfg.intervened_impact, "" if strong else "Weak")
 
     return success
+
+
+def opr_tag(impact_digit):
+    return MathsTask.OPR_TAG.value # Doesnt depend on impact_digit
+
+
+def opr_prereqs(cfg, position, impact_digit):
+    return FilterAnd(
+        FilterHead(),
+        FilterPosition(position_name(position)),
+        FilterAttention(cfg.op_position_name()))
+
+
+def sgn_tag(impact_digit):
+    return MathsTask.SGN_TAG.value # Doesnt depend on impact_digit
+
+
+def sgn_prereqs(cfg, position, impact_digit):
+    return FilterAnd(
+        FilterHead(),
+        FilterPosition(position_name(position)),
+        FilterAttention(cfg.an_to_position_name(cfg.n_digits+1)))
