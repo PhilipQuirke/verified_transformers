@@ -17,6 +17,7 @@ class MathsBehavior(Enum):
 
     # Minor "maths" tags related to major tag QType.MATH_ADD:
     # Addition operation "complexity" non-overlapping minor tags
+    ADD_COMPLEXITY_PREFIX = "S"
     ADD_S0_TAG = "S0" # Easy. No MakeCarry1
     ADD_S1_TAG = "S1"
     ADD_S2_TAG = "S2"
@@ -26,6 +27,7 @@ class MathsBehavior(Enum):
     ADD_PCA_TAG = "SP" # PCA is clustered aligned to the T8,T9,T10 question grouping
 
     # Minor "maths" tags related to major tag QType.MATH_SUB (positive-answer subtraction):
+    SUB_COMPLEXITY_PREFIX = "M"    
     SUB_M0_TAG = "M0"  # Answer >= 0. No BorrowOne. Easy
     SUB_M1_TAG = "M1"  # Answer > 0. Has one BorrowOne.  
     SUB_M2_TAG = "M2"  # Answer > 0. 
@@ -34,6 +36,7 @@ class MathsBehavior(Enum):
     SUB_PCA_TAG = "MP" # PCA is clustered aligned to the T8,T9,T10 question grouping
     
     # Minor "maths" tags related to major tag QType.MATH_NEG (negative-answer subtraction):
+    NEG_COMPLEXITY_PREFIX = "N"    
     NEG_N1_TAG = "N1"  # Answer < 0. Includes one BorrowOne. E.g. 100-200
     NEG_N2_TAG = "N2"  # Answer < 0. Includes two BorrowOnes. E.g. 110-200
     NEG_N3_TAG = "N3"  # Answer < 0. Has multiple cascades of BorrowOne. Hard. E.g. 111-200    

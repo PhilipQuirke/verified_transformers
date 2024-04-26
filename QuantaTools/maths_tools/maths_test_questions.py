@@ -539,13 +539,13 @@ def test_maths_questions_and_add_useful_node_tags(cfg, acfg, questions, node_loc
 
         # Add summary of all addition question complexity quanta failures
         if add_complexity_fails != "":
-            cfg.add_useful_node_tag( node_location, QType.MATH_ADD.value, "S" + sort_unique_digits(add_complexity_fails, False) )
+            cfg.add_useful_node_tag( node_location, QType.MATH_ADD.value, MathsBehavior.ADD_COMPLEXITY_PREFIX.value + sort_unique_digits(add_complexity_fails, False) )
 
         # Add summary of all subtraction question complexity quanta failures
         if sub_complexity_fails != "":
-            cfg.add_useful_node_tag( node_location, QType.MATH_SUB.value, "M" + sort_unique_digits(sub_complexity_fails, False) )
+            cfg.add_useful_node_tag( node_location, QType.MATH_SUB.value, MathsBehavior.SUB_COMPLEXITY_PREFIX.value + sort_unique_digits(sub_complexity_fails, False) )
         if neg_complexity_fails != "":
-            cfg.add_useful_node_tag( node_location, QType.MATH_NEG.value, "N" + sort_unique_digits(neg_complexity_fails, False) )
+            cfg.add_useful_node_tag( node_location, QType.MATH_NEG.value, MathsBehavior.NEG_COMPLEXITY_PREFIX.value + sort_unique_digits(neg_complexity_fails, False) )
           
 
 TRICASE_QUESTIONS = 100

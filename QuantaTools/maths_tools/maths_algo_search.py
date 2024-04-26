@@ -255,7 +255,7 @@ def add_st_prereqs(cfg, position, focus_digit):
         FilterAttention(cfg.dn_to_position_name(focus_digit)), # Attends to Dn
         FilterAttention(cfg.ddn_to_position_name(focus_digit)), # Attends to D'n
         FilterContains(QType.MATH_ADD, MathsBehavior.ADD_PCA_TAG.value), # Node PCA is interpretable (bigram or trigram output) with respect to addition T8,T9,T10
-        FilterContains(QType.MATH_ADD, "")) # Impacts addition questions
+        FilterContains(QType.MATH_ADD, MathsBehavior.ADD_COMPLEXITY_PREFIX)) # Impacts addition questions
 
 
 # Intervention ablation test for addition An.ST (aka Dn.C in Paper 2) with impact "A65432" to "A65" in early tokens.
