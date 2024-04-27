@@ -2,7 +2,7 @@ from enum import Enum
 
 
 # These are tokens used in arithmetic vocab. 
-class MathsToken:
+class MathsToken(Enum):
     # Token indexes 0 to 9 represent digits 0 to 9
     PLUS = 10
     MINUS = 11
