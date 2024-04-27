@@ -42,6 +42,7 @@ class QType(Enum):
     # They are defined here to 1) avoid naming conflicts and 2) act as an 'index' of implemented quanta
     
     # Types of mathematical questions 
+    MATH = "Math" 
     MATH_ADD = "Math.Add" 
     MATH_SUB = "Math.Sub" # Subtraction with a negative answer
     MATH_NEG = "Math.Neg" # Subtraction with a negative answer
