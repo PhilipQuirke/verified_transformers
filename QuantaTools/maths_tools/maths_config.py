@@ -22,9 +22,9 @@ class MathsConfig(AlgoConfig):
         # Dictionary of test maths questions based on the T8, T9, T10 categorisation
         self.tricase_questions_dict = {}
 
-        # Format to save graphs to CoLab temp files as. Supports PDF and SVG. You can later manually export the temp files for re-use in papers.
-        self.graph_file_suffix = "pdf"
-        
+        # Format to save graphs to CoLab temp files as. Temp files can be manually exported for re-use in papers etc.
+        self.graph_file_suffix = "pdf" # Can be pdf, svg or png 
+      
 
     # Based on n_digits, set the number of question and answer tokens in the context 
     def initialize_maths_token_positions(self):
