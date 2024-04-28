@@ -10,7 +10,8 @@ from QuantaTools.maths_tools.maths_data_generator import make_maths_questions_an
 
 
 # Create a cache of sample (matrix) maths questions based on the T8, T9, T10 categorisation
-DEFAULT_TRICASE_QUESTIONS = 300
+EACH_CASE_TRICASE_QUESTIONS = 100
+TOTAL_TRICASE_QUESTIONS = 3*EACH_CASE_TRICASE_QUESTIONS
 
 @dataclass
 class OperatorQTypeNumber:
@@ -21,13 +22,13 @@ class OperatorQTypeNumber:
 @dataclass
 class CustomTriclassConfig:
     operators_qtypes_counts: Tuple[OperatorQTypeNumber] = (
-        OperatorQTypeNumber(MathsToken.PLUS, QType.MATH_ADD, DEFAULT_TRICASE_QUESTIONS),
-        OperatorQTypeNumber(MathsToken.MINUS, QType.MATH_SUB, DEFAULT_TRICASE_QUESTIONS),
-        OperatorQTypeNumber(MathsToken.MINUS, QType.MATH_NEG, DEFAULT_TRICASE_QUESTIONS)
+        OperatorQTypeNumber(MathsToken.PLUS, QType.MATH_ADD, TOTAL_TRICASE_QUESTIONS),
+        OperatorQTypeNumber(MathsToken.MINUS, QType.MATH_SUB, TOTAL_TRICASE_QUESTIONS),
+        OperatorQTypeNumber(MathsToken.MINUS, QType.MATH_NEG, TOTAL_TRICASE_QUESTIONS)
     )
 
 def make_tricase_questions(
-        cfg, test_digit: int, test_case: int, operation: MathsToken, num_questions=DEFAULT_TRICASE_QUESTIONS, qtype: QType = None
+        cfg, test_digit: int, test_case: int, operation: MathsToken, num_questions=TOTAL_TRICASE_QUESTIONS, qtype: QType = None
 ):
     """
     Returns a set of questions over a number of test digits, given an operation and optionally a qtype
@@ -130,7 +131,7 @@ def make_tricase_questions(
     else:
         raise Exception(f"Unsupported operation {operation}.")
 
-def make_maths_tricase_questions_core(cfg, test_digit, operation, num_questions=DEFAULT_TRICASE_QUESTIONS):
+def make_maths_tricase_questions_core(cfg, test_digit, operation, num_questions=TOTAL_TRICASE_QUESTIONS):
     assert num_questions%3==0, "Number of questions must be divisible by 3"
     local_num_questions = int(num_questions/3)
     q1 = make_tricase_questions(cfg, test_digit, 8, operation, num_questions=local_num_questions)
@@ -139,7 +140,7 @@ def make_maths_tricase_questions_core(cfg, test_digit, operation, num_questions=
 
     return torch.vstack((q1, q2, q3))
 
-def make_maths_tricase_questions(cfg, num_questions=DEFAULT_TRICASE_QUESTIONS):
+def make_maths_tricase_questions(cfg, num_questions=TOTAL_TRICASE_QUESTIONS):
     cfg.tricase_questions_dict = {}
     for answer_digit in range(cfg.n_digits):
         for operation in [MathsToken.PLUS, MathsToken.MINUS]:
@@ -186,5 +187,6 @@ def make_maths_tricase_questions_customized(cfg, custom_triclass_config=CustomTr
                     num_questions=local_num_questions
                 ) for test_case in [8, 9, 10]]
 
-
+            num_questions_created = sum([len(questions) for questions in all_questions])
+            assert num_questions_created == num_questions, f"Created {num_questions_created} when requested with {num_questions} for {operator_qtype_number}"
             cfg.tricase_questions_dict[(answer_digit, operator, qtype)] = torch.vstack(all_questions)

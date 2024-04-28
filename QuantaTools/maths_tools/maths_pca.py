@@ -6,15 +6,18 @@ from QuantaTools.quanta_constants import QType
 from QuantaTools.quanta_file_utils import save_plt_to_file
 from QuantaTools.useful_node import answer_name, NodeLocation
 from .maths_constants import MathsBehavior, MathsToken
-from .maths_test_questions import TRICASE_QUESTIONS
+from .maths_test_questions import EACH_CASE_TRICASE_QUESTIONS as TRICASE_QUESTIONS
 
 
 
-# Plot the PCA of PnLnHn's attention pattern, using T8, T9, T10 questions that differ in the An digit
-def plot_pca_for_an(ax, pca_attn_outputs, title):
-    ax.scatter(pca_attn_outputs[:TRICASE_QUESTIONS, 0], pca_attn_outputs[:TRICASE_QUESTIONS, 1], color='red', label='T8 (0-8)') # t8 questions
-    ax.scatter(pca_attn_outputs[TRICASE_QUESTIONS:2*TRICASE_QUESTIONS, 0], pca_attn_outputs[TRICASE_QUESTIONS:2*TRICASE_QUESTIONS, 1], color='green', label='T9') # t9 questions
-    ax.scatter(pca_attn_outputs[2*TRICASE_QUESTIONS:, 0], pca_attn_outputs[2*TRICASE_QUESTIONS:, 1], color='blue', label='T10 (10-18)') # t10 questions
+def plot_pca_for_an(ax, pca_attn_outputs, title, num_questions=TRICASE_QUESTIONS):
+    """
+    Plot the PCA of PnLnHn's attention pattern, using T8, T9, T10 questions that differ in the An digit
+    Assumes that we have equal number of questions for each tricase.
+    """
+    ax.scatter(pca_attn_outputs[:num_questions, 0], pca_attn_outputs[:num_questions, 1], color='red', label='T8 (0-8)') # t8 questions
+    ax.scatter(pca_attn_outputs[num_questions:2*num_questions, 0], pca_attn_outputs[num_questions:2*num_questions, 1], color='green', label='T9') # t9 questions
+    ax.scatter(pca_attn_outputs[2*num_questions:, 0], pca_attn_outputs[2*num_questions:, 1], color='blue', label='T10 (10-18)') # t10 questions
     if title != "" :
         ax.set_title(title)
 
@@ -36,7 +39,6 @@ def manual_node_pca(cfg, ax, position, layer, num, operation, answer_digit, plot
     title, error_message = _build_title_and_error_message(
         cfg=cfg, node_location=node_location, operation=operation, answer_digit=answer_digit
     )
-
     pca, pca_attn_outputs, title = calc_pca_for_an(
         cfg=cfg, node_location=node_location, test_inputs=test_inputs, title=title, error_message=error_message
     )

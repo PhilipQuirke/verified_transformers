@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+
 import matplotlib.pyplot as plt
 import torch
 import transformer_lens.utils as utils
@@ -13,6 +15,25 @@ from QuantaTools.quanta_map_impact import get_quanta_impact
 from .maths_utilities import tokens_to_unsigned_int
 from .maths_constants import MathsToken, MathsBehavior
 
+class SimpleQuestionDescriptor:
+
+    def __init__(self, first_value: int, second_value: int, answer: int, operator: int):
+        self.first_value = first_value
+        self.second_value = second_value
+        self.answer = answer
+        self.operator = operator
+
+    @staticmethod
+    def from_tensor(cfg, question: torch.LongTensor):
+        operator = question[cfg.n_digits]
+
+        first_value = tokens_to_unsigned_int(question, offset=0, digits=cfg.n_digits)
+        second_value = tokens_to_unsigned_int(question, offset=cfg.n_digits + 1, digits=cfg.n_digits)
+        answer = tokens_to_unsigned_int(question, offset=2*cfg.n_digits + 2, digits=cfg.n_digits)
+        sign = int(question[2*cfg.n_digits+1].item())
+        if sign == MathsToken.MINUS:
+            answer = -1 * answer
+        return SimpleQuestionDescriptor(first_value=first_value, second_value=second_value, answer=answer, operator=sign)
 
 # Analyse and return the question complexity for the Addition (S0 to S4) or Subtraction (M0 to NG) questions
 def get_maths_question_complexity(cfg, question):

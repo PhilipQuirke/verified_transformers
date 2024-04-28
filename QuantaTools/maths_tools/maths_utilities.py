@@ -1,6 +1,5 @@
 from .maths_constants import MathsToken
 
-
 # Vocabulary dictionary: Mapping from character (key) to token (value)
 def set_maths_vocabulary(cfg):
     cfg.char_to_token = {str(i) : i for i in range(10)}
