@@ -3,6 +3,7 @@ from typing import Tuple
 import random
 
 import torch
+from tqdm.notebook import tqdm
 
 from QuantaTools.quanta_constants import QType
 from QuantaTools.maths_tools.maths_constants import MathsBehavior, MathsTask, MathsToken
@@ -33,8 +34,10 @@ def pad_small_set_of_questions(cfg, sample_pairs_of_numbers: list, target_number
     """
     unique_pairs_set = set(sample_pairs_of_numbers)
     unique_pairs_list = list(unique_pairs_set)
+    attempts = 0
 
-    while len(unique_pairs_set) < target_number:
+    while len(unique_pairs_set) < target_number and attempts < 5*target_number:
+        attempts += 1
         random_addition = random.randint(10**(digit+1), 10**(cfg.n_digits))
         random_choice = random.choice(unique_pairs_list)
         new_choice = (random_choice[0] + random_addition, random_choice[1] + random_addition)
@@ -133,7 +136,7 @@ def make_tricase_questions(
 
     attempts = 0
     # Attempts stops us from trying forever if the requested operation is impossible.
-    while len(set(questions)) < num_questions or attempts <= 5*num_questions:
+    while len(set(questions)) < num_questions or attempts <= 2*num_questions:
         attempts +=1
         try:
             x,y = make_single_tricase_question(
@@ -142,11 +145,12 @@ def make_tricase_questions(
             questions.append((x,y))
 
         except Exception as e:
+            print(f'Caught exception {e} on test case {test_case} on digit {test_digit} and qtype {qtype}.')
             exceptions.append(e)
 
     print(f'Received {len(exceptions)} creating {len(questions)} questions out of {num_questions} for test case {test_case} on digit {test_digit} and qtype {qtype}.')
 
-    if len(questions) < num_questions:
+    if len(set(questions)) < num_questions and test_digit<3:
         questions = pad_small_set_of_questions(
             cfg, sample_pairs_of_numbers=questions, target_number=num_questions, digit=test_digit
         )
