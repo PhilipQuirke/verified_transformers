@@ -1,12 +1,12 @@
 from dataclasses import dataclass
 from typing import Tuple
-
 import random
-from collections import defaultdict
 
 import torch
 
-from QuantaTools import MathsTask, MathsToken, QType, make_maths_questions_and_answers, MathsBehavior
+from maths_tools.maths_constants import MathsBehavior, MathsTask, MathsToken
+from QuantaTools.quanta_constants import  QType
+from maths_tools.maths_data_generator import make_maths_questions_and_answers
 
 
 # Create a cache of sample (matrix) maths questions based on the T8, T9, T10 categorisation
@@ -130,9 +130,6 @@ def make_tricase_questions(
     else:
         raise Exception(f"Unsupported operation {operation}.")
 
-
-
-
 def make_maths_tricase_questions_core(cfg, test_digit, operation, num_questions=DEFAULT_TRICASE_QUESTIONS):
     assert num_questions%3==0, "Number of questions must be divisible by 3"
     local_num_questions = int(num_questions/3)
@@ -191,5 +188,3 @@ def make_maths_tricase_questions_customized(cfg, custom_triclass_config=CustomTr
 
 
             cfg.tricase_questions_dict[(answer_digit, operator, qtype)] = torch.vstack(all_questions)
-
-
