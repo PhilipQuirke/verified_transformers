@@ -253,4 +253,22 @@ class UsefulNodeList():
         dict_list = [node.to_dict() for node in self.nodes]
         with open(filename, 'w') as file:
             json.dump(dict_list, file, default=lambda o: o.__dict__)
+    
+            
+    # Load the nodes and tags from a json file
+    def load_nodes(self, filename):
+        with open(filename, 'r') as file:
+            dict_list = json.load(file)
+            for data in dict_list:
+                data_node = UsefulNode.from_dict(data)
+                
+                # Find/create the corresponding in-memory node
+                the_node = self.get_node( data_node )
+                if the_node == None:
+                    the_node = UsefulNode(data_node.position, data_node.layer, data_node.is_head, data_node.num, [])
+                    self.nodes += [the_node]
 
+                # Load/merge the tags
+                for tag in data_node.tags:
+                    major_tag, minor_tag = tag.split(":")
+                    the_node.add_tag(major_tag, minor_tag)
