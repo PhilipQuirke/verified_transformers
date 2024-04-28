@@ -128,7 +128,7 @@ def make_maths_questions_and_answers(cfg, operator, major_tag, minor_tag, q_matr
             make_a_maths_question_and_answer(cfg, questions, real_len, a, b, operator)
 
             good = True
-            if not ( major_tag == QType.UNKNOWN or minor_tag == MathsBehavior.UNKNOWN ):
+            if (major_tag != QType.UNKNOWN) and (minor_tag != MathsBehavior.UNKNOWN ):
                 # Check that the complexity of the question matches what the test data believes it is
                 actual_major_tag, actual_minor_tag = get_maths_question_complexity(cfg, questions[real_len])
                 question_str = tokens_to_string(cfg, questions[real_len])

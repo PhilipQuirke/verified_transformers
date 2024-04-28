@@ -1,5 +1,8 @@
+from dataclasses import dataclass
+from typing import Tuple
+
 import random
-from typing import Optional
+from collections import defaultdict
 
 import torch
 
@@ -7,26 +10,40 @@ from QuantaTools import MathsTask, MathsToken, QType, make_maths_questions_and_a
 
 
 # Create a cache of sample (matrix) maths questions based on the T8, T9, T10 categorisation
-DEFAULT_TRICASE_QUESTIONS = 100
+DEFAULT_TRICASE_QUESTIONS = 300
 
+@dataclass
+class OperatorQTypeNumber:
+    operator: MathsToken
+    qtype:QType
+    number: int
+
+@dataclass
+class CustomTriclassConfig:
+    operators_qtypes_counts: Tuple[OperatorQTypeNumber] = (
+        OperatorQTypeNumber(MathsToken.PLUS, QType.MATH_ADD, DEFAULT_TRICASE_QUESTIONS),
+        OperatorQTypeNumber(MathsToken.MINUS, QType.MATH_SUB, DEFAULT_TRICASE_QUESTIONS),
+        OperatorQTypeNumber(MathsToken.MINUS, QType.MATH_NEG, DEFAULT_TRICASE_QUESTIONS)
+    )
 
 def make_tricase_questions(
-        cfg, test_digit: int, test_case: int, operation: MathsToken,
-        requested_features: Optional[list[MathsTask]] =None, excluded_features: Optional[list[MathsTask]] = None,
-        num_tricase_questions: int = DEFAULT_TRICASE_QUESTIONS
+        cfg, test_digit: int, test_case: int, operation: MathsToken, num_questions=DEFAULT_TRICASE_QUESTIONS, qtype: QType = None
 ):
     """
-    Returns a set of questions over a number of test digits, given an operation,
-    requested features and excluded features corresponding to MathsTasks.
+    Returns a set of questions over a number of test digits, given an operation and optionally a qtype
     """
-
     limit = 10 ** test_digit
     questions = []
-    for i in range(num_tricase_questions):
+    assert qtype in [None, QType.MATH_SUB, QType.MATH_NEG, QType.UNKNOWN], f"Qtype must be none, sub, neg or unknown"
+    assert test_case in [8,9,10], f"Tricase test cases must be 8,9 or 10, received {test_case}"
+    assert operation in [MathsToken.PLUS, MathsToken.MINUS], f"Tricase operation must be in [plus,minus]={[MathsToken.PLUS, MathsToken.MINUS]}, recieved operation {operation}"
+
+    for i in range(num_questions):
         x_noise = 0
         y_noise = 0
 
         if operation == MathsToken.PLUS:
+            assert qtype not in [QType.MATH_NEG, QType.MATH_NEG], f"Negative qtypes not supported for PLUS operator, received {qtype}"
             if test_case == 8:
                 # These are n_digit addition questions where x and y sum is between 0 to 8
                 x = random.randint(0, 8)
@@ -50,40 +67,129 @@ def make_tricase_questions(
                 # These are n_digit subtraction questions where x - y < 0
                 x = random.randint(0, 8)
                 y = random.randint(x+1, 9)
+                if qtype == QType.MATH_SUB:
+                    raise Exception(f'Cannot have both Math_Sub and test_case 8 true simultaneously.')
+                else:
+                    x_noise = random.randint(0, limit - 1)
+                    y_noise = random.randint(0, limit - 1)
+
             if test_case == 9:
                 # These are n_digit subtraction questions where x - y is 0
                 x = random.randint(0, 9)
                 y = x
+                if qtype == QType.MATH_SUB:
+                    # Randomise the lower digits - ensuring that x_noise - y_noise dont cause a BorrowOne
+                    x_noise = random.randint(0, limit - 1)
+                    y_noise = random.randint(0, x_noise)
+                elif qtype == QType.MATH_NEG:
+                    # Randomise the lower digits - ensuring that x_noise - y_noise cause a BorrowOne
+                    y_noise = random.randint(1, limit - 1)
+                    x_noise = random.randint(0, y_noise-1)
+                else:
+                    # Will have a mix of BorrowOnes and no BorrowOnes if we don't specify either MATH_SUB OR MATH_NEG
+                    x_noise = random.randint(0, limit - 1)
+                    y_noise = random.randint(0, limit - 1)
+
             if test_case == 10:
                 # These are n_digit subtraction questions where x - y > 0
                 x = random.randint(1, 9)
                 y = random.randint(0, x-1)
 
-            # Randomise the lower digits - ensuring that x_noise + y_noise dont cause a BorrowOne
-            x_noise = random.randint(0, limit-1)
-            y_noise = random.randint(0, x_noise)
+                if qtype == QType.MATH_NEG:
+                    raise Exception(f'Cannot have both Math_Neg and test_case 10 true simultaneously.')
+
+                # Will have a mix of BorrowOnes and no BorrowOnes
+                x_noise = random.randint(0, limit - 1)
+                y_noise = random.randint(0, limit - 1)
 
 
         x = x * limit + x_noise
         y = y * limit + y_noise
         questions.append([x, y])
 
-    qtype = QType.MATH_ADD if operation == MathsToken.PLUS else QType.MATH_SUB # Inaccurate. Could be QType.MATH_NEG
-    return make_maths_questions_and_answers(cfg, operation, qtype, MathsBehavior.UNKNOWN, questions)
+    if qtype is not None:  # We have enforced qtype remains consistent with questions returned
+        return make_maths_questions_and_answers(cfg, operation, qtype, MathsBehavior.UNKNOWN, questions)
+
+    elif operation == MathsToken.PLUS:  # qtype not relevant for MathsToken.PLUS
+        qtype = QType.MATH_ADD #if operation == MathsToken.PLUS else QType.MATH_SUB # Inaccurate. Will be a mix of QType.MATH_SUB and QType.MATH_NEG
+
+        return make_maths_questions_and_answers(cfg, operation, qtype, MathsBehavior.UNKNOWN, questions)
+
+    elif operation == MathsToken.MINUS:
+        sub_questions = [question for question in questions if question[0] >= question[1]]
+
+        sub_question_tensors = make_maths_questions_and_answers(cfg, operation, QType.MATH_SUB, MathsBehavior.UNKNOWN, questions)
+
+        neg_questions = [question for question in questions if question[0] < question[1]]
+
+        neg_question_tensors = make_maths_questions_and_answers(cfg, operation, QType.MATH_NEG, MathsBehavior.UNKNOWN, questions)
+        print(f"Created {len(sub_question_tensors)} MATH_SUB questions for MINUS and {len(neg_question_tensors)} MATH_NEG questions.")
+
+        return torch.vstack([sub_question_tensors, neg_question_tensors])
+
+    else:
+        raise Exception(f"Unsupported operation {operation}.")
 
 
-def make_maths_tricase_questions_core(cfg, test_digit, operation):
-    q1 = make_tricase_questions(cfg, test_digit, 8, operation)
-    q2 = make_tricase_questions(cfg, test_digit, 9, operation)
-    q3 = make_tricase_questions(cfg, test_digit, 10, operation)
+
+
+def make_maths_tricase_questions_core(cfg, test_digit, operation, num_questions=DEFAULT_TRICASE_QUESTIONS):
+    assert num_questions%3==0, "Number of questions must be divisible by 3"
+    local_num_questions = int(num_questions/3)
+    q1 = make_tricase_questions(cfg, test_digit, 8, operation, num_questions=local_num_questions)
+    q2 = make_tricase_questions(cfg, test_digit, 9, operation, num_questions=local_num_questions)
+    q3 = make_tricase_questions(cfg, test_digit, 10, operation, num_questions=local_num_questions)
 
     return torch.vstack((q1, q2, q3))
 
-
-def make_maths_tricase_questions(cfg):
+def make_maths_tricase_questions(cfg, num_questions=DEFAULT_TRICASE_QUESTIONS):
     cfg.tricase_questions_dict = {}
     for answer_digit in range(cfg.n_digits):
         for operation in [MathsToken.PLUS, MathsToken.MINUS]:
-            t_questions = make_maths_tricase_questions_core(cfg, answer_digit, operation)
+            t_questions = make_maths_tricase_questions_core(cfg, answer_digit, operation, num_questions=num_questions)
             # Use a tuple of (answer_digit, operation) as the key for indexing
             cfg.tricase_questions_dict[(answer_digit, operation)] = t_questions
+
+def make_maths_tricase_questions_customized(cfg, custom_triclass_config=CustomTriclassConfig()):
+    cfg.tricase_questions_dict = {}
+    for answer_digit in range(cfg.n_digits):
+        operators_qtype_numbers = custom_triclass_config.operators_qtypes_counts
+
+        for operator_qtype_number in operators_qtype_numbers:
+            num_questions = operator_qtype_number.number
+            qtype = operator_qtype_number.qtype
+            operator = operator_qtype_number.operator
+
+            if qtype in [QType.MATH_NEG, QType.MATH_SUB] and operator == MathsToken.PLUS:
+                raise Exception(f'A qtype of MATH_NEG or MATH_SUB is not supported with plus operator.')
+
+            if qtype == QType.MATH_SUB:
+                # Only test cases 9 and 10 are supported for MATH_SUB
+                local_num_questions = int(num_questions / 2)
+                all_questions = [make_tricase_questions(
+                    cfg, test_digit=answer_digit, test_case=test_case, operation=operator, qtype=qtype, num_questions=local_num_questions
+                ) for test_case in [9, 10]]
+            elif qtype == QType.MATH_NEG:
+                # Only test cases 8 and 9 are supported for MATH_SUB
+                local_num_questions = int(num_questions / 2)
+                all_questions = [make_tricase_questions(
+                    cfg, test_digit=answer_digit, test_case=test_case, operation=operator, qtype=qtype,
+                    num_questions=local_num_questions
+                ) for test_case in [8, 9]]
+            elif qtype == QType.MATH_ADD:
+                local_num_questions = int(num_questions / 3)
+                all_questions = [make_tricase_questions(
+                    cfg, test_digit=answer_digit, test_case=test_case, operation=operator, qtype=qtype,
+                    num_questions=local_num_questions
+                ) for test_case in [8, 9, 10]]
+            else:
+                local_num_questions = int(num_questions / 3)
+                all_questions = [make_tricase_questions(
+                    cfg, test_digit=answer_digit, test_case=test_case, operation=operator, qtype=qtype,
+                    num_questions=local_num_questions
+                ) for test_case in [8, 9, 10]]
+
+
+            cfg.tricase_questions_dict[(answer_digit, operator, qtype)] = torch.vstack(all_questions)
+
+

@@ -41,9 +41,10 @@ class QType(Enum):
     # These quanta types apply to specific models predicting specific types of questions
     # They are defined here to 1) avoid naming conflicts and 2) act as an 'index' of implemented quanta
     
-    # Types of mathematical questions 
+    # Types of mathematical questions
+    MATH = "Math"
     MATH_ADD = "Math.Add" 
-    MATH_SUB = "Math.Sub" # Subtraction with a negative answer
+    MATH_SUB = "Math.Sub" # Subtraction with a positive answer
     MATH_NEG = "Math.Neg" # Subtraction with a negative answer
     MATH_MUL = "Math.Mul"
   
@@ -58,8 +59,6 @@ class QType(Enum):
     SPARE_2 = "Spare.2"
     SPARE_3 = "Spare.3"
     SPARE_4 = "Spare.4"
-    
-
 
 
 # Related to QType.FAIL:

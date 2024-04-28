@@ -2,7 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import matplotlib.patches as patches
-#import textwrap
 
 from .useful_node import position_name, NodeLocation, UsefulNodeList 
 
