@@ -27,6 +27,91 @@ class CustomTriclassConfig:
         OperatorQTypeNumber(MathsToken.MINUS, QType.MATH_NEG, TOTAL_TRICASE_QUESTIONS)
     )
 
+def make_single_tricase_question(
+        cfg, test_digit: int, test_case: int, operation: MathsToken,
+        qtype: QType = None,make_borrow: str = "never"
+):
+    x_noise = 0
+    y_noise = 0
+    limit = 10 ** test_digit
+
+    def make_noise(make_borrow="never"):
+        if make_borrow == "never":
+            x_noise = random.randint(0, limit - 1)
+            y_noise = random.randint(0, x_noise)
+        elif make_borrow == "always":
+            y_noise = random.randint(1, limit - 1)
+            x_noise = random.randint(0, y_noise - 1)
+        else:
+            x_noise = random.randint(0, limit - 1)
+            y_noise = random.randint(0, limit - 1)
+        return x_noise, y_noise
+
+    if operation == MathsToken.PLUS:
+        assert qtype not in [QType.MATH_NEG,
+                             QType.MATH_NEG], f"Negative qtypes not supported for PLUS operator, received {qtype}"
+        if test_case == 8:
+            # These are n_digit addition questions where x and y sum is between 0 to 8
+            x = random.randint(0, 8)
+            y = random.randint(0, 8 - x)
+        if test_case == 9:
+            # These are n_digit addition questions where x and y sum is 9
+            x = random.randint(0, 9)
+            y = 9 - x
+        if test_case == 10:
+            # These are n_digit addition questions where x and y sum is between 10 to 18
+            x = random.randint(1, 9)
+            y = random.randint(10 - x, 9)
+
+        # Randomise the lower digits - ensuring that x_noise + y_noise dont cause a MakeCarry
+        x_noise = random.randint(0, limit - 1)
+        y_noise = random.randint(0, limit - 1 - x_noise)
+
+    # Check digit positions for viability
+    elif operation == MathsToken.MINUS:
+        if test_case == 8:
+            # These are n_digit subtraction questions where x - y < 0
+            x = random.randint(0, 8)
+            y = random.randint(x + 1, 9)
+            if qtype == QType.MATH_SUB:
+                raise Exception(f'Cannot have both Math_Sub and test_case 8 true simultaneously.')
+            else:
+                x_noise, y_noise = make_noise(make_borrow=make_borrow)
+
+        # These are n_digit subtraction questions where x - y is 0
+        if test_case == 9 and test_digit == cfg.n_digits and qtype == QType.MATH_NEG:
+            raise Exception("Test Case 9 is not possible for Math_NEG on last digit")
+
+        if test_case == 9:
+            # These are n_digit subtraction questions where x - y is 0
+            x = random.randint(0, 9)
+            y = x
+            if qtype == QType.MATH_NEG:
+                local_make_borrow = "always"
+            elif qtype == QType.MATH_SUB:
+                local_make_borrow = "never"
+            else:
+                local_make_borrow = make_borrow
+            x_noise, y_noise = make_noise(local_make_borrow)
+
+        if test_case == 10:
+            # These are n_digit subtraction questions where x - y > 0
+            x = random.randint(1, 9)
+            y = random.randint(0, x - 1)
+
+            if qtype == QType.MATH_NEG:
+                raise Exception(f'Cannot have both Math_Neg and test_case 10 true simultaneously.')
+            else:
+                x_noise, y_noise = make_noise(make_borrow)
+
+        else:
+            raise Exception(f'Did not recognize operation {operation}')
+
+    x = x * limit + x_noise
+    y = y * limit + y_noise
+
+    return [x,y]
+
 def make_tricase_questions(
         cfg, test_digit: int, test_case: int, operation: MathsToken, num_questions=TOTAL_TRICASE_QUESTIONS, qtype: QType = None,
         make_borrow: str = "never"
@@ -39,94 +124,26 @@ def make_tricase_questions(
     tricase test_case=8 and qtype=Math_NEG
     """
     assert make_borrow in ["always", "never", "mixed"]
-    limit = 10 ** test_digit
     questions = []
+    exceptions = []
     assert qtype in [None, QType.MATH_SUB, QType.MATH_NEG, QType.UNKNOWN], f"Qtype must be none, sub, neg or unknown"
     assert test_case in [8,9,10], f"Tricase test cases must be 8,9 or 10, received {test_case}"
     assert operation in [MathsToken.PLUS, MathsToken.MINUS], f"Tricase operation must be in [plus,minus]={[MathsToken.PLUS, MathsToken.MINUS]}, recieved operation {operation}"
 
     for i in range(num_questions):
-        x_noise = 0
-        y_noise = 0
+        try:
+            [x, y] = make_single_tricase_question(
+                cfg=cfg, test_digit=test_digit, test_case=test_case, operation=operation, make_borrow=make_borrow)
+            questions.append([x,y])
+        except Exception as e:
+            exceptions.append(e)
 
-        if operation == MathsToken.PLUS:
-            assert qtype not in [QType.MATH_NEG, QType.MATH_NEG], f"Negative qtypes not supported for PLUS operator, received {qtype}"
-            if test_case == 8:
-                # These are n_digit addition questions where x and y sum is between 0 to 8
-                x = random.randint(0, 8)
-                y = random.randint(0, 8-x)
-            if test_case == 9:
-                # These are n_digit addition questions where x and y sum is 9
-                x = random.randint(0, 9)
-                y = 9 - x
-            if test_case == 10:
-                # These are n_digit addition questions where x and y sum is between 10 to 18
-                x = random.randint(1, 9)
-                y = random.randint(10-x, 9)
-
-            # Randomise the lower digits - ensuring that x_noise + y_noise dont cause a MakeCarry
-            x_noise = random.randint(0, limit-1)
-            y_noise = random.randint(0, limit-1 - x_noise)
-
-        def make_noise(make_borrow="never"):
-            if make_borrow == "never":
-                x_noise = random.randint(0, limit - 1)
-                y_noise = random.randint(0, x_noise)
-            elif make_borrow == "always":
-                y_noise = random.randint(1, limit - 1)
-                x_noise = random.randint(0, y_noise-1)
-            else:
-                x_noise = random.randint(0, limit - 1)
-                y_noise = random.randint(0, limit - 1)
-            return x_noise, y_noise
-
-        # Check digit positions for viability
-        if operation == MathsToken.MINUS:
-            if test_case == 8:
-                # These are n_digit subtraction questions where x - y < 0
-                x = random.randint(0, 8)
-                y = random.randint(x+1, 9)
-                if qtype == QType.MATH_SUB:
-                    raise Exception(f'Cannot have both Math_Sub and test_case 8 true simultaneously.')
-                else:
-                    x_noise, y_noise = make_noise(make_borrow=make_borrow)
-
-            # These are n_digit subtraction questions where x - y is 0
-            if test_case == 9 and test_digit == cfg.n_digits and qtype==QType.MATH_NEG:
-                raise Exception("Test Case 9 is not possible for Math_NEG on last digit")
-
-            if test_case == 9:
-                # These are n_digit subtraction questions where x - y is 0
-                x = random.randint(0, 9)
-                y = x
-                if qtype == QType.MATH_NEG:
-                    local_make_borrow = "always"
-                elif qtype == QType.MATH_SUB:
-                    local_make_borrow = "never"
-                else:
-                    local_make_borrow=make_borrow
-                x_noise, y_noise = make_noise(local_make_borrow)
-
-            if test_case == 10:
-                # These are n_digit subtraction questions where x - y > 0
-                x = random.randint(1, 9)
-                y = random.randint(0, x-1)
-
-                if qtype == QType.MATH_NEG:
-                    raise Exception(f'Cannot have both Math_Neg and test_case 10 true simultaneously.')
-                else:
-                    x_noise, y_noise = make_noise(make_borrow)
-
-
-        x = x * limit + x_noise
-        y = y * limit + y_noise
-        questions.append([x, y])
-
+    print(f'Received {len(exceptions)} on tricase {test_case} for operation {operation}, qtype {qtype} and test digit {test_digit}.')
     if qtype is not None:  # We have enforced qtype remains consistent with questions returned
         return make_maths_questions_and_answers(cfg, operation, qtype, MathsBehavior.UNKNOWN, questions)
 
-    elif operation == MathsToken.PLUS:  # qtype not relevant for MathsToken.PLUS
-        qtype = QType.MATH_ADD #if operation == MathsToken.PLUS else QType.MATH_SUB # Inaccurate. Will be a mix of QType.MATH_SUB and QType.MATH_NEG
+    elif operation == MathsToken.PLUS:
+        qtype = QType.MATH_ADD
 
         return make_maths_questions_and_answers(cfg, operation, qtype, MathsBehavior.UNKNOWN, questions)
 
