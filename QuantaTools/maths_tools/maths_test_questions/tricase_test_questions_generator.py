@@ -143,16 +143,17 @@ def make_tricase_questions(
             x,y = make_single_tricase_question(
                 cfg=cfg, test_digit=test_digit, test_case=test_case, operation=operation,
                 qtype=qtype, make_borrow=make_borrow)
-            print(f'Received (x,y)')
             questions.append((x,y))
 
         except Exception as e:
             print(f'Caught exception {e} on test case {test_case} on digit {test_digit} and qtype {qtype}.')
             exceptions.append(e)
 
-    print(f'Received {len(exceptions)} creating {len(questions)} questions out of {num_questions} for test case {test_case} on digit {test_digit} and qtype {qtype}.')
+    questions = list(set(questions))
 
-    if len(set(questions)) < num_questions and test_digit<3:
+    print(f'Received {len(exceptions)} exceptions creating {len(questions)} questions out of {num_questions} for test case {test_case} on digit {test_digit} and qtype {qtype}.')
+
+    if len(questions) < num_questions and test_digit<3:
         questions = pad_small_set_of_questions(
             cfg, sample_pairs_of_numbers=questions, target_number=num_questions, digit=test_digit
         )
@@ -185,10 +186,15 @@ def make_maths_tricase_questions_core(cfg, test_digit, operation, num_questions=
     local_num_questions = int(num_questions/3)
     print(f'Making questions for case 8')
     q1 = make_tricase_questions(cfg, test_digit, 8, operation, num_questions=local_num_questions)
+    print(f'Created {len(q1)} questions for {test_digit} digit and case 8 and operation {operation}.')
+
     print(f'Making questions for case 9')
     q2 = make_tricase_questions(cfg, test_digit, 9, operation, num_questions=local_num_questions)
+    print(f'Created {len(q1)} questions for {test_digit} digit and case 8 and operation {operation}.')
+
     print(f'Making questions for case 10')
     q3 = make_tricase_questions(cfg, test_digit, 10, operation, num_questions=local_num_questions)
+    print(f'Created {len(q1)} questions for {test_digit} digit and case 8 and operation {operation}.')
 
     return torch.vstack((q1, q2, q3))
 
@@ -249,5 +255,9 @@ def make_maths_tricase_questions_customized(cfg, custom_triclass_config=CustomTr
                 ) for test_case in target_cases]
 
             num_questions_created = sum([len(questions) for questions in all_questions])
-            assert num_questions_created == num_questions, f"Created {num_questions_created} when requested with {num_questions} for {operator_qtype_number}"
+
+            print(f"Created {num_questions_created} for digit {answer_digit} when requested with {num_questions} for {operator_qtype_number}")
+            assert num_questions_created == num_questions, (
+                f"Created {num_questions_created} for digit {answer_digit} "
+                f"when requested with {num_questions} for {operator_qtype_number}")
             cfg.tricase_questions_dict[(answer_digit, operator, qtype)] = torch.vstack(all_questions)
