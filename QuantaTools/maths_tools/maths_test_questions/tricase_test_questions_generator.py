@@ -4,9 +4,9 @@ import random
 
 import torch
 
-from maths_tools.maths_constants import MathsBehavior, MathsTask, MathsToken
-from QuantaTools.quanta_constants import  QType
-from maths_tools.maths_data_generator import make_maths_questions_and_answers
+from QuantaTools.quanta_constants import QType
+from QuantaTools.maths_tools.maths_constants import MathsBehavior, MathsTask, MathsToken
+from QuantaTools.maths_tools.maths_data_generator import make_maths_questions_and_answers
 
 
 # Create a cache of sample (matrix) maths questions based on the T8, T9, T10 categorisation
