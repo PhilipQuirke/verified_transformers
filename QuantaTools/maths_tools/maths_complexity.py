@@ -142,7 +142,7 @@ def get_maths_question_complexity(cfg, question):
     return QType.UNKNOWN, MathsBehavior.UNKNOWN
 
 
-# Analyze the tags associated with node, to show the minimum mathematical complexity
+# Analyze the tags associated with node, to show the minimum complexity of mathematical task.
 # That is, what is the simpliest type of question that this node is needed for?
 def get_maths_min_complexity(_, node, major_tag : str, minor_tag : str, num_shades : int):
     color_index = 0
@@ -220,6 +220,20 @@ def calc_maths_quanta_for_position_nodes(cfg, position):
                 if text_data[row][col] != "":
                     the_color_map = specific_map if col <= 3 or col == 7 else standard_map 
                     table[(row+1, col)].set_facecolor(pale_color(the_color_map(shade_data[row][col])))
+                    
+
+# Analyze the tags associated with node, to show which mathematical operations apply
+def get_maths_operation_complexity(_, node, __ : str, ___ : str, num_shades : int):
+    add_text = node.min_tag_suffix( QType.MATH_ADD.value, MathsBehavior.ADD_COMPLEXITY_PREFIX.value )[:1]
+    sub_text = node.min_tag_suffix( QType.MATH_SUB.value, MathsBehavior.SUB_COMPLEXITY_PREFIX.value )[:1]
+    neg_text = node.min_tag_suffix( QType.MATH_NEG.value, MathsBehavior.NEG_COMPLEXITY_PREFIX.value )[:1]
+    cell_text = add_text + sub_text + neg_text
+
+    color_index = 0
+    if cell_text != "" :
+        color_index = len(cell_text)
+
+    return cell_text, color_index
 
 
 

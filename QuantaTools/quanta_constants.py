@@ -1,6 +1,5 @@
 from enum import Enum
 
-
 # Set of distinct conditions using in filtering. Each filter contains zero or one of these conditions
 class QCondition(Enum):
     MUST = "must" # The specified quanta value MUST exist in the object
@@ -36,13 +35,12 @@ class QType(Enum):
     
     UNKNOWN = "Unknown"
 
-
     # MODEL-SPECIFIC QUANTA TYPES:
     # These quanta types apply to specific models predicting specific types of questions
     # They are defined here to 1) avoid naming conflicts and 2) act as an 'index' of implemented quanta
     
-    # Types of mathematical questions
-    MATH = "Math"
+    # Types of mathematical questions 
+    MATH = "Math" 
     MATH_ADD = "Math.Add" 
     MATH_SUB = "Math.Sub" # Subtraction with a positive answer
     MATH_NEG = "Math.Neg" # Subtraction with a negative answer
@@ -66,7 +64,6 @@ NO_IMPACT_TAG = "(none)"
 # Number of shades used in quanta maps
 FAIL_SHADES = 10 
 
-
 # Related to QType.ATTN:
 # For each node, we store at most 5 input attention facts (as tags)
 MAX_ATTN_TAGS = 5
@@ -75,16 +72,13 @@ MIN_ATTN_PERC = 10
 # Number of shades used in quanta maps
 ATTN_SHADES = 10 
 
-
 # Related to QType.IMPACT:
 # Used when no answer digits were impacted by the intervention
 NO_IMPACT_TAG = "(none)"
 
-
 # Related to QType.ALGO:
 # Number of shades used in quanta maps
 ALGO_SHADES = 2
-
 
 # Related to QType.MATH_*:
 # Number of shades used in quanta maps for mathematical questions
