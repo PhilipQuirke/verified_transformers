@@ -36,7 +36,7 @@ def pad_small_set_of_questions(cfg, sample_pairs_of_numbers: list, target_number
     unique_pairs_list = list(unique_pairs_set)
     attempts = 0
 
-    while len(unique_pairs_set) < target_number and attempts < 5*target_number:
+    while len(unique_pairs_set) < target_number and attempts < 2*target_number:
         attempts += 1
         random_addition = random.randint(10**(digit+1), 10**(cfg.n_digits))
         random_choice = random.choice(unique_pairs_list)
@@ -136,12 +136,14 @@ def make_tricase_questions(
 
     attempts = 0
     # Attempts stops us from trying forever if the requested operation is impossible.
-    while len(set(questions)) < num_questions or attempts <= 2*num_questions:
+    print(f'Beginning attempts')
+    while len(set(questions)) < num_questions and attempts <= 2*num_questions:
         attempts +=1
         try:
             x,y = make_single_tricase_question(
                 cfg=cfg, test_digit=test_digit, test_case=test_case, operation=operation,
                 qtype=qtype, make_borrow=make_borrow)
+            print(f'Received (x,y)')
             questions.append((x,y))
 
         except Exception as e:
@@ -181,8 +183,11 @@ def make_tricase_questions(
 def make_maths_tricase_questions_core(cfg, test_digit, operation, num_questions=TOTAL_TRICASE_QUESTIONS):
     assert num_questions%3==0, "Number of questions must be divisible by 3"
     local_num_questions = int(num_questions/3)
+    print(f'Making questions for case 8')
     q1 = make_tricase_questions(cfg, test_digit, 8, operation, num_questions=local_num_questions)
+    print(f'Making questions for case 9')
     q2 = make_tricase_questions(cfg, test_digit, 9, operation, num_questions=local_num_questions)
+    print(f'Making questions for case 10')
     q3 = make_tricase_questions(cfg, test_digit, 10, operation, num_questions=local_num_questions)
 
     return torch.vstack((q1, q2, q3))
