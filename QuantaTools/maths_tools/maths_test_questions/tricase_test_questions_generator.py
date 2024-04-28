@@ -27,9 +27,24 @@ class CustomTriclassConfig:
         OperatorQTypeNumber(MathsToken.MINUS, QType.MATH_NEG, TOTAL_TRICASE_QUESTIONS)
     )
 
+def pad_small_set_of_questions(cfg, sample_pairs_of_numbers: list, target_number: int, digit: int):
+    """
+    Sample a value and add it to list
+    """
+    unique_pairs_set = set(sample_pairs_of_numbers)
+    unique_pairs_list = list(unique_pairs_set)
+
+    while len(unique_pairs_set) < target_number:
+        random_addition = random.randint(10**(digit+1), 10**(cfg.n_digits))
+        random_choice = random.choice(unique_pairs_list)
+        new_choice = (random_choice[0] + random_addition, random_choice[1] + random_addition)
+        unique_pairs_set.add(new_choice)
+
+    return list(unique_pairs_set)
+
 def make_single_tricase_question(
         cfg, test_digit: int, test_case: int, operation: MathsToken,
-        qtype: QType = None,make_borrow: str = "never"
+        qtype: QType = None, make_borrow: str = "mixed"
 ):
     x_noise = 0
     y_noise = 0
@@ -48,8 +63,6 @@ def make_single_tricase_question(
         return x_noise, y_noise
 
     if operation == MathsToken.PLUS:
-        assert qtype not in [QType.MATH_NEG,
-                             QType.MATH_NEG], f"Negative qtypes not supported for PLUS operator, received {qtype}"
         if test_case == 8:
             # These are n_digit addition questions where x and y sum is between 0 to 8
             x = random.randint(0, 8)
@@ -73,48 +86,36 @@ def make_single_tricase_question(
             # These are n_digit subtraction questions where x - y < 0
             x = random.randint(0, 8)
             y = random.randint(x + 1, 9)
-            if qtype == QType.MATH_SUB:
-                raise Exception(f'Cannot have both Math_Sub and test_case 8 true simultaneously.')
-            else:
-                x_noise, y_noise = make_noise(make_borrow=make_borrow)
-
-        # These are n_digit subtraction questions where x - y is 0
-        if test_case == 9 and test_digit == cfg.n_digits and qtype == QType.MATH_NEG:
-            raise Exception("Test Case 9 is not possible for Math_NEG on last digit")
+            x_noise, y_noise = make_noise(make_borrow=make_borrow)
 
         if test_case == 9:
             # These are n_digit subtraction questions where x - y is 0
             x = random.randint(0, 9)
             y = x
             if qtype == QType.MATH_NEG:
-                local_make_borrow = "always"
-            elif qtype == QType.MATH_SUB:
-                local_make_borrow = "never"
+                x_noise, y_noise = make_noise(make_borrow="always")
             else:
-                local_make_borrow = make_borrow
-            x_noise, y_noise = make_noise(local_make_borrow)
+                x_noise, y_noise = make_noise(make_borrow="never")
 
         if test_case == 10:
             # These are n_digit subtraction questions where x - y > 0
             x = random.randint(1, 9)
             y = random.randint(0, x - 1)
-
-            if qtype == QType.MATH_NEG:
-                raise Exception(f'Cannot have both Math_Neg and test_case 10 true simultaneously.')
-            else:
-                x_noise, y_noise = make_noise(make_borrow)
-
-        else:
-            raise Exception(f'Did not recognize operation {operation}')
+            x_noise, y_noise = make_noise(make_borrow)
 
     x = x * limit + x_noise
     y = y * limit + y_noise
 
-    return [x,y]
+    if x -y < 0 and qtype == QType.MATH_SUB:
+        raise Exception("Math_sub should have positive result")
+    if x -y >= 0 and qtype == QType.MATH_NEG:
+        raise Exception("Math_neg should have negative result")
+
+    return x, y
 
 def make_tricase_questions(
         cfg, test_digit: int, test_case: int, operation: MathsToken, num_questions=TOTAL_TRICASE_QUESTIONS, qtype: QType = None,
-        make_borrow: str = "never"
+        make_borrow: str = "never", return_raw_questions=False
 ):
     """
     Returns a set of questions over a number of test digits, given an operation and optionally a qtype
@@ -127,23 +128,34 @@ def make_tricase_questions(
     questions = []
     exceptions = []
     assert qtype in [None, QType.MATH_SUB, QType.MATH_NEG, QType.UNKNOWN], f"Qtype must be none, sub, neg or unknown"
-    assert test_case in [8,9,10], f"Tricase test cases must be 8,9 or 10, received {test_case}"
-    assert operation in [MathsToken.PLUS, MathsToken.MINUS], f"Tricase operation must be in [plus,minus]={[MathsToken.PLUS, MathsToken.MINUS]}, recieved operation {operation}"
+    assert test_case in [8, 9, 10], f"Tricase test cases must be 8,9 or 10, received {test_case}"
+    assert operation in [MathsToken.PLUS, MathsToken.MINUS], f"Tricase operation must be in [plus,minus]={[MathsToken.PLUS, MathsToken.MINUS]}, received operation {operation}"
 
-    for i in range(num_questions):
+    attempts = 0
+    # Attempts stops us from trying forever if the requested operation is impossible.
+    while len(set(questions)) < num_questions or attempts <= 5*num_questions:
+        attempts +=1
         try:
-            [x, y] = make_single_tricase_question(
-                cfg=cfg, test_digit=test_digit, test_case=test_case, operation=operation, make_borrow=make_borrow)
-            questions.append([x,y])
+            x,y = make_single_tricase_question(
+                cfg=cfg, test_digit=test_digit, test_case=test_case, operation=operation,
+                qtype=qtype, make_borrow=make_borrow)
+            questions.append((x,y))
+
         except Exception as e:
             exceptions.append(e)
 
-    print(f'Received {len(exceptions)} on tricase {test_case} for operation {operation}, qtype {qtype} and test digit {test_digit}.')
+    print(f'Received {len(exceptions)} creating {len(questions)} questions out of {num_questions} for test case {test_case} on digit {test_digit} and qtype {qtype}.')
+
+    if len(questions) < num_questions:
+        questions = pad_small_set_of_questions(
+            cfg, sample_pairs_of_numbers=questions, target_number=num_questions, digit=test_digit
+        )
+
     if qtype is not None:  # We have enforced qtype remains consistent with questions returned
         return make_maths_questions_and_answers(cfg, operation, qtype, MathsBehavior.UNKNOWN, questions)
 
-    elif operation == MathsToken.PLUS:
-        qtype = QType.MATH_ADD
+    elif operation == MathsToken.PLUS:  # qtype not relevant for MathsToken.PLUS
+        qtype = QType.MATH_ADD #if operation == MathsToken.PLUS else QType.MATH_SUB # Inaccurate. Will be a mix of QType.MATH_SUB and QType.MATH_NEG
 
         return make_maths_questions_and_answers(cfg, operation, qtype, MathsBehavior.UNKNOWN, questions)
 
@@ -178,6 +190,7 @@ def make_maths_tricase_questions(cfg, num_questions=TOTAL_TRICASE_QUESTIONS):
             t_questions = make_maths_tricase_questions_core(cfg, answer_digit, operation, num_questions=num_questions)
             # Use a tuple of (answer_digit, operation) as the key for indexing
             cfg.tricase_questions_dict[(answer_digit, operation)] = t_questions
+
 
 def make_maths_tricase_questions_customized(cfg, custom_triclass_config=CustomTriclassConfig()):
     """
