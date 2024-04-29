@@ -28,7 +28,9 @@ class SimpleQuestionDescriptor:
     def from_tensor(cfg, question: torch.LongTensor):
         first_value = int(tokens_to_unsigned_int(question, offset=0, digits=cfg.n_digits).item())
         second_value = int(tokens_to_unsigned_int(question, offset=cfg.n_digits + 1, digits=cfg.n_digits).item())
-        answer = int(tokens_to_unsigned_int(question, offset=2*cfg.n_digits + 2, digits=cfg.n_digits))
+
+        # Offset of 3 - for operator, sign and equals to sign. 7 digits because we keep an extra one for carries.
+        answer = int(tokens_to_unsigned_int(question, offset=2*cfg.n_digits + 3, digits=cfg.n_digits+1))
         sign = int(question[cfg.n_digits].item())
         if sign == MathsToken.MINUS:
             answer = -1 * answer

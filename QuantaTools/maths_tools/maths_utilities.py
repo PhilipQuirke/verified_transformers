@@ -66,7 +66,6 @@ def insert_question_number(the_question, index, first_digit_index, the_digits, n
 
 # Create a single maths question and answer, by writing to 2d matrix the_question.
 def make_a_maths_question_and_answer(cfg, the_question, index, q1, q2, operator ):
-    print(f"Received {the_question[index]} with {q1} and {q2} and operator {operator}")
     insert_question_number(the_question, index, 0, cfg.n_digits, q1)
 
     the_question[index, cfg.n_digits] = operator
@@ -86,5 +85,3 @@ def make_a_maths_question_and_answer(cfg, the_question, index, q1, q2, operator 
         answer = -answer
 
     insert_question_number(the_question, index, 2*cfg.n_digits + 3, cfg.n_digits+1, answer)
-
-    print(f"Computed {the_question[index]} with {q1} and {q2} and operator {operator}")
