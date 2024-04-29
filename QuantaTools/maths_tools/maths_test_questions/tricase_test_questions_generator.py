@@ -38,11 +38,14 @@ def pad_small_set_of_questions(cfg, sample_pairs_of_numbers: list, target_number
 
     while len(unique_pairs_set) < target_number and attempts < 2*target_number:
         attempts += 1
-        random_addition = random.randint(10**(digit+1), 10**(cfg.n_digits))
+        num_digits = cfg.n_digits - digit
+        # Find a random number, and offset it so it doesn't affect test digit.
+        random_addition = (10**digit) * random.randint(0, 10**num_digits)
         random_choice = random.choice(unique_pairs_list)
         new_choice = (random_choice[0] + random_addition, random_choice[1] + random_addition)
         unique_pairs_set.add(new_choice)
 
+    print(f'Padded from {len(sample_pairs_of_numbers)} to {len(unique_pairs_set)}')
     return list(unique_pairs_set)
 
 def make_single_tricase_question(
@@ -136,7 +139,6 @@ def make_tricase_questions(
 
     attempts = 0
     # Attempts stops us from trying forever if the requested operation is impossible.
-    print(f'Beginning attempts')
     while len(set(questions)) < num_questions and attempts <= 2*num_questions:
         attempts +=1
         try:
