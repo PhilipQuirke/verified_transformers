@@ -65,9 +65,9 @@ def show_quanta_text(ax, col : float, row : float, text : str, fontsize : int):
 
 
 # Function to draw a circle in a cell
-def show_quanta_circle(ax, col_idx, row_idx, color, value, max_value, cell_fontsize):
+def show_quanta_perc(ax, col_idx, row_idx, color, value, cell_fontsize):
     # Normalize the value to get a radius that fits well in the cell
-    radius = (value / max_value) * 0.4  # Scale factor to adjust the circle size; tweak as needed
+    radius = (value / 100.0) * 0.4  # Scale factor to adjust the circle size; tweak as needed
     circle = plt.Circle((col_idx + 0.5, row_idx + 0.5), radius, color=color, ec='black')
     ax.add_artist(circle)
     # Add text inside the circle
@@ -76,15 +76,15 @@ def show_quanta_circle(ax, col_idx, row_idx, color, value, max_value, cell_fonts
     
 
 # Draw 1 to a few similar cells
-def show_quanta_cells(ax, col : float, start_row : float, end_row : float, text : str, cell_fontsize : int, draw_circle : bool):      
+def show_quanta_cells(ax, col : float, start_row : float, end_row : float, text : str, cell_fontsize : int, show_perc_circles : bool):      
     num_cells = start_row - end_row + 1
 
     # Draw a thin border around 1 to 8 cells in a vertical column
     ax.add_patch(patches.Rectangle((col, start_row+1), 1, -num_cells, edgecolor='lightgrey', fill=False, lw=1))
 
-    if draw_circle:
-        value = float(text.rstrip('%'))        
-        show_quanta_circle(ax, col, start_row, 'white', value, 100, cell_fontsize)
+    if show_perc_circles:
+        perc = float(text.rstrip('%').rstrip('<')) # Get "32%" or "<1%" as text.
+        show_quanta_perc(ax, col, start_row, 'white', perc, cell_fontsize)
     elif num_cells <= 1:
         show_quanta_text( ax, col, start_row, text, cell_fontsize)
     else:                
@@ -96,7 +96,7 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, \
                     the_nodes : UsefulNodeList, major_tag : str, minor_tag : str, get_node_details, \
                     cell_fontsize : int = 10, \
                     combine_identical_cells : bool = True, \
-                    draw_circle : bool = False, \
+                    show_perc_circles : bool = False, \
                     width_inches : int = -1, height_inches : int = -1 ):
 
     quanta_results = calc_quanta_results(cfg, the_nodes, major_tag, minor_tag, get_node_details, num_shades)
@@ -176,7 +176,7 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, \
                 if previous_text != None:
                     # Draw the previous sequence of similar cells (excluding this row which is different)
                     merge_end_row = row_idx + 1
-                    show_quanta_cells(ax1, col_idx, merge_start_row, merge_end_row, previous_text, cell_fontsize, draw_circle)  
+                    show_quanta_cells(ax1, col_idx, merge_start_row, merge_end_row, previous_text, cell_fontsize, show_perc_circles)  
 
                 # Update trackers
                 previous_text = cell_text
@@ -186,7 +186,7 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, \
             
         if previous_text != None:
             # Draw the last cell(s)
-            show_quanta_cells(ax1, col_idx, merge_start_row, 0, previous_text, cell_fontsize, draw_circle)  
+            show_quanta_cells(ax1, col_idx, merge_start_row, 0, previous_text, cell_fontsize, show_perc_circles)  
 
 
     # Configure x axis
