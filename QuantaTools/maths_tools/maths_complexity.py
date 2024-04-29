@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+
 import matplotlib.pyplot as plt
 import torch
 import transformer_lens.utils as utils
@@ -11,8 +13,34 @@ from QuantaTools.quanta_map_failperc import get_quanta_fail_perc
 from QuantaTools.quanta_map_binary import get_quanta_binary
 from QuantaTools.quanta_map_impact import get_quanta_impact
 from .maths_utilities import tokens_to_unsigned_int
-from .maths_constants import MathsToken, MathsBehavior
+from .maths_constants import MathsToken, MathsBehavior, maths_tokens_to_names
 
+class SimpleQuestionDescriptor:
+
+    def __init__(self, first_value: int, second_value: int, answer: int, operator: int, raw_tensor: torch.LongTensor):
+        self.first_value = first_value
+        self.second_value = second_value
+        self.answer = answer
+        self.operator = operator
+        self.raw_tensor = raw_tensor
+
+    def __str__(self):
+        operator_string = maths_tokens_to_names.get(self.operator, self.operator)
+        return f'(first_value={self.first_value}, second_value={self.second_value}, answer={self.answer}, operator={operator_string})'
+
+    @staticmethod
+    def from_tensor(cfg, question: torch.LongTensor):
+        first_value = int(tokens_to_unsigned_int(question, offset=0, digits=cfg.n_digits).item())
+        second_value = int(tokens_to_unsigned_int(question, offset=cfg.n_digits + 1, digits=cfg.n_digits).item())
+
+        # Offset of 3 - for operator, sign and equals to sign. 7 digits because we keep an extra one for carries.
+        answer = int(tokens_to_unsigned_int(question, offset=2*cfg.n_digits + 3, digits=cfg.n_digits+1))
+        operator = int(question[cfg.n_digits].item())
+        sign = int(question[2*cfg.n_digits+2].item())
+        if sign == MathsToken.MINUS:
+            answer = -1 * answer
+        return SimpleQuestionDescriptor(
+            first_value=first_value, second_value=second_value, answer=answer, operator=operator, raw_tensor=question)
 
 # Analyse and return the question complexity for the Addition (S0 to S4) or Subtraction (M0 to NG) questions
 def get_maths_question_complexity(cfg, question):

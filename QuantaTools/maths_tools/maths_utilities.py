@@ -1,6 +1,5 @@
 from .maths_constants import MathsToken
 
-
 # Vocabulary dictionary: Mapping from character (key) to token (value)
 def set_maths_vocabulary(cfg):
     cfg.char_to_token = {str(i) : i for i in range(10)}
@@ -65,9 +64,8 @@ def insert_question_number(the_question, index, first_digit_index, the_digits, n
         n = n // 10
 
 
-# Create a single maths question and answer
+# Create a single maths question and answer, by writing to 2d matrix the_question.
 def make_a_maths_question_and_answer(cfg, the_question, index, q1, q2, operator ):
-
     insert_question_number(the_question, index, 0, cfg.n_digits, q1)
 
     the_question[index, cfg.n_digits] = operator
