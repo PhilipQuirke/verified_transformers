@@ -229,6 +229,7 @@ class TestMaths(unittest.TestCase):
             self.assertEqual( len(the_list.nodes[i].tags), len(the_list2.nodes[i].tags) )
 
 
+    # Test that two attention tags are sorted alphabetically if they are within 5% of each other
     def test_get_quanta_attention(self):
           
         cfg, the_list = self.get_useful_node_list()  
@@ -252,7 +253,7 @@ class TestMaths(unittest.TestCase):
         self.assertEqual( cell_text, "P10 P3") 
 
         the_list.reset_node_tags( QType.ATTN.value )
-        the_list.add_node_tag( the_locn, QType.ATTN.value, 'P3=47' )
+        the_list.add_node_tag( the_locn, QType.ATTN.value, 'P3=47' ) # Reverse order
         the_list.add_node_tag( the_locn, QType.ATTN.value, 'P10=45' )
         cell_text, color_index = get_quanta_attention(cfg, the_node, QType.ATTN.value, "", 4)
         self.assertEqual( cell_text, "P10 P3") 
