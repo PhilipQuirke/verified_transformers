@@ -1,4 +1,4 @@
-from .quanta_constants import MAX_ATTN_TAGS, MIN_ATTN_PERC, ATTN_PERC_EPSILON
+from .quanta_constants import MAX_ATTN_TAGS, MIN_ATTN_PERC, ATTN_ORDER_DIFF, ATTN_ORDER_MIN
 from .useful_node import position_name_to_int 
 
 
@@ -23,9 +23,11 @@ def get_quanta_attention(cfg, node, major_tag : str, minor_tag : str, num_shades
             # Sort primarily by percentage (descending), secondary by name (ascending) if percentages are close
             tags_with_perc.sort(key=lambda x: (-x[1], x[0]))
     
-            # Check if the top two percentages are within 5% of each other
-            if abs(tags_with_perc[0][1] - tags_with_perc[1][1]) <= ATTN_PERC_EPSILON :
-                # If so, sort these alphabetically
+            # Check if the top two percentages are within 5% of each other, or if both are >= 40%
+            tag_0_1 = tags_with_perc[0][1] 
+            tag_1_1 = tags_with_perc[1][1]
+            if (abs(tag_0_1 - tag_1_1) <= ATTN_ORDER_DIFF) or ((tag_0_1 >= ATTN_ORDER_MIN) and (tag_1_1 >= ATTN_ORDER_MIN)):
+                # If so, sort these two alphabetically
                 sorted_by_name = sorted(tags_with_perc[:2], key=lambda x: x[0])
                 tags_with_perc[:2] = sorted_by_name
 
