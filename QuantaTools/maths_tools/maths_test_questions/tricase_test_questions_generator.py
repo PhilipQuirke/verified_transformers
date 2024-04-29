@@ -153,8 +153,6 @@ def make_tricase_questions(
 
     questions = list(set(questions))
 
-    print(f'Received question {questions}')
-
     print(f'Received {len(exceptions)} exceptions creating {len(questions)} questions out of {num_questions} for test case {test_case} on digit {test_digit} and qtype {qtype}.')
 
     if len(questions) < num_questions and test_digit<3:
@@ -172,11 +170,7 @@ def make_tricase_questions(
 
     elif operation == MathsToken.MINUS:
         sub_questions = [question for question in questions if question[0] >= question[1]]
-        print(f'Sub questions are {sub_questions}')
-
         sub_question_tensors = make_maths_questions_and_answers(cfg, operation, QType.MATH_SUB, MathsBehavior.UNKNOWN, sub_questions)
-
-        print(f"Sub question tensors {sub_question_tensors}")
 
         neg_questions = [question for question in questions if question[0] < question[1]]
 
@@ -191,18 +185,9 @@ def make_tricase_questions(
 def make_maths_tricase_questions_core(cfg, test_digit, operation, num_questions=TOTAL_TRICASE_QUESTIONS):
     assert num_questions%3==0, "Number of questions must be divisible by 3"
     local_num_questions = int(num_questions/3)
-    print(f'Making questions for case 8')
     q1 = make_tricase_questions(cfg, test_digit, 8, operation, num_questions=local_num_questions)
-    print(f'Created {len(q1)} questions for {test_digit} digit and case 8 and operation {operation}.')
-
-    print(f'Making questions for case 9')
     q2 = make_tricase_questions(cfg, test_digit, 9, operation, num_questions=local_num_questions)
-    print(f'Created {len(q1)} questions for {test_digit} digit and case 8 and operation {operation}.')
-
-    print(f'Making questions for case 10')
     q3 = make_tricase_questions(cfg, test_digit, 10, operation, num_questions=local_num_questions)
-    print(f'Created {len(q1)} questions for {test_digit} digit and case 8 and operation {operation}.')
-
     return torch.vstack((q1, q2, q3))
 
 def make_maths_tricase_questions(cfg, num_questions=TOTAL_TRICASE_QUESTIONS):
@@ -239,7 +224,7 @@ def make_maths_tricase_questions_customized(cfg, custom_triclass_config=CustomTr
                     cfg, test_digit=answer_digit, test_case=test_case, operation=operator, qtype=qtype, num_questions=local_num_questions
                 ) for test_case in target_cases]
             elif qtype == QType.MATH_NEG:
-                # Only test cases 8 and 9 are supported for MATH_SUB
+                # Only test cases 8 and 9 are supported for MATH_NEG
                 target_cases = [8, 9]
                 local_num_questions = int(num_questions / len(target_cases))
                 all_questions = [make_tricase_questions(
