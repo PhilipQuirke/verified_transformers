@@ -153,6 +153,8 @@ def make_tricase_questions(
 
     questions = list(set(questions))
 
+    print(f'Received question {questions}')
+
     print(f'Received {len(exceptions)} exceptions creating {len(questions)} questions out of {num_questions} for test case {test_case} on digit {test_digit} and qtype {qtype}.')
 
     if len(questions) < num_questions and test_digit<3:
@@ -170,8 +172,11 @@ def make_tricase_questions(
 
     elif operation == MathsToken.MINUS:
         sub_questions = [question for question in questions if question[0] >= question[1]]
+        print(f'Sub questions are {sub_questions}')
 
         sub_question_tensors = make_maths_questions_and_answers(cfg, operation, QType.MATH_SUB, MathsBehavior.UNKNOWN, sub_questions)
+
+        print(f"Sub question tensors {sub_question_tensors}")
 
         neg_questions = [question for question in questions if question[0] < question[1]]
 
