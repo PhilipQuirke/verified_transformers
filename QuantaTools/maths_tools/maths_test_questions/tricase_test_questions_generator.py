@@ -3,7 +3,6 @@ from typing import Tuple
 import random
 
 import torch
-from tqdm.notebook import tqdm
 
 from QuantaTools.quanta_constants import QType
 from QuantaTools.maths_tools.maths_constants import MathsBehavior, MathsTask, MathsToken
