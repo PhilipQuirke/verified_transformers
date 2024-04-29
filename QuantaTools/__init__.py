@@ -48,7 +48,7 @@ from .maths_tools.maths_data_generator import maths_data_generator_core, maths_d
 from .maths_tools.maths_test_questions import make_maths_test_questions_and_answers
 from .maths_tools.maths_test_questions.test_questions_checker import test_maths_questions_by_complexity, \
     test_maths_questions_by_impact, test_maths_questions_and_add_useful_node_tags, test_correctness_on_num_questions
-from .maths_tools import make_maths_tricase_questions
+from .maths_tools import make_maths_tricase_questions, make_maths_tricase_questions_customized
 from .maths_tools.maths_algo_search import run_intervention_core, run_strong_intervention, run_weak_intervention, \
     succeed_test, math_common_prereqs, \
     add_ss_tag, add_ss_prereqs, add_ss_test, \
