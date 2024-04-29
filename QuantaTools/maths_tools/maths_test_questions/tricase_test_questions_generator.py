@@ -44,7 +44,6 @@ def pad_small_set_of_questions(cfg, sample_pairs_of_numbers: list, target_number
         new_choice = (random_choice[0] + random_addition, random_choice[1] + random_addition)
         unique_pairs_set.add(new_choice)
 
-    print(f'Padded from {len(sample_pairs_of_numbers)} to {len(unique_pairs_set)}')
     return list(unique_pairs_set)
 
 def make_single_tricase_question(
@@ -151,8 +150,8 @@ def make_tricase_questions(
             exceptions.append(e)
 
     questions = list(set(questions))
-
-    print(f'Received {len(exceptions)} exceptions creating {len(questions)} questions out of {num_questions} for test case {test_case} on digit {test_digit} and qtype {qtype}.')
+    if len(exceptions):
+        print(f'Received {len(exceptions)} exceptions creating {len(questions)} questions out of {num_questions} for test case {test_case} on digit {test_digit} and qtype {qtype}.')
 
     if len(questions) < num_questions and test_digit<3:
         questions = pad_small_set_of_questions(
@@ -172,9 +171,7 @@ def make_tricase_questions(
         sub_question_tensors = make_maths_questions_and_answers(cfg, operation, QType.MATH_SUB, MathsBehavior.UNKNOWN, sub_questions)
 
         neg_questions = [question for question in questions if question[0] < question[1]]
-
         neg_question_tensors = make_maths_questions_and_answers(cfg, operation, QType.MATH_NEG, MathsBehavior.UNKNOWN, neg_questions)
-        print(f"Created {len(sub_question_tensors)} MATH_SUB questions for MINUS and {len(neg_question_tensors)} MATH_NEG questions.")
 
         return torch.vstack([sub_question_tensors, neg_question_tensors])
 
@@ -247,8 +244,10 @@ def make_maths_tricase_questions_customized(cfg, custom_triclass_config=CustomTr
 
             num_questions_created = sum([len(questions) for questions in all_questions])
 
-            print(f"Created {num_questions_created} for digit {answer_digit} when requested with {num_questions} for {operator_qtype_number}")
             assert num_questions_created == num_questions, (
                 f"Created {num_questions_created} for digit {answer_digit} "
                 f"when requested with {num_questions} for {operator_qtype_number}")
             cfg.tricase_questions_dict[(answer_digit, operator, qtype)] = torch.vstack(all_questions)
+
+            value_distribution = {key: len(values) for key, values in cfg.tricase_questions_dict.items()}
+            print(f'Value distribution for (answer_digit, operator, qtype) is: \n{value_distribution}')
