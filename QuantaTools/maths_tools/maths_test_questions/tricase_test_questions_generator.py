@@ -132,7 +132,7 @@ def make_tricase_questions(
     assert make_borrow in ["always", "never", "mixed"]
     questions = []
     exceptions = []
-    assert qtype in [None, QType.MATH_SUB, QType.MATH_NEG, QType.UNKNOWN], f"Qtype must be none, sub, neg or unknown"
+    assert qtype in [None, QType.MATH_ADD, QType.MATH_SUB, QType.MATH_NEG, QType.UNKNOWN], f"Qtype must be none, sub, neg or unknown, but received {qtype}"
     assert test_case in [8, 9, 10], f"Tricase test cases must be 8,9 or 10, received {test_case}"
     assert operation in [MathsToken.PLUS, MathsToken.MINUS], f"Tricase operation must be in [plus,minus]={[MathsToken.PLUS, MathsToken.MINUS]}, received operation {operation}"
 
