@@ -64,12 +64,17 @@ def show_quanta_text(ax, col : float, row : float, text : str, fontsize : int):
         ax.text(col + 0.5, row + 0.5, text, ha='center', va='center', color='black', fontsize=fontsize)
 
 
+# Convert "32%" or "<1%" to an int.  
+def str_to_perc(text):
+    return int(text.rstrip('%').lstrip('<'))         
+
+
 # Function to draw a circle in a cell
-def show_quanta_perc(ax, col_idx, row_idx, color, text, max_perc):
-    perc = float(text.rstrip('%').lstrip('<')) # Get "32%" or "<1%" as text.
-    radius = (perc / max_perc) * 0.4  # Scale factor to adjust the circle size; tweak as needed
-    circle = plt.Circle((col_idx + 0.5, row_idx + 0.5), radius, color=color)#, ec='black')
-    ax.add_artist(circle)
+def show_quanta_perc(ax, col_idx, row_idx, color, perc, max_perc):
+    if perc >= 10:
+        radius = (perc / max_perc) * 0.5  # Scale factor to adjust the circle size; tweak as needed
+        circle = plt.Circle((col_idx + 0.5, row_idx + 0.5), radius, color=color)#, ec='black')
+        ax.add_artist(circle)
     
 
 # Draw 1 to a few similar cells
@@ -80,7 +85,7 @@ def show_quanta_cells(ax, col : float, start_row : float, end_row : float, text 
     ax.add_patch(patches.Rectangle((col, start_row+1), 1, -num_cells, edgecolor='lightgrey', fill=False, lw=1))
 
     if show_perc_circles:
-        show_quanta_perc( ax, col, start_row, 'white', text, max_perc)
+        show_quanta_perc( ax, col, start_row, 'white', str_to_perc(text), max_perc)
         show_quanta_text( ax, col, start_row, text, cell_fontsize)
     elif num_cells <= 1:
         show_quanta_text( ax, col, start_row, text, cell_fontsize)
@@ -147,7 +152,7 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, \
     if show_perc_circles:
         combine_identical_cells = False
         for result in quanta_results:
-            perc = float(result.cell_text.rstrip('%').lstrip('<')) # Get "32%" or "<1%" as text.
+            perc = str_to_perc(result.cell_text)
             max_perc = max(max_perc, perc)
 
     # Iterate over positions (columns)
