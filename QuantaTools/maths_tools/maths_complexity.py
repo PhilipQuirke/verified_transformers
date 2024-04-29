@@ -17,20 +17,19 @@ from .maths_constants import MathsToken, MathsBehavior
 
 class SimpleQuestionDescriptor:
 
-    def __init__(self, first_value: int, second_value: int, answer: int, operator: int):
+    def __init__(self, first_value: int, second_value: int, answer: int, operator: int, tensor: torch.LongTensor):
         self.first_value = first_value
         self.second_value = second_value
         self.answer = answer
         self.operator = operator
+        self.raw_tensor = tensor
 
     @staticmethod
     def from_tensor(cfg, question: torch.LongTensor):
-        operator = question[cfg.n_digits]
-
-        first_value = tokens_to_unsigned_int(question, offset=0, digits=cfg.n_digits)
-        second_value = tokens_to_unsigned_int(question, offset=cfg.n_digits + 1, digits=cfg.n_digits)
-        answer = tokens_to_unsigned_int(question, offset=2*cfg.n_digits + 2, digits=cfg.n_digits)
-        sign = int(question[2*cfg.n_digits+1].item())
+        first_value = int(tokens_to_unsigned_int(question, offset=0, digits=cfg.n_digits).item())
+        second_value = int(tokens_to_unsigned_int(question, offset=cfg.n_digits + 1, digits=cfg.n_digits).item())
+        answer = int(tokens_to_unsigned_int(question, offset=2*cfg.n_digits + 2, digits=cfg.n_digits))
+        sign = int(question[cfg.n_digits].item())
         if sign == MathsToken.MINUS:
             answer = -1 * answer
         return SimpleQuestionDescriptor(first_value=first_value, second_value=second_value, answer=answer, operator=sign)
