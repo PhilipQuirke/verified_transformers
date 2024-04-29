@@ -9,3 +9,4 @@ notebooks/*
 /.vs
 /QuantaTools/__pycache__
 /QuantaTools/maths_tools/__pycache__
+/test_useful_node_list.json
