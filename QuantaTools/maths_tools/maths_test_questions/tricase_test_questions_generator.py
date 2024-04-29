@@ -120,8 +120,8 @@ def make_single_tricase_question(
     return x, y
 
 def make_tricase_questions(
-        cfg, test_digit: int, test_case: int, operation: MathsToken, num_questions=TOTAL_TRICASE_QUESTIONS, qtype: QType = None,
-        make_borrow: str = "never", return_raw_questions=False
+        cfg, test_digit: int, test_case: int, operation: MathsToken, num_questions=EACH_CASE_TRICASE_QUESTIONS, qtype: QType = None,
+        make_borrow: str = "never"
 ):
     """
     Returns a set of questions over a number of test digits, given an operation and optionally a qtype

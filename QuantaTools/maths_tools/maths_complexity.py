@@ -13,7 +13,7 @@ from QuantaTools.quanta_map_failperc import get_quanta_fail_perc
 from QuantaTools.quanta_map_binary import get_quanta_binary
 from QuantaTools.quanta_map_impact import get_quanta_impact
 from .maths_utilities import tokens_to_unsigned_int
-from .maths_constants import MathsToken, MathsBehavior
+from .maths_constants import MathsToken, MathsBehavior, maths_tokens_to_names
 
 class SimpleQuestionDescriptor:
 
@@ -23,6 +23,10 @@ class SimpleQuestionDescriptor:
         self.answer = answer
         self.operator = operator
         self.raw_tensor = raw_tensor
+
+    def __str__(self):
+        operator_string = maths_tokens_to_names.get(self.operator, self.operator)
+        return f'(first_value={self.first_value}, second_value={self.second_value}, answer={self.answer}, operator={operator_string})'
 
     @staticmethod
     def from_tensor(cfg, question: torch.LongTensor):

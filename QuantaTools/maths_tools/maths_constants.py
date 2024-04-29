@@ -11,6 +11,11 @@ class MathsToken:
     DIV = 14
     MAX_INDEX = DIV
 
+maths_tokens_to_names = {
+    MathsToken.PLUS: "plus", MathsToken.MINUS: "minus", MathsToken.EQUALS: "equals",
+    MathsToken.MULT: "mult", MathsToken.DIV: "div", MathsToken.MAX_INDEX: "div"
+}
+
 
 # These are maths behaviors: quanta we can evaluate for each node based just on that node
 class MathsBehavior(Enum):
