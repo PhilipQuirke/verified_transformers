@@ -83,7 +83,7 @@ def show_quanta_cells(ax, col : float, start_row : float, end_row : float, text 
     ax.add_patch(patches.Rectangle((col, start_row+1), 1, -num_cells, edgecolor='lightgrey', fill=False, lw=1))
 
     if show_perc_circles:
-        perc = float(text.rstrip('%').rstrip('<')) # Get "32%" or "<1%" as text.
+        perc = float(text.rstrip('%').lstrip('<')) # Get "32%" or "<1%" as text.
         show_quanta_perc(ax, col, start_row, 'white', perc, cell_fontsize)
     elif num_cells <= 1:
         show_quanta_text( ax, col, start_row, text, cell_fontsize)
