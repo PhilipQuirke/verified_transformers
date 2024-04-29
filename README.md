@@ -35,8 +35,8 @@ This library contains files:
   - **Analysis:** Colab VerifiedArithmeticAnalyse.ipynb is used to analyze the behavior and algorithm sub-tasks of transformer arithmetic models
     - Inputs pth files (generated above) from HuggingFace
     - Outputs *_behavior and *_algorithm json files that are (manually) stored on HuggingFace
-  - **Algorithm:** Colab VerifiedArithmeticAlgorithm.ipynb describes/tests an overall algorithm for a model (based on behavior and algorithm sub-tasks data collected in analysis phase).
-    - Inputs json files (generated above) from HuggingFace 
+  - **Algorithm:** Colab VerifiedArithmeticAlgorithm.ipynb describes/tests an overall algorithm for a model (based on behavior and algorithm sub-tasks data)
+    - Inputs *_behavior and *_algorithm json files (generated above) from HuggingFace 
   - Accurate_Math_Train.ipynb: Deprecated. Predecessor of VerifiedArithmeticTrain associated with https://arxiv.org/abs/2402.02619 
   - Accurate_Math_Analyse.ipynb: Deprecated. Predecessor of VerifiedArithmeticAnalyse associated with https://arxiv.org/abs/2402.02619
 
