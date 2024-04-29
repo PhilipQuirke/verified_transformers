@@ -31,11 +31,12 @@ class SimpleQuestionDescriptor:
 
         # Offset of 3 - for operator, sign and equals to sign. 7 digits because we keep an extra one for carries.
         answer = int(tokens_to_unsigned_int(question, offset=2*cfg.n_digits + 3, digits=cfg.n_digits+1))
-        sign = int(question[cfg.n_digits].item())
+        operator = int(question[cfg.n_digits].item())
+        sign = int(question[2*cfg.n_digits+2].item())
         if sign == MathsToken.MINUS:
             answer = -1 * answer
         return SimpleQuestionDescriptor(
-            first_value=first_value, second_value=second_value, answer=answer, operator=sign, raw_tensor=question)
+            first_value=first_value, second_value=second_value, answer=answer, operator=operator, raw_tensor=question)
 
 # Analyse and return the question complexity for the Addition (S0 to S4) or Subtraction (M0 to NG) questions
 def get_maths_question_complexity(cfg, question):
