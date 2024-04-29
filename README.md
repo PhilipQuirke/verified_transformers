@@ -30,11 +30,13 @@ Much of this library is generic (can be applied to any transformer model). As a 
 This library contains files:
 
 - **Notebooks:** Jupyter notebooks which are run in Google Colab or Jupyter: 
-  - VerifiedArithmeticTrain.ipynb: Colab used to train transformer arithmetic models. 
+  - **Train:** Colab VerifiedArithmeticTrain.ipynb is used to train transformer arithmetic models. 
     - Outputs pth and json files that are (manually) stored on HuggingFace
-  - VerifiedArithmeticAnalyse.ipynb: Colab used to analyze the behavior and algorithm of transformer arithmetic models
+  - **Analysis:** Colab VerifiedArithmeticAnalyse.ipynb is used to analyze the behavior and algorithm sub-tasks of transformer arithmetic models
     - Inputs pth files (generated above) from HuggingFace
-    - Outputs *_behavior and *_algorithm json files that are (manually) stored on HuggingFace 
+    - Outputs *_behavior and *_algorithm json files that are (manually) stored on HuggingFace
+  - **Algorithm:** Colab VerifiedArithmeticAlgorithm.ipynb describes/tests an overall algorithm for a model (based on behavior and algorithm sub-tasks data collected in analysis phase).
+    - Inputs json files (generated above) from HuggingFace 
   - Accurate_Math_Train.ipynb: Deprecated. Predecessor of VerifiedArithmeticTrain associated with https://arxiv.org/abs/2402.02619 
   - Accurate_Math_Analyse.ipynb: Deprecated. Predecessor of VerifiedArithmeticAnalyse associated with https://arxiv.org/abs/2402.02619
 
