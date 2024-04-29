@@ -162,13 +162,17 @@ class UsefulNode(NodeLocation):
         return False
 
 
-    def to_dict(self):
+    def to_dict(self, major_tag = ""):
+        the_tags = self.tags    
+        if major_tag != "":
+            the_tags = [s for s in self.tags if s.startswith(major_tag)]
+
         return {
           "position": self.position,
           "layer": self.layer,
           "is_head": self.is_head,
           "num": self.num,
-          "tags": self.tags
+          "tags": the_tags
         }
 
     @classmethod
@@ -249,8 +253,8 @@ class UsefulNodeList():
 
 
     # Save the nodes and tags to a json file
-    def save_nodes(self, filename):
-        dict_list = [node.to_dict() for node in self.nodes]
+    def save_nodes(self, filename, major_tag = ""):
+        dict_list = [node.to_dict(major_tag) for node in self.nodes]
         with open(filename, 'w') as file:
             json.dump(dict_list, file, default=lambda o: o.__dict__)
     
