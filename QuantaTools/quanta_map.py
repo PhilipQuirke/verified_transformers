@@ -71,7 +71,7 @@ def str_to_perc(text):
 
 # Function to draw a circle in a cell
 def show_quanta_perc(ax, col_idx, row_idx, color, perc, max_perc):
-    if perc >= 10:
+    if perc >= 20:
         radius = (perc / max_perc) * 0.5  # Scale factor to adjust the circle size; tweak as needed
         circle = plt.Circle((col_idx + 0.5, row_idx + 0.5), radius, color=color)#, ec='black')
         ax.add_artist(circle)
