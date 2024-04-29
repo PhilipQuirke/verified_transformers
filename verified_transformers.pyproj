@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{96a77344-fe98-4400-8758-f7beed2bf843}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>Tests\tests.py</StartupFile>
+    <StartupFile>Tests\tests_suite.py</StartupFile>
     <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -62,7 +62,9 @@
     <Compile Include="QuantaTools\useful_node.py" />
     <Compile Include="QuantaTools\__init__.py" />
     <Compile Include="setup.py" />
-    <Compile Include="Tests\tests.py">
+    <Compile Include="Tests\tests_suite.py" />
+    <Compile Include="Tests\tests_generic.py" />
+    <Compile Include="Tests\tests_maths.py">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>

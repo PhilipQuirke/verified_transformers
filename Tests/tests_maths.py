@@ -6,6 +6,7 @@ from QuantaTools.useful_node import NodeLocation, UsefulNode, UsefulNodeList
 
 from QuantaTools.quanta_constants import QType, MATH_ADD_SHADES, MATH_SUB_SHADES
 from QuantaTools.quanta_map_impact import sort_unique_digits, get_quanta_impact
+from QuantaTools.quanta_map_attention import get_quanta_attention
 
 from QuantaTools.maths_tools.maths_config import MathsConfig
 from QuantaTools.maths_tools.maths_constants import MathsToken, MathsBehavior
@@ -16,39 +17,6 @@ from QuantaTools.maths_tools.maths_test_questions import make_maths_m0_questions
 from QuantaTools.maths_tools.maths_test_questions import make_maths_n1_questions_and_answers, make_maths_n2_questions_and_answers, make_maths_n3_questions_and_answers, make_maths_n4_questions_and_answers
 from QuantaTools.maths_tools.maths_complexity import get_maths_min_complexity
 
-
-class TestUseful(unittest.TestCase):
-
-
-    def test_useful_node(self):
-        
-        useful_node = UsefulNode(1, 2, True, 3, [])
-
-        # Add 6 distinct tags
-        useful_node.add_tag( "Major0", "Minor1" )
-        useful_node.add_tag( "Major0", "Minor2" )
-        useful_node.add_tag( "Major1", "Minor1" )
-        useful_node.add_tag( "Major1", "Minor2" )
-        useful_node.add_tag( "Major2", "Minor1" )
-        useful_node.add_tag( "Major2", "Minor2" )
-        self.assertEqual( len(useful_node.tags), 6)
-        
-        # Add 2 duplicate tags
-        useful_node.add_tag( "Major1", "Minor1" )
-        useful_node.add_tag( "Major2", "Minor2" )
-        self.assertEqual( len(useful_node.tags), 6)
-
-        # Remove 2 tags
-        useful_node.reset_tags( "Major2" )
-        self.assertEqual( len(useful_node.tags), 4)
-
-        # Remove 1 tag
-        useful_node.reset_tags( "Major0", "Minor2" )
-        self.assertEqual( len(useful_node.tags), 3)
-
-        # Remove all tags
-        useful_node.reset_tags( "" )
-        self.assertEqual( len(useful_node.tags), 0)
 
 
 class TestMaths(unittest.TestCase):
@@ -116,8 +84,7 @@ class TestMaths(unittest.TestCase):
         self.assertEqual( cfg.repeat_digit(4), 444444)
 
 
-
-    def test_useful_node_list(self):
+    def get_useful_node_list(self):
         cfg = MathsConfig()
         cfg.perc_sub = 60
         cfg.use_cuda = False
@@ -185,6 +152,13 @@ class TestMaths(unittest.TestCase):
         the_list.add_node_tag( the_locn, QType.MATH_SUB.value, 'M0123' )
         the_list.add_node_tag( the_locn, QType.MATH_NEG.value, 'N1234' )
 
+        return cfg, the_list
+    
+
+    def test_useful_node_list_complexity(self):
+        
+        cfg, the_list = self.get_useful_node_list()      
+        
         the_locn = NodeLocation(18,0,True,0)
         the_node = the_list.get_node( the_locn )
         node_add_complexity, _ = get_maths_min_complexity( cfg, the_node, QType.MATH_ADD.value, MathsBehavior.ADD_COMPLEXITY_PREFIX.value, MATH_ADD_SHADES)
@@ -239,6 +213,11 @@ class TestMaths(unittest.TestCase):
         self.assertEqual( node_sub_complexity, "M123")
         self.assertEqual( node_neg_complexity, "")
         
+
+    def test_useful_node_list_save_load(self):
+        
+        cfg, the_list = self.get_useful_node_list()
+
         the_file_name = "test_useful_node_list.json"
         the_list.save_nodes(the_file_name)
 
@@ -250,5 +229,32 @@ class TestMaths(unittest.TestCase):
             self.assertEqual( len(the_list.nodes[i].tags), len(the_list2.nodes[i].tags) )
 
 
-if __name__ == '__main__':
-    unittest.main()
+    def test_get_quanta_attention(self):
+          
+        cfg, the_list = self.get_useful_node_list()  
+ 
+        the_locn = NodeLocation(18,0,True,2)
+        the_node = the_list.get_node( the_locn )   
+        
+        cell_text, color_index = get_quanta_attention(cfg, the_node, QType.ATTN.value, "", 4)
+        self.assertEqual( cell_text, "P10 P3") 
+        
+        the_list.reset_node_tags( QType.ATTN.value )
+        the_list.add_node_tag( the_locn, QType.ATTN.value, 'P10=51' )
+        the_list.add_node_tag( the_locn, QType.ATTN.value, 'P3=47' )
+        cell_text, color_index = get_quanta_attention(cfg, the_node, QType.ATTN.value, "", 4)
+        self.assertEqual( cell_text, "P10 P3") 
+
+        the_list.reset_node_tags( QType.ATTN.value )
+        the_list.add_node_tag( the_locn, QType.ATTN.value, 'P10=48' )
+        the_list.add_node_tag( the_locn, QType.ATTN.value, 'P3=47' )
+        cell_text, color_index = get_quanta_attention(cfg, the_node, QType.ATTN.value, "", 4)
+        self.assertEqual( cell_text, "P10 P3") 
+
+        the_list.reset_node_tags( QType.ATTN.value )
+        the_list.add_node_tag( the_locn, QType.ATTN.value, 'P3=47' )
+        the_list.add_node_tag( the_locn, QType.ATTN.value, 'P10=45' )
+        cell_text, color_index = get_quanta_attention(cfg, the_node, QType.ATTN.value, "", 4)
+        self.assertEqual( cell_text, "P10 P3") 
+
+        
