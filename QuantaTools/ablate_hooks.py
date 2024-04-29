@@ -128,6 +128,7 @@ def a_predict_questions(cfg, questions, the_hooks):
 
 
 # Run an ablation intervention on the model, and return a description of the impact of the intervention
+# In the https://arxiv.org/pdf/2404.15255 terminology, this is a "noising" ablation.
 def a_run_attention_intervention(cfg, store_question_and_answer, clean_question_and_answer, clean_answer_str):
 
     # These are all matrixes of tokens
