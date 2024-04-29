@@ -223,8 +223,8 @@ def make_maths_tricase_questions_customized(cfg, custom_triclass_config=CustomTr
                     cfg, test_digit=answer_digit, test_case=test_case, operation=operator, qtype=qtype, num_questions=local_num_questions
                 ) for test_case in target_cases]
             elif qtype == QType.MATH_NEG:
-                # Only test cases 8 and 9 are supported for MATH_NEG
-                target_cases = [8, 9]
+                # Only test cases 8 and 9 are supported for MATH_NEG when digit > 0, and only test case 8 for digit=0
+                target_cases = [8, 9] if answer_digit > 0 else [8]
                 local_num_questions = int(num_questions / len(target_cases))
                 all_questions = [make_tricase_questions(
                     cfg, test_digit=answer_digit, test_case=test_case, operation=operator, qtype=qtype,
