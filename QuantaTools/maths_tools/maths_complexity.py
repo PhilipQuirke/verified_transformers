@@ -22,7 +22,7 @@ class SimpleQuestionDescriptor:
         self.second_value = second_value
         self.answer = answer
         self.operator = operator
-        self.raw_tensor = tensor
+        self.raw_tensor = raw_tensor
 
     @staticmethod
     def from_tensor(cfg, question: torch.LongTensor):
