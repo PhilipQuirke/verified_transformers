@@ -18,8 +18,7 @@ from .maths_complexity import get_maths_question_complexity
 from .maths_utilities import int_to_answer_str
 
 
-def run_intervention_core(cfg, acfg, node_locations, store_question, clean_question, operation, expected_answer_impact, expected_answer_int, strong):
-    assert(len(node_locations) > 0)
+def run_intervention_core(cfg, acfg, store_question, clean_question, expected_answer_impact, expected_answer_int, strong):
     assert(store_question[0] < + 10 ** cfg.n_digits)
     assert(store_question[1] > - 10 ** cfg.n_digits)
     assert(store_question[0] < + 10 ** cfg.n_digits)
@@ -30,7 +29,7 @@ def run_intervention_core(cfg, acfg, node_locations, store_question, clean_quest
     assert(clean_question[1] > - 10 ** cfg.n_digits)
 
     # Calculate the test (clean) question answer e.g. "+006671"
-    clean_answer_int = clean_question[0]+clean_question[1] if operation == MathsToken.PLUS else clean_question[0]-clean_question[1]
+    clean_answer_int = clean_question[0]+clean_question[1] if acfg.operation == MathsToken.PLUS else clean_question[0]-clean_question[1]
     clean_answer_str = int_to_answer_str(cfg, clean_answer_int)
     expected_answer_str = int_to_answer_str(cfg, expected_answer_int)
 
@@ -38,9 +37,8 @@ def run_intervention_core(cfg, acfg, node_locations, store_question, clean_quest
     store_question_and_answer = make_maths_questions_and_answers(cfg, acfg.operation, QType.UNKNOWN, MathsBehavior.UNKNOWN, [store_question])
     clean_question_and_answer = make_maths_questions_and_answers(cfg, acfg.operation, QType.UNKNOWN, MathsBehavior.UNKNOWN, [clean_question])
 
-    acfg.reset_intervention(expected_answer_str, expected_answer_impact, operation)
-    acfg.ablate_node_locations = node_locations
-
+    acfg.reset_intervention(expected_answer_str, expected_answer_impact)
+    
     run_description = a_run_attention_intervention(cfg, store_question_and_answer, clean_question_and_answer, clean_answer_str)
 
     acfg.ablate_description = "Intervening on " + acfg.node_names() + ", " + ("Strong" if strong else "Weak") + ", Node[0]=" + acfg.ablate_node_locations[0].name() + ", " + run_description
@@ -48,9 +46,11 @@ def run_intervention_core(cfg, acfg, node_locations, store_question, clean_quest
 
 # Run an intervention where we have a precise expectation of the intervention impact
 def run_strong_intervention(cfg, acfg, node_locations, store_question, clean_question, operation, expected_answer_impact, expected_answer_int):
-
+    acfg.operation = operation
+    acfg.ablate_node_locations = node_locations
+    
     # These are the actual model prediction outputs (while applying our node-level intervention).
-    run_intervention_core(cfg, acfg, node_locations, store_question, clean_question, operation, expected_answer_impact, expected_answer_int, strong=True)
+    run_intervention_core(cfg, acfg, store_question, clean_question, expected_answer_impact, expected_answer_int, strong=True)
 
     answer_success = (acfg.intervened_answer == acfg.expected_answer)
     impact_success = (acfg.intervened_impact == acfg.expected_impact)
@@ -66,11 +66,13 @@ def run_strong_intervention(cfg, acfg, node_locations, store_question, clean_que
 
 # Run an intervention where we expect the intervention to have a non-zero impact but we cant precisely predict the answer impact
 def run_weak_intervention(cfg, acfg, node_locations, store_question, clean_question, operation):
-
+    acfg.operation = operation
+    acfg.ablate_node_locations = node_locations
+    
     # Calculate the test (clean) question answer e.g. "+006671"
     clean_answer = clean_question[0]+clean_question[1] if operation == MathsToken.PLUS else clean_question[0]-clean_question[1]
 
-    run_intervention_core(cfg, acfg, node_locations, store_question, clean_question, operation, NO_IMPACT_TAG, clean_answer, strong=False)
+    run_intervention_core(cfg, acfg, store_question, clean_question, NO_IMPACT_TAG, clean_answer, strong=False)
 
     answer_success = (acfg.intervened_answer != acfg.expected_answer) # We can't predict the answer
     impact_success = (acfg.intervened_impact != NO_IMPACT_TAG) # Has some impact

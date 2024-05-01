@@ -48,8 +48,8 @@ class AblateConfig():
         self.layer_store = [[],[],[],[]]   # Supports 1 to 4 model layers
 
 
-    def reset_intervention(self, expected_answer = "", expected_impact = NO_IMPACT_TAG, operation = 0):
-        self.operation : int = operation
+    def reset_intervention(self, expected_answer = "", expected_impact = NO_IMPACT_TAG):
+        self.operation = 0
 
         # Expected output of an intervention ablation experiment
         self.expected_answer = expected_answer
