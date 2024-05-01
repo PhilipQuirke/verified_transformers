@@ -69,9 +69,11 @@ def search_and_tag(cfg, acfg, \
         test_function, # The test function applied to interesting nodes \ 
         tag_function, # The tag applied to interesting nodes that pass the test \
         do_pair_search : bool = False, # Search for "pairs" of interesting nodes (as well as "single" nodes) that satisfy the test \
-        allow_impact_mismatch : bool = False): # Succeed in search even if expected impact is not correct
+        allow_impact_mismatch : bool = False, # Succeed in search even if expected impact is not correct
+        operation : int = 0 ):
 
     acfg.reset_intervention_totals()
+    acfg.operation = operation
 
     for the_impact_digit in range(cfg.num_answer_positions):
         search_and_tag_digit(cfg, acfg, 
