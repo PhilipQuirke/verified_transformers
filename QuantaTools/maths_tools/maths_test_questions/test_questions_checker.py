@@ -1,6 +1,6 @@
 import torch
 from tqdm.notebook import tqdm
-from transformer_lens import utils
+import transformer_lens.utils as utils
 
 from QuantaTools import logits_to_tokens_loss, tokens_to_string, get_maths_question_complexity, NodeLocation, \
     a_predict_questions, loss_fn, get_question_answer_impact, QType, sort_unique_digits, MathsBehavior, \
