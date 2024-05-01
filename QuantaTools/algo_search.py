@@ -50,6 +50,8 @@ def search_and_tag_digit(cfg, acfg, prerequisites_function, the_impact_digit, te
     for strong in [True, False]:
         if strong or allow_impact_mismatch:
 
+            # For tasks like GT, SGN, OPR nodes at say 2 positions can satisfy the test.
+            success = False
             for position in range(from_position, to_position+1):
                 the_filters = prerequisites_function(cfg, position, the_impact_digit)
                 
@@ -62,7 +64,10 @@ def search_and_tag_digit(cfg, acfg, prerequisites_function, the_impact_digit, te
                 acfg.num_filtered_nodes += len(test_nodes.nodes)
                 
                 if search_and_tag_digit_position(cfg, acfg, the_impact_digit, test_nodes, test_function, strong, the_tag, do_pair_search ):
-                    return True
+                    success = True
+                    
+            if success:
+                return True
 
     return False
 
