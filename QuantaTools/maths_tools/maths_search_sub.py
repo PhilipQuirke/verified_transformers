@@ -159,7 +159,7 @@ def neg_nd_prereqs(cfg, position, impact_digit):
     return math_common_prereqs(cfg, position, impact_digit, impact_digit)
 
 
-def neg_nd_test1(cfg, acfg, alter_digit):
+def neg_nd_test1(cfg, alter_digit):
     # 033333 - 111111 = -077778. No Dn.NB
     store_question = [cfg.repeat_digit(3), cfg.repeat_digit(1)]
     store_question[0] = store_question[0] // 10 # Convert 333333 to 033333
@@ -171,17 +171,10 @@ def neg_nd_test1(cfg, acfg, alter_digit):
     # When we intervene we expect answer -347445
     intervened_answer = clean_question[0] - clean_question[1] - (7-4) * 10 ** alter_digit
 
-    # Unit test
-    if cfg.n_digits == 6 and alter_digit == 3:
-        assert store_question[0] == 33333
-        assert clean_question[0] == 99999
-        assert clean_question[0] - clean_question[1] == -344445
-        assert intervened_answer == -347445
-
     return store_question, clean_question, intervened_answer
 
 
-def neg_nd_test2(cfg, acfg, alter_digit):
+def neg_nd_test2(cfg, alter_digit):
     # 066666 - 222222 = -155556. No Dn.NB
     store_question = [cfg.repeat_digit(6), cfg.repeat_digit(2)]
     store_question[0] = store_question[0] // 10 # Remove top digit
@@ -200,10 +193,10 @@ def neg_nd_test2(cfg, acfg, alter_digit):
 def neg_nd_test(cfg, acfg, alter_digit, strong):
     intervention_impact = answer_name(alter_digit)
 
-    store_question, clean_question, intervened_answer = neg_nd_test1(cfg, acfg, alter_digit)
+    store_question, clean_question, intervened_answer = neg_nd_test1(cfg, alter_digit)
     success1, _, impact_success1 = run_strong_intervention(cfg, acfg, store_question, clean_question, intervention_impact, intervened_answer)
 
-    store_question, clean_question, intervened_answer = neg_nd_test2(cfg, acfg, alter_digit)
+    store_question, clean_question, intervened_answer = neg_nd_test2(cfg, alter_digit)
     success2, _, impact_success2 = run_strong_intervention(cfg, acfg, store_question, clean_question, intervention_impact, intervened_answer)
 
     success = (success1 and success2) if strong else (impact_success1 and impact_success2)

@@ -23,14 +23,7 @@ def add_ss_prereqs(cfg, position, impact_digit):
     return math_common_prereqs(cfg, position, impact_digit-2, impact_digit)
 
 
-# Intervention ablation test for addition "Use Sum 9" (SS) task
-def add_ss_test(cfg, acfg, alter_digit, strong):
-    if alter_digit < 2 or alter_digit > cfg.n_digits:
-        acfg.reset_intervention()
-        return False
-
-    intervention_impact = answer_name(alter_digit)
-
+def add_ss_test1(cfg, alter_digit):
     # 25222 + 44444 = 69666. Has no Dn-2.SC but has Dn-1.SS so not a UseSum9 case
     store_question = [cfg.repeat_digit(2), cfg.repeat_digit(4)]
     store_question[0] += (5-2) * 10 ** (alter_digit - 1)
@@ -43,14 +36,16 @@ def add_ss_test(cfg, acfg, alter_digit, strong):
     # When we intervene we expect answer 80188
     intervened_answer = clean_question[0] + clean_question[1] - 10 ** (alter_digit)
 
+    return store_question, clean_question, intervened_answer
 
-    # Unit test
-    if cfg.n_digits == 5 and alter_digit == 4:
-        assert store_question[0] == 25222
-        assert clean_question[0] == 34633
-        assert clean_question[0] + clean_question[1] == 90188
-        assert intervened_answer == 80188
 
+# Intervention ablation test for addition "Use Sum 9" (SS) task
+def add_ss_test(cfg, acfg, alter_digit, strong):
+    if alter_digit < 2 or alter_digit > cfg.n_digits:
+        acfg.reset_intervention()
+        return False
+
+    store_question, clean_question, intervened_answer = add_ss_test1(cfg, alter_digit)
 
     success, _, _ = run_strong_intervention(cfg, acfg, store_question, clean_question, intervention_impact, intervened_answer)
 
@@ -151,7 +146,7 @@ def add_sa_test(cfg, acfg, alter_digit, strong):
     success = (success1 and success2) if strong else (impact_success1 and impact_success2)
 
     if success:
-        print( "Test confirmed:", acfg.ablate_node_names(), "perform A"+str(alter_digit)+"SA = (D"+str(alter_digit)+" + D'"+str(alter_digit)+") % 10 impacting "+intervention_impact+" accuracy.", "" if strong else "Weak", acfg.intervened_answer)
+        print( "Test confirmed:", acfg.ablate_node_names(), "perform A"+str(alter_digit)+".SA = (D"+str(alter_digit)+" + D'"+str(alter_digit)+") % 10 impacting "+intervention_impact+" accuracy.", "" if strong else "Weak", acfg.intervened_answer)
 
     return success
 
