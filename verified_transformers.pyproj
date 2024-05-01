@@ -40,7 +40,6 @@
     <Compile Include="QuantaTools\maths_tools\maths_config.py" />
     <Compile Include="QuantaTools\maths_tools\maths_data_generator.py" />
     <Compile Include="QuantaTools\maths_tools\maths_pca.py" />
-    <Compile Include="QuantaTools\maths_tools\maths_test_questions.py" />
     <Compile Include="QuantaTools\maths_tools\maths_utilities.py" />
     <Compile Include="QuantaTools\maths_tools\maths_constants.py" />
     <Compile Include="QuantaTools\model_config.py" />

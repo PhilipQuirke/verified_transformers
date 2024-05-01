@@ -137,7 +137,7 @@ def a_run_attention_intervention(cfg, store_question_and_answer, clean_question_
     
     acfg.num_tests_run += 1
 
-    description = "CleanAnswer: " + clean_answer_str + ", ExpectedAnswer/Impact: " + acfg.expected_answer + "/" + acfg.expected_impact + ", "
+    description = "CleanAns: " + clean_answer_str + ", ExpectedAns/Impact: " + acfg.expected_answer + "/" + acfg.expected_impact + ", "
 
 
     a_predict_questions(cfg, store_question, acfg.attn_get_hooks)
@@ -163,7 +163,7 @@ def a_run_attention_intervention(cfg, store_question_and_answer, clean_question_
     if acfg.intervened_impact == "":
         acfg.intervened_impact = NO_IMPACT_TAG
 
-    description += "IntervenedAnswer/Impact: " + acfg.intervened_answer + "/" + acfg.intervened_impact
+    description += "IntervenedAns/Impact: " + acfg.intervened_answer + "/" + acfg.intervened_impact
 
     if loss_max > acfg.threshold:
         loss_str = NO_IMPACT_TAG if loss_max < 1e-7 else str(loss_max)
