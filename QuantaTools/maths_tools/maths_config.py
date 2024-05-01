@@ -94,6 +94,9 @@ class MathsConfig(AlgoConfig):
     # Return integer 444444 for 6 digit number
     @staticmethod
     def repeat_digit_n(digit, n):
+        if n <= 0:
+            return 0
+        
         return int(str(digit) * n)
     
     # Return integer 444444 for 6 digit number
