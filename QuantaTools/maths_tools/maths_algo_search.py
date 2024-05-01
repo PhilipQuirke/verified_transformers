@@ -50,7 +50,7 @@ def run_intervention_core(cfg, acfg, node_locations, store_question, clean_quest
 def run_strong_intervention(cfg, acfg, node_locations, store_question, clean_question, operation, expected_answer_impact, expected_answer_int):
 
     # These are the actual model prediction outputs (while applying our node-level intervention).
-    run_intervention_core(cfg, acfg, node_locations, store_question, clean_question, operation, expected_answer_impact, expected_answer_int, True)
+    run_intervention_core(cfg, acfg, node_locations, store_question, clean_question, operation, expected_answer_impact, expected_answer_int, strong=True)
 
     answer_success = (acfg.intervened_answer == acfg.expected_answer)
     impact_success = (acfg.intervened_impact == acfg.expected_impact)
@@ -68,11 +68,13 @@ def run_strong_intervention(cfg, acfg, node_locations, store_question, clean_que
 def run_weak_intervention(cfg, acfg, node_locations, store_question, clean_question, operation):
 
     # Calculate the test (clean) question answer e.g. "+006671"
-    expected_answer_int = clean_question[0]+clean_question[1] if operation == MathsToken.PLUS else clean_question[0]-clean_question[1]
+    clean_answer = clean_question[0]+clean_question[1] if operation == MathsToken.PLUS else clean_question[0]-clean_question[1]
 
-    run_intervention_core(cfg, acfg, node_locations, store_question, clean_question, operation, NO_IMPACT_TAG, expected_answer_int, False)
+    run_intervention_core(cfg, acfg, node_locations, store_question, clean_question, operation, NO_IMPACT_TAG, clean_answer, strong=False)
 
-    success = not ((acfg.intervened_answer == acfg.expected_answer) or (acfg.intervened_impact == NO_IMPACT_TAG))
+    answer_success = (acfg.intervened_answer != acfg.expected_answer) # We can't predict the answer
+    impact_success = (acfg.intervened_impact != NO_IMPACT_TAG) # Has some impact
+    success = answer_success and impact_success
 
     if acfg.show_test_failures and not success:
         print("Failed: Intervention had no impact on the answer", acfg.ablate_description)

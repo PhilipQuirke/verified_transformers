@@ -72,3 +72,4 @@ class MathsTask(Enum):
   
     OPR_TAG = "OPR" # Add/Sub - Attends to operation token (in the middle of the question)
     SGN_TAG = "SGN" # Add/Sub - Attends to answer sign (+/-) token (at the start of the answer)
+    GTR_TAG = "GTR" # SUB/NEG - GreaterThan node that helps calculate Dn > D'n, and impacts sign of answer 
