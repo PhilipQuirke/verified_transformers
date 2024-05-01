@@ -45,8 +45,7 @@ def run_intervention_core(cfg, acfg, store_question, clean_question, expected_an
 
 
 # Run an intervention where we have a precise expectation of the intervention impact
-def run_strong_intervention(cfg, acfg, store_question, clean_question, operation, expected_answer_impact, expected_answer_int):
-    acfg.operation = operation
+def run_strong_intervention(cfg, acfg, store_question, clean_question, expected_answer_impact, expected_answer_int):
     
     # These are the actual model prediction outputs (while applying our node-level intervention).
     run_intervention_core(cfg, acfg, store_question, clean_question, expected_answer_impact, expected_answer_int, strong=True)
@@ -64,8 +63,7 @@ def run_strong_intervention(cfg, acfg, store_question, clean_question, operation
 
 
 # Run an intervention where we expect the intervention to have a non-zero impact but we cant precisely predict the answer impact
-def run_weak_intervention(cfg, acfg, store_question, clean_question, operation):
-    acfg.operation = operation
+def run_weak_intervention(cfg, acfg, store_question, clean_question):
     
     # Calculate the test (clean) question answer e.g. "+006671"
     clean_answer = clean_question[0]+clean_question[1] if operation == MathsToken.PLUS else clean_question[0]-clean_question[1]
@@ -140,7 +138,7 @@ def add_ss_test(cfg, acfg, alter_digit, strong):
         assert intervened_answer == 80188
 
 
-    success, _, _ = run_strong_intervention(cfg, acfg, store_question, clean_question, MathsToken.PLUS, intervention_impact, intervened_answer)
+    success, _, _ = run_strong_intervention(cfg, acfg, store_question, clean_question, intervention_impact, intervened_answer)
 
     if success:
         print( "Test confirmed", acfg.node_names(), "perform A"+str(alter_digit)+".SS impacting "+intervention_impact+" accuracy.", "" if strong else "Weak")
@@ -179,7 +177,7 @@ def add_sc_test(cfg, acfg, impact_digit, strong):
     # When we intervene we expect answer 889888
     intervened_answer = clean_question[0] + clean_question[1] + 10 ** (alter_digit+1)
 
-    success, _, _ = run_strong_intervention(cfg, acfg, store_question, clean_question, MathsToken.PLUS, intervention_impact, intervened_answer)
+    success, _, _ = run_strong_intervention(cfg, acfg, store_question, clean_question, intervention_impact, intervened_answer)
 
     if success:
         print( "Test confirmed", acfg.node_names(), "perform A"+str(alter_digit)+".SC impacting "+intervention_impact+" accuracy.", "" if strong else "Weak")
@@ -231,10 +229,10 @@ def add_sa_test(cfg, acfg, alter_digit, strong):
     intervention_impact = answer_name(alter_digit)
 
     store_question, clean_question, intervened_answer = add_sa_test1(cfg, alter_digit)
-    success1, _, impact_success1 = run_strong_intervention(cfg, acfg, store_question, clean_question, MathsToken.PLUS, intervention_impact, intervened_answer)
+    success1, _, impact_success1 = run_strong_intervention(cfg, acfg, store_question, clean_question, intervention_impact, intervened_answer)
 
     store_question, clean_question, intervened_answer = add_sa_test2(cfg, alter_digit)
-    success2, _, impact_success2 = run_strong_intervention(cfg, acfg, store_question, clean_question, MathsToken.PLUS, intervention_impact, intervened_answer)
+    success2, _, impact_success2 = run_strong_intervention(cfg, acfg, store_question, clean_question, intervention_impact, intervened_answer)
 
     success = (success1 and success2) if strong else (impact_success1 and impact_success2)
 
@@ -271,7 +269,7 @@ def add_st_test(cfg, acfg, focus_digit, strong):
     # 333333 + 666666 = 999999. No Dn.SC
     clean_question = [cfg.repeat_digit(3), cfg.repeat_digit(6)]
 
-    success = run_weak_intervention(cfg, acfg, store_question, clean_question, MathsToken.PLUS)
+    success = run_weak_intervention(cfg, acfg, store_question, clean_question)
 
     if success:
         description = acfg.node_names() + " perform D"+str(focus_digit)+".ST = TriCase(D"+str(focus_digit)+" + D'"+str(focus_digit)+")"
@@ -324,10 +322,10 @@ def sub_md_test(cfg, acfg, alter_digit, strong):
     intervention_impact = answer_name(alter_digit)
 
     store_question, clean_question, intervened_answer = sub_md_test1(cfg, alter_digit)
-    success1, _, impact_success1 = run_strong_intervention(cfg, acfg, store_question, clean_question, MathsToken.MINUS, intervention_impact, intervened_answer)
+    success1, _, impact_success1 = run_strong_intervention(cfg, acfg, store_question, clean_question, intervention_impact, intervened_answer)
 
     store_question, clean_question, intervened_answer = sub_md_test2(cfg, alter_digit)
-    success2, _, impact_success2 = run_strong_intervention(cfg, acfg, store_question, clean_question, MathsToken.MINUS, intervention_impact, intervened_answer)
+    success2, _, impact_success2 = run_strong_intervention(cfg, acfg, store_question, clean_question, intervention_impact, intervened_answer)
 
     success = (success1 and success2) if strong else (impact_success1 and impact_success2)
 
@@ -368,7 +366,7 @@ def sub_mb_test(cfg, acfg, impact_digit, strong):
     # When we intervene we expect answer +0332333
     intervened_answer = clean_question[0] - clean_question[1] - 10 ** (alter_digit+1)
 
-    success, _, _ = run_strong_intervention(cfg, acfg, store_question, clean_question, MathsToken.MINUS, intervention_impact, intervened_answer)
+    success, _, _ = run_strong_intervention(cfg, acfg, store_question, clean_question, intervention_impact, intervened_answer)
 
     if success:
         print( "Test confirmed", acfg.node_names(), "perform A"+str(alter_digit)+".MB impacting "+intervention_impact+" accuracy.", "" if strong else "Weak")
@@ -407,7 +405,7 @@ def sub_mt_test(cfg, acfg, focus_digit, strong):
     clean_question = [cfg.repeat_digit(2), cfg.repeat_digit(2)]
     clean_question[1] += 2 * (10 ** focus_digit)
 
-    success = run_weak_intervention(cfg, acfg, store_question, clean_question, MathsToken.MINUS)
+    success = run_weak_intervention(cfg, acfg, store_question, clean_question)
 
     if success:
         print("Test confirmed", acfg.node_names(), " perform D"+str(focus_digit)+".MT", "Impact:", acfg.intervened_impact, "" if strong else "Weak")
@@ -494,10 +492,10 @@ def neg_nd_test(cfg, acfg, alter_digit, strong):
     intervention_impact = answer_name(alter_digit)
 
     store_question, clean_question, intervened_answer = neg_nd_test1(cfg, acfg, alter_digit)
-    success1, _, impact_success1 = run_strong_intervention(cfg, acfg, store_question, clean_question, MathsToken.MINUS, intervention_impact, intervened_answer)
+    success1, _, impact_success1 = run_strong_intervention(cfg, acfg, store_question, clean_question, intervention_impact, intervened_answer)
 
     store_question, clean_question, intervened_answer = neg_nd_test2(cfg, acfg, alter_digit)
-    success2, _, impact_success2 = run_strong_intervention(cfg, acfg, store_question, clean_question, MathsToken.MINUS, intervention_impact, intervened_answer)
+    success2, _, impact_success2 = run_strong_intervention(cfg, acfg, store_question, clean_question, intervention_impact, intervened_answer)
 
     success = (success1 and success2) if strong else (impact_success1 and impact_success2)
 
@@ -540,7 +538,7 @@ def neg_nb_test(cfg, acfg, impact_digit, strong):
     # When we intervene we expect answer -0366677
     intervened_answer = clean_question[0] - clean_question[1] - 10 ** (alter_digit+1)
 
-    success, _, _ = run_strong_intervention(cfg, acfg, store_question, clean_question, MathsToken.MINUS, intervention_impact, intervened_answer)
+    success, _, _ = run_strong_intervention(cfg, acfg, store_question, clean_question, intervention_impact, intervened_answer)
 
     if success:
         print( "Test confirmed", acfg.node_names(), "perform A"+str(alter_digit)+".NB impacting "+intervention_impact+" accuracy.", "" if strong else "Weak")
