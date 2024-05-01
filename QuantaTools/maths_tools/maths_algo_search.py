@@ -66,7 +66,7 @@ def run_strong_intervention(cfg, acfg, store_question, clean_question, expected_
 def run_weak_intervention(cfg, acfg, store_question, clean_question):
     
     # Calculate the test (clean) question answer e.g. "+006671"
-    clean_answer = clean_question[0]+clean_question[1] if operation == MathsToken.PLUS else clean_question[0]-clean_question[1]
+    clean_answer = clean_question[0]+clean_question[1] if acfg.operation == MathsToken.PLUS else clean_question[0]-clean_question[1]
 
     run_intervention_core(cfg, acfg, store_question, clean_question, NO_IMPACT_TAG, clean_answer, strong=False)
 
