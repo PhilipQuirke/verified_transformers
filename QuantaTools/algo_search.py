@@ -9,28 +9,32 @@ from .algo_config import AlgoConfig
 # Search the specified useful node(s), using the test_function, for the expected impact on the_impact_digit
 def search_and_tag_digit_position(cfg, acfg, the_impact_digit, test_nodes, test_function, strong, the_tag, do_pair_search ):
 
+    success = False
+    
     # Try single nodes first
+    # For tasks like GT, SGN, OPR nodes at say 2 layers can satisfy the test.
     for node in test_nodes.nodes:
         acfg.ablate_node_locations = [node]
         if test_function(cfg, acfg, the_impact_digit, strong):
             full_tag = the_tag + ("" if strong else "." + acfg.intervened_impact)
             acfg.num_tags_added += node.add_tag(QType.ALGO.value, full_tag)
-            return True
+            success = True
 
-    # Try pairs of nodes. Sometimes a task is split across two attention heads (i.e. a virtual attention head)
-    if do_pair_search:
-        node_pairs = list(itertools.combinations(test_nodes.nodes, 2))
-        for pair in node_pairs:
-            # Only if the 2 nodes are in the same layer can they can act in parallel and so "sum" to give a virtual attention head
-            if pair[0].layer == pair[1].layer and pair[0].is_head == pair[1].is_head:
-                acfg.ablate_node_locations = [pair[0], pair[1]]
-                if test_function(cfg, acfg, the_impact_digit, strong):
-                    full_tag = the_tag + ("" if strong else "." + acfg.intervened_impact)
-                    acfg.num_tags_added += pair[0].add_tag(QType.ALGO.value, full_tag)
-                    acfg.num_tags_added += pair[1].add_tag(QType.ALGO.value, full_tag)
-                    return True
+    if not success:   
+        # Try pairs of nodes. Sometimes a task is split across two attention heads (i.e. a virtual attention head)
+        if do_pair_search:
+            node_pairs = list(itertools.combinations(test_nodes.nodes, 2))
+            for pair in node_pairs:
+                # Only if the 2 nodes are in the same layer can they can act in parallel and so "sum" to give a virtual attention head
+                if pair[0].layer == pair[1].layer and pair[0].is_head == pair[1].is_head:
+                    acfg.ablate_node_locations = [pair[0], pair[1]]
+                    if test_function(cfg, acfg, the_impact_digit, strong):
+                        full_tag = the_tag + ("" if strong else "." + acfg.intervened_impact)
+                        acfg.num_tags_added += pair[0].add_tag(QType.ALGO.value, full_tag)
+                        acfg.num_tags_added += pair[1].add_tag(QType.ALGO.value, full_tag)
+                        success = True
 
-    return False
+    return success
 
 
 # For each useful position, search the related useful node(s), using the test_function, for the expected impact on the_impact_digit.
