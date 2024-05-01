@@ -49,18 +49,21 @@ from .maths_tools.maths_test_questions import make_maths_test_questions_and_answ
 from .maths_tools.maths_test_questions.test_questions_checker import test_maths_questions_by_complexity, \
     test_maths_questions_by_impact, test_maths_questions_and_add_useful_node_tags, test_correctness_on_num_questions
 from .maths_tools import make_maths_tricase_questions, make_maths_tricase_questions_customized
-from .maths_tools.maths_algo_search import run_intervention_core, run_strong_intervention, run_weak_intervention, \
+from .maths_tools.maths_search_mix import \
+    run_intervention_core, run_strong_intervention, run_weak_intervention, \
     succeed_test, math_common_prereqs, \
+    opr_tag, opr_prereqs, \
+    sgn_tag, sgn_prereqs   
+from .maths_tools.maths_search_add import \
     add_ss_tag, add_ss_prereqs, add_ss_test, \
     add_sc_tag, add_sc_prereqs, add_sc_test, \
     add_sa_tag, add_sa_prereqs, add_sa_test, \
-    add_st_tag, add_st_prereqs, add_st_test, \
+    add_st_tag, add_st_prereqs, add_st_test
+from .maths_tools.maths_search_sub import \
     sub_md_tag, sub_md_prereqs, sub_md_test, \
     sub_mb_tag, sub_mb_prereqs, sub_mb_test, \
     sub_mt_tag, sub_mt_prereqs, sub_mt_test, \
     neg_nd_tag, neg_nd_prereqs, neg_nd_test, \
-    neg_nb_tag, neg_nb_prereqs, neg_nb_test, \
-    opr_tag, opr_prereqs, \
-    sgn_tag, sgn_prereqs   
+    neg_nb_tag, neg_nb_prereqs, neg_nb_test
 from .maths_tools.maths_pca import manual_nodes_pca, manual_node_pca
     

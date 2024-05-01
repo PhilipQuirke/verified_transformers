@@ -33,9 +33,11 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="QuantaTools\algo_search.py" />
+    <Compile Include="QuantaTools\maths_tools\maths_search_add.py" />
+    <Compile Include="QuantaTools\maths_tools\maths_search_sub.py" />
     <Compile Include="QuantaTools\model_pca.py" />
     <Compile Include="QuantaTools\maths_tools\__init__.py" />
-    <Compile Include="QuantaTools\maths_tools\maths_algo_search.py" />
+    <Compile Include="QuantaTools\maths_tools\maths_search_mix.py" />
     <Compile Include="QuantaTools\maths_tools\maths_complexity.py" />
     <Compile Include="QuantaTools\maths_tools\maths_config.py" />
     <Compile Include="QuantaTools\maths_tools\maths_data_generator.py" />
