@@ -10,6 +10,7 @@ class AblateConfig():
         self.reset_ablate()
         self.reset_intervention()
         self.reset_intervention_totals()
+        self.operation = 0
         self.show_test_failures = False
         self.show_test_successes = False
 
@@ -49,7 +50,6 @@ class AblateConfig():
 
 
     def reset_intervention(self, expected_answer = "", expected_impact = NO_IMPACT_TAG):
-        self.operation = 0
 
         # Expected output of an intervention ablation experiment
         self.expected_answer = expected_answer
