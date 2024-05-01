@@ -10,6 +10,7 @@ from QuantaTools.ablate_config import AblateConfig
 from .maths_constants import MathsToken, MathsBehavior, MathsTask 
 from .maths_search_mix import succeed_test, math_common_prereqs, \
     run_strong_intervention, run_weak_intervention
+from .maths_utilities import digit_name
 
     
 # Tag for addition "Use Sum 9" (SS) task e.g. 34633+55555=+090188 where D4 and D'4 sum to 9 (4+5), and D3 + D'3 > 10
@@ -50,7 +51,7 @@ def add_ss_test(cfg, acfg, alter_digit, strong):
     success, _, _ = run_strong_intervention(cfg, acfg, store_question, clean_question, intervention_impact, intervened_answer)
 
     if success:
-        print( "Test confirmed", acfg.ablate_node_names(), "perform A"+str(alter_digit)+".SS impacting "+intervention_impact+" accuracy.", "" if strong else "Weak")
+        print( "Test confirmed", acfg.ablate_node_names(), "perform", add_ss_tag(alter_digit), "impacting", intervention_impact+" accuracy.", "" if strong else "Weak")
 
     return success
 
@@ -89,7 +90,7 @@ def add_sc_test(cfg, acfg, impact_digit, strong):
     success, _, _ = run_strong_intervention(cfg, acfg, store_question, clean_question, intervention_impact, intervened_answer)
 
     if success:
-        print( "Test confirmed", acfg.ablate_node_names(), "perform A"+str(alter_digit)+".SC impacting "+intervention_impact+" accuracy.", "" if strong else "Weak")
+        print( "Test confirmed", acfg.ablate_node_names(), "perform", add_sc_tag(alter_digit), "impacting", intervention_impact, " accuracy.", "" if strong else "Weak")
 
     return success
 
@@ -146,14 +147,14 @@ def add_sa_test(cfg, acfg, alter_digit, strong):
     success = (success1 and success2) if strong else (impact_success1 and impact_success2)
 
     if success:
-        print( "Test confirmed:", acfg.ablate_node_names(), "perform A"+str(alter_digit)+".SA = (D"+str(alter_digit)+" + D'"+str(alter_digit)+") % 10 impacting "+intervention_impact+" accuracy.", "" if strong else "Weak", acfg.intervened_answer)
+        print( "Test confirmed:", acfg.ablate_node_names(), "perform", add_sa_tag(alter_digit), "= (D"+str(alter_digit)+" + D'"+str(alter_digit)+") % 10 impacting "+intervention_impact+" accuracy.", "" if strong else "Weak", acfg.intervened_answer)
 
     return success
 
 
 # Tag for addition An.ST 
 def add_st_tag(focus_digit):
-    return "A" + str(focus_digit) + "." + MathsTask.ST_TAG.value
+    return digit_name(focus_digit) + "." + MathsTask.ST_TAG.value
 
 
 # Prerequisites for addition An.ST 
@@ -181,7 +182,7 @@ def add_st_test(cfg, acfg, focus_digit, strong):
     success = run_weak_intervention(cfg, acfg, store_question, clean_question)
 
     if success:
-        description = acfg.ablate_node_names() + " perform D"+str(focus_digit)+".ST = TriCase(D"+str(focus_digit)+" + D'"+str(focus_digit)+")"
+        description = acfg.ablate_node_names() + " perform " + add_st_tag(focus_digit) + " = TriCase(D"+str(focus_digit)+" + D'"+str(focus_digit)+")"
         print("Test confirmed", description, "Impact:", acfg.intervened_impact, "" if strong else "Weak")
 
     return success

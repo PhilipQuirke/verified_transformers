@@ -10,7 +10,7 @@ from QuantaTools.ablate_config import AblateConfig
 from .maths_constants import MathsToken, MathsBehavior, MathsTask 
 from .maths_search_mix import succeed_test, math_common_prereqs, \
     run_strong_intervention, run_weak_intervention
-
+from .maths_utilities import digit_name
 
 
 # Tag for positive-answer subtraction "Difference" (MD) tasks e.g. 666666-222222=+0444444 where D3 >= D'3
@@ -65,7 +65,7 @@ def sub_md_test(cfg, acfg, alter_digit, strong):
     success = (success1 and success2) if strong else (impact_success1 and impact_success2)
 
     if success:
-        print( "Test confirmed", acfg.ablate_node_names(), "perform A"+str(alter_digit)+".MD = (D"+str(alter_digit)+" + D'"+str(alter_digit)+") % 10 impacting "+intervention_impact+" accuracy.", "" if strong else "Weak")
+        print( "Test confirmed", acfg.ablate_node_names(), "perform", sub_md_tag(alter_digit), " = (D"+str(alter_digit)+" + D'"+str(alter_digit)+") % 10 impacting "+intervention_impact+" accuracy.", "" if strong else "Weak")
 
     return success
 
@@ -104,14 +104,14 @@ def sub_mb_test(cfg, acfg, impact_digit, strong):
     success, _, _ = run_strong_intervention(cfg, acfg, store_question, clean_question, intervention_impact, intervened_answer)
 
     if success:
-        print( "Test confirmed", acfg.ablate_node_names(), "perform A"+str(alter_digit)+".MB impacting "+intervention_impact+" accuracy.", "" if strong else "Weak")
+        print( "Test confirmed", acfg.ablate_node_names(), "perform", sub_mb_tag(alter_digit), "impacting", intervention_impact, "accuracy.", "" if strong else "Weak")
         
     return success
 
 
 # Tag for positive-answer subtraction "TriCase" task "MT"
 def sub_mt_tag(impact_digit):
-    return answer_name(impact_digit)  + "." + MathsTask.MT_TAG.value
+    return digit_name(impact_digit) + "." + MathsTask.MT_TAG.value
 
 
 def sub_mt_prereqs(cfg, position, focus_digit):
@@ -143,7 +143,7 @@ def sub_mt_test(cfg, acfg, focus_digit, strong):
     success = run_weak_intervention(cfg, acfg, store_question, clean_question)
 
     if success:
-        print("Test confirmed", acfg.ablate_node_names(), " perform D"+str(focus_digit)+".MT", "Impact:", acfg.intervened_impact, "" if strong else "Weak")
+        print("Test confirmed", acfg.ablate_node_names(), "perform", sub_mt_tag(focus_digit), "Impact:", acfg.intervened_impact, "" if strong else "Weak")
 
     return success
 
@@ -202,7 +202,7 @@ def neg_nd_test(cfg, acfg, alter_digit, strong):
     success = (success1 and success2) if strong else (impact_success1 and impact_success2)
 
     if success:
-        print( "Test confirmed", acfg.ablate_node_names(), "perform A"+str(alter_digit)+".ND = (D"+str(alter_digit)+" + D'"+str(alter_digit)+") % 10 impacting "+intervention_impact+" accuracy.", "" if strong else "Weak")
+        print( "Test confirmed", acfg.ablate_node_names(), "perform", neg_nd_tag(alter_digit), " = (D"+str(alter_digit)+" + D'"+str(alter_digit)+") % 10 impacting "+intervention_impact+" accuracy.", "" if strong else "Weak")
 
     return success
 
@@ -243,6 +243,6 @@ def neg_nb_test(cfg, acfg, impact_digit, strong):
     success, _, _ = run_strong_intervention(cfg, acfg, store_question, clean_question, intervention_impact, intervened_answer)
 
     if success:
-        print( "Test confirmed", acfg.ablate_node_names(), "perform A"+str(alter_digit)+".NB impacting "+intervention_impact+" accuracy.", "" if strong else "Weak")
+        print( "Test confirmed", acfg.ablate_node_names(), "perform", neg_nb_tag(alter_digit), "impacting", intervention_impact, " accuracy.", "" if strong else "Weak")
 
     return success

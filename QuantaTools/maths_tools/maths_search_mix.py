@@ -8,9 +8,10 @@ from QuantaTools.ablate_config import AblateConfig
 from QuantaTools.ablate_hooks import a_predict_questions, a_run_attention_intervention
 
 from .maths_constants import MathsToken, MathsBehavior, MathsTask 
+from .maths_config import MathsConfig
 from .maths_data_generator import make_maths_questions_and_answers
 from .maths_complexity import get_maths_question_complexity
-from .maths_utilities import int_to_answer_str
+from .maths_utilities import int_to_answer_str, digit_name
 
 
 def run_intervention_core(cfg, acfg, store_question, clean_question, expected_answer_impact, expected_answer_int, strong):
@@ -121,7 +122,7 @@ def sgn_prereqs(cfg, position, impact_digit):
 
 # Tag for Greater Than "Dn > D'n" (Dn.GT) task used in SUB and NEG
 def gt_tag(impact_digit):
-  return answer_name(impact_digit) + "." + MathsTask.GT_TAG.value
+  return digit_name(impact_digit) + "." + MathsTask.GT_TAG.value
 
 
 # Prerequisites for Greater Than "Dn > D'n" (Dn.GT) task used in SUB and NEG
@@ -132,4 +133,67 @@ def gt_prereqs(cfg, position, attend_digit):
         FilterAttention(cfg.dn_to_position_name(attend_digit)), # Attends to Dn
         FilterAttention(cfg.ddn_to_position_name(attend_digit))) # Attends to D'n
 
+
+# Intervention ablation test for subtraction "Dn > D'n" (Dn.GT) task
+def gt_test(cfg, acfg, impact_digit, strong):
+    impact_locn = (10 ** impact_digit)
+    tail_nines = MathsConfig.repeat_digit_n(9,min(cfg.n_digits,impact_digit+2))
+
+    # 00600-00201=+000399. SUB
+    sub_question = [6 * impact_locn, 2 * impact_locn+1]
+    # 00100-00201=-000101. NEG
+    neg_question = [1 * impact_locn, 2 * impact_locn+1]
+
+    # We expect the sign (Amax) to change from - to +
+    intervention_impact = answer_name(cfg.n_digits+1)
+    # Addition of 2 6-digit numbers can give a 7-digit answer. Subtraction of 2 6-digit numbers gives a signed 6-digit number. Exclude Amax-1
+    digit = cfg.n_digits - 1
+    while digit > impact_digit+1:
+        intervention_impact += str(digit)
+        digit -= 1  
+
+
+    # TEST CHANGE FROM NEGATIVE TO POSITIVE ANSWER
+    # 00600-00201=+000399. SUB
+    store_question = [sub_question[0], sub_question[1]]
+    # 00100-00201=-000101. NEG
+    clean_question = [neg_question[0], neg_question[1]]
+    clean_answer = clean_question[0] - clean_question[1]
+    assert(clean_answer<0) # Negative clean answer
+    expected_answer = + cfg.repeat_digit(9) - tail_nines - clean_answer 
+    assert(expected_answer>=0) # Positive ablated answer
+    run_intervention_core(cfg, acfg, store_question, clean_question, intervention_impact, expected_answer, strong=False)
+    success = (acfg.intervened_answer[0] == "+")
+
+    if acfg.show_test_failures and not success:
+        print("Failed: GT_1, impact_digit:", impact_digit, acfg.ablate_description)
+    if acfg.show_test_successes and success:
+        print("Success: GT_1, " + acfg.ablate_description)
+
+
+    if success:
+      # TEST CHANGE FROM POSITIVE TO NEGATIVE ANSWER
+        # 00100-00201=-000101. NEG
+        store_question = [neg_question[0], neg_question[1]]
+        # 00600-00201=+000399. SUB
+        clean_question = [sub_question[0], sub_question[1]]
+        clean_answer = clean_question[0] - clean_question[1] # positive
+        assert(clean_answer>=0) # Positive clean answer
+        # When we intervene we expect answer to swap from negative to positive. Get -0999101 
+        expected_answer = - cfg.repeat_digit(9) + tail_nines - clean_answer 
+        assert(expected_answer<0) # Negative ablated answer
+        run_intervention_core(cfg, acfg, store_question, clean_question, intervention_impact, expected_answer, strong=False)
+        success = (acfg.intervened_answer[0] == "-")
+
+        #if acfg.show_test_failures and not success:
+        if not success:
+          print("Failed: GT_2, impact_digit:", impact_digit, acfg.ablate_description)
+        if acfg.show_test_successes and success:
+            print("Success: GT_2 ," + acfg.ablate_description)
+
+ 
+    if success:
+        print( "Test confirmed", acfg.ablate_node_names(), "perform", gt_tag(impact_digit))
+
+    return success
 
