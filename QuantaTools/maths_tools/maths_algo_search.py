@@ -41,7 +41,7 @@ def run_intervention_core(cfg, acfg, store_question, clean_question, expected_an
     
     run_description = a_run_attention_intervention(cfg, store_question_and_answer, clean_question_and_answer, clean_answer_str)
 
-    acfg.ablate_description = "Intervening on " + acfg.node_names() + ", " + ("Strong" if strong else "Weak") + ", Node[0]=" + acfg.ablate_node_locations[0].name() + ", " + run_description
+    acfg.ablate_description = "Ablate" + ("" if strong else "(Weak)") + ":" + acfg.node_names() + ", Op:" + acfg.operation.value + ", " + run_description
 
 
 # Run an intervention where we have a precise expectation of the intervention impact
