@@ -92,7 +92,12 @@ class MathsConfig(AlgoConfig):
     
 
     # Return integer 444444 for 6 digit number
+    @staticmethod
+    def repeat_digit_n(digit, n):
+        return int(str(digit) * n)
+    
+    # Return integer 444444 for 6 digit number
     def repeat_digit(self, digit):
-        return int(str(digit) * self.n_digits)
+        return MathsConfig.repeat_digit_n(digit, self.n_digits)
 
 
