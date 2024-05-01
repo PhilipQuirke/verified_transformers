@@ -53,7 +53,7 @@ def add_ss_test(cfg, acfg, alter_digit, strong):
     success, _, _ = run_strong_intervention(cfg, acfg, store_question, clean_question, intervention_impact, intervened_answer)
 
     if success:
-        print( "Test confirmed", acfg.ablate_node_names(), "perform", add_ss_tag(alter_digit), "impacting", intervention_impact+" accuracy.", "" if strong else "Weak")
+        print( "Test confirmed", acfg.ablate_node_names(), "perform", add_ss_tag(alter_digit), "impacting", intervention_impact, "accuracy.", "" if strong else "Weak")
 
     return success
 
@@ -92,7 +92,7 @@ def add_sc_test(cfg, acfg, impact_digit, strong):
     success, _, _ = run_strong_intervention(cfg, acfg, store_question, clean_question, intervention_impact, intervened_answer)
 
     if success:
-        print( "Test confirmed", acfg.ablate_node_names(), "perform", add_sc_tag(alter_digit), "impacting", intervention_impact, " accuracy.", "" if strong else "Weak")
+        print( "Test confirmed", acfg.ablate_node_names(), "perform", add_sc_tag(alter_digit), "impacting", intervention_impact, "accuracy.", "" if strong else "Weak")
 
     return success
 

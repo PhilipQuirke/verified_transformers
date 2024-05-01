@@ -243,6 +243,6 @@ def neg_nb_test(cfg, acfg, impact_digit, strong):
     success, _, _ = run_strong_intervention(cfg, acfg, store_question, clean_question, intervention_impact, intervened_answer)
 
     if success:
-        print( "Test confirmed", acfg.ablate_node_names(), "perform", neg_nb_tag(alter_digit), "impacting", intervention_impact, " accuracy.", "" if strong else "Weak")
+        print( "Test confirmed", acfg.ablate_node_names(), "perform", neg_nb_tag(alter_digit), "impacting", intervention_impact, "accuracy.", "" if strong else "Weak")
 
     return success
