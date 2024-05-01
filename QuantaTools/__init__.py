@@ -53,7 +53,8 @@ from .maths_tools.maths_search_mix import \
     run_intervention_core, run_strong_intervention, run_weak_intervention, \
     succeed_test, math_common_prereqs, \
     opr_tag, opr_prereqs, \
-    sgn_tag, sgn_prereqs   
+    sgn_tag, sgn_prereqs, \
+    gt_tag, gt_prereqs
 from .maths_tools.maths_search_add import \
     add_ss_tag, add_ss_prereqs, add_ss_test, \
     add_sc_tag, add_sc_prereqs, add_sc_test, \

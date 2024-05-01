@@ -117,3 +117,19 @@ def sgn_prereqs(cfg, position, impact_digit):
         FilterHead(),
         FilterPosition(position_name(position)),
         FilterAttention(cfg.an_to_position_name(cfg.n_digits+1)))
+
+
+# Tag for Greater Than "Dn > D'n" (Dn.GT) task used in SUB and NEG
+def gt_tag(impact_digit):
+  return answer_name(impact_digit) + "." + MathsTask.GT_TAG.value
+
+
+# Prerequisites for Greater Than "Dn > D'n" (Dn.GT) task used in SUB and NEG
+def gt_prereqs(cfg, position, attend_digit):
+    return FilterAnd(
+        FilterHead(), # Is an attention head
+        FilterPosition(position_name(position)), # Is at token position Px
+        FilterAttention(cfg.dn_to_position_name(attend_digit)), # Attends to Dn
+        FilterAttention(cfg.ddn_to_position_name(attend_digit))) # Attends to D'n
+
+
