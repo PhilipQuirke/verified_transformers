@@ -41,7 +41,7 @@ def run_intervention_core(cfg, acfg, store_question, clean_question, expected_an
     
     run_description = a_run_attention_intervention(cfg, store_question_and_answer, clean_question_and_answer, clean_answer_str)
 
-    acfg.ablate_description = "Ablate" + ("" if strong else "(Weak)") + ":" + acfg.node_names() + ", Op:" + str(acfg.operation) + ", " + run_description
+    acfg.ablate_description = "Ablate" + ("" if strong else "(Weak)") + ":" + acfg.ablate_node_names() + ", Op:" + str(acfg.operation) + ", " + run_description
 
 
 # Run an intervention where we have a precise expectation of the intervention impact
@@ -75,7 +75,7 @@ def run_weak_intervention(cfg, acfg, store_question, clean_question):
     success = answer_success and impact_success
 
     if acfg.show_test_failures and not success:
-        print("Failed: Intervention had no impact on the answer", acfg.ablate_description)
+        print("Failed: No answer impact.", acfg.ablate_description)
     if acfg.show_test_successes and success:
         print("Success: " + acfg.ablate_description)
 
@@ -84,7 +84,7 @@ def run_weak_intervention(cfg, acfg, store_question, clean_question):
 
 # A test function that always suceeds 
 def succeed_test(cfg, acfg, alter_digit, strong):
-    print( "Test confirmed", acfg.node_locations[0].name(), acfg.node_locations[1].name() if len(acfg.node_locations)>1 else "", "" if strong else "Weak")
+    print( "Test confirmed", acfg.ablate_node_names(), "" if strong else "Weak")
     return True
 
 
@@ -141,7 +141,7 @@ def add_ss_test(cfg, acfg, alter_digit, strong):
     success, _, _ = run_strong_intervention(cfg, acfg, store_question, clean_question, intervention_impact, intervened_answer)
 
     if success:
-        print( "Test confirmed", acfg.node_names(), "perform A"+str(alter_digit)+".SS impacting "+intervention_impact+" accuracy.", "" if strong else "Weak")
+        print( "Test confirmed", acfg.ablate_node_names(), "perform A"+str(alter_digit)+".SS impacting "+intervention_impact+" accuracy.", "" if strong else "Weak")
 
     return success
 
@@ -180,7 +180,7 @@ def add_sc_test(cfg, acfg, impact_digit, strong):
     success, _, _ = run_strong_intervention(cfg, acfg, store_question, clean_question, intervention_impact, intervened_answer)
 
     if success:
-        print( "Test confirmed", acfg.node_names(), "perform A"+str(alter_digit)+".SC impacting "+intervention_impact+" accuracy.", "" if strong else "Weak")
+        print( "Test confirmed", acfg.ablate_node_names(), "perform A"+str(alter_digit)+".SC impacting "+intervention_impact+" accuracy.", "" if strong else "Weak")
 
     return success
 
@@ -237,7 +237,7 @@ def add_sa_test(cfg, acfg, alter_digit, strong):
     success = (success1 and success2) if strong else (impact_success1 and impact_success2)
 
     if success:
-        print( "Test confirmed:", acfg.node_names(), "perform A"+str(alter_digit)+"SA = (D"+str(alter_digit)+" + D'"+str(alter_digit)+") % 10 impacting "+intervention_impact+" accuracy.", "" if strong else "Weak", acfg.intervened_answer)
+        print( "Test confirmed:", acfg.ablate_node_names(), "perform A"+str(alter_digit)+"SA = (D"+str(alter_digit)+" + D'"+str(alter_digit)+") % 10 impacting "+intervention_impact+" accuracy.", "" if strong else "Weak", acfg.intervened_answer)
 
     return success
 
@@ -272,7 +272,7 @@ def add_st_test(cfg, acfg, focus_digit, strong):
     success = run_weak_intervention(cfg, acfg, store_question, clean_question)
 
     if success:
-        description = acfg.node_names() + " perform D"+str(focus_digit)+".ST = TriCase(D"+str(focus_digit)+" + D'"+str(focus_digit)+")"
+        description = acfg.ablate_node_names() + " perform D"+str(focus_digit)+".ST = TriCase(D"+str(focus_digit)+" + D'"+str(focus_digit)+")"
         print("Test confirmed", description, "Impact:", acfg.intervened_impact, "" if strong else "Weak")
 
     return success
@@ -330,7 +330,7 @@ def sub_md_test(cfg, acfg, alter_digit, strong):
     success = (success1 and success2) if strong else (impact_success1 and impact_success2)
 
     if success:
-        print( "Test confirmed", acfg.node_names(), "perform A"+str(alter_digit)+".MD = (D"+str(alter_digit)+" + D'"+str(alter_digit)+") % 10 impacting "+intervention_impact+" accuracy.", "" if strong else "Weak")
+        print( "Test confirmed", acfg.ablate_node_names(), "perform A"+str(alter_digit)+".MD = (D"+str(alter_digit)+" + D'"+str(alter_digit)+") % 10 impacting "+intervention_impact+" accuracy.", "" if strong else "Weak")
 
     return success
 
@@ -369,7 +369,7 @@ def sub_mb_test(cfg, acfg, impact_digit, strong):
     success, _, _ = run_strong_intervention(cfg, acfg, store_question, clean_question, intervention_impact, intervened_answer)
 
     if success:
-        print( "Test confirmed", acfg.node_names(), "perform A"+str(alter_digit)+".MB impacting "+intervention_impact+" accuracy.", "" if strong else "Weak")
+        print( "Test confirmed", acfg.ablate_node_names(), "perform A"+str(alter_digit)+".MB impacting "+intervention_impact+" accuracy.", "" if strong else "Weak")
         
     return success
 
@@ -408,7 +408,7 @@ def sub_mt_test(cfg, acfg, focus_digit, strong):
     success = run_weak_intervention(cfg, acfg, store_question, clean_question)
 
     if success:
-        print("Test confirmed", acfg.node_names(), " perform D"+str(focus_digit)+".MT", "Impact:", acfg.intervened_impact, "" if strong else "Weak")
+        print("Test confirmed", acfg.ablate_node_names(), " perform D"+str(focus_digit)+".MT", "Impact:", acfg.intervened_impact, "" if strong else "Weak")
 
     return success
 
@@ -500,7 +500,7 @@ def neg_nd_test(cfg, acfg, alter_digit, strong):
     success = (success1 and success2) if strong else (impact_success1 and impact_success2)
 
     if success:
-        print( "Test confirmed", acfg.node_names(), "perform A"+str(alter_digit)+".ND = (D"+str(alter_digit)+" + D'"+str(alter_digit)+") % 10 impacting "+intervention_impact+" accuracy.", "" if strong else "Weak")
+        print( "Test confirmed", acfg.ablate_node_names(), "perform A"+str(alter_digit)+".ND = (D"+str(alter_digit)+" + D'"+str(alter_digit)+") % 10 impacting "+intervention_impact+" accuracy.", "" if strong else "Weak")
 
     return success
 
@@ -541,6 +541,6 @@ def neg_nb_test(cfg, acfg, impact_digit, strong):
     success, _, _ = run_strong_intervention(cfg, acfg, store_question, clean_question, intervention_impact, intervened_answer)
 
     if success:
-        print( "Test confirmed", acfg.node_names(), "perform A"+str(alter_digit)+".NB impacting "+intervention_impact+" accuracy.", "" if strong else "Weak")
+        print( "Test confirmed", acfg.ablate_node_names(), "perform A"+str(alter_digit)+".NB impacting "+intervention_impact+" accuracy.", "" if strong else "Weak")
 
     return success

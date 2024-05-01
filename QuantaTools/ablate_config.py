@@ -71,7 +71,7 @@ class AblateConfig():
         self.num_tags_added = 0
 
 
-    def node_names(self):
+    def ablate_node_names(self):
         answer = ""
 
         for node in self.ablate_node_locations:
