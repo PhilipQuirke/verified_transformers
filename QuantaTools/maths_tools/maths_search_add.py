@@ -48,6 +48,8 @@ def add_ss_test(cfg, acfg, alter_digit, strong):
 
     store_question, clean_question, intervened_answer = add_ss_test1(cfg, alter_digit)
 
+    intervention_impact = answer_name(alter_digit)
+    
     success, _, _ = run_strong_intervention(cfg, acfg, store_question, clean_question, intervention_impact, intervened_answer)
 
     if success:
