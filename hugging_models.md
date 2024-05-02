@@ -6,7 +6,7 @@ For each model the 'VerifiedArithmeticTrain' Colab notebook generates two files:
 - A "XXXXXX.pth" file containing the model weights
 - A "XXXXXX_train.json" file containing configuration information and training loss data
 
-These files are available for these models:
+These files are available on HuggingFace for these models:
 
 ### 5-digit and 6-digit digit Addition models
 - add_d5_l1_h3_t30K_s372001: Inaccurate **5-digit, 1-layer, 3-attention-head**, addition model. Reproduces Paper 1 model. Can predict S0, S1 and S2 complexity addition questions.
