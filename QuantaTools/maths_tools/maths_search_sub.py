@@ -202,7 +202,7 @@ def neg_nd_test(cfg, acfg, alter_digit, strong):
     success = (success1 and success2) if strong else (impact_success1 and impact_success2)
 
     if success:
-        print( "Test confirmed", acfg.ablate_node_names(), "perform", neg_nd_tag(alter_digit), " = (D"+str(alter_digit)+" + D'"+str(alter_digit)+") % 10 impacting "+intervention_impact+" accuracy.", "" if strong else "Weak")
+        print( "Test confirmed", acfg.ablate_node_names(), "perform", neg_nd_tag(alter_digit), " = (D"+str(alter_digit)+" + D'"+str(alter_digit)+") % 10 impacting", intervention_impact, "accuracy.", "" if strong else "Weak")
 
     return success
 
