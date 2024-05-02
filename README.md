@@ -86,4 +86,14 @@ Using QuantaTools files also reduces version change conflicts between multiple p
 - D'n : nth token in the second question number. Zero-based. D0 is the units value
 - A : Answer to the question (including answer sign)
 - An : nth token in the answer. Zero-based. A0 is the units value. The highest token is the "+" or "-" answer sign
+- Amax : The highest token in the answer. It is always the "+" or "-" sign
+- S : Prefix for Addition. Think S for Sum. Aka ADD.
+- SA : Basic Add. An addition sub-task. An.SA is defined as (Dn + D'n) % 10. For example, 5 + 7 = 2
+- SC : Make Carry. An addition sub-task. An.SC is defined as Dn + D'n >= 10. For example, 5 + 7 = True
+- SS : Make Sum 9. An addition sub-task. Refer paper 1 for details
+- ST : TriCase. An addition sub-task. Refer paper 2 for details
+- M : Prefix for Subtraction with a positive answer. Think M for Minus. Aka SUB
+- MD: Basic Difference. A subtraction sub-task. An.MD is defined as (Dn - D'n) % 10. For example, 3 - 7 = 6
+- MB: Borrow One. A subtraction sub-task.   
+
 
