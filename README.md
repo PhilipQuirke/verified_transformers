@@ -74,3 +74,16 @@ After a new 'search' is sucessfully developed and tested in the notebook, the co
 
 The files in the QuantaTools code folder have better version control and are easier to maintain than code blocks in a notebook.  
 Using QuantaTools files also reduces version change conflicts between multiple people working to improve the library.
+
+## Abbreviations
+- Pn : Model token position. Zero-based
+- Ln : Model layer n. Zero-based
+- Hn : Attention head n. Zero-based
+- Mn : MLP neuron n. Zero-based
+- D : First number of the pair question numbers
+- Dn : nth numeric token in the first question number. Zero-based. D0 is the units value
+- D' : Second number of the pair question numbers
+- D'n : nth token in the second question number. Zero-based. D0 is the units value
+- A : Answer to the question (including answer sign)
+- An : nth token in the answer. Zero-based. A0 is the units value. The highest token is the "+" or "-" answer sign
+
