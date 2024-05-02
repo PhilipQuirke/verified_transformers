@@ -8,6 +8,7 @@ These terms and abbreviations are used in Paper 2, this repository's Colabs and 
 - Mn : MLP neuron n. Zero-based
 - PnLnHn : Location / name of a single attention head, at a specified layer, at a specific token position
 - PnLnMn : Location / name of a single MLP neuron, at a specified layer, at a specific token position
+- add_d5_l2_h3_t30K_s372001: This is a sample model name which can be read as: Peforms addition, n_digits=5, n_layers=2, n_heads=3, training_epochs=30K, training_seed=372001
 - D : First number of the pair question numbers
 - Dn : nth numeric token in the first question number. Zero-based. D0 is the units value
 - D' : Second number of the pair question numbers
