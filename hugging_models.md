@@ -1,7 +1,7 @@
 # HuggingFace resources
 The HuggingFace website https://huggingface.co/PhilipQuirke/VerifiedArithmetic holds the output generated for experiments on ~14 models.
 
-A model name like add_d5_l2_h3_t30K_s372001 can be "read" as: Peforms addition, n_digits=5, n_layers=2, n_heads=3, training_epochs=30K, training_seed=372001
+A model name like add_d5_l2_h3_t30K_s372001 can be "read" as: Performs addition, n_digits=5, n_layers=2, n_heads=3, training_epochs=30K, training_seed=372001
 
 ## Training Resources
 For each model the 'VerifiedArithmeticTrain' Colab notebook generates two files:
