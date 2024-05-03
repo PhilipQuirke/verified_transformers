@@ -10,9 +10,9 @@ These files are available on HuggingFace for these models:
 ### 5-digit and 6-digit digit Addition models
 - add_d5_l1_h3_t30K_s372001: Inaccurate **5-digit, 1-layer, 3-attention-head**, addition model. Reproduces Paper 1 model. Can predict S0, S1 and S2 complexity addition questions.
 - add_d5_l2_h3_t15K_s372001: **Accurate** 5-digit, **2-layers**, 3-head addition model trained for 15K epochs. Training loss is 9e-9
-- add_d6_l2_h3_t15K_s372001: **Accurate** **6-digit**, 2-layers, 3-head addition model trained for 15K epochs.
-- add_d6_l2_h3_t20K_s173289: **Accurate** 6-digit, 2-layers, 3-head addition model trained for **20K** epochs.
-- add_d6_l2_h3_t20K_s572091: **Accurate** 6-digit, 2-layers, 3-head addition model trained for **20K** epochs.
+- add_d6_l2_h3_t15K_s372001: **Accurate** **6-digit**, 2-layers, 3-head addition model trained for 15K epochs. Training seed is 372001
+- add_d6_l2_h3_t20K_s173289: **Accurate** 6-digit, 2-layers, 3-head addition model trained for **20K** epochs. Training seed is 173289
+- add_d6_l2_h3_t20K_s572091: **Accurate** 6-digit, 2-layers, 3-head addition model trained for **20K** epochs. Training seed is 572091
 
 ### 6-digit Subtraction model
 - sub_d6_l2_h3_t30K_s372001: Inaccurate 6-digit, 2-layers, 3-head subtraction model trained for 30K epochs.
