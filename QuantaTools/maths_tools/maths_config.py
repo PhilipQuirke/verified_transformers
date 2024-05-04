@@ -71,6 +71,10 @@ class MathsConfig(AlgoConfig):
         match = re.search(r"d(\d)_", self.model_name)
         if match:
             self.n_digits = int(match.group(1))
+        else:
+            match = re.search(r"d(\d\d)_", self.model_name)
+            if match:
+                self.n_digits = int(match.group(1))
             
         # n_digits may have changed 
         self.initialize_maths_token_positions()  
