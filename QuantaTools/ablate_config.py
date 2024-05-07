@@ -1,7 +1,6 @@
 import transformer_lens.utils as utils
 
 from .quanta_constants import NO_IMPACT_TAG 
-from .ablate_hooks import a_set_ablate_hooks
 
 
 # Intervention ablation configuration class
@@ -94,10 +93,6 @@ class AblateConfig():
             print("Model got all test questions correct. This is a pre-requisite for the model to be fully accurate, but this is NOT proof.")
         else:
             print("WARNING: Model is not fully accurate as it got", bad_predictions, "questions wrong.")
-          
-
-    def set_ablate_hooks(self):
-        a_set_ablate_hooks(self)    
 
 
 # Global singleton class instance
