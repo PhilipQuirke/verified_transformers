@@ -35,6 +35,10 @@
     <Compile Include="QuantaTools\algo_search.py" />
     <Compile Include="QuantaTools\maths_tools\maths_search_add.py" />
     <Compile Include="QuantaTools\maths_tools\maths_search_sub.py" />
+    <Compile Include="QuantaTools\maths_tools\maths_test_questions\manual_test_questions_generator.py" />
+    <Compile Include="QuantaTools\maths_tools\maths_test_questions\test_questions_checker.py" />
+    <Compile Include="QuantaTools\maths_tools\maths_test_questions\tricase_test_questions_generator.py" />
+    <Compile Include="QuantaTools\maths_tools\maths_test_questions\__init__.py" />
     <Compile Include="QuantaTools\model_pca.py" />
     <Compile Include="QuantaTools\maths_tools\__init__.py" />
     <Compile Include="QuantaTools\maths_tools\maths_search_mix.py" />
@@ -71,8 +75,16 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="QuantaTools\maths_tools\" />
+    <Folder Include="QuantaTools\maths_tools\maths_test_questions\" />
+    <Folder Include="QuantaTools\maths_tools\maths_test_questions\__pycache__\" />
     <Folder Include="Tests\" />
     <Folder Include="QuantaTools" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="QuantaTools\maths_tools\maths_test_questions\__pycache__\manual_test_questions_generator.cpython-311.pyc" />
+    <Content Include="QuantaTools\maths_tools\maths_test_questions\__pycache__\test_questions_checker.cpython-311.pyc" />
+    <Content Include="QuantaTools\maths_tools\maths_test_questions\__pycache__\tricase_test_questions_generator.cpython-311.pyc" />
+    <Content Include="QuantaTools\maths_tools\maths_test_questions\__pycache__\__init__.cpython-311.pyc" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
 </Project>
