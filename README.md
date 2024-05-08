@@ -71,4 +71,4 @@ The papers associated with this content are:
 
 ## Extending the code
 Most exploratory work is done in a Google Colab in the 'train and 'analyse' notebooks. 
-After a new 'search' is sucessfully developed and tested in the notebook, the code is migrated to the QuantaTools code folder. 
+After a new 'search' is successfully developed and tested in the notebook, the code is migrated to the QuantaTools code folder. 

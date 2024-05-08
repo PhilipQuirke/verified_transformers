@@ -69,6 +69,7 @@ def a_put_l3_attn_z_hook(value, hook):
             value[:,location.position,location.num,:] = acfg.layer_store[3][:,location.position,location.num,:].clone()
   
 
+# Set acfg ablation hooks. Updates global acfg variable
 def a_set_ablate_hooks(cfg):
     acfg.resid_put_hooks = [(acfg.l_hook_resid_post_name[0], a_put_resid_post_hook),(acfg.l_hook_resid_post_name[1], a_put_resid_post_hook),(acfg.l_hook_resid_post_name[2], a_put_resid_post_hook),(acfg.l_hook_resid_post_name[3], a_put_resid_post_hook)][:cfg.n_layers]
 
