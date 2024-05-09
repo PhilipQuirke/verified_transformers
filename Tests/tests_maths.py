@@ -18,8 +18,8 @@ from QuantaTools.maths_tools.maths_test_questions import make_maths_s0_questions
 from QuantaTools.maths_tools.maths_test_questions import make_maths_m0_questions_and_answers, make_maths_m1_questions_and_answers, make_maths_m2_questions_and_answers, make_maths_m3_questions_and_answers
 from QuantaTools.maths_tools.maths_test_questions import make_maths_n1_questions_and_answers, make_maths_n2_questions_and_answers, make_maths_n3_questions_and_answers, make_maths_n4_questions_and_answers
 from QuantaTools.maths_tools.maths_complexity import get_maths_min_complexity
-from QuantaTools.maths_tools.maths_search_add import add_ss_test1
-from QuantaTools.maths_tools.maths_search_sub import neg_nd_test1
+from QuantaTools.maths_tools.maths_search_add import add_ss_functions
+from QuantaTools.maths_tools.maths_search_sub import neg_nd_functions
 
 
 class TestMaths(unittest.TestCase):
@@ -95,7 +95,7 @@ class TestMaths(unittest.TestCase):
         cfg = self.get_cfg()
         cfg.n_digits = 5 
         
-        store_question, clean_question, intervened_answer = add_ss_test1(cfg, 4)
+        store_question, clean_question, intervened_answer = add_ss_functions.test1(cfg, 4)
 
         self.assertEqual( store_question[0], 25222 )
         self.assertEqual( clean_question[0], 34633 )
@@ -108,7 +108,7 @@ class TestMaths(unittest.TestCase):
         cfg = self.get_cfg()
         cfg.n_digits = 6 
         
-        store_question, clean_question, intervened_answer = neg_nd_test1(cfg, 3)
+        store_question, clean_question, intervened_answer = neg_nd_functions.test1(cfg, 3)
 
         self.assertEqual( store_question[0], 33333 )
         self.assertEqual( clean_question[0], 99999 )

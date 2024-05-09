@@ -1,3 +1,5 @@
+from abc import ABC, abstractmethod
+
 from QuantaTools.useful_node import position_name, location_name, answer_name, UsefulNode, UsefulNodeList
 
 from QuantaTools.quanta_constants import QType, QCondition, NO_IMPACT_TAG
@@ -78,122 +80,189 @@ def run_weak_intervention(cfg, acfg, store_question, clean_question):
     return success
 
 
-# A test function that always suceeds 
-def succeed_test(cfg, acfg, alter_digit, strong):
-    print( "Test confirmed", acfg.ablate_node_names(), "" if strong else "Weak")
-    return True
+class SubTaskBase(ABC):
+    """
+    Abstract base class for tasks, enforcing implementation of tag, prereqs, and test methods.
+    """
+
+    @staticmethod
+    @abstractmethod
+    def operation():
+        """
+        Method to return the operation assoicated with the task.
+        """
+        pass
+    
+    @staticmethod
+    @abstractmethod
+    def tag(impact_digit):
+        """
+        Method to generate a tag for the task.
+        """
+        pass
+
+    @staticmethod
+    @abstractmethod
+    def prereqs(cfg, position, impact_digit):
+        """
+        Method to calculate prerequisites for the task.
+        """
+        pass
+
+    @staticmethod
+    # Common set of node filters (pre-requisites) for some maths tasks based on token position, attention to Dn and D'n, and answer digit impact
+    def math_common_prereqs(cfg, position, attend_digit, impact_digit):
+        return FilterAnd(
+            FilterHead(), # Is an attention head
+            FilterPosition(position_name(position)), # Is at token position Px
+            FilterAttention(cfg.dn_to_position_name(attend_digit)), # Attends to Dn
+            FilterAttention(cfg.ddn_to_position_name(attend_digit)), # Attends to D'n
+            FilterImpact(answer_name(impact_digit))) # Impacts Am
+
+    @staticmethod
+    @abstractmethod
+    def test(cfg, acfg, impact_digit, strong):
+        """
+        Method to test the task's implementation and interventions.
+        """
+        pass
+
+    @staticmethod
+    # A test function that always suceeds 
+    def succeed_test(cfg, acfg, alter_digit, strong):
+        print( "Test confirmed", acfg.ablate_node_names(), "" if strong else "Weak")
+        return True
 
 
-# Common set of node filters (pre-requisites) for some maths tasks based on token position, attention to Dn and D'n, and answer digit impact
-def math_common_prereqs(cfg, position, attend_digit, impact_digit):
-    return FilterAnd(
-        FilterHead(), # Is an attention head
-        FilterPosition(position_name(position)), # Is at token position Px
-        FilterAttention(cfg.dn_to_position_name(attend_digit)), # Attends to Dn
-        FilterAttention(cfg.ddn_to_position_name(attend_digit)), # Attends to D'n
-        FilterImpact(answer_name(impact_digit))) # Impacts Am
+class opr_functions(SubTaskBase):
+
+    @staticmethod
+    def operation():
+        return MathsToken.PLUS
+
+    @staticmethod
+    # Operator task tag
+    def tag(impact_digit):
+        return MathsTask.OPR_TAG.value # Doesnt depend on impact_digit
+
+    @staticmethod
+    # Operator task prerequisites
+    def prereqs(cfg, position, impact_digit):
+        return FilterAnd(
+            FilterHead(),
+            FilterPosition(position_name(position)),
+            FilterAttention(cfg.op_position_name()))
+
+    @staticmethod
+    def test(cfg, acfg, impact_digit, strong):
+        return succeed_test(cfg, acfg, impact_digit, strong)
 
 
-# Operator task tag
-def opr_tag(impact_digit):
-    return MathsTask.OPR_TAG.value # Doesnt depend on impact_digit
+class sgn_functions(SubTaskBase):
+
+    @staticmethod
+    def operation():
+        return MathsToken.PLUS
+    
+    @staticmethod
+    # Sign task tag
+    def tag(impact_digit):
+        return MathsTask.SGN_TAG.value # Doesnt depend on impact_digit
+
+    @staticmethod
+    # Sign task prerequisites
+    def prereqs(cfg, position, impact_digit):
+        return FilterAnd(
+            FilterHead(),
+            FilterPosition(position_name(position)),
+            FilterAttention(cfg.an_to_position_name(cfg.n_digits+1)))
+
+    @staticmethod
+    def test(cfg, acfg, impact_digit, strong):
+        return succeed_test(cfg, acfg, impact_digit, strong)
 
 
-# Operator task prerequisites
-def opr_prereqs(cfg, position, impact_digit):
-    return FilterAnd(
-        FilterHead(),
-        FilterPosition(position_name(position)),
-        FilterAttention(cfg.op_position_name()))
+class gt_functions(SubTaskBase):
 
+    @staticmethod
+    def operation():
+        return MathsToken.MINUS
+    
+    @staticmethod
+    # Tag for Greater Than "Dn > D'n" (Dn.GT) task used in SUB and NEG
+    def tag(impact_digit):
+      return digit_name(impact_digit) + "." + MathsTask.GT_TAG.value
 
-# Sign task tag
-def sgn_tag(impact_digit):
-    return MathsTask.SGN_TAG.value # Doesnt depend on impact_digit
+    @staticmethod
+    # Prerequisites for Greater Than "Dn > D'n" (Dn.GT) task used in SUB and NEG
+    def prereqs(cfg, position, attend_digit):
+        return FilterAnd(
+            FilterHead(), # Is an attention head
+            FilterPosition(position_name(position)), # Is at token position Px
+            FilterAttention(cfg.dn_to_position_name(attend_digit)), # Attends to Dn
+            FilterAttention(cfg.ddn_to_position_name(attend_digit))) # Attends to D'n
 
+    @staticmethod
+    # Intervention ablation test for subtraction "Dn > D'n" (Dn.GT) task
+    def test(cfg, acfg, impact_digit, strong):
+        impact_locn = (10 ** impact_digit)
+        tail_nines = MathsConfig.repeat_digit_n(9,min(cfg.n_digits,impact_digit+2))
 
-# Sign task prerequisites
-def sgn_prereqs(cfg, position, impact_digit):
-    return FilterAnd(
-        FilterHead(),
-        FilterPosition(position_name(position)),
-        FilterAttention(cfg.an_to_position_name(cfg.n_digits+1)))
-
-
-# Tag for Greater Than "Dn > D'n" (Dn.GT) task used in SUB and NEG
-def gt_tag(impact_digit):
-  return digit_name(impact_digit) + "." + MathsTask.GT_TAG.value
-
-
-# Prerequisites for Greater Than "Dn > D'n" (Dn.GT) task used in SUB and NEG
-def gt_prereqs(cfg, position, attend_digit):
-    return FilterAnd(
-        FilterHead(), # Is an attention head
-        FilterPosition(position_name(position)), # Is at token position Px
-        FilterAttention(cfg.dn_to_position_name(attend_digit)), # Attends to Dn
-        FilterAttention(cfg.ddn_to_position_name(attend_digit))) # Attends to D'n
-
-
-# Intervention ablation test for subtraction "Dn > D'n" (Dn.GT) task
-def gt_test(cfg, acfg, impact_digit, strong):
-    impact_locn = (10 ** impact_digit)
-    tail_nines = MathsConfig.repeat_digit_n(9,min(cfg.n_digits,impact_digit+2))
-
-    # 00600-00201=+000399. SUB
-    sub_question = [6 * impact_locn, 2 * impact_locn+1]
-    # 00100-00201=-000101. NEG
-    neg_question = [1 * impact_locn, 2 * impact_locn+1]
-
-    # We expect the sign (Amax) to change from - to +
-    intervention_impact = answer_name(cfg.n_digits+1)
-    # Addition of 2 6-digit numbers can give a 7-digit answer. Subtraction of 2 6-digit numbers gives a signed 6-digit number. Exclude Amax-1
-    digit = cfg.n_digits - 1
-    while digit > impact_digit+1:
-        intervention_impact += str(digit)
-        digit -= 1  
-
-
-    # TEST CHANGE FROM NEGATIVE TO POSITIVE ANSWER
-    # 00600-00201=+000399. SUB
-    store_question = [sub_question[0], sub_question[1]]
-    # 00100-00201=-000101. NEG
-    clean_question = [neg_question[0], neg_question[1]]
-    clean_answer = clean_question[0] - clean_question[1]
-    assert(clean_answer<0) # Negative clean answer
-    expected_answer = + cfg.repeat_digit(9) - tail_nines - clean_answer 
-    assert(expected_answer>=0) # Positive ablated answer
-    run_intervention_core(cfg, acfg, store_question, clean_question, intervention_impact, expected_answer, strong=False)
-    success = (acfg.intervened_answer[0] == "+")
-
-    if acfg.show_test_failures and not success:
-        print("Failed: GT_1, impact_digit:", impact_digit, acfg.ablate_description)
-    if acfg.show_test_successes and success:
-        print("Success: GT_1, " + acfg.ablate_description)
-
-
-    if success:
-      # TEST CHANGE FROM POSITIVE TO NEGATIVE ANSWER
-        # 00100-00201=-000101. NEG
-        store_question = [neg_question[0], neg_question[1]]
         # 00600-00201=+000399. SUB
-        clean_question = [sub_question[0], sub_question[1]]
-        clean_answer = clean_question[0] - clean_question[1] # positive
-        assert(clean_answer>=0) # Positive clean answer
-        # When we intervene we expect answer to swap from negative to positive. Get -0999101 
-        expected_answer = - cfg.repeat_digit(9) + tail_nines - clean_answer 
-        assert(expected_answer<0) # Negative ablated answer
-        run_intervention_core(cfg, acfg, store_question, clean_question, intervention_impact, expected_answer, strong=False)
-        success = (acfg.intervened_answer[0] == "-")
+        sub_question = [6 * impact_locn, 2 * impact_locn+1]
+        # 00100-00201=-000101. NEG
+        neg_question = [1 * impact_locn, 2 * impact_locn+1]
 
-        #if acfg.show_test_failures and not success:
-        if not success:
-          print("Failed: GT_2, impact_digit:", impact_digit, acfg.ablate_description)
+        # We expect the sign (Amax) to change from - to +
+        intervention_impact = answer_name(cfg.n_digits+1)
+        # Addition of 2 6-digit numbers can give a 7-digit answer. Subtraction of 2 6-digit numbers gives a signed 6-digit number. Exclude Amax-1
+        digit = cfg.n_digits - 1
+        while digit > impact_digit+1:
+            intervention_impact += str(digit)
+            digit -= 1  
+
+
+        # TEST CHANGE FROM NEGATIVE TO POSITIVE ANSWER
+        # 00600-00201=+000399. SUB
+        store_question = [sub_question[0], sub_question[1]]
+        # 00100-00201=-000101. NEG
+        clean_question = [neg_question[0], neg_question[1]]
+        clean_answer = clean_question[0] - clean_question[1]
+        assert(clean_answer<0) # Negative clean answer
+        expected_answer = + cfg.repeat_digit(9) - tail_nines - clean_answer 
+        assert(expected_answer>=0) # Positive ablated answer
+        run_intervention_core(cfg, acfg, store_question, clean_question, intervention_impact, expected_answer, strong=False)
+        success = (acfg.intervened_answer[0] == "+")
+
+        if acfg.show_test_failures and not success:
+            print("Failed: GT_1, impact_digit:", impact_digit, acfg.ablate_description)
         if acfg.show_test_successes and success:
-            print("Success: GT_2 ," + acfg.ablate_description)
+            print("Success: GT_1, " + acfg.ablate_description)
+
+
+        if success:
+          # TEST CHANGE FROM POSITIVE TO NEGATIVE ANSWER
+            # 00100-00201=-000101. NEG
+            store_question = [neg_question[0], neg_question[1]]
+            # 00600-00201=+000399. SUB
+            clean_question = [sub_question[0], sub_question[1]]
+            clean_answer = clean_question[0] - clean_question[1] # positive
+            assert(clean_answer>=0) # Positive clean answer
+            # When we intervene we expect answer to swap from negative to positive. Get -0999101 
+            expected_answer = - cfg.repeat_digit(9) + tail_nines - clean_answer 
+            assert(expected_answer<0) # Negative ablated answer
+            run_intervention_core(cfg, acfg, store_question, clean_question, intervention_impact, expected_answer, strong=False)
+            success = (acfg.intervened_answer[0] == "-")
+
+            #if acfg.show_test_failures and not success:
+            if not success:
+              print("Failed: GT_2, impact_digit:", impact_digit, acfg.ablate_description)
+            if acfg.show_test_successes and success:
+                print("Success: GT_2 ," + acfg.ablate_description)
 
  
-    if success:
-        print( "Test confirmed", acfg.ablate_node_names(), "perform", gt_tag(impact_digit))
+        if success:
+            print( "Test confirmed", acfg.ablate_node_names(), "perform", tag(impact_digit))
 
-    return success
+        return success
 

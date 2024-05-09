@@ -51,20 +51,10 @@ from .maths_tools.maths_test_questions.test_questions_checker import test_maths_
 from .maths_tools import make_maths_tricase_questions, make_maths_tricase_questions_customized
 from .maths_tools.maths_search_mix import \
     run_intervention_core, run_strong_intervention, run_weak_intervention, \
-    succeed_test, math_common_prereqs, \
-    opr_tag, opr_prereqs, \
-    sgn_tag, sgn_prereqs, \
-    gt_tag, gt_prereqs, gt_test
+    opr_functions, sgn_functions, gt_functions
 from .maths_tools.maths_search_add import \
-    add_ss_tag, add_ss_prereqs, add_ss_test, \
-    add_sc_tag, add_sc_prereqs, add_sc_test, \
-    add_sa_tag, add_sa_prereqs, add_sa_test, \
-    add_st_tag, add_st_prereqs, add_st_test
+    add_ss_functions, add_sc_functions, add_sa_functions, add_st_functions
 from .maths_tools.maths_search_sub import \
-    sub_md_tag, sub_md_prereqs, sub_md_test, \
-    sub_mb_tag, sub_mb_prereqs, sub_mb_test, \
-    sub_mt_tag, sub_mt_prereqs, sub_mt_test, \
-    neg_nd_tag, neg_nd_prereqs, neg_nd_test, \
-    neg_nb_tag, neg_nb_prereqs, neg_nb_test
+    sub_md_functions, sub_mb_functions, sub_mt_functions, neg_nd_functions, neg_nb_functions
 from .maths_tools.maths_pca import manual_nodes_pca, manual_node_pca
     
