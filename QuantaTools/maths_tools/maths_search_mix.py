@@ -1,13 +1,12 @@
 from abc import ABC, abstractmethod
 
 from QuantaTools.useful_node import position_name, location_name, answer_name, UsefulNode, UsefulNodeList
-
 from QuantaTools.quanta_constants import QType, QCondition, NO_IMPACT_TAG
 from QuantaTools.quanta_map_impact import get_question_answer_impact, sort_unique_digits
 from QuantaTools.quanta_filter import FilterNode, FilterAnd, FilterOr, FilterHead, FilterContains, FilterPosition, FilterAttention, FilterImpact, FilterAlgo, filter_nodes
-
 from QuantaTools.ablate_config import AblateConfig
 from QuantaTools.ablate_hooks import a_predict_questions, a_run_attention_intervention
+from QuantaTools.algo_search import SubTaskBase
 
 from .maths_constants import MathsToken, MathsBehavior, MathsTask 
 from .maths_config import MathsConfig
@@ -80,35 +79,8 @@ def run_weak_intervention(cfg, acfg, store_question, clean_question):
     return success
 
 
-class SubTaskBase(ABC):
-    """
-    Abstract base class for tasks, enforcing implementation of tag, prereqs, and test methods.
-    """
-
-    @staticmethod
-    @abstractmethod
-    def operation():
-        """
-        Method to return the operation assoicated with the task.
-        """
-        pass
-    
-    @staticmethod
-    @abstractmethod
-    def tag(impact_digit):
-        """
-        Method to generate a tag for the task.
-        """
-        pass
-
-    @staticmethod
-    @abstractmethod
-    def prereqs(cfg, position, impact_digit):
-        """
-        Method to calculate prerequisites for the task.
-        """
-        pass
-
+class SubTaskBaseMath(SubTaskBase):
+ 
     @staticmethod
     # Common set of node filters (pre-requisites) for some maths tasks based on token position, attention to Dn and D'n, and answer digit impact
     def math_common_prereqs(cfg, position, attend_digit, impact_digit):
@@ -119,22 +91,8 @@ class SubTaskBase(ABC):
             FilterAttention(cfg.ddn_to_position_name(attend_digit)), # Attends to D'n
             FilterImpact(answer_name(impact_digit))) # Impacts Am
 
-    @staticmethod
-    @abstractmethod
-    def test(cfg, acfg, impact_digit, strong):
-        """
-        Method to test the task's implementation and interventions.
-        """
-        pass
 
-    @staticmethod
-    # A test function that always suceeds 
-    def succeed_test(cfg, acfg, alter_digit, strong):
-        print( "Test confirmed", acfg.ablate_node_names(), "" if strong else "Weak")
-        return True
-
-
-class opr_functions(SubTaskBase):
+class opr_functions(SubTaskBaseMath):
 
     @staticmethod
     def operation():
@@ -155,10 +113,10 @@ class opr_functions(SubTaskBase):
 
     @staticmethod
     def test(cfg, acfg, impact_digit, strong):
-        return succeed_test(cfg, acfg, impact_digit, strong)
+        return SubTaskBaseMath.succeed_test(cfg, acfg, impact_digit, strong)
 
 
-class sgn_functions(SubTaskBase):
+class sgn_functions(SubTaskBaseMath):
 
     @staticmethod
     def operation():
@@ -179,10 +137,10 @@ class sgn_functions(SubTaskBase):
 
     @staticmethod
     def test(cfg, acfg, impact_digit, strong):
-        return succeed_test(cfg, acfg, impact_digit, strong)
+        return SubTaskBaseMath.succeed_test(cfg, acfg, impact_digit, strong)
 
 
-class gt_functions(SubTaskBase):
+class gt_functions(SubTaskBaseMath):
 
     @staticmethod
     def operation():
@@ -262,7 +220,7 @@ class gt_functions(SubTaskBase):
 
  
         if success:
-            print( "Test confirmed", acfg.ablate_node_names(), "perform", tag(impact_digit))
+            print( "Test confirmed", acfg.ablate_node_names(), "perform", gt_functions.tag(impact_digit))
 
         return success
 

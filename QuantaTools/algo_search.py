@@ -1,9 +1,56 @@
 import itertools
+from abc import ABC, abstractmethod
 
 from .useful_config import UsefulConfig
 from .quanta_filter import FilterAlgo, filter_nodes
 from .quanta_constants import QType, QCondition
+from .quanta_filter import FilterNode, FilterAnd, FilterOr, FilterHead, FilterContains, FilterPosition, FilterAttention, FilterImpact, FilterAlgo, filter_nodes
 from .algo_config import AlgoConfig
+
+
+class SubTaskBase(ABC):
+    """
+    Abstract base class for tasks, enforcing implementation of tag, prereqs, and test methods.
+    """
+
+    @staticmethod
+    @abstractmethod
+    def operation():
+        """
+        Method to return the operation assoicated with the task.
+        """
+        pass
+    
+    @staticmethod
+    @abstractmethod
+    def tag(impact_digit):
+        """
+        Method to generate a tag for the task.
+        """
+        pass
+
+    @staticmethod
+    @abstractmethod
+    def prereqs(cfg, position, impact_digit):
+        """
+        Method to calculate prerequisites for the task.
+        """
+        pass
+
+    @staticmethod
+    @abstractmethod
+    def test(cfg, acfg, impact_digit, strong):
+        """
+        Method to test the task's implementation and interventions.
+        """
+        pass
+
+    @staticmethod
+    # A test function that always suceeds 
+    def succeed_test(cfg, acfg, alter_digit, strong):
+        print( "Test confirmed", acfg.ablate_node_names(), "" if strong else "Weak")
+        return True
+    
 
 
 # Search the specified useful node(s), using the test_function, for the expected impact on the_impact_digit

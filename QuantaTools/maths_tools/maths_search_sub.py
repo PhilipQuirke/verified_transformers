@@ -1,18 +1,16 @@
 from QuantaTools.useful_node import position_name, answer_name, UsefulNode, UsefulNodeList
-
 from QuantaTools.quanta_constants import QType, QCondition, NO_IMPACT_TAG
 from QuantaTools.quanta_map_impact import sort_unique_digits
 from QuantaTools.quanta_filter import FilterNode, FilterAnd, FilterOr, FilterHead, \
      FilterContains, FilterPosition, FilterAttention, FilterImpact, FilterAlgo
-
 from QuantaTools.ablate_config import AblateConfig
 
 from .maths_constants import MathsToken, MathsBehavior, MathsTask 
-from .maths_search_mix import run_strong_intervention, run_weak_intervention, SubTaskBase
+from .maths_search_mix import run_strong_intervention, run_weak_intervention, SubTaskBaseMath
 from .maths_utilities import digit_name
 
 
-class sub_md_functions(SubTaskBase):
+class sub_md_functions(SubTaskBaseMath):
 
     @staticmethod
     def operation():
@@ -27,7 +25,7 @@ class sub_md_functions(SubTaskBase):
     # Prerequisites for positive-answer subtraction "Difference" (MD) tasks 
     def prereqs(cfg, position, impact_digit):
         # Pays attention to Dn and D'n. Impacts An
-        return math_common_prereqs(cfg, position, impact_digit, impact_digit)
+        return SubTaskBaseMath.math_common_prereqs(cfg, position, impact_digit, impact_digit)
 
     @staticmethod
     def test1(cfg, alter_digit):
@@ -62,21 +60,21 @@ class sub_md_functions(SubTaskBase):
     
         intervention_impact = answer_name(alter_digit)
 
-        store_question, clean_question, intervened_answer = test1(cfg, alter_digit)
+        store_question, clean_question, intervened_answer = sub_md_functions.test1(cfg, alter_digit)
         success1, _, impact_success1 = run_strong_intervention(cfg, acfg, store_question, clean_question, intervention_impact, intervened_answer)
 
-        store_question, clean_question, intervened_answer = test2(cfg, alter_digit)
+        store_question, clean_question, intervened_answer = sub_md_functions.test2(cfg, alter_digit)
         success2, _, impact_success2 = run_strong_intervention(cfg, acfg, store_question, clean_question, intervention_impact, intervened_answer)
 
         success = (success1 and success2) if strong else (impact_success1 and impact_success2)
 
         if success:
-            print( "Test confirmed", acfg.ablate_node_names(), "perform", tag(alter_digit), " = (D"+str(alter_digit)+" + D'"+str(alter_digit)+") % 10 impacting "+intervention_impact+" accuracy.", "" if strong else "Weak")
+            print( "Test confirmed", acfg.ablate_node_names(), "perform", sub_md_functions.tag(alter_digit), " = (D"+str(alter_digit)+" + D'"+str(alter_digit)+") % 10 impacting "+intervention_impact+" accuracy.", "" if strong else "Weak")
 
         return success
 
 
-class sub_mb_functions(SubTaskBase):
+class sub_mb_functions(SubTaskBaseMath):
 
     @staticmethod
     def operation():
@@ -91,7 +89,7 @@ class sub_mb_functions(SubTaskBase):
     # Prerequisites for positive-answer subtraction "Borrow One" (MB) task
     def prereqs(cfg, position, impact_digit):
         # Pays attention to Dn-1 and D'n-1. Impacts An    
-        return math_common_prereqs(cfg,  position, impact_digit-1, impact_digit)
+        return SubTaskBaseMath.math_common_prereqs(cfg,  position, impact_digit-1, impact_digit)
 
     @staticmethod
     # Intervention ablation test for positive-answer subtraction "Borrow One" (MB) task
@@ -117,12 +115,12 @@ class sub_mb_functions(SubTaskBase):
         success, _, _ = run_strong_intervention(cfg, acfg, store_question, clean_question, intervention_impact, intervened_answer)
 
         if success:
-            print( "Test confirmed", acfg.ablate_node_names(), "perform", sub_mb_tag(alter_digit), "impacting", intervention_impact, "accuracy.", "" if strong else "Weak")
+            print( "Test confirmed", acfg.ablate_node_names(), "perform", sub_mb_functions.tag(alter_digit), "impacting", intervention_impact, "accuracy.", "" if strong else "Weak")
         
         return success
 
 
-class sub_mt_functions(SubTaskBase):
+class sub_mt_functions(SubTaskBaseMath):
 
     @staticmethod
     def operation():
@@ -163,12 +161,12 @@ class sub_mt_functions(SubTaskBase):
         success = run_weak_intervention(cfg, acfg, store_question, clean_question)
 
         if success:
-            print("Test confirmed", acfg.ablate_node_names(), "perform", sub_mt_tag(focus_digit), "Impact:", acfg.intervened_impact, "" if strong else "Weak")
+            print("Test confirmed", acfg.ablate_node_names(), "perform", sub_mt_functions.tag(focus_digit), "Impact:", acfg.intervened_impact, "" if strong else "Weak")
 
         return success
 
 
-class neg_nd_functions(SubTaskBase):
+class neg_nd_functions(SubTaskBaseMath):
 
     @staticmethod
     def operation():
@@ -183,7 +181,7 @@ class neg_nd_functions(SubTaskBase):
     # These rules are prerequisites for (not proof of) a Neg Difference node
     def prereqs(cfg, position, impact_digit):
         # Impacts An and pays attention to Dn and D'n
-        return math_common_prereqs(cfg, position, impact_digit, impact_digit)
+        return SubTaskBaseMath.math_common_prereqs(cfg, position, impact_digit, impact_digit)
 
     @staticmethod
     def test1(cfg, alter_digit):
@@ -220,21 +218,21 @@ class neg_nd_functions(SubTaskBase):
     def test(cfg, acfg, alter_digit, strong):
         intervention_impact = answer_name(alter_digit)
 
-        store_question, clean_question, intervened_answer = test1(cfg, alter_digit)
+        store_question, clean_question, intervened_answer = neg_nd_functions.test1(cfg, alter_digit)
         success1, _, impact_success1 = run_strong_intervention(cfg, acfg, store_question, clean_question, intervention_impact, intervened_answer)
 
-        store_question, clean_question, intervened_answer = test2(cfg, alter_digit)
+        store_question, clean_question, intervened_answer = neg_nd_functions.test2(cfg, alter_digit)
         success2, _, impact_success2 = run_strong_intervention(cfg, acfg, store_question, clean_question, intervention_impact, intervened_answer)
 
         success = (success1 and success2) if strong else (impact_success1 and impact_success2)
 
         if success:
-            print( "Test confirmed", acfg.ablate_node_names(), "perform", neg_nd_tag(alter_digit), " = (D"+str(alter_digit)+" + D'"+str(alter_digit)+") % 10 impacting", intervention_impact, "accuracy.", "" if strong else "Weak")
+            print( "Test confirmed", acfg.ablate_node_names(), "perform", neg_nd_functions.tag(alter_digit), " = (D"+str(alter_digit)+" + D'"+str(alter_digit)+") % 10 impacting", intervention_impact, "accuracy.", "" if strong else "Weak")
 
         return success
 
 
-class neg_nb_functions(SubTaskBase):
+class neg_nb_functions(SubTaskBaseMath):
 
     @staticmethod
     def operation():
@@ -249,7 +247,7 @@ class neg_nb_functions(SubTaskBase):
     # Prerequisites for negative-answer subtraction "Borrow One" (NB) task
     def prereqs(cfg, position, impact_digit):
         # Pays attention to Dn-1 and D'n-1. Impacts An
-        return math_common_prereqs(cfg,  position, impact_digit-1, impact_digit)
+        return SubTaskBaseMath.math_common_prereqs(cfg,  position, impact_digit-1, impact_digit)
 
     @staticmethod
     # Intervention ablation test for negative-answer subtraction "Borrow One" (NB) task
@@ -277,6 +275,6 @@ class neg_nb_functions(SubTaskBase):
         success, _, _ = run_strong_intervention(cfg, acfg, store_question, clean_question, intervention_impact, intervened_answer)
 
         if success:
-            print( "Test confirmed", acfg.ablate_node_names(), "perform", neg_nb_tag(alter_digit), "impacting", intervention_impact, "accuracy.", "" if strong else "Weak")
+            print( "Test confirmed", acfg.ablate_node_names(), "perform", neg_nb_functions.tag(alter_digit), "impacting", intervention_impact, "accuracy.", "" if strong else "Weak")
 
         return success

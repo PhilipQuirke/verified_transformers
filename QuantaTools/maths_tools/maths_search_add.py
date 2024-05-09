@@ -1,18 +1,16 @@
 from QuantaTools.useful_node import position_name, answer_name, UsefulNode, UsefulNodeList
-
 from QuantaTools.quanta_constants import QType, QCondition, NO_IMPACT_TAG
 from QuantaTools.quanta_map_impact import sort_unique_digits
 from QuantaTools.quanta_filter import FilterNode, FilterAnd, FilterOr, FilterHead, \
      FilterContains, FilterPosition, FilterAttention, FilterImpact, FilterAlgo
-
 from QuantaTools.ablate_config import AblateConfig
 
 from .maths_constants import MathsToken, MathsBehavior, MathsTask 
-from .maths_search_mix import run_strong_intervention, run_weak_intervention, SubTaskBase
+from .maths_search_mix import run_strong_intervention, run_weak_intervention, SubTaskBaseMath
 from .maths_utilities import digit_name
 
 
-class add_ss_functions(SubTaskBase):
+class add_ss_functions(SubTaskBaseMath):
 
     @staticmethod
     def operation():
@@ -27,7 +25,7 @@ class add_ss_functions(SubTaskBase):
     # Node rerequisites for addition "Use Sum 9" (SS) task
     def prereqs(cfg, position, impact_digit):
         # Pays attention to Dn-2 and D'n-2. Impacts An
-        return math_common_prereqs(cfg, position, impact_digit-2, impact_digit)
+        return SubTaskBaseMath.math_common_prereqs(cfg, position, impact_digit-2, impact_digit)
 
     @staticmethod
     def test1(cfg, alter_digit):
@@ -52,19 +50,19 @@ class add_ss_functions(SubTaskBase):
             acfg.reset_intervention()
             return False
 
-        store_question, clean_question, intervened_answer = test1(cfg, alter_digit)
+        store_question, clean_question, intervened_answer = add_ss_functions.test1(cfg, alter_digit)
 
         intervention_impact = answer_name(alter_digit)
     
         success, _, _ = run_strong_intervention(cfg, acfg, store_question, clean_question, intervention_impact, intervened_answer)
 
         if success:
-            print( "Test confirmed", acfg.ablate_node_names(), "perform", tag(alter_digit), "impacting", intervention_impact, "accuracy.", "" if strong else "Weak")
+            print( "Test confirmed", acfg.ablate_node_names(), "perform", add_ss_functions.tag(alter_digit), "impacting", intervention_impact, "accuracy.", "" if strong else "Weak")
 
         return success
 
 
-class add_sc_functions(SubTaskBase):
+class add_sc_functions(SubTaskBaseMath):
 
     @staticmethod
     def operation():
@@ -79,7 +77,7 @@ class add_sc_functions(SubTaskBase):
     # Node rerequisites for addition "Make Carry 1" (SC) task
     def prereqs(cfg, position, impact_digit):
         # Pays attention to Dn-1 and D'n-1. Impacts An
-        return math_common_prereqs(cfg, position, impact_digit-1, impact_digit)
+        return SubTaskBaseMath.math_common_prereqs(cfg, position, impact_digit-1, impact_digit)
 
     @staticmethod
     # Intervention ablation test for addition "Make Carry 1" (SC) task
@@ -105,12 +103,12 @@ class add_sc_functions(SubTaskBase):
         success, _, _ = run_strong_intervention(cfg, acfg, store_question, clean_question, intervention_impact, intervened_answer)
 
         if success:
-            print( "Test confirmed", acfg.ablate_node_names(), "perform", tag(alter_digit), "impacting", intervention_impact, "accuracy.", "" if strong else "Weak")
+            print( "Test confirmed", acfg.ablate_node_names(), "perform", add_sc_functions.tag(alter_digit), "impacting", intervention_impact, "accuracy.", "" if strong else "Weak")
 
         return success
 
 
-class add_sa_functions(SubTaskBase):
+class add_sa_functions(SubTaskBaseMath):
 
     @staticmethod
     def operation():
@@ -125,7 +123,7 @@ class add_sa_functions(SubTaskBase):
     # Node rerequisites for addition "Simple Add" (SA) task
     def prereqs(cfg, position, impact_digit):
         # Pays attention to Dn and D'n. Impacts An
-        return math_common_prereqs(cfg, position, impact_digit, impact_digit)
+        return SubTaskBaseMath.math_common_prereqs(cfg, position, impact_digit, impact_digit)
 
     @staticmethod
     def test1(cfg, alter_digit):
@@ -160,21 +158,21 @@ class add_sa_functions(SubTaskBase):
 
         intervention_impact = answer_name(alter_digit)
 
-        store_question, clean_question, intervened_answer = test1(cfg, alter_digit)
+        store_question, clean_question, intervened_answer = add_sa_functions.test1(cfg, alter_digit)
         success1, _, impact_success1 = run_strong_intervention(cfg, acfg, store_question, clean_question, intervention_impact, intervened_answer)
 
-        store_question, clean_question, intervened_answer = test2(cfg, alter_digit)
+        store_question, clean_question, intervened_answer = add_sa_functions.test2(cfg, alter_digit)
         success2, _, impact_success2 = run_strong_intervention(cfg, acfg, store_question, clean_question, intervention_impact, intervened_answer)
 
         success = (success1 and success2) if strong else (impact_success1 and impact_success2)
 
         if success:
-            print( "Test confirmed:", acfg.ablate_node_names(), "perform", tag(alter_digit), "= (D"+str(alter_digit)+" + D'"+str(alter_digit)+") % 10 impacting "+intervention_impact+" accuracy.", "" if strong else "Weak", acfg.intervened_answer)
+            print( "Test confirmed:", acfg.ablate_node_names(), "perform", add_sa_functions.tag(alter_digit), "= (D"+str(alter_digit)+" + D'"+str(alter_digit)+") % 10 impacting "+intervention_impact+" accuracy.", "" if strong else "Weak", acfg.intervened_answer)
 
         return success
 
 
-class add_st_functions(SubTaskBase):
+class add_st_functions(SubTaskBaseMath):
 
     @staticmethod
     def operation():
@@ -211,7 +209,7 @@ class add_st_functions(SubTaskBase):
         success = run_weak_intervention(cfg, acfg, store_question, clean_question)
 
         if success:
-            description = acfg.ablate_node_names() + " perform " + add_st_tag(focus_digit) + " = TriCase(D"+str(focus_digit)+" + D'"+str(focus_digit)+")"
+            description = acfg.ablate_node_names() + " perform " + add_st_functions.tag(focus_digit) + " = TriCase(D"+str(focus_digit)+" + D'"+str(focus_digit)+")"
             print("Test confirmed", description, "Impact:", acfg.intervened_impact, "" if strong else "Weak")
 
         return success
