@@ -195,12 +195,12 @@ def make_maths_tricase_questions(cfg, num_questions=TOTAL_TRICASE_QUESTIONS):
             cfg.tricase_questions_dict[(answer_digit, operation)] = t_questions
 
 
-def make_maths_tricase_questions_customized(cfg, custom_triclass_config=CustomTriclassConfig()):
+def make_maths_tricase_questions_customized(cfg, custom_triclass_config=CustomTriclassConfig(), verbose=False):
     """
     Creates a dictionary of tricase questions in cfg.tricase_questions_dict.
     This dictionary is indexed by (answer_digit, operator, question_type) with custom_triclass_config.number examples of each.
     """
-    cfg.tricase_questions_dict = {}
+    cfg.customized_tricase_questions_dict = {}
     for answer_digit in range(cfg.n_digits):
         operators_qtype_numbers = custom_triclass_config.operators_qtypes_counts
 
@@ -249,5 +249,7 @@ def make_maths_tricase_questions_customized(cfg, custom_triclass_config=CustomTr
                 f"when requested with {num_questions} for {operator_qtype_number}")
             cfg.customized_tricase_questions_dict[(answer_digit, operator, qtype)] = torch.vstack(all_questions)
 
-            value_distribution = {key: len(values) for key, values in cfg.tricase_questions_dict.items()}
-            print(f'Value distribution for (answer_digit, operator, qtype) is: \n{value_distribution}')
+            value_distribution = {key: len(values) for key, values in cfg.customized_tricase_questions_dict.items()}
+
+            if verbose:
+                print(f'Value distribution for (answer_digit, operator, qtype) is: \n{value_distribution}')
