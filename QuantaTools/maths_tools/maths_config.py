@@ -71,6 +71,10 @@ class MathsConfig(AlgoConfig):
         match = re.search(r"d(\d)_", self.model_name)
         if match:
             self.n_digits = int(match.group(1))
+        else:
+            match = re.search(r"d(\d\d)_", self.model_name)
+            if match:
+                self.n_digits = int(match.group(1))
             
         # n_digits may have changed 
         self.initialize_maths_token_positions()  
@@ -92,7 +96,15 @@ class MathsConfig(AlgoConfig):
     
 
     # Return integer 444444 for 6 digit number
+    @staticmethod
+    def repeat_digit_n(digit, n):
+        if n <= 0:
+            return 0
+        
+        return int(str(digit) * n)
+    
+    # Return integer 444444 for 6 digit number
     def repeat_digit(self, digit):
-        return int(str(digit) * self.n_digits)
+        return MathsConfig.repeat_digit_n(digit, self.n_digits)
 
 
