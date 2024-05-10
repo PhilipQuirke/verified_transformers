@@ -253,3 +253,5 @@ def make_maths_tricase_questions_customized(cfg, custom_triclass_config=CustomTr
 
             if verbose:
                 print(f'Value distribution for (answer_digit, operator, qtype) is: \n{value_distribution}')
+
+    return cfg.customized_tricase_questions_dict.copy()
