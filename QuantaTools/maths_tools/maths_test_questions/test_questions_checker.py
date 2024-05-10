@@ -200,7 +200,7 @@ def test_correctness_on_num_questions_core(cfg, acfg, num_questions=1000000):
     for epoch in tqdm(range(num_batches)):
         tokens = next(local_ds)
 
-        the_fails = test_maths_questions_by_impact(cfg, acfg, tokens, 0, False)
+        the_fails += test_maths_questions_by_impact(cfg, acfg, tokens, 0, False)
 
         the_successes = the_successes + cfg.batch_size
 
