@@ -249,9 +249,9 @@ def make_maths_tricase_questions_customized(cfg, custom_triclass_config=CustomTr
                 f"when requested with {num_questions} for {operator_qtype_number}")
             cfg.customized_tricase_questions_dict[(answer_digit, operator, qtype)] = torch.vstack(all_questions)
 
-            value_distribution = {key: len(values) for key, values in cfg.customized_tricase_questions_dict.items()}
+    value_distribution = {key: len(values) for key, values in cfg.customized_tricase_questions_dict.items()}
 
-            if verbose:
-                print(f'Value distribution for (answer_digit, operator, qtype) is: \n{value_distribution}')
+    if verbose:
+        print(f'Value distribution for (answer_digit, operator, qtype) is: \n{value_distribution}')
 
     return cfg.customized_tricase_questions_dict.copy()
