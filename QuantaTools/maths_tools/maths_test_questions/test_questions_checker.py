@@ -100,7 +100,7 @@ def test_maths_questions_by_impact(cfg, acfg, questions, position : int, ablate 
                 num_fails += 1
 
                 if acfg.show_test_failures:
-                    print(tokens_to_string(cfg, q), "Q: ModelAnswer:", answer_str, "Impact:", impact_str, "Loss:", format(the_loss_mean, ".4f"))
+                    print(tokens_to_string(cfg, q), "ModelAnswer:", answer_str, "Impact:", impact_str, "Loss:", format(the_loss_mean, ".4f"))
 
     return num_fails
 
