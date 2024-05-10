@@ -179,25 +179,31 @@ class add_st_functions(SubTaskBaseMath):
         return MathsToken.PLUS
     
     @staticmethod
-    # Tag for addition An.ST 
+    # Tag for addition Dn.ST 
     def tag(focus_digit):
         return digit_name(focus_digit) + "." + MathsTask.ST_TAG.value
 
     @staticmethod
-    # Prerequisites for addition An.ST 
+    # Prerequisites for addition Dn.ST 
     def prereqs(cfg, position, focus_digit):
+        # Example meaning: 
+        #   And(IsHead, 
+        #       Position>=n_digits, Position<=num_question_positions, Position=14,
+        #       AttendsTo:D3, AttendsTo:D'3, 
+        #       Has bi- or trigram PCA for addition questions,
+        #       Impacts addition questions)    
         return FilterAnd(
             FilterHead(),
             FilterPosition(position_name(cfg.n_digits), QCondition.MIN), # Occurs from the operator token
             FilterPosition(position_name(cfg.num_question_positions), QCondition.MAX), # Occurs by the = token
+            FilterPosition(position_name(position)), # Is at token position Px
             FilterAttention(cfg.dn_to_position_name(focus_digit)), # Attends to Dn
             FilterAttention(cfg.ddn_to_position_name(focus_digit)), # Attends to D'n
             FilterContains(QType.MATH_ADD, MathsBehavior.ADD_PCA_TAG.value), # Node PCA is interpretable (bigram or trigram output) with respect to addition T8,T9,T10
-            FilterContains(QType.MATH_ADD, MathsBehavior.ADD_COMPLEXITY_PREFIX.value), # Impacts addition questions
-            FilterPosition(position_name(position))) # Is at token position Px
+            FilterContains(QType.MATH_ADD, MathsBehavior.ADD_COMPLEXITY_PREFIX.value)) # Impacts addition questions
 
     @staticmethod
-    # Intervention ablation test for addition An.ST with impact "A65432" to "A65" in early tokens.
+    # Intervention ablation test for addition Dn.ST with impact "A65432" to "A65" in early tokens.
     def test(cfg, acfg, focus_digit, strong):
         # 222222 + 777977 = 1000188. Has Dn.SC
         store_question = [cfg.repeat_digit(2), cfg.repeat_digit(7)]

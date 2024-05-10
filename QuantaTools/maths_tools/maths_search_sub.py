@@ -133,15 +133,21 @@ class sub_mt_functions(SubTaskBaseMath):
 
     @staticmethod
     def prereqs(cfg, position, focus_digit):
+        # Example meaning: 
+        #   And(IsHead, 
+        #       Position>=n_digits, Position<=num_question_positions, Position=14,
+        #       AttendsTo:D3, AttendsTo:D'3, 
+        #       Has bi- or trigram PCA for subtraction questions,
+        #       Impacts subtraction questions)        
         return FilterAnd(
             FilterHead(),
             FilterPosition(position_name(cfg.n_digits), QCondition.MIN), # Occurs in early tokens
             FilterPosition(position_name(cfg.num_question_positions), QCondition.MAX), # Occurs in early tokens   
+            FilterPosition(position_name(position)),
             FilterAttention(cfg.dn_to_position_name(focus_digit)), # Attends to Dn
             FilterAttention(cfg.ddn_to_position_name(focus_digit)), # Attends to D'n
             FilterContains(QType.MATH_SUB, MathsBehavior.SUB_PCA_TAG.value), # Node PCA is interpretable (bigram or trigram output) with respect to subtraction T8,T9,T10
-            FilterContains(QType.MATH_SUB, MathsBehavior.SUB_COMPLEXITY_PREFIX.value), # Impacts positive-answer questions (cover M1 to M4)
-            FilterPosition(position_name(position)))
+            FilterContains(QType.MATH_SUB, MathsBehavior.SUB_COMPLEXITY_PREFIX.value)) # Impacts positive-answer questions (cover M1 to M4)
 
     @staticmethod
     # Test that if we ablate this node then a negative-answer-subtraction question answer swaps to its positive complement
