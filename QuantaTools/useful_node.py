@@ -162,13 +162,17 @@ class UsefulNode(NodeLocation):
         return False
 
 
-    def to_dict(self):
+    def to_dict(self, major_tag = ""):
+        the_tags = self.tags    
+        if major_tag != "":
+            the_tags = [s for s in self.tags if s.startswith(major_tag)]
+
         return {
           "position": self.position,
           "layer": self.layer,
           "is_head": self.is_head,
           "num": self.num,
-          "tags": self.tags
+          "tags": the_tags
         }
 
     @classmethod
@@ -249,8 +253,26 @@ class UsefulNodeList():
 
 
     # Save the nodes and tags to a json file
-    def save_nodes(self, filename):
-        dict_list = [node.to_dict() for node in self.nodes]
+    def save_nodes(self, filename, major_tag = ""):
+        dict_list = [node.to_dict(major_tag) for node in self.nodes]
         with open(filename, 'w') as file:
             json.dump(dict_list, file, default=lambda o: o.__dict__)
+    
+            
+    # Load the nodes and tags from a json file
+    def load_nodes(self, filename):
+        with open(filename, 'r') as file:
+            dict_list = json.load(file)
+            for data in dict_list:
+                data_node = UsefulNode.from_dict(data)
+                
+                # Find/create the corresponding in-memory node
+                the_node = self.get_node( data_node )
+                if the_node == None:
+                    the_node = UsefulNode(data_node.position, data_node.layer, data_node.is_head, data_node.num, [])
+                    self.nodes += [the_node]
 
+                # Load/merge the tags
+                for tag in data_node.tags:
+                    major_tag, minor_tag = tag.split(":")
+                    the_node.add_tag(major_tag, minor_tag)

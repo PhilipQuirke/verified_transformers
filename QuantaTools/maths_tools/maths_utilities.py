@@ -1,5 +1,10 @@
 from .maths_constants import MathsToken
 
+
+def digit_name(digit):
+    return "D" + str(digit)
+
+
 # Vocabulary dictionary: Mapping from character (key) to token (value)
 def set_maths_vocabulary(cfg):
     cfg.char_to_token = {str(i) : i for i in range(10)}
@@ -14,7 +19,7 @@ def set_maths_vocabulary(cfg):
 def set_maths_question_meanings(cfg):
     q_meanings = []
     for i in range(cfg.n_digits):
-        q_meanings += ["D" + str(cfg.n_digits-i-1)]
+        q_meanings += [digit_name(cfg.n_digits-i-1)]
     q_meanings += ["OPR"] # Stands in for operation +, - or *
     for i in range(cfg.n_digits):
         q_meanings += ["D'" + str(cfg.n_digits-i-1)]

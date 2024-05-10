@@ -69,6 +69,9 @@ class MathsTask(Enum):
     NB_TAG = "NB" # Negative-answer Subtraction - Borrow One (Dn, D'n)
     NZ_TAG = "NZ" # Negative-answer Subtraction - Sum Zero (Dn, D'n)
     NT_TAG = "NT" # Negative-answer Subtraction - TriCase (Dn, D'n)
+
+    GT_TAG = "GT" # SUB/NEG - GreaterThan node that helps calculate Dn > D'n, and impacts sign of answer 
   
     OPR_TAG = "OPR" # Add/Sub - Attends to operation token (in the middle of the question)
     SGN_TAG = "SGN" # Add/Sub - Attends to answer sign (+/-) token (at the start of the answer)
+    

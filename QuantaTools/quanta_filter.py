@@ -175,7 +175,9 @@ def print_algo_purpose_results(cfg):
     num_heads_with_purpose = algo_nodes.num_heads()
     num_neurons_with_purpose = algo_nodes.num_neurons()
 
-    print(f"{num_heads_with_purpose} of {num_heads} useful attention heads ({num_heads_with_purpose / num_heads * 100:.2f}%) have an algorithmic purpose assigned." )
-    print(f"{num_neurons_with_purpose} of {num_neurons} useful MLP neurons ({num_neurons_with_purpose / num_neurons * 100:.2f}%) have an algorithmic purpose assigned." )
+    if num_heads>0:
+        print(f"{num_heads_with_purpose} of {num_heads} useful attention heads ({num_heads_with_purpose / num_heads * 100:.2f}%) have an algorithmic purpose assigned." )
+    if num_neurons>0:
+        print(f"{num_neurons_with_purpose} of {num_neurons} useful MLP neurons ({num_neurons_with_purpose / num_neurons * 100:.2f}%) have an algorithmic purpose assigned." )
 
 

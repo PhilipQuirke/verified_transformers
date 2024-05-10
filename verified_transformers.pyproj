@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{96a77344-fe98-4400-8758-f7beed2bf843}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>Tests\tests.py</StartupFile>
+    <StartupFile>Tests\tests_suite.py</StartupFile>
     <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -33,14 +33,19 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="QuantaTools\algo_search.py" />
+    <Compile Include="QuantaTools\maths_tools\maths_search_add.py" />
+    <Compile Include="QuantaTools\maths_tools\maths_search_sub.py" />
+    <Compile Include="QuantaTools\maths_tools\maths_test_questions\manual_test_questions_generator.py" />
+    <Compile Include="QuantaTools\maths_tools\maths_test_questions\test_questions_checker.py" />
+    <Compile Include="QuantaTools\maths_tools\maths_test_questions\tricase_test_questions_generator.py" />
+    <Compile Include="QuantaTools\maths_tools\maths_test_questions\__init__.py" />
     <Compile Include="QuantaTools\model_pca.py" />
     <Compile Include="QuantaTools\maths_tools\__init__.py" />
-    <Compile Include="QuantaTools\maths_tools\maths_algo_search.py" />
+    <Compile Include="QuantaTools\maths_tools\maths_search_mix.py" />
     <Compile Include="QuantaTools\maths_tools\maths_complexity.py" />
     <Compile Include="QuantaTools\maths_tools\maths_config.py" />
     <Compile Include="QuantaTools\maths_tools\maths_data_generator.py" />
     <Compile Include="QuantaTools\maths_tools\maths_pca.py" />
-    <Compile Include="QuantaTools\maths_tools\maths_test_questions.py" />
     <Compile Include="QuantaTools\maths_tools\maths_utilities.py" />
     <Compile Include="QuantaTools\maths_tools\maths_constants.py" />
     <Compile Include="QuantaTools\model_config.py" />
@@ -62,14 +67,24 @@
     <Compile Include="QuantaTools\useful_node.py" />
     <Compile Include="QuantaTools\__init__.py" />
     <Compile Include="setup.py" />
-    <Compile Include="Tests\tests.py">
+    <Compile Include="Tests\tests_suite.py" />
+    <Compile Include="Tests\tests_generic.py" />
+    <Compile Include="Tests\tests_maths.py">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="QuantaTools\maths_tools\" />
+    <Folder Include="QuantaTools\maths_tools\maths_test_questions\" />
+    <Folder Include="QuantaTools\maths_tools\maths_test_questions\__pycache__\" />
     <Folder Include="Tests\" />
     <Folder Include="QuantaTools" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="QuantaTools\maths_tools\maths_test_questions\__pycache__\manual_test_questions_generator.cpython-311.pyc" />
+    <Content Include="QuantaTools\maths_tools\maths_test_questions\__pycache__\test_questions_checker.cpython-311.pyc" />
+    <Content Include="QuantaTools\maths_tools\maths_test_questions\__pycache__\tricase_test_questions_generator.cpython-311.pyc" />
+    <Content Include="QuantaTools\maths_tools\maths_test_questions\__pycache__\__init__.cpython-311.pyc" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
 </Project>

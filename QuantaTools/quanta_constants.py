@@ -69,6 +69,16 @@ FAIL_SHADES = 10
 MAX_ATTN_TAGS = 5
 # When graphing, we only show input tokens with > 10% of the node's attention
 MIN_ATTN_PERC = 10
+# When graphing, if the two top percent attentions are within 5% (e.g. 'Attn:P3=52', 'Attn:P10=48')
+# show the top two tokens in alphabetical order. For a task split across two adjacent cells, this helps the 
+# two cells to generate the same attention text, and so for the cells to combine in graphs.
+ATTN_ORDER_DIFF = 5
+# When graphing, if the two top percent attentions are each over 40% (e.g. 'Attn:P5=56', 'Attn:P12=43')
+# show the top two tokens in alphabetical order. For a task split across two adjacent cells, this helps the 
+# two cells to generate the same attention text, and so for the cells to combine in graphs.
+ATTN_ORDER_MIN = 40
+
+
 # Number of shades used in quanta maps
 ATTN_SHADES = 10 
 

@@ -1,6 +1,6 @@
 import torch
 from tqdm.notebook import tqdm
-from transformer_lens import utils
+import transformer_lens.utils as utils
 
 from QuantaTools import logits_to_tokens_loss, tokens_to_string, get_maths_question_complexity, NodeLocation, \
     a_predict_questions, loss_fn, get_question_answer_impact, QType, sort_unique_digits, MathsBehavior, \
@@ -45,7 +45,7 @@ def test_maths_questions_by_complexity(cfg, acfg, varied_questions):
 
         if acfg.show_test_failures and not correct:
             q_and_a_str = tokens_to_string(cfg, q_and_a)
-            print("Failed: Q&A:", q_and_a_str, "ModelAnswer:", model_answer_str, "Correct:", correct_answer_str, "Complexity:", group_name)
+            print("Failed: Q&A:", q_and_a_str, "ModelAnswer:", model_answer_str, "Complexity:", group_name)
 
 
     # Calculate and print summary success rates per group
@@ -100,7 +100,7 @@ def test_maths_questions_by_impact(cfg, acfg, questions, position : int, ablate 
                 num_fails += 1
 
                 if acfg.show_test_failures:
-                    print(tokens_to_string(cfg, q), "Q: ModelAnswer:", answer_str, "Impact:", impact_str, "Loss:", the_loss_mean )
+                    print(tokens_to_string(cfg, q), "Q: ModelAnswer:", answer_str, "Impact:", impact_str, "Loss:", format(the_loss_mean, ".4f"))
 
     return num_fails
 
@@ -202,9 +202,6 @@ def test_correctness_on_num_questions_core(cfg, acfg, num_questions=1000000):
 
         the_fails = test_maths_questions_by_impact(cfg, acfg, tokens, 0, False)
 
-        if the_fails>0:
-            break
-
         the_successes = the_successes + cfg.batch_size
 
         if epoch % 100 == 0:
@@ -212,4 +209,4 @@ def test_correctness_on_num_questions_core(cfg, acfg, num_questions=1000000):
 
     print("successes", the_successes, "num_fails", the_fails)
     if the_fails > 0:
-        print("WARNING: Model is not fully accurate. It failed the 1M Q test")
+        print("WARNING: Model failed the 1M Q test")

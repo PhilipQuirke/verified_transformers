@@ -248,14 +248,21 @@ def calc_maths_quanta_for_position_nodes(cfg, position):
                 if text_data[row][col] != "":
                     the_color_map = specific_map if col <= 3 or col == 7 else standard_map 
                     table[(row+1, col)].set_facecolor(pale_color(the_color_map(shade_data[row][col])))
+          
                     
 
-# Analyze the tags associated with node, to show which mathematical operations apply
-def get_maths_operation_complexity(_, node, __ : str, ___ : str, num_shades : int):
+# Return a 0 to 3 letter string representing the mathematical operation(s) that this node is involved in
+def get_maths_node_operation_coverage( node ):
     add_text = node.min_tag_suffix( QType.MATH_ADD.value, MathsBehavior.ADD_COMPLEXITY_PREFIX.value )[:1]
     sub_text = node.min_tag_suffix( QType.MATH_SUB.value, MathsBehavior.SUB_COMPLEXITY_PREFIX.value )[:1]
     neg_text = node.min_tag_suffix( QType.MATH_NEG.value, MathsBehavior.NEG_COMPLEXITY_PREFIX.value )[:1]
-    cell_text = add_text + sub_text + neg_text
+    return add_text + sub_text + neg_text
+    
+
+
+# Analyze the tags associated with node, to show which mathematical operations apply
+def get_maths_operation_complexity(_, node, __ : str, ___ : str, num_shades : int):
+    cell_text = get_maths_node_operation_coverage( node )
 
     color_index = 0
     if cell_text != "" :
@@ -263,6 +270,35 @@ def get_maths_operation_complexity(_, node, __ : str, ___ : str, num_shades : in
 
     return cell_text, color_index
 
+
+
+# Analyze the tags associated with node, to show which mathematical operations apply
+def get_maths_nodes_operation_coverage(nodes):
+    num_add = 0
+    num_sub = 0
+    num_neg = 0
+    num_triple = 0
+    num_double = 0
+    num_single = 0
+
+    for node in nodes:
+        cell_text = get_maths_node_operation_coverage( node )
+        
+        if MathsBehavior.ADD_COMPLEXITY_PREFIX.value in cell_text:
+            num_add += 1
+        if MathsBehavior.SUB_COMPLEXITY_PREFIX.value in cell_text:
+            num_sub += 1
+        if MathsBehavior.NEG_COMPLEXITY_PREFIX.value in cell_text:
+            num_neg += 1
+    
+        if len(cell_text) == 3:
+            num_triple += 1
+        elif len(cell_text) == 2:
+            num_double += 1
+        elif len(cell_text) == 1:
+            num_single += 1
+            
+    return num_add, num_sub, num_neg, num_triple, num_double, num_single
 
 
 

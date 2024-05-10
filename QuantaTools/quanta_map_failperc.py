@@ -7,6 +7,6 @@ def get_quanta_fail_perc( _, node, major_tag, __, num_shades):
     value = int(cell_text) if cell_text != "" else 0
 
     color_index = value // num_shades
-    cell_text = (str(value) if value > 0 else "<1") + "%"
+    cell_text = (str(value) if value > 0 else "<1")
 
     return cell_text, color_index

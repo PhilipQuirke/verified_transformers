@@ -20,7 +20,7 @@ def a_put_resid_post_hook(value, hook):
 
 def validate_value(name, value):
     if value.shape[0] == 0:
-        print( "Aborted", name, acfg.node_names(), acfg.operation, acfg.expected_answer, acfg.expected_impact)
+        print( "Aborted", name, acfg.ablate_node_names(), acfg.operation, acfg.expected_answer, acfg.expected_impact)
         acfg.abort = True # TransformerLens returned a [0, 22, 3, 170] tensor. This is bad data. Bug in code? Abort
         return False
 
@@ -69,6 +69,7 @@ def a_put_l3_attn_z_hook(value, hook):
             value[:,location.position,location.num,:] = acfg.layer_store[3][:,location.position,location.num,:].clone()
   
 
+# Set acfg ablation hooks. Updates global acfg variable
 def a_set_ablate_hooks(cfg):
     acfg.resid_put_hooks = [(acfg.l_hook_resid_post_name[0], a_put_resid_post_hook),(acfg.l_hook_resid_post_name[1], a_put_resid_post_hook),(acfg.l_hook_resid_post_name[2], a_put_resid_post_hook),(acfg.l_hook_resid_post_name[3], a_put_resid_post_hook)][:cfg.n_layers]
 
@@ -128,6 +129,7 @@ def a_predict_questions(cfg, questions, the_hooks):
 
 
 # Run an ablation intervention on the model, and return a description of the impact of the intervention
+# In the https://arxiv.org/pdf/2404.15255 terminology, this is a "noising" ablation.
 def a_run_attention_intervention(cfg, store_question_and_answer, clean_question_and_answer, clean_answer_str):
 
     # These are all matrixes of tokens
@@ -136,7 +138,7 @@ def a_run_attention_intervention(cfg, store_question_and_answer, clean_question_
     
     acfg.num_tests_run += 1
 
-    description = "CleanAnswer: " + clean_answer_str + ", ExpectedAnswer/Impact: " + acfg.expected_answer + "/" + acfg.expected_impact + ", "
+    description = "CleanAns: " + clean_answer_str + ", ExpectedAns/Impact: " + acfg.expected_answer + "/" + acfg.expected_impact + ", "
 
 
     a_predict_questions(cfg, store_question, acfg.attn_get_hooks)
@@ -162,7 +164,7 @@ def a_run_attention_intervention(cfg, store_question_and_answer, clean_question_
     if acfg.intervened_impact == "":
         acfg.intervened_impact = NO_IMPACT_TAG
 
-    description += "IntervenedAnswer/Impact: " + acfg.intervened_answer + "/" + acfg.intervened_impact
+    description += "AblatedAns/Impact: " + acfg.intervened_answer + "/" + acfg.intervened_impact
 
     if loss_max > acfg.threshold:
         loss_str = NO_IMPACT_TAG if loss_max < 1e-7 else str(loss_max)

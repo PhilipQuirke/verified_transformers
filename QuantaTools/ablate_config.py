@@ -3,6 +3,7 @@ import transformer_lens.utils as utils
 from .quanta_constants import NO_IMPACT_TAG 
 
 
+# Intervention ablation configuration class
 class AblateConfig():
 
 
@@ -10,6 +11,7 @@ class AblateConfig():
         self.reset_ablate()
         self.reset_intervention()
         self.reset_intervention_totals()
+        self.operation = 0
         self.show_test_failures = False
         self.show_test_successes = False
 
@@ -48,8 +50,7 @@ class AblateConfig():
         self.layer_store = [[],[],[],[]]   # Supports 1 to 4 model layers
 
 
-    def reset_intervention(self, expected_answer = "", expected_impact = NO_IMPACT_TAG, operation = 0):
-        self.operation : int = operation
+    def reset_intervention(self, expected_answer = "", expected_impact = NO_IMPACT_TAG):
 
         # Expected output of an intervention ablation experiment
         self.expected_answer = expected_answer
@@ -71,7 +72,7 @@ class AblateConfig():
         self.num_tags_added = 0
 
 
-    def node_names(self):
+    def ablate_node_names(self):
         answer = ""
 
         for node in self.ablate_node_locations:
@@ -89,10 +90,9 @@ class AblateConfig():
         if bad_predictions == 0:
             # This is evidence not proof because there may be very rare edge cases (say 1 in ten million) that do not exist in the test questions.
             # Even if you believe you know all the edge cases, and have enriched the training data to contain them, you may not have thought of all edge cases, so this is not proof.
-            print("Model got all test questions correct. This is a pre-requisite for the model to be fully accurate, but this is NOT proof.")
+            print("Model got all test questions correct.")
         else:
-            print("WARNING: Model is not fully accurate as it got", bad_predictions, "questions wrong.")
-          
+            print("WARNING: Model got", bad_predictions, "test questions wrong.")
 
 
 # Global singleton class instance
