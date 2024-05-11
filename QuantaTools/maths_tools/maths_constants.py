@@ -29,7 +29,7 @@ class MathsBehavior(Enum):
     ADD_S3_TAG = "S3"
     ADD_S4_TAG = "S4"
     ADD_S5_TAG = "S5" # Hard. Multiple cascades of MakeCarry1
-    ADD_PCA_TAG = "SP" # PCA is clustered aligned to the T8,T9,T10 question grouping
+    ADD_PCA_TAG = "SP" # PCA is clustered aligned to the ST8,ST9,ST10 question grouping
 
     # Minor "maths" tags related to major tag QType.MATH_SUB (positive-answer subtraction):
     SUB_COMPLEXITY_PREFIX = "M"    
@@ -46,7 +46,7 @@ class MathsBehavior(Enum):
     NEG_N2_TAG = "N2"  # Answer < 0. Includes two BorrowOnes. E.g. 110-200
     NEG_N3_TAG = "N3"  # Answer < 0. Has multiple cascades of BorrowOne. Hard. E.g. 111-200    
     NEG_N4_TAG = "N4+" # Answer < 0. Has multiple cascades of BorrowOne. Hard. E.g. 1111-2000   
-    NEG_PCA_TAG = "NP" # PCA is clustered aligned to the T8,T9,T10 question grouping
+    NEG_PCA_TAG = "NP" # PCA is clustered aligned to the ST8,ST9,ST10 question grouping
 
     UNKNOWN = "Unknown"
     

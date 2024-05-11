@@ -19,7 +19,7 @@ class MathsConfig(AlgoConfig):
         self.n_digits : int = 6
         self.initialize_maths_token_positions()     
 
-        # Dictionary of test maths questions based on the T8, T9, T10 categorisation. Indexed by (digit, operator).
+        # Dictionary of test maths questions based on the ST8, ST9, ST10 categorisation. Indexed by (digit, operator).
         self.tricase_questions_dict = {}
 
         # More granular tricase_questions, indexed by (digit, operator, qtype).
