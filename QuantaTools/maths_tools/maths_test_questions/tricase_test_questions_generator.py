@@ -266,7 +266,7 @@ def make_maths_tricase_questions_customized(cfg, custom_triclass_config=CustomTr
 
 
             questions_created = [len(cfg.customized_tricase_questions_dict.get(
-                (answer_digit, operator, qtype, test_case), 0)) for test_case in [8, 9, 10]
+                (answer_digit, operator, qtype, test_case), [])) for test_case in [8, 9, 10]
             ]
             num_questions_created = sum(questions_created)
             assert num_questions_created == num_questions, (
