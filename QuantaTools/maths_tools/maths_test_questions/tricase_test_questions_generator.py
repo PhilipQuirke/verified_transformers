@@ -13,11 +13,18 @@ from QuantaTools.maths_tools.maths_data_generator import make_maths_questions_an
 EACH_CASE_TRICASE_QUESTIONS = 100
 TOTAL_TRICASE_QUESTIONS = 3*EACH_CASE_TRICASE_QUESTIONS
 
-@dataclass
+@dataclass(eq=True, order=True, frozen=True)
 class OperatorQTypeNumber:
     operator: MathsToken
     qtype:QType
     number: int
+
+@dataclass(eq=True, order=True, frozen=True)
+class DigitOperatorQTypeTricase:
+    digit: int
+    operator: MathsToken
+    qtype:QType
+    test_case: int
 
 @dataclass
 class CustomTriclassConfig:
@@ -216,38 +223,55 @@ def make_maths_tricase_questions_customized(cfg, custom_triclass_config=CustomTr
                 # Only test cases 9 and 10 are supported for MATH_SUB
                 target_cases = [9, 10]
                 local_num_questions = int(num_questions / len(target_cases))
-                all_questions = [make_tricase_questions(
-                    cfg, test_digit=answer_digit, test_case=test_case, operation=operator, qtype=qtype, num_questions=local_num_questions
-                ) for test_case in target_cases]
+                for test_case in target_cases:
+                    all_questions = make_tricase_questions(
+                        cfg, test_digit=answer_digit, test_case=test_case, operation=operator, qtype=qtype, num_questions=local_num_questions
+                    )
+                    key = DigitOperatorQTypeTricase(answer_digit, operator, qtype, test_case)
+                    cfg.customized_tricase_questions_dict[key] = all_questions
+
             elif qtype == QType.MATH_NEG:
                 # Only test cases 8 and 9 are supported for MATH_NEG when digit > 0, and only test case 8 for digit=0
                 target_cases = [8, 9] if answer_digit > 0 else [8]
                 local_num_questions = int(num_questions / len(target_cases))
-                all_questions = [make_tricase_questions(
-                    cfg, test_digit=answer_digit, test_case=test_case, operation=operator, qtype=qtype,
-                    num_questions=local_num_questions
-                ) for test_case in target_cases]
+                for test_case in target_cases:
+                    all_questions = make_tricase_questions(
+                        cfg, test_digit=answer_digit, test_case=test_case, operation=operator, qtype=qtype,
+                        num_questions=local_num_questions
+                    )
+                    key = DigitOperatorQTypeTricase(answer_digit, operator, qtype, test_case)
+                    cfg.customized_tricase_questions_dict[key] = all_questions
+
             elif qtype == QType.MATH_ADD:
                 target_cases = [8, 9, 10]
                 local_num_questions = int(num_questions / len(target_cases))
-                all_questions = [make_tricase_questions(
-                    cfg, test_digit=answer_digit, test_case=test_case, operation=operator, qtype=qtype,
-                    num_questions=local_num_questions
-                ) for test_case in target_cases]
+                for test_case in target_cases:
+                    all_questions = make_tricase_questions(
+                        cfg, test_digit=answer_digit, test_case=test_case, operation=operator, qtype=qtype,
+                        num_questions=local_num_questions
+                    )
+                    key = DigitOperatorQTypeTricase(answer_digit, operator, qtype, test_case)
+                    cfg.customized_tricase_questions_dict[key] = all_questions
+
             else:
                 target_cases = [8, 9, 10]
                 local_num_questions = int(num_questions / len(target_cases))
-                all_questions = [make_tricase_questions(
-                    cfg, test_digit=answer_digit, test_case=test_case, operation=operator, qtype=qtype,
-                    num_questions=local_num_questions
-                ) for test_case in target_cases]
+                for test_case in target_cases:
+                    all_questions = make_tricase_questions(
+                        cfg, test_digit=answer_digit, test_case=test_case, operation=operator, qtype=qtype,
+                        num_questions=local_num_questions
+                    )
+                    key = DigitOperatorQTypeTricase(answer_digit, operator, qtype, test_case)
+                    cfg.customized_tricase_questions_dict[key] = all_questions
 
-            num_questions_created = sum([len(questions) for questions in all_questions])
 
+            questions_created = [len(cfg.customized_tricase_questions_dict.get(
+                (answer_digit, operator, qtype, test_case), 0)) for test_case in [8, 9, 10]
+            ]
+            num_questions_created = sum(questions_created)
             assert num_questions_created == num_questions, (
                 f"Created {num_questions_created} for digit {answer_digit} "
                 f"when requested with {num_questions} for {operator_qtype_number}")
-            cfg.customized_tricase_questions_dict[(answer_digit, operator, qtype)] = torch.vstack(all_questions)
 
     value_distribution = {key: len(values) for key, values in cfg.customized_tricase_questions_dict.items()}
 
