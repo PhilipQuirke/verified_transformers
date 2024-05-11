@@ -16,6 +16,16 @@ maths_tokens_to_names = {
     MathsToken.MULT: "mult", MathsToken.DIV: "div", MathsToken.MAX_INDEX: "div"
 }
 
+class TriCaseBehavior(Enum):
+    ST8 = 1  # Dn +D'n <= 8, so never causes a carry.
+    ST9 = 2  # Dn + D'n = 9, and may cause a carry (if the next lower digit pair causes a carry)
+    ST10 = 3  # Dn + D'n >= 10 and so always causes a carry
+
+    MT1 = 4  # Dn - D'n >= 1 and so never causes a borrow one
+    MT2 = 5  # Dn - D'n = 0 and may cause a borrow one (if the next lower digit pair causes a borrow one)
+    MT3 = 6  # Dn - D'n <= -1 and so always causes a borrow one
+
+
 
 # These are maths behaviors: quanta we can evaluate for each node based just on that node
 class MathsBehavior(Enum):

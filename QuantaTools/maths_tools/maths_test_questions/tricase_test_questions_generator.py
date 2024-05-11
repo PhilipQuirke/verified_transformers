@@ -5,7 +5,7 @@ import random
 import torch
 
 from QuantaTools.quanta_constants import QType
-from QuantaTools.maths_tools.maths_constants import MathsBehavior, MathsTask, MathsToken
+from QuantaTools.maths_tools.maths_constants import MathsBehavior, MathsTask, MathsToken, TriCaseBehavior
 from QuantaTools.maths_tools.maths_data_generator import make_maths_questions_and_answers
 
 
@@ -24,7 +24,7 @@ class DigitOperatorQTypeTricase:
     digit: int
     operator: MathsToken
     qtype:QType
-    test_case: int
+    test_case: TriCaseBehavior
 
 @dataclass
 class CustomTriclassConfig:
@@ -54,7 +54,7 @@ def pad_small_set_of_questions(cfg, sample_pairs_of_numbers: list, target_number
     return list(unique_pairs_set)
 
 def make_single_tricase_question(
-        cfg, test_digit: int, test_case: int, operation: MathsToken,
+        cfg, test_digit: int, test_case: TriCaseBehavior, operation: MathsToken,
         qtype: QType = None, make_borrow: str = "mixed"
 ):
     x_noise = 0
@@ -74,32 +74,35 @@ def make_single_tricase_question(
         return x_noise, y_noise
 
     if operation == MathsToken.PLUS:
-        if test_case == 8:
+        if test_case == TriCaseBehavior.ST8:
             # These are n_digit addition questions where x and y sum is between 0 to 8
             x = random.randint(0, 8)
             y = random.randint(0, 8 - x)
-        if test_case == 9:
+        elif test_case == TriCaseBehavior.ST9:
             # These are n_digit addition questions where x and y sum is 9
             x = random.randint(0, 9)
             y = 9 - x
-        if test_case == 10:
+        elif test_case == TriCaseBehavior.ST10:
             # These are n_digit addition questions where x and y sum is between 10 to 18
             x = random.randint(1, 9)
             y = random.randint(10 - x, 9)
+        else:
+            raise Exception(f'Expected test case in ST8, ST9 or ST10. Received {test_case}')
 
         # Randomise the lower digits - ensuring that x_noise + y_noise dont cause a MakeCarry
         x_noise = random.randint(0, limit - 1)
         y_noise = random.randint(0, limit - 1 - x_noise)
 
+
     # Check digit positions for viability
     elif operation == MathsToken.MINUS:
-        if test_case == 8:
+        if test_case == TriCaseBehavior.MT3:
             # These are n_digit subtraction questions where x - y < 0
             x = random.randint(0, 8)
             y = random.randint(x + 1, 9)
             x_noise, y_noise = make_noise(make_borrow=make_borrow)
 
-        if test_case == 9:
+        elif test_case == TriCaseBehavior.MT2:
             # These are n_digit subtraction questions where x - y is 0
             x = random.randint(0, 9)
             y = x
@@ -108,11 +111,17 @@ def make_single_tricase_question(
             else:
                 x_noise, y_noise = make_noise(make_borrow="never")
 
-        if test_case == 10:
+        elif test_case == TriCaseBehavior.MT1:
             # These are n_digit subtraction questions where x - y > 0
             x = random.randint(1, 9)
             y = random.randint(0, x - 1)
             x_noise, y_noise = make_noise(make_borrow)
+
+        else:
+            raise Exception(f'Only behaviors MT1, MT2, and MT3 supported for negative. Received {test_case}.')
+
+    else:
+        raise Exception(f'Only MINUS and PLUS operations are supported currently, received {operation}.')
 
     x = x * limit + x_noise
     y = y * limit + y_noise
@@ -125,8 +134,8 @@ def make_single_tricase_question(
     return x, y
 
 def make_tricase_questions(
-        cfg, test_digit: int, test_case: int, operation: MathsToken, num_questions=EACH_CASE_TRICASE_QUESTIONS, qtype: QType = None,
-        make_borrow: str = "never"
+        cfg, test_digit: int, test_case: TriCaseBehavior, operation: MathsToken, num_questions=EACH_CASE_TRICASE_QUESTIONS, qtype: QType = None,
+        make_borrow: str = "never", make_carry: str = "never"
 ):
     """
     Returns a set of questions over a number of test digits, given an operation and optionally a qtype
@@ -136,6 +145,7 @@ def make_tricase_questions(
     tricase test_case=8 and qtype=Math_NEG
     """
     assert make_borrow in ["always", "never", "mixed"]
+    assert make_carry in ["always", "never", "mixed"]
     questions = []
     exceptions = []
     assert qtype in [None, QType.MATH_ADD, QType.MATH_SUB, QType.MATH_NEG, QType.UNKNOWN], f"Qtype must be none, sub, neg or unknown, but received {qtype}"
@@ -188,9 +198,19 @@ def make_tricase_questions(
 def make_maths_tricase_questions_core(cfg, test_digit, operation, num_questions=TOTAL_TRICASE_QUESTIONS):
     assert num_questions%3==0, "Number of questions must be divisible by 3"
     local_num_questions = int(num_questions/3)
-    q1 = make_tricase_questions(cfg, test_digit, 8, operation, num_questions=local_num_questions)
-    q2 = make_tricase_questions(cfg, test_digit, 9, operation, num_questions=local_num_questions)
-    q3 = make_tricase_questions(cfg, test_digit, 10, operation, num_questions=local_num_questions)
+
+    if operation == MathsToken.PLUS:
+        q1 = make_tricase_questions(cfg, test_digit, 8, operation, num_questions=local_num_questions)
+        q2 = make_tricase_questions(cfg, test_digit, 9, operation, num_questions=local_num_questions)
+        q3 = make_tricase_questions(cfg, test_digit, 10, operation, num_questions=local_num_questions)
+
+    elif operation == MathsToken.MINUS:
+        q1 = make_tricase_questions(cfg, test_digit, TriCaseBehavior.MT1, operation, num_questions=local_num_questions)
+        q2 = make_tricase_questions(cfg, test_digit, TriCaseBehavior.MT2, operation, num_questions=local_num_questions)
+        q3 = make_tricase_questions(cfg, test_digit, Tri, operation, num_questions=local_num_questions)
+
+    else:
+        raise Exception(f'Only PLUS and MINUS operations are currently supported, received {operation}')
     return torch.vstack((q1, q2, q3))
 
 def make_maths_tricase_questions(cfg, num_questions=TOTAL_TRICASE_QUESTIONS):
@@ -220,8 +240,8 @@ def make_maths_tricase_questions_customized(cfg, custom_triclass_config=CustomTr
                 raise Exception(f'A qtype of MATH_NEG or MATH_SUB is not supported with plus operator.')
 
             if qtype == QType.MATH_SUB:
-                # Only test cases 9 and 10 are supported for MATH_SUB
-                target_cases = [9, 10]
+                # Only test cases MT1 and MT2 are supported for MATH_SUB
+                target_cases = [TriCaseBehavior.MT1, TriCaseBehavior.MT2]
                 local_num_questions = int(num_questions / len(target_cases))
                 for test_case in target_cases:
                     all_questions = make_tricase_questions(
@@ -231,8 +251,8 @@ def make_maths_tricase_questions_customized(cfg, custom_triclass_config=CustomTr
                     cfg.customized_tricase_questions_dict[key] = all_questions
 
             elif qtype == QType.MATH_NEG:
-                # Only test cases 8 and 9 are supported for MATH_NEG when digit > 0, and only test case 8 for digit=0
-                target_cases = [8, 9] if answer_digit > 0 else [8]
+                # Only test cases MT2 and MT3 are supported for MATH_NEG when digit > 0, and only test case MT3 for digit=0
+                target_cases = [TriCaseBehavior.MT2, TriCaseBehavior.MT3] if answer_digit > 0 else [TriCaseBehavior.MT3]
                 local_num_questions = int(num_questions / len(target_cases))
                 for test_case in target_cases:
                     all_questions = make_tricase_questions(
@@ -243,7 +263,7 @@ def make_maths_tricase_questions_customized(cfg, custom_triclass_config=CustomTr
                     cfg.customized_tricase_questions_dict[key] = all_questions
 
             elif qtype == QType.MATH_ADD:
-                target_cases = [8, 9, 10]
+                target_cases = [TriCaseBehavior.ST8, TriCaseBehavior.ST9, TriCaseBehavior.ST10]
                 local_num_questions = int(num_questions / len(target_cases))
                 for test_case in target_cases:
                     all_questions = make_tricase_questions(
@@ -266,7 +286,7 @@ def make_maths_tricase_questions_customized(cfg, custom_triclass_config=CustomTr
 
 
             questions_created = [len(cfg.customized_tricase_questions_dict.get(
-                (answer_digit, operator, qtype, test_case), [])) for test_case in [8, 9, 10]
+                DigitOperatorQTypeTricase(answer_digit, operator, qtype, test_case), [])) for test_case in [8, 9, 10]
             ]
             num_questions_created = sum(questions_created)
             assert num_questions_created == num_questions, (
