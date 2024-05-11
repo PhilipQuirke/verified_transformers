@@ -51,7 +51,7 @@ def manual_nodes_pca(cfg, operation, nodes, test_inputs=None):
     print("Manual PCA tags for", cfg.model_name, "with operation", token_to_char(cfg, operation))
 
     cols = 4
-    rows = 1 + (len(nodes)+1) // cols
+    rows = max(1, (len(nodes)+1) // cols)
 
     fig, axs = plt.subplots(rows, cols)
     fig.set_figheight(rows*2 + 1)
