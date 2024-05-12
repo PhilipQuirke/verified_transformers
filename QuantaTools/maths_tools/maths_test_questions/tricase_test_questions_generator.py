@@ -200,14 +200,14 @@ def make_maths_tricase_questions_core(cfg, test_digit, operation, num_questions=
     local_num_questions = int(num_questions/3)
 
     if operation == MathsToken.PLUS:
-        q1 = make_tricase_questions(cfg, test_digit, 8, operation, num_questions=local_num_questions)
-        q2 = make_tricase_questions(cfg, test_digit, 9, operation, num_questions=local_num_questions)
-        q3 = make_tricase_questions(cfg, test_digit, 10, operation, num_questions=local_num_questions)
+        q1 = make_tricase_questions(cfg, test_digit, TriCaseBehavior.ST8, operation, num_questions=local_num_questions)
+        q2 = make_tricase_questions(cfg, test_digit, TriCaseBehavior.ST8, operation, num_questions=local_num_questions)
+        q3 = make_tricase_questions(cfg, test_digit, TriCaseBehavior.ST10, operation, num_questions=local_num_questions)
 
     elif operation == MathsToken.MINUS:
         q1 = make_tricase_questions(cfg, test_digit, TriCaseBehavior.MT1, operation, num_questions=local_num_questions)
         q2 = make_tricase_questions(cfg, test_digit, TriCaseBehavior.MT2, operation, num_questions=local_num_questions)
-        q3 = make_tricase_questions(cfg, test_digit, Tri, operation, num_questions=local_num_questions)
+        q3 = make_tricase_questions(cfg, test_digit, TriCaseBehavior.MT3, operation, num_questions=local_num_questions)
 
     else:
         raise Exception(f'Only PLUS and MINUS operations are currently supported, received {operation}')
@@ -239,7 +239,7 @@ def make_maths_tricase_questions_customized(cfg, custom_triclass_config=CustomTr
             if qtype in [QType.MATH_NEG, QType.MATH_SUB] and operator == MathsToken.PLUS:
                 raise Exception(f'A qtype of MATH_NEG or MATH_SUB is not supported with plus operator.')
 
-            if qtype == QType.MATH_SUB:
+            elif qtype == QType.MATH_SUB:
                 # Only test cases MT1 and MT2 are supported for MATH_SUB
                 target_cases = [TriCaseBehavior.MT1, TriCaseBehavior.MT2]
                 local_num_questions = int(num_questions / len(target_cases))
@@ -262,6 +262,7 @@ def make_maths_tricase_questions_customized(cfg, custom_triclass_config=CustomTr
                     key = DigitOperatorQTypeTricase(answer_digit, operator, qtype, test_case)
                     cfg.customized_tricase_questions_dict[key] = all_questions
 
+
             elif qtype == QType.MATH_ADD:
                 target_cases = [TriCaseBehavior.ST8, TriCaseBehavior.ST9, TriCaseBehavior.ST10]
                 local_num_questions = int(num_questions / len(target_cases))
@@ -274,19 +275,10 @@ def make_maths_tricase_questions_customized(cfg, custom_triclass_config=CustomTr
                     cfg.customized_tricase_questions_dict[key] = all_questions
 
             else:
-                target_cases = [8, 9, 10]
-                local_num_questions = int(num_questions / len(target_cases))
-                for test_case in target_cases:
-                    all_questions = make_tricase_questions(
-                        cfg, test_digit=answer_digit, test_case=test_case, operation=operator, qtype=qtype,
-                        num_questions=local_num_questions
-                    )
-                    key = DigitOperatorQTypeTricase(answer_digit, operator, qtype, test_case)
-                    cfg.customized_tricase_questions_dict[key] = all_questions
-
+                raise Exception(f'Unknown qtype {qtype}.')
 
             questions_created = [len(cfg.customized_tricase_questions_dict.get(
-                DigitOperatorQTypeTricase(answer_digit, operator, qtype, test_case), [])) for test_case in [8, 9, 10]
+                DigitOperatorQTypeTricase(answer_digit, operator, qtype, test_case), [])) for test_case in TriCaseBehavior
             ]
             num_questions_created = sum(questions_created)
             assert num_questions_created == num_questions, (
