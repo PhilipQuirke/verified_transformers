@@ -5,7 +5,7 @@ import random
 import torch
 
 from QuantaTools.quanta_constants import QType
-from QuantaTools.maths_tools.maths_constants import MathsBehavior, MathsTask, MathsToken, TriCaseBehavior
+from QuantaTools.maths_tools.maths_constants import MathsBehavior, MathsTask, MathsToken, TriCaseBehavior, maths_tokens_to_names
 from QuantaTools.maths_tools.maths_data_generator import make_maths_questions_and_answers
 
 
@@ -278,7 +278,7 @@ def make_maths_tricase_questions_customized(cfg, custom_triclass_config=CustomTr
                 raise Exception(f'Unknown qtype {qtype}.')
 
             questions_created = [len(cfg.customized_tricase_questions_dict.get(
-                DigitOperatorQTypeTricase(answer_digit, operator, qtype, test_case), [])) for test_case in TriCaseBehavior
+                DigitOperatorQTypeTricase(answer_digit, maths_tokens_to_names[operator], qtype, test_case), [])) for test_case in TriCaseBehavior
             ]
             num_questions_created = sum(questions_created)
             assert num_questions_created == num_questions, (

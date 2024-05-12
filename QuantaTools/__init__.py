@@ -39,7 +39,7 @@ from .algo_search import search_and_tag_digit_position, search_and_tag_digit, se
 
 # maths_*.py: Contains specializations of the above specific to arithmetic (addition and subtraction) transformer models
 from .maths_tools.maths_config import MathsConfig
-from .maths_tools.maths_constants import MathsToken, MathsBehavior, MathsTask
+from .maths_tools.maths_constants import MathsToken, MathsBehavior, MathsTask, TriCaseBehavior
 from .maths_tools.maths_utilities import set_maths_vocabulary, set_maths_question_meanings, int_to_answer_str, \
     tokens_to_unsigned_int, tokens_to_answer, insert_question_number, make_a_maths_question_and_answer
 from .maths_tools.maths_complexity import get_maths_question_complexity, get_maths_min_complexity, \
