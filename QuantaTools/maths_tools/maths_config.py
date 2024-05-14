@@ -30,17 +30,21 @@ class MathsConfig(AlgoConfig):
         self.graph_file_suffix = "pdf" # Can be pdf, svg or png 
       
 
+    # percentage of addition questions
+    def perc_add(self):
+        return max(0, 100 - self.perc_mult - self.perc_sub)
+    
+
     # Based on n_digits, set the number of question and answer tokens in the context 
     def initialize_maths_token_positions(self):
         self.initialize_token_positions( 
             self.n_digits*2 + 2,  # Plus 2 for operator (+ or -) and equals (=) sign
             self.n_digits + 2, # Plus 2 for answer sign (+ or -) and answer digits (adding two 5 digits numbers gives a 6 digit answer )
             False ) 
-
-
-    # percentage of addition questions
-    def perc_add(self):
-        return max(0, 100 - self.perc_mult - self.perc_sub)
+        
+        if self.perc_add() == 100:
+            # The first answer token is always "+"
+            self.token_position_meanings[self.num_question_positions] = "+"
 
 
     # How many slices do we break the MLP layer up into?
