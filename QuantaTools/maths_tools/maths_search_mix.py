@@ -83,15 +83,16 @@ class SubTaskBaseMath(SubTaskBase):
  
     @staticmethod
     # Common set of node filters (pre-requisites) for some maths tasks based on token position, attention to Dn and D'n, and answer digit impact
-    def math_common_prereqs(cfg, position, attend_digit, impact_digit):
+    def math_latetoken_subtask_prereqs(cfg, position, attend_digit, impact_digit):
         # Example meaning: 
         #   And(IsHead, 
-        #       Position:P14, 
+        #       Position:P14, Position_After:+/-token,
         #       AttendsTo:D3, AttendsTo:D'3, 
         #       Impacts:A4)
         return FilterAnd(
             FilterHead(), # Is an attention head
             FilterPosition(position_name(position)), # Is at token position Px
+            FilterPosition(position_name(cfg.num_question_positions+1), QCondition.MIN), # Occurs after the +/- token
             FilterAttention(cfg.dn_to_position_name(attend_digit)), # Attends to Dn
             FilterAttention(cfg.ddn_to_position_name(attend_digit)), # Attends to D'n
             FilterImpact(answer_name(impact_digit))) # Impacts Am

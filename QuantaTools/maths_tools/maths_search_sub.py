@@ -10,6 +10,8 @@ from .maths_search_mix import run_strong_intervention, run_weak_intervention, Su
 from .maths_utilities import digit_name
 
 
+# Positive-answer subtraction "Difference" (MD) tasks e.g. 666666-222222=+0444444 where D3 >= D'3
+# Node output is one of 10 values 0 to 9
 class sub_md_functions(SubTaskBaseMath):
 
     @staticmethod
@@ -17,15 +19,13 @@ class sub_md_functions(SubTaskBaseMath):
         return MathsToken.MINUS
     
     @staticmethod
-    # Tag for positive-answer subtraction "Difference" (MD) tasks e.g. 666666-222222=+0444444 where D3 >= D'3
     def tag(impact_digit):
         return answer_name(impact_digit) + "." + MathsTask.MD_TAG.value
 
     @staticmethod
-    # Prerequisites for positive-answer subtraction "Difference" (MD) tasks 
     def prereqs(cfg, position, impact_digit):
         # Pays attention to Dn and D'n. Impacts An
-        return SubTaskBaseMath.math_common_prereqs(cfg, position, impact_digit, impact_digit)
+        return SubTaskBaseMath.math_latetoken_subtask_prereqs(cfg, position, impact_digit, impact_digit)
 
     @staticmethod
     def test1(cfg, alter_digit):
@@ -54,7 +54,6 @@ class sub_md_functions(SubTaskBaseMath):
         return store_question, clean_question, intervened_answer
 
     @staticmethod
-    # Intervention ablation test for positive-answer subtraction "Difference" (MD) tasks 
     def test(cfg, acfg, alter_digit, strong):
         # Note: MD and SA give the same result when D'=0 or D=D'=5. We avoid ablation tests like this.
     
@@ -74,6 +73,8 @@ class sub_md_functions(SubTaskBaseMath):
         return success
 
 
+# Positive-answer subtraction "Borrow One" (MB) task e.g. 222222-111311=+0110911 where D2 > D'2
+# Node output is binary (aka boolean)        
 class sub_mb_functions(SubTaskBaseMath):
 
     @staticmethod
@@ -81,18 +82,15 @@ class sub_mb_functions(SubTaskBaseMath):
         return MathsToken.MINUS
     
     @staticmethod
-    # Tag for positive-answer subtraction "Borrow One" (MB) task e.g. 222222-111311=+0110911 where D2 > D'2
     def tag(impact_digit):
         return answer_name(impact_digit-1)  + "." + MathsTask.MB_TAG.value    
 
     @staticmethod
-    # Prerequisites for positive-answer subtraction "Borrow One" (MB) task
     def prereqs(cfg, position, impact_digit):
         # Pays attention to Dn-1 and D'n-1. Impacts An    
-        return SubTaskBaseMath.math_common_prereqs(cfg,  position, impact_digit-1, impact_digit)
+        return SubTaskBaseMath.math_latetoken_subtask_prereqs(cfg,  position, impact_digit-1, impact_digit)
 
     @staticmethod
-    # Intervention ablation test for positive-answer subtraction "Borrow One" (MB) task
     def test(cfg, acfg, impact_digit, strong):
         alter_digit = impact_digit - 1
 
@@ -120,6 +118,9 @@ class sub_mb_functions(SubTaskBaseMath):
         return success
 
 
+# Positive-answer subtraction "Essential Borrow Info" (MT) sub-task. 
+# Found in early tokens. Node output is tricase: MT8, MT9, MT10    
+# Has impact "A65432" to "A65" (Always excludes A0. Generally excludes A1 which uses SC).
 class sub_mt_functions(SubTaskBaseMath):
 
     @staticmethod
@@ -127,7 +128,6 @@ class sub_mt_functions(SubTaskBaseMath):
         return MathsToken.MINUS
     
     @staticmethod
-    # Tag for positive-answer subtraction "TriCase" task "MT"
     def tag(impact_digit):
         return digit_name(impact_digit) + "." + MathsTask.MT_TAG.value
 
@@ -137,7 +137,7 @@ class sub_mt_functions(SubTaskBaseMath):
         #   And(IsHead, 
         #       Position>=n_digits, Position<=num_question_positions, Position=14,
         #       AttendsTo:D3, AttendsTo:D'3, 
-        #       Has bi- or trigram PCA for subtraction questions,
+        #       MAY have bi- or trigram PCA for subtraction questions,
         #       Impacts subtraction questions)        
         return FilterAnd(
             FilterHead(),
@@ -146,11 +146,10 @@ class sub_mt_functions(SubTaskBaseMath):
             FilterPosition(position_name(position)),
             FilterAttention(cfg.dn_to_position_name(focus_digit)), # Attends to Dn
             FilterAttention(cfg.ddn_to_position_name(focus_digit)), # Attends to D'n
-            FilterContains(QType.MATH_SUB, MathsBehavior.SUB_PCA_TAG.value), # Node PCA is interpretable (bigram or trigram output) with respect to subtraction ST8,ST9,ST10
+            FilterContains(QType.MATH_SUB, MathsBehavior.SUB_PCA_TAG.value, QCondition.May), # Weak: Node PCA is interpretable (bigram or trigram output) with respect to subtraction ST8,ST9,ST10
             FilterContains(QType.MATH_SUB, MathsBehavior.SUB_COMPLEXITY_PREFIX.value)) # Impacts positive-answer questions (cover M1 to M4)
 
     @staticmethod
-    # Test that if we ablate this node then a negative-answer-subtraction question answer swaps to its positive complement
     def test(cfg, acfg, focus_digit, strong):
 
         if focus_digit >= cfg.n_digits:
@@ -172,6 +171,8 @@ class sub_mt_functions(SubTaskBaseMath):
         return success
 
 
+# Negative-answer subtraction "Difference" (ND) tasks e.g. 666666-928222=-0261556 where D3 >= D'3
+# Node output is one of 10 values 0 to 9
 class neg_nd_functions(SubTaskBaseMath):
 
     @staticmethod
@@ -179,15 +180,13 @@ class neg_nd_functions(SubTaskBaseMath):
         return MathsToken.MINUS
     
     @staticmethod
-    # Negative-answer subtraction "Difference" (ND) task tag
     def tag(impact_digit):
         return answer_name(impact_digit) + "." + MathsTask.ND_TAG.value
 
     @staticmethod
-    # These rules are prerequisites for (not proof of) a Neg Difference node
     def prereqs(cfg, position, impact_digit):
         # Impacts An and pays attention to Dn and D'n
-        return SubTaskBaseMath.math_common_prereqs(cfg, position, impact_digit, impact_digit)
+        return SubTaskBaseMath.math_latetoken_subtask_prereqs(cfg, position, impact_digit, impact_digit)
 
     @staticmethod
     def test1(cfg, alter_digit):
@@ -220,7 +219,6 @@ class neg_nd_functions(SubTaskBaseMath):
         return store_question, clean_question, intervened_answer
 
     @staticmethod
-    # Negative-answer subtraction "Difference" (ND) task ablation test
     def test(cfg, acfg, alter_digit, strong):
         intervention_impact = answer_name(alter_digit)
 
@@ -238,6 +236,8 @@ class neg_nd_functions(SubTaskBaseMath):
         return success
 
 
+# Negative-answer subtraction "Borrow One" (NB) task 
+# Node output is binary (aka boolean)   
 class neg_nb_functions(SubTaskBaseMath):
 
     @staticmethod
@@ -245,18 +245,15 @@ class neg_nb_functions(SubTaskBaseMath):
         return MathsToken.MINUS
     
     @staticmethod
-    # Negative-answer subtraction "Borrow One" (NB) task tag
     def tag(impact_digit):
         return answer_name(impact_digit) + "." + MathsTask.NB_TAG.value
 
     @staticmethod
-    # Prerequisites for negative-answer subtraction "Borrow One" (NB) task
     def prereqs(cfg, position, impact_digit):
         # Pays attention to Dn-1 and D'n-1. Impacts An
-        return SubTaskBaseMath.math_common_prereqs(cfg,  position, impact_digit-1, impact_digit)
+        return SubTaskBaseMath.math_latetoken_subtask_prereqs(cfg,  position, impact_digit-1, impact_digit)
 
     @staticmethod
-    # Intervention ablation test for negative-answer subtraction "Borrow One" (NB) task
     def test(cfg, acfg, impact_digit, strong):
         alter_digit = impact_digit - 1
 

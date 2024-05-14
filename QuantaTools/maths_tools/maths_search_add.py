@@ -25,7 +25,7 @@ class add_ss_functions(SubTaskBaseMath):
     @staticmethod
     def prereqs(cfg, position, impact_digit):
         # Pays attention to Dn-2 and D'n-2. Impacts An
-        return SubTaskBaseMath.math_common_prereqs(cfg, position, impact_digit-2, impact_digit)
+        return SubTaskBaseMath.math_latetoken_subtask_prereqs(cfg, position, impact_digit-2, impact_digit)
 
     @staticmethod
     def test1(cfg, alter_digit):
@@ -76,19 +76,9 @@ class add_sc_functions(SubTaskBaseMath):
 
     @staticmethod
     def prereqs(cfg, position, impact_digit):
-        # Example meaning: 
-        #   And(IsHead, 
-        #       Position:P14, 
-        #       AttendsTo:D3, AttendsTo:D'3, 
-        #       Impacts:A4)
-        return FilterAnd(
-            FilterHead(), # Is an attention head
-            FilterPosition(position_name(position)), # Is at token position Px
-            FilterAttention(cfg.dn_to_position_name(impact_digit-1)), # Attends to Dn-1
-            FilterAttention(cfg.ddn_to_position_name(impact_digit-1)), # Attends to D'n-1
-            FilterImpact(answer_name(impact_digit)), # Impacts An
-            FilterPosition(position_name(cfg.num_question_positions), QCondition.MIN)) # Occurs after the = token
-    
+        # Pays attention to Dn-1 and D'n-1. Impacts An
+        return SubTaskBaseMath.math_latetoken_subtask_prereqs(cfg, position, impact_digit-1, impact_digit)
+            
     @staticmethod
     def test(cfg, acfg, impact_digit, strong):
         alter_digit = impact_digit - 1
@@ -132,7 +122,7 @@ class add_sa_functions(SubTaskBaseMath):
     @staticmethod
     def prereqs(cfg, position, impact_digit):
         # Pays attention to Dn and D'n. Impacts An
-        return SubTaskBaseMath.math_common_prereqs(cfg, position, impact_digit, impact_digit)
+        return SubTaskBaseMath.math_latetoken_subtask_prereqs(cfg, position, impact_digit, impact_digit)
 
     @staticmethod
     def test1(cfg, alter_digit):
@@ -180,8 +170,8 @@ class add_sa_functions(SubTaskBaseMath):
         return success
 
 
-# Addition "Essential Carry Info" (ST) sub-task. Found in early tokens
-# Node output is tri-state: ST8, ST9, ST10    
+# Addition "Essential Carry Info" (ST) sub-task. 
+# Found in early tokens. Node output is tricase: ST8, ST9, ST10    
 # Has impact "A65432" to "A65" (Always excludes A0. Generally excludes A1 which uses SC).
 class add_st_functions(SubTaskBaseMath):
 
@@ -199,7 +189,7 @@ class add_st_functions(SubTaskBaseMath):
         #   And(IsHead, 
         #       Position>=n_digits, Position<=num_question_positions, Position=14,
         #       AttendsTo:D3, AttendsTo:D'3, 
-        #  PQR     Has bi- or trigram PCA for addition questions,
+        #       MAY have bi- or trigram PCA for addition questions,
         #       Impacts addition questions)    
         return FilterAnd(
             FilterHead(),
@@ -208,7 +198,7 @@ class add_st_functions(SubTaskBaseMath):
             FilterPosition(position_name(position)), # Is at token position Px
             FilterAttention(cfg.dn_to_position_name(focus_digit)), # Attends to Dn
             FilterAttention(cfg.ddn_to_position_name(focus_digit)), # Attends to D'n
-            #PQR FilterContains(QType.MATH_ADD, MathsBehavior.ADD_PCA_TAG.value), # Node PCA is interpretable (bigram or trigram output) with respect to addition ST8,ST9,ST10
+            FilterContains(QType.MATH_ADD, MathsBehavior.ADD_PCA_TAG.value, QCondition.MAY), # Weak: Node PCA is interpretable (bigram or trigram output) with respect to addition ST8,ST9,ST10
             FilterContains(QType.MATH_ADD, MathsBehavior.ADD_COMPLEXITY_PREFIX.value)) # Impacts addition questions
 
     @staticmethod
