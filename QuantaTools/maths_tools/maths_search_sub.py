@@ -146,7 +146,7 @@ class sub_mt_functions(SubTaskBaseMath):
             FilterPosition(position_name(position)),
             FilterAttention(cfg.dn_to_position_name(focus_digit)), # Attends to Dn
             FilterAttention(cfg.ddn_to_position_name(focus_digit)), # Attends to D'n
-            FilterContains(QType.MATH_SUB, MathsBehavior.SUB_PCA_TAG.value, QCondition.May), # Weak: Node PCA is interpretable (bigram or trigram output) with respect to subtraction ST8,ST9,ST10
+            FilterContains(QType.MATH_SUB, MathsBehavior.SUB_PCA_TAG.value, QCondition.MAY), # Weak: Node PCA is interpretable (bigram or trigram output) with respect to subtraction ST8,ST9,ST10
             FilterContains(QType.MATH_SUB, MathsBehavior.SUB_COMPLEXITY_PREFIX.value)) # Impacts positive-answer questions (cover M1 to M4)
 
     @staticmethod
