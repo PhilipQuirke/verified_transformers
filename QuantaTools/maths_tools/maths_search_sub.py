@@ -88,7 +88,7 @@ class sub_mb_functions(SubTaskBaseMath):
     @staticmethod
     def prereqs(cfg, position, impact_digit):
         # Pays attention to Dn-1 and D'n-1. Impacts An    
-        return SubTaskBaseMath.math_latetoken_subtask_prereqs(cfg,  position, impact_digit-1, impact_digit)
+        return SubTaskBaseMath.math_latetoken_subtask_prereqs(cfg, position, impact_digit-1, impact_digit)
 
     @staticmethod
     def test(cfg, acfg, impact_digit, strong):
@@ -246,12 +246,12 @@ class neg_nb_functions(SubTaskBaseMath):
     
     @staticmethod
     def tag(impact_digit):
-        return answer_name(impact_digit) + "." + MathsTask.NB_TAG.value
+        return answer_name(impact_digit-1) + "." + MathsTask.NB_TAG.value
 
     @staticmethod
     def prereqs(cfg, position, impact_digit):
         # Pays attention to Dn-1 and D'n-1. Impacts An
-        return SubTaskBaseMath.math_latetoken_subtask_prereqs(cfg,  position, impact_digit-1, impact_digit)
+        return SubTaskBaseMath.math_latetoken_subtask_prereqs(cfg, position, impact_digit-1, impact_digit)
 
     @staticmethod
     def test(cfg, acfg, impact_digit, strong):
