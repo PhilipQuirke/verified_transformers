@@ -28,7 +28,7 @@ from .quanta_add_attn_tags import add_node_attention_tags
 from .quanta_map import create_colormap, calc_quanta_map
 from .quanta_map_attention import get_quanta_attention
 from .quanta_map_failperc import get_quanta_fail_perc
-from .quanta_map_binary import get_quanta_binary
+from .quanta_map_binary import get_quanta_binary, get_quanta_algo
 from .quanta_map_impact import get_answer_impact, get_question_answer_impact, is_answer_sequential, compact_answer_if_sequential, get_quanta_impact, sort_unique_digits
 
 
@@ -40,21 +40,21 @@ from .algo_search import search_and_tag_digit_position, search_and_tag_digit, se
 # maths_*.py: Contains specializations of the above specific to arithmetic (addition and subtraction) transformer models
 from .maths_tools.maths_config import MathsConfig
 from .maths_tools.maths_constants import MathsToken, MathsBehavior, MathsTask
-from .maths_tools.maths_utilities import set_maths_vocabulary, set_maths_question_meanings, int_to_answer_str, \
-    tokens_to_unsigned_int, tokens_to_answer, insert_question_number, make_a_maths_question_and_answer
-from .maths_tools.maths_complexity import get_maths_question_complexity, get_maths_min_complexity, \
-    calc_maths_quanta_for_position_nodes, get_maths_operation_complexity, get_maths_nodes_operation_coverage
+from .maths_tools.maths_utilities import (set_maths_vocabulary, set_maths_question_meanings, int_to_answer_str, 
+    tokens_to_unsigned_int, tokens_to_answer, insert_question_number, make_a_maths_question_and_answer)
+from .maths_tools.maths_complexity import (get_maths_question_complexity, get_maths_min_complexity, 
+    calc_maths_quanta_for_position_nodes, get_maths_operation_complexity, get_maths_nodes_operation_coverage)
 from .maths_tools.maths_data_generator import maths_data_generator_core, maths_data_generator, make_maths_questions_and_answers
 from .maths_tools.maths_test_questions import make_maths_test_questions_and_answers
-from .maths_tools.maths_test_questions.test_questions_checker import test_maths_questions_by_complexity, \
-    test_maths_questions_by_impact, test_maths_questions_and_add_useful_node_tags, test_correctness_on_num_questions
+from .maths_tools.maths_test_questions.test_questions_checker import (test_maths_questions_by_complexity, 
+    test_maths_questions_by_impact, test_maths_questions_and_add_useful_node_tags, test_correctness_on_num_questions)
 from .maths_tools import make_maths_tricase_questions, make_maths_tricase_questions_customized
-from .maths_tools.maths_search_mix import \
-    run_intervention_core, run_strong_intervention, run_weak_intervention, \
-    opr_functions, sgn_functions, gt_functions
-from .maths_tools.maths_search_add import \
-    add_ss_functions, add_sc_functions, add_sa_functions, add_st_functions
-from .maths_tools.maths_search_sub import \
-    sub_md_functions, sub_mb_functions, sub_mt_functions, neg_nd_functions, neg_nb_functions
+from .maths_tools.maths_search_mix import (
+    run_intervention_core, run_strong_intervention, run_weak_intervention, 
+    opr_functions, sgn_functions, gt_functions )
+from .maths_tools.maths_search_add import (
+    add_ss_functions, add_sc_functions, add_sa_functions, add_st_functions )
+from .maths_tools.maths_search_sub import (
+    sub_md_functions, sub_mb_functions, sub_mt_functions, neg_nd_functions, neg_nb_functions )
 from .maths_tools.maths_pca import manual_nodes_pca, manual_node_pca
-    
+
