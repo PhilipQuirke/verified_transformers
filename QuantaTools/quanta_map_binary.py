@@ -1,4 +1,4 @@
-from quanta_constants import QType
+from .quanta_constants import QType, QCondition
 
 
 # Either the node has or doesnt have matching tag(s). Return the matching tag(s) if any
