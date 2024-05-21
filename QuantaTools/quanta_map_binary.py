@@ -20,7 +20,7 @@ def get_quanta_algo(_, node, __ : str, minor_tag : str, ___):
 
     cell_text = ""
 
-    node_tags = node.filter_tags( QType.ALGO, minor_tag )
+    node_tags = node.filter_tags( QType.ALGO.value, minor_tag )
     for tag in node_tags:
         cell_text += tag + " "
 
