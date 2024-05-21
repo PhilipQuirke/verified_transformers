@@ -24,6 +24,10 @@ def get_quanta_algo(_, node, __ : str, minor_tag : str, ___):
     for tag in node_tags:
         cell_text += tag + " "
 
-    color_index = 0 if cell_text == "" else 1
+    color_index = 1 if cell_text == "" else 2
+
+    if cell_text == "":
+        # Ensure all cells are shown    
+        cell_text = " "
 
     return cell_text, color_index
