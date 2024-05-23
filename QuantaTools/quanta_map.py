@@ -20,13 +20,16 @@ class QuantaResult(NodeLocation):
 def calc_quanta_results( cfg, test_nodes : UsefulNodeList, major_tag : str, minor_tag : str, get_node_details, num_shades : int ):
 
     quanta_results = []
+    max_spaces = 0
     
     for node in test_nodes.nodes:
         cell_text, color_index = get_node_details(cfg, node, major_tag, minor_tag, num_shades)
         if cell_text != "" :
             quanta_results +=[QuantaResult(node, cell_text, color_index)]
+            max_spaces = max(max_spaces, cell_text.count(" "))
 
-    return quanta_results
+    num_text_lines = max_spaces+1
+    return quanta_results, num_text_lines
 
 
 # Show standard_quanta (common across all potential models) in blue shades and model-specific quanta in green/yellow num_shades 
@@ -101,7 +104,7 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, \
                     show_perc_circles : bool = False, \
                     width_inches : int = -1, height_inches : int = -1 ):
 
-    quanta_results = calc_quanta_results(cfg, the_nodes, major_tag, minor_tag, get_node_details, num_shades)
+    quanta_results, num_text_lines = calc_quanta_results(cfg, the_nodes, major_tag, minor_tag, get_node_details, num_shades)
 
     distinct_row_names = set()
     distinct_positions = set()
@@ -124,7 +127,8 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, \
     else:
         square_cells = False
     if height_inches == -1:
-        height_inches = 7*num_rows/12
+        # Height is based on the number of rows and the number of text lines in the cells
+        height_inches = (5 + num_text_lines*2) * num_rows / 12
     else:
         square_cells = False
         
