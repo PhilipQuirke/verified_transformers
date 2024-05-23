@@ -95,17 +95,24 @@ def show_quanta_cells(ax, col : float, start_row : float, end_row : float, text 
     else:                
         show_quanta_text( ax, col, 0.5 * (start_row + end_row), text, cell_fontsize)    
 
-     
-# Calculate (but do not draw) the quanta map with cell contents provided by get_node_details 
-def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, \
-                    the_nodes : UsefulNodeList, major_tag : str, minor_tag : str, get_node_details, \
-                    cell_fontsize : int = 10, \
-                    combine_identical_cells : bool = True, \
-                    show_perc_circles : bool = False, \
-                    width_inches : int = -1, height_inches : int = -1 ):
 
-    quanta_results, num_text_lines = calc_quanta_results(cfg, the_nodes, major_tag, minor_tag, get_node_details, num_shades)
+def calc_quanta_map_size( num_rows : int, num_cols : int, num_text_lines : int, width_inches : int, height_inches : int ):
+    square_cells = True
+    if width_inches == -1:
+        width_inches = 2*num_cols/3
+    else:
+        square_cells = False
+    if height_inches == -1:
+        # Height is based on the number of rows and the number of text lines in the cells
+        height_inches = (5 + num_text_lines*2) * num_rows / 12
+    else:
+        square_cells = False
+        
+    return width_inches, height_inches, square_cells
 
+
+# Calculate the number of rows and columns in the quanta map
+def calc_quanta_rows_cols( quanta_results ):
     distinct_row_names = set()
     distinct_positions = set()
 
@@ -118,19 +125,25 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, \
 
     num_rows = len(distinct_row_names)     
     num_cols = len(distinct_positions)     
+
+    return num_rows, num_cols, distinct_row_names, distinct_positions
+
+     
+# Calculate (but do not draw) the quanta map with cell contents provided by get_node_details 
+def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, \
+                    the_nodes : UsefulNodeList, major_tag : str, minor_tag : str, get_node_details, \
+                    cell_fontsize : int = 10, \
+                    combine_identical_cells : bool = True, \
+                    show_perc_circles : bool = False, \
+                    width_inches : int = -1, height_inches : int = -1 ):
+
+    quanta_results, num_text_lines = calc_quanta_results(cfg, the_nodes, major_tag, minor_tag, get_node_details, num_shades)
+
+    num_rows, num_cols, distinct_row_names, distinct_positions = calc_quanta_rows_cols(quanta_results)
     if num_rows == 0 or num_cols == 0:
         return None, quanta_results, 0
 
-    square_cells = True
-    if width_inches == -1:
-        width_inches = 2*num_cols/3
-    else:
-        square_cells = False
-    if height_inches == -1:
-        # Height is based on the number of rows and the number of text lines in the cells
-        height_inches = (5 + num_text_lines*2) * num_rows / 12
-    else:
-        square_cells = False
+    width_inches, height_inches, square_cells = calc_quanta_map_size(num_rows, num_cols, num_text_lines, width_inches, height_inches)
         
     # Create figure and axes
     _, ax1 = plt.subplots(figsize=(width_inches, height_inches))  # Adjust the figure size as needed
@@ -242,33 +255,14 @@ def calc_quanta_map_numeric( cfg, standard_quanta : bool, num_shades : int, \
                     cell_fontsize : int = 10, \
                     width_inches : int = -1, height_inches : int = -1 ):
 
-    quanta_results = calc_quanta_results(cfg, the_nodes, major_tag, minor_tag, get_node_details, num_shades)
+    quanta_results, num_text_lines = calc_quanta_results(cfg, the_nodes, major_tag, minor_tag, get_node_details, num_shades)
 
-    distinct_row_names = set()
-    distinct_positions = set()
-
-    for result in quanta_results:
-        distinct_row_names.add(result.row_name())
-        distinct_positions.add(result.position)
-
-    distinct_row_names = sorted(distinct_row_names)
-    distinct_positions = sorted(distinct_positions)
-
-    num_rows = len(distinct_row_names)     
-    num_cols = len(distinct_positions)     
+    num_rows, num_cols, distinct_row_names, distinct_positions = calc_quanta_rows_cols(quanta_results)
     if num_rows == 0 or num_cols == 0:
         return None, quanta_results, 0
 
-    square_cells = True
-    if width_inches == -1:
-        width_inches = 2*num_cols/3
-    else:
-        square_cells = False
-    if height_inches == -1:
-        height_inches = 7*num_rows/12
-    else:
-        square_cells = False
-        
+    width_inches, height_inches, square_cells = calc_quanta_map_size(num_rows, num_cols, num_text_lines, width_inches, height_inches)
+       
     # Create figure and axes
     _, ax1 = plt.subplots(figsize=(width_inches, height_inches))  # Adjust the figure size as needed
 
