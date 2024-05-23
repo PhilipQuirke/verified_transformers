@@ -104,7 +104,8 @@ def calc_quanta_map_size( num_rows : int, num_cols : int, num_text_lines : int, 
         square_cells = False
     if height_inches == -1:
         # Height is based on the number of rows and the number of text lines in the cells
-        height_inches = (5 + num_text_lines*2) * num_rows / 12
+        #height_inches = (5 + num_text_lines*2) * num_rows / 12
+        height_inches = (7 + (num_text_lines-1)*3) * num_rows / 12
     else:
         square_cells = False
         
