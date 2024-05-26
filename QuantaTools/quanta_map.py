@@ -25,12 +25,13 @@ def calc_quanta_results( cfg, test_nodes : UsefulNodeList, major_tag : str, mino
     
     for node in test_nodes.nodes:
         cell_text, color_index = get_node_details(cfg, node, major_tag, minor_tag, num_shades)
-        if cell_text != "" :
-            quanta_results +=[QuantaResult(node, cell_text, color_index)]
+        if cell_text:
+            quanta_results.append(QuantaResult(node, cell_text, color_index))            
             max_spaces = max(max_spaces, cell_text.count(" "))
 
             words = cell_text.split()
-            max_word_len = max(max_word_len, max(len(word) for word in words))
+            if words:
+                max_word_len = max(max_word_len, max(len(word) for word in words))
 
     num_text_lines = max_spaces+1
     return quanta_results, num_text_lines, max_word_len
