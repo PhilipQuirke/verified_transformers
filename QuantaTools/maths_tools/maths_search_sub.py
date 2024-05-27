@@ -40,8 +40,8 @@ class sub_mt_functions(SubTaskBaseMath):
             FilterAttention(cfg.dn_to_position_name(focus_digit)), # Attends to Dn
             FilterAttention(cfg.ddn_to_position_name(focus_digit)), # Attends to D'n
             FilterContains(QType.MATH_SUB, MathsBehavior.SUB_PCA_TAG.value, QCondition.MAY), # Weak: Node PCA is interpretable (bigram or trigram output) with respect to subtraction ST8,ST9,ST10
-            FilterContains(QType.MATH_SUB, MathsBehavior.SUB_COMPLEXITY_PREFIX.value), # Impacts positive-answer subtraction questions (cover M1 to M4)
-            FilterContains(QType.MATH_SUB, MathsBehavior.NEG_COMPLEXITY_PREFIX.value)) # Impacts ngative-answer subtraction questions (cover N1 to N4)
+            FilterContains(QType.MATH_SUB, MathsBehavior.SUB_COMPLEXITY_PREFIX.value)) # Impacts positive-answer subtraction questions (cover M1 to M4)
+            # FilterContains(QType.MATH_SUB, MathsBehavior.NEG_COMPLEXITY_PREFIX.value)) # Impacts ngative-answer subtraction questions (cover N1 to N4)
 
     @staticmethod
     def test(cfg, acfg, focus_digit, strong):
