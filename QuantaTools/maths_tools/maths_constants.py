@@ -60,18 +60,15 @@ class MathsTask(Enum):
     SS_TAG = "SS" # Addition - Use Sum 9 (Dn, D'n)
     ST_TAG = "ST" # Addition - TriCase (Dn, D'n)
   
+    MT_TAG = "MT" # Subtraction - TriCase (Dn, D'n)
+    GT_TAG = "GT" # Subtraction - GreaterThan node that helps calculate Dn > D'n, and impacts sign of answer 
+  
     MD_TAG = "MD" # Positive-answer Subtraction - Difference (Dn, D'n)
     MB_TAG = "MB" # Positive-answer Subtraction - Borrow One (Dn, D'n)
-    MZ_TAG = "MZ" # Positive-answer Subtraction - Sum Zero (Dn, D'n)
-    MT_TAG = "MT" # Positive-answer Subtraction - TriCase (Dn, D'n)
 
     ND_TAG = "ND" # Negative-answer Subtraction - Difference (Dn, D'n)
     NB_TAG = "NB" # Negative-answer Subtraction - Borrow One (Dn, D'n)
-    NZ_TAG = "NZ" # Negative-answer Subtraction - Sum Zero (Dn, D'n)
-    NT_TAG = "NT" # Negative-answer Subtraction - TriCase (Dn, D'n)
 
-    GT_TAG = "GT" # SUB/NEG - GreaterThan node that helps calculate Dn > D'n, and impacts sign of answer 
-  
     OPR_TAG = "OPR" # Add/Sub - Attends to operation token (in the middle of the question)
     SGN_TAG = "SGN" # Add/Sub - Attends to answer sign (+/-) token (at the start of the answer)
     

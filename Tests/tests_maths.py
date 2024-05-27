@@ -18,15 +18,13 @@ from QuantaTools.maths_tools.maths_test_questions import make_maths_s0_questions
 from QuantaTools.maths_tools.maths_test_questions import make_maths_m0_questions_and_answers, make_maths_m1_questions_and_answers, make_maths_m2_questions_and_answers, make_maths_m3_questions_and_answers
 from QuantaTools.maths_tools.maths_test_questions import make_maths_n1_questions_and_answers, make_maths_n2_questions_and_answers, make_maths_n3_questions_and_answers, make_maths_n4_questions_and_answers
 from QuantaTools.maths_tools.maths_complexity import get_maths_min_complexity
-from QuantaTools.maths_tools.maths_search_mix import \
-    run_intervention_core, run_strong_intervention, run_weak_intervention, \
-    opr_functions, sgn_functions, gt_functions
-from QuantaTools.maths_tools.maths_search_add import \
-    add_ss_functions, add_sc_functions, add_sa_functions, add_st_functions
-from QuantaTools.maths_tools.maths_search_sub import \
-    sub_md_functions, sub_mb_functions, sub_mt_functions, neg_nd_functions, neg_nb_functions
-
-
+from QuantaTools.maths_tools.maths_search_mix import (
+    run_intervention_core, run_strong_intervention, run_weak_intervention,
+    opr_functions, sgn_functions)
+from QuantaTools.maths_tools.maths_search_add import (
+    add_ss_functions, add_sc_functions, add_sa_functions, add_st_functions)
+from QuantaTools.maths_tools.maths_search_sub import (
+    sub_mt_functions, sub_gt_functions, sub_md_functions, sub_mb_functions, neg_nd_functions, neg_nb_functions)
 
 
 class TestMaths(unittest.TestCase):
@@ -266,7 +264,7 @@ class TestMaths(unittest.TestCase):
 
 
     # Test that two attention tags are sorted alphabetically if they are within 5% of each other
-    def test_get_quanta_attention(self):
+    def test_get_quanta_attention_sorting(self):
           
         cfg, the_list = self.get_useful_node_list()  
  
@@ -296,7 +294,7 @@ class TestMaths(unittest.TestCase):
 
         
     # Test the math subtask search function
-    def test_get_quanta_attention(self):
+    def test_get_math_subtask_search(self):
             
         cfg, the_list = self.get_useful_node_list() 
       
@@ -305,9 +303,6 @@ class TestMaths(unittest.TestCase):
          
         tag = sgn_functions.tag(2)
         filters = sgn_functions.prereqs(cfg, 14, 2)  
-        
-        tag = gt_functions.tag(2)
-        filters = gt_functions.prereqs(cfg, 14, 2)   
         
         tag = add_ss_functions.tag(2)
         filters = add_ss_functions.prereqs(cfg, 14, 2)     
@@ -321,14 +316,17 @@ class TestMaths(unittest.TestCase):
         tag = add_st_functions.tag(2)
         filters = add_st_functions.prereqs(cfg, 14, 2)    
                 
+        tag = sub_mt_functions.tag(2)
+        filters = sub_mt_functions.prereqs(cfg, 14, 2)    
+                
+        tag = sub_gt_functions.tag(2)
+        filters = sub_gt_functions.prereqs(cfg, 14, 2)   
+
         tag = sub_md_functions.tag(2)
         filters = sub_md_functions.prereqs(cfg, 14, 2)    
                 
         tag = sub_mb_functions.tag(2)
         filters = sub_mb_functions.prereqs(cfg, 14, 2)    
-                
-        tag = sub_mt_functions.tag(2)
-        filters = sub_mt_functions.prereqs(cfg, 14, 2)    
                 
         tag = neg_nd_functions.tag(2)
         filters = neg_nd_functions.prereqs(cfg, 14, 2)    
