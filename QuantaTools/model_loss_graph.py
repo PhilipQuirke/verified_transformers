@@ -6,10 +6,6 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 
-def plot_loss_line(tensor, renderer=None, xaxis="", yaxis="", **kwargs):
-    px.line(utils.to_numpy(tensor), labels={"x":xaxis, "y":yaxis}, **kwargs).show(renderer)
-
-
 # Plot multiple graph with lines
 def plot_loss_lines(cfg, epochs_to_graph : int, raw_lines_list, x=None, mode='lines', labels=None, xaxis='Epoch', yaxis='Loss', title = '', log_y=False, hover=None, all_epochs=True, **kwargs):
 
