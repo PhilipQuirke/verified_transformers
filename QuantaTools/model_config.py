@@ -55,6 +55,9 @@ class ModelConfig():
     
         # Should we use the GPU (if any) to speed up processing?
         self.use_cuda = True
+        
+        # Save graphs to CoLab temp files as PDF and HTML. Can manually export files for re-use in papers.
+        self.save_graph_to_file = True        
     
  
     def initialize_token_positions(self, num_question_positions, num_answer_positions, answer_meanings_ascend ):
