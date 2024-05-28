@@ -25,9 +25,6 @@ class MathsConfig(AlgoConfig):
         # More granular tricase_questions, indexed by (digit, operator, qtype).
         # Makes easier how we mix and match tricase data from different qtypes.
         self.customized_tricase_questions_dict = {}
-
-        # Format to save graphs to CoLab temp files as. Temp files can be manually exported for re-use in papers etc.
-        self.graph_file_suffix = "pdf" # Can be pdf, svg or png 
       
 
     # percentage of addition questions
