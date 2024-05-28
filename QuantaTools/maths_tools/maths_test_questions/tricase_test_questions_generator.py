@@ -47,7 +47,7 @@ def pad_small_set_of_questions(cfg, sample_pairs_of_numbers: list, target_number
     return list(unique_pairs_set)
 
 def make_single_tricase_question(
-        _, test_digit: int, test_case: int, operation: MathsToken,
+        cfg, test_digit: int, test_case: int, operation: MathsToken,
         qtype: QType = None, make_borrow: str = "mixed"
 ):
     x_noise = 0
