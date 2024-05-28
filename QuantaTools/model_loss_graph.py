@@ -18,7 +18,7 @@ def plot_loss_lines(cfg, epochs_to_graph : int, raw_lines_list, x=None, mode='li
         lines_list = [lines_list[i] for i in range(lines_list.shape[0])]
     if x is None:
         x=np.arange(len(lines_list[0]))
-    if cfg.save_graph_to_file :
+    if cfg.graph_file_suffix != "" :
       fig = go.Figure(layout={})
       print(full_title)
     else:
@@ -63,7 +63,7 @@ def plot_loss_lines(cfg, epochs_to_graph : int, raw_lines_list, x=None, mode='li
           ticktext=[str(tick) for tick in x_ticks]
       )
 
-    if cfg.save_graph_to_file:
+    if cfg.graph_file_suffix != "":
         # fig.update_layout(margin=dict(l=10, r=10, t=10, b=10),width=1200,height=300)
         # Update layout for legend positioning inside the graph
         fig.update_layout(
