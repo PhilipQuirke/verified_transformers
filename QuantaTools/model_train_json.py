@@ -37,7 +37,10 @@ class TrainingJsonData:
         self.training_loss = training_loss
 
 
-def load_training_json(data) -> TrainingJsonData:   
+def load_training_json(file_path: str) -> TrainingJsonData:
+    with open(file_path, 'r') as file:
+        data = json.load(file)
+    
     config_data = data['Config']
     config = TrainingJsonConfig(**config_data)
     
