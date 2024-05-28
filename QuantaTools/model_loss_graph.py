@@ -89,4 +89,4 @@ def plot_loss_lines(cfg, epochs_to_graph : int, raw_lines_list, x=None, mode='li
 
     fig.show(bbox_inches="tight")
 
-    return full_title
+    return full_title, fig
