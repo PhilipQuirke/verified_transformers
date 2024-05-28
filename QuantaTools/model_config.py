@@ -33,7 +33,12 @@ class ModelConfig():
 
         # Before training was this model initialised with another existing model?
         self.insert_mode = 0 # 0=None 1=Init, 2=FreezeHeads 3=FreezeAll
-    
+        self.insert_late = False
+        self.insert_n_layers = 2
+        self.insert_n_heads = 3
+        self.insert_training_seed = 372001
+        self.insert_n_training_steps = 15000
+        
         # Random seeds
         self.training_seed : int = 372001
         self.analysis_seed : int = 673023
@@ -47,7 +52,7 @@ class ModelConfig():
         self.token_position_meanings = []
   
         self.initialize_token_positions( 12, 7, True ) # Random values (based on 5 digit addition)
-        
+    
         # Should we use the GPU (if any) to speed up processing?
         self.use_cuda = True
     
