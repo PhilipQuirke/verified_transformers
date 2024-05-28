@@ -1,5 +1,3 @@
-from dataclasses import dataclass
-
 import matplotlib.pyplot as plt
 import torch
 import transformer_lens.utils as utils
@@ -261,7 +259,7 @@ def get_maths_node_operation_coverage( node ):
 
 
 # Analyze the tags associated with node, to show which mathematical operations apply
-def get_maths_operation_complexity(_, node, __ : str, ___ : str, num_shades : int):
+def get_maths_operation_complexity(_, node, __ : str, ___ : str, ____ : int):
     cell_text = get_maths_node_operation_coverage( node )
 
     color_index = 0

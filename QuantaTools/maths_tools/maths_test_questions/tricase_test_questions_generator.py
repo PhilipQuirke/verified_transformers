@@ -5,7 +5,7 @@ import random
 import torch
 
 from QuantaTools.quanta_constants import QType
-from QuantaTools.maths_tools.maths_constants import MathsBehavior, MathsTask, MathsToken
+from QuantaTools.maths_tools.maths_constants import MathsBehavior, MathsToken
 from QuantaTools.maths_tools.maths_data_generator import make_maths_questions_and_answers
 
 
@@ -47,7 +47,7 @@ def pad_small_set_of_questions(cfg, sample_pairs_of_numbers: list, target_number
     return list(unique_pairs_set)
 
 def make_single_tricase_question(
-        cfg, test_digit: int, test_case: int, operation: MathsToken,
+        _, test_digit: int, test_case: int, operation: MathsToken,
         qtype: QType = None, make_borrow: str = "mixed"
 ):
     x_noise = 0

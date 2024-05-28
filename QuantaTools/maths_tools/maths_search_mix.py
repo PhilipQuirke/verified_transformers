@@ -1,18 +1,16 @@
 from abc import ABC, abstractmethod
 
-from QuantaTools.useful_node import position_name, location_name, answer_name, UsefulNode, UsefulNodeList
+from QuantaTools.useful_node import position_name, answer_name, UsefulNode, UsefulNodeList
 from QuantaTools.quanta_constants import QType, QCondition, NO_IMPACT_TAG
-from QuantaTools.quanta_map_impact import get_question_answer_impact, sort_unique_digits
-from QuantaTools.quanta_filter import FilterNode, FilterAnd, FilterOr, FilterHead, FilterContains, FilterPosition, FilterAttention, FilterImpact, FilterAlgo, filter_nodes
+from QuantaTools.quanta_map_impact import sort_unique_digits
+from QuantaTools.quanta_filter import FilterNode, FilterAnd, FilterOr, FilterHead, FilterPosition, FilterAttention, FilterImpact, filter_nodes
 from QuantaTools.ablate_config import AblateConfig
 from QuantaTools.ablate_hooks import a_predict_questions, a_run_attention_intervention
 from QuantaTools.algo_search import SubTaskBase
 
 from .maths_constants import MathsToken, MathsBehavior, MathsTask 
-from .maths_config import MathsConfig
 from .maths_data_generator import make_maths_questions_and_answers
-from .maths_complexity import get_maths_question_complexity
-from .maths_utilities import int_to_answer_str, digit_name
+from .maths_utilities import int_to_answer_str 
 
 
 def run_intervention_core(cfg, acfg, store_question, clean_question, expected_answer_impact, expected_answer_int, strong):

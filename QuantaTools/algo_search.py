@@ -2,9 +2,8 @@ import itertools
 from abc import ABC, abstractmethod
 
 from .useful_config import UsefulConfig
-from .quanta_filter import FilterAlgo, filter_nodes
 from .quanta_constants import QType, QCondition
-from .quanta_filter import FilterNode, FilterAnd, FilterOr, FilterHead, FilterContains, FilterPosition, FilterAttention, FilterImpact, FilterAlgo, filter_nodes
+from .quanta_filter import FilterNode, FilterOr, FilterHead, FilterAlgo, FilterContains, FilterPosition, FilterImpact, FilterAlgo, filter_nodes
 from .algo_config import AlgoConfig
 
 
@@ -47,7 +46,7 @@ class SubTaskBase(ABC):
 
     @staticmethod
     # A test function that always suceeds 
-    def succeed_test(cfg, acfg, alter_digit, strong):
+    def succeed_test(_, acfg, alter_digit, strong):
         print( "Test confirmed", acfg.ablate_node_names(), "" if strong else "Weak")
         return True
     

@@ -2,10 +2,10 @@ import unittest
 
 from QuantaTools.model_token_to_char import token_to_char, tokens_to_string
 
-from QuantaTools.useful_node import NodeLocation, UsefulNode, UsefulNodeList
+from QuantaTools.useful_node import UsefulNode, UsefulNodeList
 
-from QuantaTools.quanta_constants import QType, MATH_ADD_SHADES, MATH_SUB_SHADES
-from QuantaTools.quanta_map_impact import sort_unique_digits, get_quanta_impact
+from QuantaTools.quanta_constants import QType
+from QuantaTools.quanta_map_impact import sort_unique_digits
 
 
 class TestUseful(unittest.TestCase):

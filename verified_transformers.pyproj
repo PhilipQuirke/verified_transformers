@@ -39,6 +39,7 @@
     <Compile Include="QuantaTools\maths_tools\maths_test_questions\test_questions_checker.py" />
     <Compile Include="QuantaTools\maths_tools\maths_test_questions\tricase_test_questions_generator.py" />
     <Compile Include="QuantaTools\maths_tools\maths_test_questions\__init__.py" />
+    <Compile Include="QuantaTools\model_loss_graph.py" />
     <Compile Include="QuantaTools\model_pca.py" />
     <Compile Include="QuantaTools\maths_tools\__init__.py" />
     <Compile Include="QuantaTools\maths_tools\maths_search_mix.py" />
@@ -53,6 +54,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="QuantaTools\model_token_to_char.py" />
+    <Compile Include="QuantaTools\model_train_json.py" />
     <Compile Include="QuantaTools\quanta_filter.py" />
     <Compile Include="QuantaTools\quanta_map.py" />
     <Compile Include="QuantaTools\quanta_map_attention.py" />

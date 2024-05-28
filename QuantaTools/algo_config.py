@@ -1,5 +1,3 @@
-import itertools
-
 from .useful_config import UsefulConfig
 from .quanta_filter import FilterAlgo, filter_nodes
 from .quanta_constants import QType, QCondition

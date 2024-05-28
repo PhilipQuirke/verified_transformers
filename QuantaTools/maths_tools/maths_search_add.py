@@ -1,8 +1,8 @@
 from QuantaTools.useful_node import position_name, answer_name, UsefulNode, UsefulNodeList
-from QuantaTools.quanta_constants import QType, QCondition, NO_IMPACT_TAG
+from QuantaTools.quanta_constants import QType, QCondition
 from QuantaTools.quanta_map_impact import sort_unique_digits
 from QuantaTools.quanta_filter import FilterNode, FilterAnd, FilterOr, FilterHead, \
-     FilterContains, FilterPosition, FilterAttention, FilterImpact, FilterAlgo
+     FilterContains, FilterPosition, FilterAttention, FilterImpact 
 from QuantaTools.ablate_config import AblateConfig
 
 from .maths_constants import MathsToken, MathsBehavior, MathsTask 

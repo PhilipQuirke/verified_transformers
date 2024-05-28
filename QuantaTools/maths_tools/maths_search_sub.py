@@ -2,7 +2,7 @@ from QuantaTools.useful_node import position_name, answer_name, UsefulNode, Usef
 from QuantaTools.quanta_constants import QType, QCondition, NO_IMPACT_TAG
 from QuantaTools.quanta_map_impact import sort_unique_digits
 from QuantaTools.quanta_filter import ( FilterNode, FilterAnd, FilterOr, FilterHead,
-     FilterContains, FilterPosition, FilterAttention, FilterImpact, FilterAlgo )
+     FilterContains, FilterPosition, FilterAttention, FilterImpact )
 from QuantaTools.ablate_config import AblateConfig
 from QuantaTools.ablate_hooks import a_predict_questions, a_run_attention_intervention
 
