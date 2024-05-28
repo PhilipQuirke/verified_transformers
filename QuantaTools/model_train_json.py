@@ -1,8 +1,7 @@
 import json
-from typing import List
+import requests
 
 
-# The training colab creates a json file containing this information
 class TrainingJsonConfig:
     def __init__(self, n_layers, n_heads, d_vocab, d_mlp, d_head, training_seed, n_digits, n_ctx, act_fn, batch_size, n_training_steps, lr, weight_decay, perc_mult, perc_sub, insert_late, insert_mode, insert_n_layers, insert_n_heads, insert_training_seed, insert_n_training_steps):
         self.n_layers = n_layers
@@ -28,19 +27,21 @@ class TrainingJsonConfig:
         self.insert_n_training_steps = insert_n_training_steps
 
 
-# The training colab creates a json file containing this information
 class TrainingJsonData:
-    def __init__(self, config: TrainingJsonConfig, avg_final_loss: float, final_loss: float, training_loss: List[float]):
+    def __init__(self, config: TrainingJsonConfig, avg_final_loss: float, final_loss: float, training_loss: list):
         self.config = config
         self.avg_final_loss = avg_final_loss
         self.final_loss = final_loss
         self.training_loss = training_loss
 
 
-def load_training_json(file_path: str) -> TrainingJsonData:
-    with open(file_path, 'r') as file:
-        data = json.load(file)
-    
+def download_json(url: str) -> dict:
+    response = requests.get(url)
+    response.raise_for_status()
+    return response.json()
+
+
+def load_training_json(data: dict) -> TrainingJsonData:
     config_data = data['Config']
     config = TrainingJsonConfig(**config_data)
     
@@ -50,4 +51,3 @@ def load_training_json(file_path: str) -> TrainingJsonData:
     
     training_data = TrainingJsonData(config, avg_final_loss, final_loss, training_loss)
     return training_data
-
