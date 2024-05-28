@@ -6,6 +6,7 @@ from .quanta_constants import QType, QCondition
 
 # Extends UsefulConfig with algorithm functionality
 class AlgoConfig(UsefulConfig):
+    
     def __init__(self):
         super().__init__()
         self.reset_algo()

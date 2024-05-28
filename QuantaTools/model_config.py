@@ -6,7 +6,6 @@ from .useful_node import answer_name
 # Base configuration class related to a Transformer model shape, training and analysis
 class ModelConfig():
 
-
     def __init__(self):
         # Model name for models stored on HuggingFace
         self.model_name = ""
