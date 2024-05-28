@@ -81,6 +81,19 @@ class MathsConfig(AlgoConfig):
         self.initialize_maths_token_positions()  
 
 
+    # Parse the model name to extract the number of digits in question
+    def parse_insert_model_name(self, insert_model_name):
+        super().parse_insert_model_name(insert_model_name)
+        
+        match = re.search(r"d(\d)_", insert_model_name)
+        if match:
+            self.insert_n_digits = int(match.group(1))
+        else:
+            match = re.search(r"d(\d\d)_", insert_model_name)
+            if match:
+                self.insert_n_digits = int(match.group(1))
+                
+
     # Extend "l2_h3_t15K" with number of digits in question to give "_d5_l2_h3_t15K
     def short_config_description(self):       
         return f'_d{self.n_digits}' + super().short_config_description()      

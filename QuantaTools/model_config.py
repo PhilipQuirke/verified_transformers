@@ -105,11 +105,7 @@ class ModelConfig():
 
         match = re.search(r"t(\d\d)K", self.model_name)
         if not match:
-            match = re.search(r"t(\d)K", self.model_name)
-        if not match:
-            match = re.search(r"train(\d\d)K", self.model_name) # Old style            
-        if not match:
-            match = re.search(r"train(\d)K", self.model_name) # Old style            
+            match = re.search(r"t(\d)K", self.model_name)        
         if match:
             self.n_training_steps = int(match.group(1)) * 1000
     
@@ -127,6 +123,28 @@ class ModelConfig():
         match = re.search(r"_s(\d\d\d\d\d\d)", self.model_name)
         if match:
             self.training_seed = int(match.group(1))
+
+
+   # Update n_digits, n_layers, n_heads, n_training_steps, training_seed from model_name
+    def parse_insert_model_name(self, insert_model_name):
+
+        match = re.search(r"l(\d)_", insert_model_name)
+        if match:
+            self.insert_n_layers = int(match.group(1))
+
+        match = re.search(r"h(\d)_", insert_model_name)
+        if match:
+            self.insert_n_heads = int(match.group(1))
+
+        match = re.search(r"t(\d\d)K", insert_model_name)
+        if not match:
+            match = re.search(r"t(\d)K", insert_model_name)       
+        if match:
+            self.insert_n_training_steps = int(match.group(1)) * 1000
+    
+        match = re.search(r"_s(\d\d\d\d\d\d)", insert_model_name)
+        if match:
+            self.insert_training_seed = int(match.group(1))
 
 
     def short_config_description(self):       

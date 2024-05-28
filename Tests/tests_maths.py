@@ -91,6 +91,27 @@ class TestMaths(unittest.TestCase):
         self.assertEqual( cfg.repeat_digit(4), 444444)
 
 
+    def test_parse_model_name(self):
+        cfg = self.get_cfg()
+        cfg.model_name = "ins1_mix_d10_l3_h5_t50K_s572091"
+        cfg.parse_model_name()
+        self.assertEqual( cfg.insert_mode, 1)
+        self.assertEqual( cfg.n_digits, 10)
+        self.assertEqual( cfg.n_layers, 3)
+        self.assertEqual( cfg.n_heads, 5)
+        self.assertEqual( cfg.n_training_steps, 50000)
+        self.assertEqual( cfg.training_seed, 572091)
+
+        
+    def test_parse_insert_model_name(self):
+        cfg = self.get_cfg()
+        cfg.parse_insert_model_name("add_d7_l6_h5_t40K_s572077")
+        self.assertEqual( cfg.insert_n_digits, 7)
+        self.assertEqual( cfg.insert_n_layers, 6)
+        self.assertEqual( cfg.insert_n_heads, 5)
+        self.assertEqual( cfg.insert_n_training_steps, 40000)
+        self.assertEqual( cfg.insert_training_seed, 572077)
+
         
     # Intervention ablation test for addition "Use Sum 9" (SS) task
     def test_add_ss_test1(self):
