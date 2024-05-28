@@ -121,6 +121,8 @@ class ModelConfig():
             self.insert_mode = 2 # Initialised with existing model. Train & reset useful heads every 100 epochs
         elif "ins3_" in self.model_name :
             self.insert_mode = 3 # Initialised with existing model. Trained & reset useful heads & MLPs every 100 epochs
+        elif "ins4_" in self.model_name :
+            self.insert_mode = 4 # Initialised with "nodes with identified subtasks" from existing model. Train & reset useful heads every 100 epochs
      
         match = re.search(r"_s(\d\d\d\d\d\d)", self.model_name)
         if match:
@@ -138,8 +140,31 @@ class ModelConfig():
 
     def insert_config_description(self):
         return '' if self.insert_mode == 0 else f'ins{self.insert_mode}_' 
+    
 
-
+    def to_dict(self):
+        return {
+            "model_name": self.model_name,
+            "n_layers": self.n_layers,
+            "n_heads": self.n_heads,
+            "d_vocab": self.d_vocab,    
+            "d_model": self.d_model,    
+            "d_mlp_multiplier": self.d_mlp_multiplier,
+            "d_head": self.d_head,
+            "act_fn": self.act_fn,
+            "batch_size": self.batch_size,
+            "n_training_steps": self.n_training_steps,
+            "weight_decay": self.weight_decay,
+            "lr": self.lr,
+            "insert_mode": self.insert_mode,
+            "insert_late": self.insert_late,
+            "insert_n_layers": self.insert_n_layers,
+            "insert_n_heads": self.insert_n_heads,
+            "insert_training_seed": self.insert_training_seed,
+            "insert_n_training_steps": self.insert_n_training_steps,
+            "training_seed": self.training_seed,
+            "analysis_seed": self.analysis_seed,
+        }
 
 
   
