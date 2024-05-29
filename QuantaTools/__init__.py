@@ -52,7 +52,7 @@ from .maths_tools.maths_test_questions import make_maths_test_questions_and_answ
 from .maths_tools.maths_test_questions.test_questions_checker import (test_maths_questions_by_complexity, 
     test_maths_questions_by_impact, test_maths_questions_and_add_useful_node_tags, test_correctness_on_num_questions)
 from .maths_tools import make_maths_tricase_questions, make_maths_tricase_questions_customized
-from .maths_tools.maths_search_mix import (
+from .maths_tools.maths_search_mix import (SubTaskBaseMath,
     run_intervention_core, run_strong_intervention, run_weak_intervention, 
     opr_functions, sgn_functions )
 from .maths_tools.maths_search_add import (
