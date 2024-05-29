@@ -107,10 +107,12 @@ def search_and_tag_digit(cfg, acfg, sub_task_functions, the_impact_digit, do_pai
                 # Do not test nodes that already have the search tag assigned (perhaps from a previous search run)
                 test_nodes = filter_nodes( test_nodes, FilterAlgo(the_tag, QCondition.NOT))
 
-                acfg.num_filtered_nodes += len(test_nodes.nodes)
+                num_test_nodes = len(test_nodes.nodes)
+                acfg.num_filtered_nodes += num_test_nodes
                 
-                if search_and_tag_digit_position(cfg, acfg, the_impact_digit, test_nodes, sub_task_functions, strong, the_tag, do_pair_search ):
-                    success = True
+                if num_test_nodes > 0 :
+                    if search_and_tag_digit_position(cfg, acfg, the_impact_digit, test_nodes, sub_task_functions, strong, the_tag, do_pair_search ):
+                        success = True
                     
             if success:
                 return True
