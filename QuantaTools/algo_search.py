@@ -84,9 +84,18 @@ def search_and_tag_digit_position(cfg, acfg, the_impact_digit, test_nodes, sub_t
 
 
 # For each useful position, search the related useful node(s), using the test_function, for the expected impact on the_impact_digit.
-def search_and_tag_digit(cfg, acfg, sub_task_functions, the_impact_digit, do_pair_search, allow_impact_mismatch ):
+def search_and_tag_digit(cfg, acfg, sub_task_functions, the_impact_digit,
+        do_pair_search : bool = False, # Search for "pairs" of interesting nodes (as well as "single" nodes) that satisfy the test \
+        allow_impact_mismatch : bool = False, # Succeed in search even if expected impact is not correct
+        delete_existing_tags : bool = True): # Delete existing tags before adding new ones
 
     the_tag = sub_task_functions.tag(the_impact_digit)
+
+    if delete_existing_tags:
+      # First time a given search is run this has no effect
+      # If the search is run a second time, developer is generally debugging code,
+      # and doesnt want output of prior runs to influence the second run.
+      cfg.useful_nodes.reset_node_tags(QType.ALGO.value, the_tag)        
 
     from_position = cfg.min_useful_position()
     to_position = cfg.max_useful_position()
@@ -121,10 +130,11 @@ def search_and_tag_digit(cfg, acfg, sub_task_functions, the_impact_digit, do_pai
 
 
 # For each answer digit, for each useful position, search the related useful node(s), using the test_function, for the expected impact on the_impact_digit. We may do 2 passes.
-def search_and_tag(cfg, acfg, \
+def search_and_tag(cfg, acfg, 
         sub_task_functions, 
         do_pair_search : bool = False, # Search for "pairs" of interesting nodes (as well as "single" nodes) that satisfy the test \
-        allow_impact_mismatch : bool = False): # Succeed in search even if expected impact is not correct
+        allow_impact_mismatch : bool = False, # Succeed in search even if expected impact is not correct
+        delete_existing_tags : bool = True): # Delete existing tags before adding new ones
 
     acfg.reset_intervention_totals()
     acfg.operation = sub_task_functions.operation()
@@ -132,6 +142,6 @@ def search_and_tag(cfg, acfg, \
     for the_impact_digit in range(cfg.num_answer_positions):
         search_and_tag_digit(cfg, acfg, 
             sub_task_functions, the_impact_digit, 
-            do_pair_search, allow_impact_mismatch )
+            do_pair_search, allow_impact_mismatch, delete_existing_tags )
 
     print(f"Filtering gave {acfg.num_filtered_nodes} candidate node(s). Ran {acfg.num_tests_run} intervention test(s). Added {acfg.num_tags_added} tag(s)")
