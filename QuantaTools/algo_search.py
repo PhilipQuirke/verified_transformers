@@ -92,9 +92,9 @@ def search_and_tag_digit(cfg, acfg, sub_task_functions, the_impact_digit,
     the_tag = sub_task_functions.tag(the_impact_digit)
 
     if delete_existing_tags:
-      # First time a given search is run this has no effect
-      # If the search is run a second time, developer is generally debugging code,
-      # and doesnt want output of prior runs to influence the second run.
+      # If a given search is run multiple times, the second run is impacted 
+      # by the output of the first run via below code: FilterAlgo(the_tag, QCondition.NOT) 
+      # Deleting the tags avoids this undesirable behavior.
       cfg.useful_nodes.reset_node_tags(QType.ALGO.value, the_tag)        
 
     from_position = cfg.min_useful_position()
