@@ -180,8 +180,8 @@ class add_st_functions(SubTaskBaseMath):
         return MathsToken.PLUS
     
     @staticmethod
-    def tag(focus_digit):
-        return digit_name(focus_digit) + "." + MathsTask.ST_TAG.value
+    def tag(impact_digit):
+        return answer_name(impact_digit) + "." + MathsTask.ST_TAG.value
 
     @staticmethod
     def prereqs(cfg, position, focus_digit):

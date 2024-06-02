@@ -22,7 +22,7 @@ class sub_mt_functions(SubTaskBaseMath):
     
     @staticmethod
     def tag(impact_digit):
-        return digit_name(impact_digit) + "." + MathsTask.MT_TAG.value
+        return answer_name(impact_digit) + "." + MathsTask.MT_TAG.value
 
     @staticmethod
     def prereqs(cfg, position, focus_digit):
@@ -76,7 +76,7 @@ class sub_gt_functions(SubTaskBaseMath):
     @staticmethod
     # Tag for Greater Than "Dn > D'n" (Dn.GT) task used in SUB and NEG
     def tag(impact_digit):
-      return digit_name(impact_digit) + "." + MathsTask.GT_TAG.value
+      return answer_name(impact_digit) + "." + MathsTask.GT_TAG.value
 
     @staticmethod
     # Prerequisites for Greater Than "Dn > D'n" (Dn.GT) task used in SUB and NEG
