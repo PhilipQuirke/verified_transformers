@@ -16,6 +16,11 @@ class AblateConfig():
         self.show_test_successes = False
 
 
+    def reset_ablate_layer_store(self):
+        # A list of "default" stored weightings collected from the model.
+        self.layer_store = [[],[],[],[]]   # Supports 1 to 4 model layers
+
+
     def reset_ablate(self):
         self.threshold = 0.01
 
@@ -46,8 +51,7 @@ class AblateConfig():
         # A list of NodeLocations to ablate
         self.ablate_node_locations = []
 
-        # A list of "default" stored weightings collected from the model.
-        self.layer_store = [[],[],[],[]]   # Supports 1 to 4 model layers
+        self.reset_ablate_layer_store()
 
 
     def reset_intervention(self, expected_answer = "", expected_impact = NO_IMPACT_TAG):

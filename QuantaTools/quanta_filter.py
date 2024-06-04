@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 
 from .quanta_constants import QCondition, QType, MIN_ATTN_PERC 
 
-from .useful_node import position_name, position_name_to_int, UsefulNodeList 
+from .useful_node import position_name, position_name_to_int, UsefulNode, UsefulNodeList 
 
 
 def extract_trailing_int(input_string):
@@ -17,7 +17,7 @@ def extract_trailing_int(input_string):
 
 class FilterNode(ABC):
     @abstractmethod
-    def evaluate(self, test_node):
+    def evaluate(self, test_node:UsefulNode):
         pass
 
     @abstractmethod
@@ -29,7 +29,7 @@ class FilterAnd(FilterNode):
     def __init__(self, *args):
         self.children = args
 
-    def evaluate(self, test_node):
+    def evaluate(self, test_node:UsefulNode):
         return all(child.evaluate(test_node) for child in self.children)
 
     def describe(self):
@@ -45,7 +45,7 @@ class FilterOr(FilterNode):
     def __init__(self, *args):
         self.children = args
 
-    def evaluate(self, test_node):
+    def evaluate(self, test_node:UsefulNode):
         return any(child.evaluate(test_node) for child in self.children)
 
     def describe(self):
@@ -61,16 +61,27 @@ class FilterName(FilterNode):
     def __init__(self, name:str):
         self.name = name
         
-    def evaluate(self, test_node):
+    def evaluate(self, test_node:UsefulNode):
         return test_node.name() == self.name
 
     def describe(self):
         return "Name=" + self.name
     
 
+class FilterTrue(FilterNode):
+    def __init__(self):
+        pass
+        
+    def evaluate(self, test_node:UsefulNode):
+        return True
+
+    def describe(self):
+        return "True"
+    
+
 class FilterHead(FilterNode):
 
-    def evaluate(self, test_node):
+    def evaluate(self, test_node:UsefulNode):
         return test_node.is_head
 
     def describe(self):
@@ -79,7 +90,7 @@ class FilterHead(FilterNode):
                                        
 class FilterNeuron(FilterNode):
 
-    def evaluate(self, test_node):
+    def evaluate(self, test_node:UsefulNode):
         return not test_node.is_head
 
     def describe(self):
@@ -91,7 +102,7 @@ class FilterPosition(FilterNode):
         self.filter_strength = filter_strength
         self.position = position_name_to_int(the_position_name)
 
-    def evaluate(self, test_node):
+    def evaluate(self, test_node:UsefulNode):
         if self.filter_strength in [QCondition.MUST, QCondition.CONTAINS]:
             return (test_node.position == self.position)
         if self.filter_strength == QCondition.NOT:
@@ -107,6 +118,17 @@ class FilterPosition(FilterNode):
     def describe(self):
         return self.filter_strength.value + " " + position_name(self.position)
 
+
+class FilterLayer(FilterNode):
+    def __init__(self, the_layer : int):
+        self.layer = the_layer
+
+    def evaluate(self, test_node:UsefulNode):
+        return (test_node.layer == self.layer)
+
+    def describe(self):
+        return "Layer=" + str(self.layer)
+
                                        
 class FilterContains(FilterNode):
     def __init__(self, quanta_type : QType, minor_tag : str, filter_strength = QCondition.MUST):
@@ -114,7 +136,7 @@ class FilterContains(FilterNode):
         self.minor_tag = minor_tag
         self.filter_strength = filter_strength
 
-    def evaluate(self, test_node):
+    def evaluate(self, test_node:UsefulNode):
         if self.filter_strength in [QCondition.MUST, QCondition.CONTAINS]:
             return test_node.contains_tag(self.quanta_type.value, self.minor_tag)   
         if self.filter_strength == QCondition.NOT:
@@ -132,7 +154,7 @@ class FilterAttention(FilterContains):
         super().__init__(QType.ATTN, minor_tag, filter_strength)
         self.filter_min_perc = filter_min_perc
 
-    def evaluate(self, test_node):
+    def evaluate(self, test_node:UsefulNode):
         if self.filter_strength in [QCondition.MUST, QCondition.CONTAINS]:
             for tag in test_node.tags:
                 # We use contains(minor) as the ATTENTION_MAJOR_TAG minor tag is "P14=25" (i.e 25 percent)

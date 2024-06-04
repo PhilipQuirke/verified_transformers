@@ -19,16 +19,18 @@ class MathsConfig(AlgoConfig):
         self.n_digits : int = 6
         self.initialize_maths_token_positions()     
 
-        # Dictionary of test maths questions based on the T8, T9, T10 categorisation. Indexed by (digit, operator).
+        # Dictionary of test maths questions based on the ST8, ST9, ST10 categorisation. Indexed by (digit, operator).
         self.tricase_questions_dict = {}
 
         # More granular tricase_questions, indexed by (digit, operator, qtype).
         # Makes easier how we mix and match tricase data from different qtypes.
         self.customized_tricase_questions_dict = {}
-
-        # Format to save graphs to CoLab temp files as. Temp files can be manually exported for re-use in papers etc.
-        self.graph_file_suffix = "pdf" # Can be pdf, svg or png 
       
+
+    # percentage of addition questions
+    def perc_add(self):
+        return max(0, 100 - self.perc_mult - self.perc_sub)
+    
 
     # Based on n_digits, set the number of question and answer tokens in the context 
     def initialize_maths_token_positions(self):
@@ -36,11 +38,10 @@ class MathsConfig(AlgoConfig):
             self.n_digits*2 + 2,  # Plus 2 for operator (+ or -) and equals (=) sign
             self.n_digits + 2, # Plus 2 for answer sign (+ or -) and answer digits (adding two 5 digits numbers gives a 6 digit answer )
             False ) 
-
-
-    # percentage of addition questions
-    def perc_add(self):
-        return max(0, 100 - self.perc_mult - self.perc_sub)
+        
+        if self.perc_add() == 100:
+            # The first answer token is always "+"
+            self.token_position_meanings[self.num_question_positions] = "+"
 
 
     # How many slices do we break the MLP layer up into?
@@ -69,16 +70,25 @@ class MathsConfig(AlgoConfig):
         super().parse_model_name()
         
         match = re.search(r"d(\d)_", self.model_name)
+        if not match:
+            match = re.search(r"d(\d\d)_", self.model_name)
         if match:
             self.n_digits = int(match.group(1))
-        else:
-            match = re.search(r"d(\d\d)_", self.model_name)
-            if match:
-                self.n_digits = int(match.group(1))
             
         # n_digits may have changed 
         self.initialize_maths_token_positions()  
 
+
+    # Parse the model name to extract the number of digits in question
+    def parse_insert_model_name(self, insert_model_name):
+        super().parse_insert_model_name(insert_model_name)
+        
+        match = re.search(r"d(\d)_", insert_model_name)
+        if not match:
+            match = re.search(r"d(\d\d)_", insert_model_name)
+        if match:
+            self.insert_n_digits = int(match.group(1))
+                
 
     # Extend "l2_h3_t15K" with number of digits in question to give "_d5_l2_h3_t15K
     def short_config_description(self):       

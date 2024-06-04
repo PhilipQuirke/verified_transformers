@@ -225,7 +225,7 @@ class UsefulNodeList():
 
 
     # Get the node at the specified location. May return None.    
-    def get_node( self, nodelocation ):
+    def get_node( self, nodelocation : NodeLocation ):
         for node in self.nodes:
             if node.position == nodelocation.position and node.is_head == nodelocation.is_head and node.layer == nodelocation.layer and node.num == nodelocation.num:
                 return node
@@ -259,7 +259,7 @@ class UsefulNodeList():
             json.dump(dict_list, file, default=lambda o: o.__dict__)
     
             
-    # Load the nodes and tags from a json file
+    # Load the nodes and tags from a json file. (Does not delete existing nodes.)
     def load_nodes(self, filename):
         with open(filename, 'r') as file:
             dict_list = json.load(file)

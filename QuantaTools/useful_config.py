@@ -8,6 +8,7 @@ from .useful_node import position_name, UsefulNodeList
 # Extends ModelConfig with info on which layers and nodes (attention heads and MLP neuron) in the model are actually useful.
 # Also refer https://github.com/PhilipQuirke/verified_transformers/blob/main/useful_tags_readme.md
 class UsefulConfig(ModelConfig):
+    
     # Create an empty useful configuration
     def __init__(self):
         super().__init__()

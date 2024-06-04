@@ -12,12 +12,12 @@ from .maths_test_questions import EACH_CASE_TRICASE_QUESTIONS as TRICASE_QUESTIO
 
 def plot_pca_for_an(ax, pca_attn_outputs, title, num_questions=TRICASE_QUESTIONS):
     """
-    Plot the PCA of PnLnHn's attention pattern, using T8, T9, T10 questions that differ in the An digit
+    Plot the PCA of PnLnHn's attention pattern, using ST8, ST9, ST10 questions that differ in the An digit
     Assumes that we have equal number of questions for each tricase.
     """
-    ax.scatter(pca_attn_outputs[:num_questions, 0], pca_attn_outputs[:num_questions, 1], color='red', label='T8 (0-8)') # t8 questions
-    ax.scatter(pca_attn_outputs[num_questions:2*num_questions, 0], pca_attn_outputs[num_questions:2*num_questions, 1], color='green', label='T9') # t9 questions
-    ax.scatter(pca_attn_outputs[2*num_questions:, 0], pca_attn_outputs[2*num_questions:, 1], color='blue', label='T10 (10-18)') # t10 questions
+    ax.scatter(pca_attn_outputs[:num_questions, 0], pca_attn_outputs[:num_questions, 1], color='red', label='ST8 (0-8)') # st8 questions
+    ax.scatter(pca_attn_outputs[num_questions:2*num_questions, 0], pca_attn_outputs[num_questions:2*num_questions, 1], color='green', label='ST9') # st9 questions
+    ax.scatter(pca_attn_outputs[2*num_questions:, 0], pca_attn_outputs[2*num_questions:, 1], color='blue', label='ST10 (10-18)') # st10 questions
     if title != "" :
         ax.set_title(title)
 

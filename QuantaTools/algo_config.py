@@ -1,5 +1,3 @@
-import itertools
-
 from .useful_config import UsefulConfig
 from .quanta_filter import FilterAlgo, filter_nodes
 from .quanta_constants import QType, QCondition
@@ -8,6 +6,7 @@ from .quanta_constants import QType, QCondition
 
 # Extends UsefulConfig with algorithm functionality
 class AlgoConfig(UsefulConfig):
+    
     def __init__(self):
         super().__init__()
         self.reset_algo()
@@ -27,7 +26,7 @@ class AlgoConfig(UsefulConfig):
 
 
     # Does a useful node exist matching the filters? If so, return the position
-    def test_algo_clause(self, node_list, the_filters):
+    def test_algo_clause(self, node_list, the_filters, mandatory : bool = True):
         answer_position = -1
       
         matching_nodes = filter_nodes(node_list, the_filters)
@@ -37,7 +36,7 @@ class AlgoConfig(UsefulConfig):
             print("Clause valid:", matching_nodes.get_node_names(), " match", the_filters.describe())
             self.num_algo_valid_clauses += 1
             answer_position = matching_nodes.nodes[0].position
-        else:
+        elif mandatory:
             print("Clause invalid: No nodes match", the_filters.describe())
             self.num_algo_invalid_clauses += 1
 
