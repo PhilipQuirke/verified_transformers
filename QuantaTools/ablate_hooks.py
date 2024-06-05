@@ -8,7 +8,6 @@ from .quanta_constants import NO_IMPACT_TAG
 from .ablate_config import acfg
 
 
-
 # (Question and answer) position ablation.
 # Impacts all nodes at acfg.ablate_node_locations[0].position
 def a_put_resid_post_hook(value, hook):
@@ -152,7 +151,7 @@ def a_run_attention_intervention(cfg, store_question_and_answer, clean_question_
         return description + "(Aborted on intervention)"
     if all_losses_raw.shape[0] == 0:
         acfg.abort = True
-        print( "Bad all_losses_raw", all_losses_raw.shape, store_question_and_answer, clean_question_and_answer )
+        print("Bad all_losses_raw", all_losses_raw.shape, store_question_and_answer, clean_question_and_answer )
         return description + "(Aborted on Bad all_losses_raw)"
     loss_max = utils.to_numpy(loss_fn(all_losses_raw[0]).max())
     acfg.intervened_answer = tokens_to_string(cfg, all_max_prob_tokens[0])
