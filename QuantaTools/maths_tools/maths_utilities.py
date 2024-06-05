@@ -1,10 +1,6 @@
 from .maths_constants import MathsToken
 
 
-def digit_name(digit):
-    return "D" + str(digit)
-
-
 # Vocabulary dictionary: Mapping from character (key) to token (value)
 def set_maths_vocabulary(cfg):
     cfg.char_to_token = {str(i) : i for i in range(10)}
@@ -13,6 +9,10 @@ def set_maths_vocabulary(cfg):
     cfg.char_to_token['='] = MathsToken.EQUALS
     cfg.char_to_token['*'] = MathsToken.MULT
     cfg.char_to_token['\\'] = MathsToken.DIV
+
+
+def digit_name(digit):
+    return "D" + str(digit)
 
 
 # Maths question and answer token position meanings are D5, .., D0, *, D5', .., D0', =, A7, A6, .., A0

@@ -6,7 +6,6 @@ from .useful_node import answer_name
 # Base configuration class related to a Transformer model shape, training and analysis
 class ModelConfig():
 
-
     def __init__(self):
         # Model name for models stored on HuggingFace
         self.model_name = ""
@@ -33,7 +32,12 @@ class ModelConfig():
 
         # Before training was this model initialised with another existing model?
         self.insert_mode = 0 # 0=None 1=Init, 2=FreezeHeads 3=FreezeAll
-    
+        self.insert_late = False
+        self.insert_n_layers = 2
+        self.insert_n_heads = 3
+        self.insert_training_seed = 372001
+        self.insert_n_training_steps = 15000
+        
         # Random seeds
         self.training_seed : int = 372001
         self.analysis_seed : int = 673023
@@ -47,9 +51,13 @@ class ModelConfig():
         self.token_position_meanings = []
   
         self.initialize_token_positions( 12, 7, True ) # Random values (based on 5 digit addition)
-        
+    
         # Should we use the GPU (if any) to speed up processing?
         self.use_cuda = True
+
+        # Format to save graphs to CoLab temp files. 
+        # Temp files can then be manually exported for re-use in papers etc.
+        self.graph_file_suffix = "pdf" # Can be pdf, svg, png or blank to suppress saving
     
  
     def initialize_token_positions(self, num_question_positions, num_answer_positions, answer_meanings_ascend ):
@@ -97,11 +105,7 @@ class ModelConfig():
 
         match = re.search(r"t(\d\d)K", self.model_name)
         if not match:
-            match = re.search(r"t(\d)K", self.model_name)
-        if not match:
-            match = re.search(r"train(\d\d)K", self.model_name) # Old style            
-        if not match:
-            match = re.search(r"train(\d)K", self.model_name) # Old style            
+            match = re.search(r"t(\d)K", self.model_name)        
         if match:
             self.n_training_steps = int(match.group(1)) * 1000
     
@@ -113,10 +117,34 @@ class ModelConfig():
             self.insert_mode = 2 # Initialised with existing model. Train & reset useful heads every 100 epochs
         elif "ins3_" in self.model_name :
             self.insert_mode = 3 # Initialised with existing model. Trained & reset useful heads & MLPs every 100 epochs
+        elif "ins4_" in self.model_name :
+            self.insert_mode = 4 # Initialised with "nodes with identified subtasks" from existing model. Train & reset useful heads every 100 epochs
      
         match = re.search(r"_s(\d\d\d\d\d\d)", self.model_name)
         if match:
             self.training_seed = int(match.group(1))
+
+
+   # Update n_digits, n_layers, n_heads, n_training_steps, training_seed from model_name
+    def parse_insert_model_name(self, insert_model_name):
+
+        match = re.search(r"l(\d)_", insert_model_name)
+        if match:
+            self.insert_n_layers = int(match.group(1))
+
+        match = re.search(r"h(\d)_", insert_model_name)
+        if match:
+            self.insert_n_heads = int(match.group(1))
+
+        match = re.search(r"t(\d\d)K", insert_model_name)
+        if not match:
+            match = re.search(r"t(\d)K", insert_model_name)       
+        if match:
+            self.insert_n_training_steps = int(match.group(1)) * 1000
+    
+        match = re.search(r"_s(\d\d\d\d\d\d)", insert_model_name)
+        if match:
+            self.insert_training_seed = int(match.group(1))
 
 
     def short_config_description(self):       
@@ -130,8 +158,31 @@ class ModelConfig():
 
     def insert_config_description(self):
         return '' if self.insert_mode == 0 else f'ins{self.insert_mode}_' 
+    
 
-
+    def to_dict(self):
+        return {
+            "model_name": self.model_name,
+            "n_layers": self.n_layers,
+            "n_heads": self.n_heads,
+            "d_vocab": self.d_vocab,    
+            "d_model": self.d_model,    
+            "d_mlp_multiplier": self.d_mlp_multiplier,
+            "d_head": self.d_head,
+            "act_fn": self.act_fn,
+            "batch_size": self.batch_size,
+            "n_training_steps": self.n_training_steps,
+            "weight_decay": self.weight_decay,
+            "lr": self.lr,
+            "insert_mode": self.insert_mode,
+            "insert_late": self.insert_late,
+            "insert_n_layers": self.insert_n_layers,
+            "insert_n_heads": self.insert_n_heads,
+            "insert_training_seed": self.insert_training_seed,
+            "insert_n_training_steps": self.insert_n_training_steps,
+            "training_seed": self.training_seed,
+            "analysis_seed": self.analysis_seed,
+        }
 
 
   

@@ -8,25 +8,20 @@ from QuantaTools.quanta_constants import QType, MATH_ADD_SHADES, MATH_SUB_SHADES
 from QuantaTools.quanta_map_impact import sort_unique_digits, get_quanta_impact
 from QuantaTools.quanta_map_attention import get_quanta_attention
 
-from QuantaTools.ablate_config import acfg
-
 from QuantaTools.maths_tools.maths_config import MathsConfig
 from QuantaTools.maths_tools.maths_constants import MathsToken, MathsBehavior
 from QuantaTools.maths_tools.maths_utilities import set_maths_vocabulary, int_to_answer_str, tokens_to_unsigned_int
-from QuantaTools.maths_tools.maths_test_questions import make_maths_test_questions_and_answers, make_maths_questions_and_answers
 from QuantaTools.maths_tools.maths_test_questions import make_maths_s0_questions_and_answers, make_maths_s1_questions_and_answers, make_maths_s2_questions_and_answers, make_maths_s3_questions_and_answers, make_maths_s4_questions_and_answers, make_maths_s5_questions_and_answers
 from QuantaTools.maths_tools.maths_test_questions import make_maths_m0_questions_and_answers, make_maths_m1_questions_and_answers, make_maths_m2_questions_and_answers, make_maths_m3_questions_and_answers
 from QuantaTools.maths_tools.maths_test_questions import make_maths_n1_questions_and_answers, make_maths_n2_questions_and_answers, make_maths_n3_questions_and_answers, make_maths_n4_questions_and_answers
 from QuantaTools.maths_tools.maths_complexity import get_maths_min_complexity
-from QuantaTools.maths_tools.maths_search_mix import \
-    run_intervention_core, run_strong_intervention, run_weak_intervention, \
-    opr_functions, sgn_functions, gt_functions
-from QuantaTools.maths_tools.maths_search_add import \
-    add_ss_functions, add_sc_functions, add_sa_functions, add_st_functions
-from QuantaTools.maths_tools.maths_search_sub import \
-    sub_md_functions, sub_mb_functions, sub_mt_functions, neg_nd_functions, neg_nb_functions
-
-
+from QuantaTools.maths_tools.maths_search_mix import (
+    run_intervention_core, run_strong_intervention, run_weak_intervention,
+    opr_functions, sgn_functions)
+from QuantaTools.maths_tools.maths_search_add import (
+    add_ss_functions, add_sc_functions, add_sa_functions, add_st_functions)
+from QuantaTools.maths_tools.maths_search_sub import (
+    sub_mt_functions, sub_gt_functions, sub_md_functions, sub_mb_functions, neg_nd_functions, neg_nb_functions)
 
 
 class TestMaths(unittest.TestCase):
@@ -95,6 +90,27 @@ class TestMaths(unittest.TestCase):
         
         self.assertEqual( cfg.repeat_digit(4), 444444)
 
+
+    def test_parse_model_name(self):
+        cfg = self.get_cfg()
+        cfg.model_name = "ins1_mix_d10_l3_h5_t50K_s572091"
+        cfg.parse_model_name()
+        self.assertEqual( cfg.insert_mode, 1)
+        self.assertEqual( cfg.n_digits, 10)
+        self.assertEqual( cfg.n_layers, 3)
+        self.assertEqual( cfg.n_heads, 5)
+        self.assertEqual( cfg.n_training_steps, 50000)
+        self.assertEqual( cfg.training_seed, 572091)
+
+        
+    def test_parse_insert_model_name(self):
+        cfg = self.get_cfg()
+        cfg.parse_insert_model_name("add_d7_l6_h5_t40K_s572077")
+        self.assertEqual( cfg.insert_n_digits, 7)
+        self.assertEqual( cfg.insert_n_layers, 6)
+        self.assertEqual( cfg.insert_n_heads, 5)
+        self.assertEqual( cfg.insert_n_training_steps, 40000)
+        self.assertEqual( cfg.insert_training_seed, 572077)
 
         
     # Intervention ablation test for addition "Use Sum 9" (SS) task
@@ -266,7 +282,7 @@ class TestMaths(unittest.TestCase):
 
 
     # Test that two attention tags are sorted alphabetically if they are within 5% of each other
-    def test_get_quanta_attention(self):
+    def test_get_quanta_attention_sorting(self):
           
         cfg, the_list = self.get_useful_node_list()  
  
@@ -296,7 +312,7 @@ class TestMaths(unittest.TestCase):
 
         
     # Test the math subtask search function
-    def test_get_quanta_attention(self):
+    def test_get_math_subtask_search(self):
             
         cfg, the_list = self.get_useful_node_list() 
       
@@ -305,9 +321,6 @@ class TestMaths(unittest.TestCase):
          
         tag = sgn_functions.tag(2)
         filters = sgn_functions.prereqs(cfg, 14, 2)  
-        
-        tag = gt_functions.tag(2)
-        filters = gt_functions.prereqs(cfg, 14, 2)   
         
         tag = add_ss_functions.tag(2)
         filters = add_ss_functions.prereqs(cfg, 14, 2)     
@@ -321,14 +334,17 @@ class TestMaths(unittest.TestCase):
         tag = add_st_functions.tag(2)
         filters = add_st_functions.prereqs(cfg, 14, 2)    
                 
+        tag = sub_mt_functions.tag(2)
+        filters = sub_mt_functions.prereqs(cfg, 14, 2)    
+                
+        tag = sub_gt_functions.tag(2)
+        filters = sub_gt_functions.prereqs(cfg, 14, 2)   
+
         tag = sub_md_functions.tag(2)
         filters = sub_md_functions.prereqs(cfg, 14, 2)    
                 
         tag = sub_mb_functions.tag(2)
         filters = sub_mb_functions.prereqs(cfg, 14, 2)    
-                
-        tag = sub_mt_functions.tag(2)
-        filters = sub_mt_functions.prereqs(cfg, 14, 2)    
                 
         tag = neg_nd_functions.tag(2)
         filters = neg_nd_functions.prereqs(cfg, 14, 2)    

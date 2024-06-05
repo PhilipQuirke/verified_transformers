@@ -100,7 +100,7 @@ def test_maths_questions_by_impact(cfg, acfg, questions, position : int, ablate 
                 num_fails += 1
 
                 if acfg.show_test_failures:
-                    print(tokens_to_string(cfg, q), "Q: ModelAnswer:", answer_str, "Impact:", impact_str, "Loss:", format(the_loss_mean, ".4f"))
+                    print(tokens_to_string(cfg, q), "ModelAnswer:", answer_str, "Impact:", impact_str, "Loss:", format(the_loss_mean, ".4f"))
 
     return num_fails
 
@@ -190,17 +190,21 @@ def test_correctness_on_num_questions(cfg, acfg, num_questions=1000000):
 
 
 def test_correctness_on_num_questions_core(cfg, acfg, num_questions=1000000):
+    old_seed = cfg.analysis_seed
+
+    # Create a local data generator
     cfg.analysis_seed = 345621  # Randomly chosen
-    local_ds = maths_data_generator(cfg=cfg)  # Re-initialise the data generator
+    assert( cfg.analysis_seed != cfg.training_seed )
+    local_ds = maths_data_generator(cfg=cfg)  
 
     the_successes = 0
     the_fails = 0
 
-    num_batches = num_questions//cfg.batch_size
+    num_batches = 1 + ( num_questions//cfg.batch_size )
     for epoch in tqdm(range(num_batches)):
         tokens = next(local_ds)
 
-        the_fails = test_maths_questions_by_impact(cfg, acfg, tokens, 0, False)
+        the_fails += test_maths_questions_by_impact(cfg, acfg, tokens, 0, False)
 
         the_successes = the_successes + cfg.batch_size
 
@@ -208,5 +212,16 @@ def test_correctness_on_num_questions_core(cfg, acfg, num_questions=1000000):
             print("Batch", epoch, "of", num_batches, "#Successes=", the_successes)
 
     print("successes", the_successes, "num_fails", the_fails)
-    if the_fails > 0:
-        print("WARNING: Model failed the 1M Q test")
+    if num_questions == 1000000:
+        if the_fails <= 1:
+            print("Model has six 9s accuracy") # 99.9999%
+        elif the_fails <= 10:
+            print("Model has five 9s accuracy") # 99.999%
+        elif the_fails <= 100:
+            print("Model has four 9s accuracy") # 99.99%
+        elif the_fails <= 1000:
+            print("Model has three 9s accuracy") # 99.9%
+        elif the_fails <= 10000:
+            print("Model has two 9s accuracy") # 99%
+            
+    cfg.analysis_seed = old_seed
