@@ -177,7 +177,7 @@ def make_tricase_questions(
             cfg, sample_pairs_of_numbers=questions, target_number=num_questions, digit=test_digit
         )
 
-    print(f'Generated {len(questions)} questions.')
+    print(f'Generated {len(questions)} questions for operation {operation}, which are {questions[:4]}.')
 
     if qtype is not None:  # We have enforced qtype remains consistent with questions returned
         return make_maths_questions_and_answers(cfg, operation, qtype, MathsBehavior.UNKNOWN, questions)
