@@ -29,9 +29,11 @@ def plot_loss_lines(cfg, steps_to_graph : int, raw_lines_list,
 
     fig.update_xaxes(
         title=xaxis,
+        title_font={"size": font_size},       
         showgrid=False)
     fig.update_yaxes(
         title=the_prefix + yaxis,
+        title_font={"size": font_size},       
         showgrid=False)
 
     for c, line in enumerate(lines_list):
