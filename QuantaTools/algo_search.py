@@ -47,7 +47,7 @@ class SubTaskBase(ABC):
     @staticmethod
     # A test function that always suceeds 
     def succeed_test(_, acfg, alter_digit, strong):
-        print( "Test confirmed", acfg.ablate_node_names(), "" if strong else "Weak")
+        print( "Test confirmed", acfg.ablate_node_names, "" if strong else "Weak")
         return True
     
 

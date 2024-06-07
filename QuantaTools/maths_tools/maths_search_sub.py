@@ -60,7 +60,7 @@ class sub_mt_functions(SubTaskBaseMath):
         success = run_weak_intervention(cfg, acfg, store_question, clean_question)
 
         if success:
-            print("Test confirmed", acfg.ablate_node_names(), "perform", sub_mt_functions.tag(focus_digit), "Impact:", acfg.intervened_impact, "" if strong else "Weak")
+            print("Test confirmed", acfg.ablate_node_names, "perform", sub_mt_functions.tag(focus_digit), "Impact:", acfg.intervened_impact, "" if strong else "Weak")
 
         return success
 
@@ -147,7 +147,7 @@ class sub_gt_functions(SubTaskBaseMath):
 
  
         if success:
-            print( "Test confirmed", acfg.ablate_node_names(), "perform", sub_gt_functions.tag(impact_digit))
+            print( "Test confirmed", acfg.ablate_node_names, "perform", sub_gt_functions.tag(impact_digit))
 
         return success
 
@@ -210,7 +210,7 @@ class sub_md_functions(SubTaskBaseMath):
         success = (success1 and success2) if strong else (impact_success1 and impact_success2)
 
         if success:
-            print( "Test confirmed", acfg.ablate_node_names(), "perform", sub_md_functions.tag(alter_digit), " = (D"+str(alter_digit)+" + D'"+str(alter_digit)+") % 10 impacting "+intervention_impact+" accuracy.", "" if strong else "Weak")
+            print( "Test confirmed", acfg.ablate_node_names, "perform", sub_md_functions.tag(alter_digit), " = (D"+str(alter_digit)+" + D'"+str(alter_digit)+") % 10 impacting "+intervention_impact+" accuracy.", "" if strong else "Weak")
 
         return success
 
@@ -255,7 +255,7 @@ class sub_mb_functions(SubTaskBaseMath):
         success, _, _ = run_strong_intervention(cfg, acfg, store_question, clean_question, intervention_impact, intervened_answer)
 
         if success:
-            print( "Test confirmed", acfg.ablate_node_names(), "perform", sub_mb_functions.tag(alter_digit), "impacting", intervention_impact, "accuracy.", "" if strong else "Weak")
+            print( "Test confirmed", acfg.ablate_node_names, "perform", sub_mb_functions.tag(alter_digit), "impacting", intervention_impact, "accuracy.", "" if strong else "Weak")
         
         return success
 
@@ -320,7 +320,7 @@ class neg_nd_functions(SubTaskBaseMath):
         success = (success1 and success2) if strong else (impact_success1 and impact_success2)
 
         if success:
-            print( "Test confirmed", acfg.ablate_node_names(), "perform", neg_nd_functions.tag(alter_digit), " = (D"+str(alter_digit)+" + D'"+str(alter_digit)+") % 10 impacting", intervention_impact, "accuracy.", "" if strong else "Weak")
+            print( "Test confirmed", acfg.ablate_node_names, "perform", neg_nd_functions.tag(alter_digit), " = (D"+str(alter_digit)+" + D'"+str(alter_digit)+") % 10 impacting", intervention_impact, "accuracy.", "" if strong else "Weak")
 
         return success
 
@@ -367,6 +367,6 @@ class neg_nb_functions(SubTaskBaseMath):
         success, _, _ = run_strong_intervention(cfg, acfg, store_question, clean_question, intervention_impact, intervened_answer)
 
         if success:
-            print( "Test confirmed", acfg.ablate_node_names(), "perform", neg_nb_functions.tag(alter_digit), "impacting", intervention_impact, "accuracy.", "" if strong else "Weak")
+            print( "Test confirmed", acfg.ablate_node_names, "perform", neg_nb_functions.tag(alter_digit), "impacting", intervention_impact, "accuracy.", "" if strong else "Weak")
 
         return success

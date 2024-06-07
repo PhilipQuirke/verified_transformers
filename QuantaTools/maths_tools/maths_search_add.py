@@ -57,7 +57,7 @@ class add_ss_functions(SubTaskBaseMath):
         success, _, _ = run_strong_intervention(cfg, acfg, store_question, clean_question, intervention_impact, intervened_answer)
 
         if success:
-            print( "Test confirmed", acfg.ablate_node_names(), "perform", add_ss_functions.tag(alter_digit), "impacting", intervention_impact, "accuracy.", "" if strong else "Weak")
+            print( "Test confirmed", acfg.ablate_node_names, "perform", add_ss_functions.tag(alter_digit), "impacting", intervention_impact, "accuracy.", "" if strong else "Weak")
 
         return success
 
@@ -102,7 +102,7 @@ class add_sc_functions(SubTaskBaseMath):
         success, _, _ = run_strong_intervention(cfg, acfg, store_question, clean_question, intervention_impact, intervened_answer)
 
         if success:
-            print( "Test confirmed", acfg.ablate_node_names(), "perform", add_sc_functions.tag(alter_digit), "impacting", intervention_impact, "accuracy.", "" if strong else "Weak")
+            print( "Test confirmed", acfg.ablate_node_names, "perform", add_sc_functions.tag(alter_digit), "impacting", intervention_impact, "accuracy.", "" if strong else "Weak")
 
         return success
 
@@ -165,7 +165,7 @@ class add_sa_functions(SubTaskBaseMath):
         success = (success1 and success2) if strong else (impact_success1 and impact_success2)
 
         if success:
-            print( "Test confirmed:", acfg.ablate_node_names(), "perform", add_sa_functions.tag(alter_digit), "= (D"+str(alter_digit)+" + D'"+str(alter_digit)+") % 10 impacting "+intervention_impact+" accuracy.", "" if strong else "Weak", acfg.intervened_answer)
+            print( "Test confirmed:", acfg.ablate_node_names, "perform", add_sa_functions.tag(alter_digit), "= (D"+str(alter_digit)+" + D'"+str(alter_digit)+") % 10 impacting "+intervention_impact+" accuracy.", "" if strong else "Weak", acfg.intervened_answer)
 
         return success
 
@@ -213,7 +213,7 @@ class add_st_functions(SubTaskBaseMath):
         success = run_weak_intervention(cfg, acfg, store_question, clean_question)
 
         if success:
-            description = acfg.ablate_node_names() + " perform " + add_st_functions.tag(focus_digit) + " = TriCase(D"+str(focus_digit)+" + D'"+str(focus_digit)+")"
+            description = acfg.ablate_node_names + " perform " + add_st_functions.tag(focus_digit) + " = TriCase(D"+str(focus_digit)+" + D'"+str(focus_digit)+")"
             print("Test confirmed", description, "Impact:", acfg.intervened_impact, "" if strong else "Weak")
 
         return success

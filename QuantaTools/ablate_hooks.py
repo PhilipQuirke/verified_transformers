@@ -20,7 +20,7 @@ def a_put_resid_post_hook(value, hook):
 
 def validate_value(name, value):
     if value.shape[0] == 0:
-        print( "Aborted", name, acfg.ablate_node_names(), acfg.operation, acfg.expected_answer, acfg.expected_impact)
+        print( "Aborted", name, acfg.ablate_node_names, acfg.operation, acfg.expected_answer, acfg.expected_impact)
         acfg.abort = True # TransformerLens returned a [0, 22, 3, 170] tensor. This is bad data. Bug in code? Abort
         return False
 
