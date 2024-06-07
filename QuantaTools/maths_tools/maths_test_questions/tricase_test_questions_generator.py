@@ -281,7 +281,7 @@ def make_maths_tricase_questions_customized(cfg, custom_triclass_config=CustomTr
                         num_questions=local_num_questions
                     )
                     print(f'Received back {len(all_questions)} for test case {test_case.name} and operator {operator}.')
-                    key = DigitOperatorQTypeTricase(answer_digit, operator, qtype, test_case)
+                    key = DigitOperatorQTypeTricase(answer_digit, maths_tokens_to_names[operator], qtype, test_case)
                     cfg.customized_tricase_questions_dict[key] = all_questions
 
             else:

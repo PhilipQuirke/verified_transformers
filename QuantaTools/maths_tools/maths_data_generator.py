@@ -143,6 +143,4 @@ def make_maths_questions_and_answers(cfg, operator, major_tag, minor_tag, q_matr
             over_limit_count += 1
             print(f'Either a or be were over limit. They were {a} and {b} respectively. ')
 
-        print(f'The over limit count is now {over_limit_count}')
-
     return questions[:real_len]
