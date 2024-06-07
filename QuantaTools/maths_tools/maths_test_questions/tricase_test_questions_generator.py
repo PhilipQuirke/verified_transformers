@@ -145,6 +145,7 @@ def make_tricase_questions(
     make_borrow will be overidden if the case_type and qtype require it, such as for
     tricase test_case=8 and qtype=Math_NEG
     """
+    print(f'Making {num_questions} questions for {test_digit} and {test_case}.')
     assert make_borrow in ["always", "never", "mixed"]
     assert make_carry in ["always", "never", "mixed"]
     questions = []
