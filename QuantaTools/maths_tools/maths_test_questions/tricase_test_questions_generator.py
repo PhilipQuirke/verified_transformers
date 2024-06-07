@@ -45,7 +45,7 @@ def pad_small_set_of_questions(cfg, sample_pairs_of_numbers: list, target_number
 
     while len(unique_pairs_set) < target_number and attempts < 2*target_number:
         attempts += 1
-        num_digits = cfg.n_digits - digit
+        num_digits = cfg.n_digits - digit - 1
         # Find a random number, and offset it so it doesn't affect test digit.
         random_addition = 10**(digit+1) * random.randint(0, 10**num_digits)
         random_choice = random.choice(unique_pairs_list)
