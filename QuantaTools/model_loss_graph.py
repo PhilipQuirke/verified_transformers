@@ -7,12 +7,12 @@ import plotly.graph_objects as go
 
 
 # Plot multiple graph with lines
-def plot_loss_lines(cfg, epochs_to_graph : int, raw_lines_list, x=None, mode='lines', labels=None, xaxis='Epoch', yaxis='Loss', title = '', log_y=False, hover=None, all_epochs=True, **kwargs):
+def plot_loss_lines(cfg, steps_to_graph : int, raw_lines_list, x=None, mode='lines', labels=None, xaxis='Training steps', yaxis='Loss', title = '', log_y=False, hover=None, all_steps=True, **kwargs):
 
-    lines_list = raw_lines_list if all_epochs==False else [row[:epochs_to_graph] for row in raw_lines_list]
-    log_suffix = '' if log_y==False else ' (Log)'
-    epoch_suffix = '' if all_epochs==False else ' (' + str(epochs_to_graph) + ' Epochs)'
-    full_title = title + log_suffix + epoch_suffix
+    lines_list = raw_lines_list if all_steps==False else [row[:steps_to_graph] for row in raw_lines_list]
+    the_prefix = '' if log_y==False else 'Log '
+    the_suffix = '' if all_steps==False else ' (' + str(steps_to_graph) + ' training steps)'
+    full_title = the_prefix + title + the_suffix
 
     if type(lines_list)==torch.Tensor:
         lines_list = [lines_list[i] for i in range(lines_list.shape[0])]
@@ -28,7 +28,7 @@ def plot_loss_lines(cfg, epochs_to_graph : int, raw_lines_list, x=None, mode='li
         title=xaxis,
         showgrid=False)
     fig.update_yaxes(
-        title=yaxis + log_suffix,
+        title=the_prefix + yaxis,
         showgrid=False)
 
     for c, line in enumerate(lines_list):
@@ -75,7 +75,7 @@ def plot_loss_lines(cfg, epochs_to_graph : int, raw_lines_list, x=None, mode='li
                 traceorder="normal",
                 font=dict(
                     family="sans-serif",
-                    size=12,
+                    size=16,
                     color="black"
                 ),
                 bgcolor="White",  # Adjust background color for visibility
