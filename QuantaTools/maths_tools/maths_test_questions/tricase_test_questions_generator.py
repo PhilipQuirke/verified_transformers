@@ -177,12 +177,13 @@ def make_tricase_questions(
             cfg, sample_pairs_of_numbers=questions, target_number=num_questions, digit=test_digit
         )
 
+    print(f'Generated {len(questions)} questions.')
+
     if qtype is not None:  # We have enforced qtype remains consistent with questions returned
         return make_maths_questions_and_answers(cfg, operation, qtype, MathsBehavior.UNKNOWN, questions)
 
     elif operation == MathsToken.PLUS:  # qtype not relevant for MathsToken.PLUS
         qtype = QType.MATH_ADD #if operation == MathsToken.PLUS else QType.MATH_SUB # Inaccurate. Will be a mix of QType.MATH_SUB and QType.MATH_NEG
-
         return make_maths_questions_and_answers(cfg, operation, qtype, MathsBehavior.UNKNOWN, questions)
 
     elif operation == MathsToken.MINUS:
