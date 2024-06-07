@@ -97,8 +97,8 @@ def search_and_tag_digit(cfg, acfg, sub_task_functions, the_impact_digit,
       # Deleting the tags avoids this undesirable behavior.
       cfg.useful_nodes.reset_node_tags(QType.ALGO.value, the_tag)        
 
-    from_position = cfg.min_useful_position()
-    to_position = cfg.max_useful_position()
+    from_position = cfg.min_useful_position
+    to_position = cfg.max_useful_position
 
     # In some models, we don't predict the intervened_answer correctly in test_function.
     # So we may do a weak second pass 
