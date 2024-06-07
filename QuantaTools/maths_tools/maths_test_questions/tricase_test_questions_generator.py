@@ -179,14 +179,16 @@ def make_tricase_questions(
             cfg, sample_pairs_of_numbers=questions, target_number=num_questions, digit=test_digit
         )
 
-    print(f'Generated {len(questions)} questions for operation {operation}, which are:\n{questions[:3]}.')
+    print(f'Generated {len(questions)} questions for operation {operation}, which include:\n{questions[:3]}.')
 
     if qtype is not None:  # We have enforced qtype remains consistent with questions returned
-        return make_maths_questions_and_answers(cfg, operation, qtype, MathsBehavior.UNKNOWN, questions)
+        result = make_maths_questions_and_answers(cfg, operation, qtype, MathsBehavior.UNKNOWN, questions)
+        return result
 
     elif operation == MathsToken.PLUS:  # qtype not relevant for MathsToken.PLUS
         qtype = QType.MATH_ADD #if operation == MathsToken.PLUS else QType.MATH_SUB # Inaccurate. Will be a mix of QType.MATH_SUB and QType.MATH_NEG
-        return make_maths_questions_and_answers(cfg, operation, qtype, MathsBehavior.UNKNOWN, questions)
+        result = make_maths_questions_and_answers(cfg, operation, qtype, MathsBehavior.UNKNOWN, questions)
+        return result
 
     elif operation == MathsToken.MINUS:
         sub_questions = [question for question in questions if question[0] >= question[1]]
@@ -276,6 +278,7 @@ def make_maths_tricase_questions_customized(cfg, custom_triclass_config=CustomTr
                         cfg, test_digit=answer_digit, test_case=test_case, operation=operator, qtype=qtype,
                         num_questions=local_num_questions
                     )
+                    print(f'Received back {len(all_questions)} for test case {test_case.name} and operator {operator}.')
                     key = DigitOperatorQTypeTricase(answer_digit, operator, qtype, test_case)
                     cfg.customized_tricase_questions_dict[key] = all_questions
 
