@@ -119,6 +119,7 @@ def make_maths_questions_and_answers(cfg, operator, major_tag, minor_tag, q_matr
     real_len = 0
     questions = torch.zeros((max_len, cfg.n_ctx())).to(torch.int64)
     limit = 10 ** cfg.n_digits
+    over_limit_count = 0
 
     for i in range(max_len):
         a = q_matrix[i][0]
@@ -138,5 +139,10 @@ def make_maths_questions_and_answers(cfg, operator, major_tag, minor_tag, q_matr
 
             if good:
                 real_len += 1
+        else:
+            over_limit_count += 1
+            print(f'Either a or be were over limit. They were {a} and {b} respectively. ')
+
+        print(f'The over limit count is now {over_limit_count}')
 
     return questions[:real_len]
