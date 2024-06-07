@@ -47,7 +47,7 @@ def pad_small_set_of_questions(cfg, sample_pairs_of_numbers: list, target_number
         attempts += 1
         num_digits = cfg.n_digits - digit
         # Find a random number, and offset it so it doesn't affect test digit.
-        random_addition = (10**digit) * random.randint(0, 10**num_digits)
+        random_addition = 10**(digit+1) * random.randint(0, 10**num_digits)
         random_choice = random.choice(unique_pairs_list)
         new_choice = (random_choice[0] + random_addition, random_choice[1] + random_addition)
         unique_pairs_set.add(new_choice)
@@ -169,6 +169,8 @@ def make_tricase_questions(
             exceptions.append(e)
 
     questions = list(set(questions))
+
+
     if len(exceptions):
         print(f'Received {len(exceptions)} exceptions creating {len(questions)} questions out of {num_questions} for test case {test_case} on digit {test_digit} and qtype {qtype}.')
 
@@ -177,7 +179,7 @@ def make_tricase_questions(
             cfg, sample_pairs_of_numbers=questions, target_number=num_questions, digit=test_digit
         )
 
-    print(f'Generated {len(questions)} questions for operation {operation}, which are {questions[:4]}.')
+    print(f'Generated {len(questions)} questions for operation {operation}, which are:\n{questions[:3]}.')
 
     if qtype is not None:  # We have enforced qtype remains consistent with questions returned
         return make_maths_questions_and_answers(cfg, operation, qtype, MathsBehavior.UNKNOWN, questions)
