@@ -10,7 +10,7 @@ import plotly.graph_objects as go
 def plot_loss_lines(cfg, steps_to_graph : int, raw_lines_list, 
                     x=None, mode='lines', labels=None, xaxis='Training Steps', 
                     yaxis='Loss', title = '', log_y=False, 
-                    hover=None, all_steps=True, font_size=16, **kwargs):
+                    hover=None, all_steps=True, font_size=20, **kwargs):
 
     lines_list = raw_lines_list if all_steps==False else [row[:steps_to_graph] for row in raw_lines_list]
     the_prefix = '' if log_y==False else 'Log '
