@@ -156,7 +156,7 @@ def make_tricase_questions(
 
     attempts = 0
     # Attempts stops us from trying forever if the requested operation is impossible.
-    while len(set(questions)) < num_questions and attempts <= 2*num_questions:
+    while len(set(questions)) < num_questions and attempts <= 20*num_questions:
         attempts +=1
         try:
             x,y = make_single_tricase_question(
@@ -187,7 +187,9 @@ def make_tricase_questions(
 
     elif operation == MathsToken.PLUS:  # qtype not relevant for MathsToken.PLUS
         qtype = QType.MATH_ADD #if operation == MathsToken.PLUS else QType.MATH_SUB # Inaccurate. Will be a mix of QType.MATH_SUB and QType.MATH_NEG
+
         result = make_maths_questions_and_answers(cfg, operation, qtype, MathsBehavior.UNKNOWN, questions)
+        print(f'returned result of length {result}')
         return result
 
     elif operation == MathsToken.MINUS:
