@@ -16,7 +16,7 @@ def ablate_mlp_hook_post(value, hook):
 def ablate_mlp_and_add_useful_node_tags(cfg, questions, test_questions_and_add_useful_node_tags):
   for position in cfg.useful_positions:
     for layer in range(cfg.n_layers):
-      for num in range(cfg.mlp_slices()):
+      for num in range(cfg.mlp_slices):
 
         node_location = NodeLocation(position, layer, False, num) # Ablate this node 
         acfg.ablate_node_locations = [node_location]  # Ablate this node  

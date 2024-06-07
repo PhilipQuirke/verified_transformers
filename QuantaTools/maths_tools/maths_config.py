@@ -27,8 +27,9 @@ class MathsConfig(AlgoConfig):
         self.customized_tricase_questions_dict = {}
       
 
+    @property
     # percentage of addition questions
-    def perc_add(self):
+    def perc_add(self) -> int:
         return max(0, 100 - self.perc_mult - self.perc_sub)
     
 
@@ -39,13 +40,14 @@ class MathsConfig(AlgoConfig):
             self.n_digits + 2, # Plus 2 for answer sign (+ or -) and answer digits (adding two 5 digits numbers gives a 6 digit answer )
             False ) 
         
-        if self.perc_add() == 100:
+        if self.perc_add == 100:
             # The first answer token is always "+"
             self.token_position_meanings[self.num_question_positions] = "+"
 
 
+    @property
     # How many slices do we break the MLP layer up into?
-    def mlp_slices(self):
+    def mlp_slices(self) -> int:
         return 1 # Paper 2 used this granualarity
         # return self.n_heads * self.d_mlp_multiplier # Alternative for Paper 3?
   
@@ -59,7 +61,7 @@ class MathsConfig(AlgoConfig):
         return position_name(2 * self.n_digits - n) 
     # Convert A0 to P20, A1 to P19, A2 to P18, etc in 6 digit addition
     def an_to_position_name(self, n):
-        return position_name(self.n_ctx() - 1 - n)
+        return position_name(self.n_ctx - 1 - n)
     # Position of the operator (+, -, * or /)
     def op_position_name(self):
         return position_name(self.n_digits)
@@ -90,19 +92,22 @@ class MathsConfig(AlgoConfig):
             self.insert_n_digits = int(match.group(1))
                 
 
+    @property
     # Extend "l2_h3_t15K" with number of digits in question to give "_d5_l2_h3_t15K
-    def short_config_description(self):       
-        return f'_d{self.n_digits}' + super().short_config_description()      
+    def short_config_description(self) -> str:       
+        return f'_d{self.n_digits}' + super().short_config_description      
     
 
+    @property
     # Return string stating whether we are doing multiplication, subtraction, addition or a mix
-    def op_config_description(self):
-        return 'mul' if self.perc_mult == 100 else 'sub' if self.perc_sub == 100 else 'add' if self.perc_add() == 100 else 'mix'    
+    def op_config_description(self) -> str:
+        return 'mul' if self.perc_mult == 100 else 'sub' if self.perc_sub == 100 else 'add' if self.perc_add == 100 else 'mix'    
     
 
+    @property
     # Return string like "ins1_mix_d6_l3_h4_t40K"
-    def file_config_prefix(self):
-        return self.insert_config_description() + self.op_config_description() + self.long_config_description()
+    def file_config_prefix(self) -> str:
+        return self.insert_config_description + self.op_config_description + self.long_config_description
     
 
     # Return integer 444444 for 6 digit number

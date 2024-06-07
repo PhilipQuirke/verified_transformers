@@ -23,14 +23,16 @@ class UsefulConfig(ModelConfig):
         # List of the useful attention heads and MLP neurons that the model actually uses
         self.useful_nodes = UsefulNodeList()
  
-  
+
+    @property  
     # Returns the minimum useful token position
-    def min_useful_position(self):
+    def min_useful_position(self) -> int:
         return min(self.useful_positions) if len(self.useful_positions) > 0 else -1
 
 
+    @property
     # Returns the maximum useful token position
-    def max_useful_position(self):
+    def max_useful_position(self) -> int:
         return max(self.useful_positions) if len(self.useful_positions) > 0 else -1
 
 
@@ -45,7 +47,7 @@ class UsefulConfig(ModelConfig):
         assert the_location.position >= 0
         assert the_location.layer >= 0
         assert the_location.num >= 0
-        assert the_location.position < self.n_ctx()
+        assert the_location.position < self.n_ctx
         assert the_location.layer < self.n_layers
         if the_location.is_head:
             assert the_location.num < self.n_heads

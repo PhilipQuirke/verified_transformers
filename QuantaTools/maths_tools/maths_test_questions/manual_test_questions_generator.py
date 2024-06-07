@@ -368,9 +368,9 @@ def make_maths_test_questions_and_answers(cfg):
     # Create a (matrix) batch of manually-curated mathematics test questions
 
     # Start with a batch of random and manually-chosen questions
-    varied_questions = maths_data_generator_core(cfg, MathsToken.PLUS if cfg.perc_add() > 0 else MathsToken.MINUS )
+    varied_questions = maths_data_generator_core(cfg, MathsToken.PLUS if cfg.perc_add > 0 else MathsToken.MINUS )
 
-    if cfg.perc_add() > 0:
+    if cfg.perc_add > 0:
         varied_questions = torch.vstack((
             varied_questions,
             make_maths_s0_questions_and_answers(cfg),

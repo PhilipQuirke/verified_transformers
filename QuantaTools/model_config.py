@@ -81,12 +81,14 @@ class ModelConfig():
         for i in range(self.num_answer_positions):
             self.token_position_meanings += [answer_name(i if self.answer_meanings_ascend else self.num_answer_positions - i - 1 )]
 
-          
-    def n_ctx(self):
+       
+    @property
+    def n_ctx(self) -> int:
         return self.num_question_positions + self.num_answer_positions
 
 
-    def d_mlp(self):
+    @property
+    def d_mlp(self) -> int:
         return self.d_mlp_multiplier * self.d_model
 
 
@@ -147,16 +149,19 @@ class ModelConfig():
             self.insert_training_seed = int(match.group(1))
 
 
-    def short_config_description(self):       
+    @property
+    def short_config_description(self) -> str:       
         return f'_l{self.n_layers}_h{self.n_heads}'   
     
 
-    def long_config_description(self):
+    @property
+    def long_config_description(self) -> str:
         train_str = str(self.n_training_steps//1000) 
-        return self.short_config_description() + f'_t{train_str}K_s{self.training_seed}'
+        return self.short_config_description + f'_t{train_str}K_s{self.training_seed}'
 
 
-    def insert_config_description(self):
+    @property
+    def insert_config_description(self) -> str:
         return '' if self.insert_mode == 0 else f'ins{self.insert_mode}_' 
     
 

@@ -16,7 +16,7 @@ from .maths_utilities import make_a_maths_question_and_answer
 # "Multiplication" batch entries are formated 000XXX*000YYY=+ZZZZZZ e.g. 000345*000678=+233910
 def maths_data_generator_core( cfg, batch_op ):
 
-    batch = torch.zeros((cfg.batch_size, cfg.n_ctx())).to(torch.int64)
+    batch = torch.zeros((cfg.batch_size, cfg.n_ctx)).to(torch.int64)
     x = torch.randint(0, 10, (cfg.batch_size, cfg.n_digits))
     y = torch.randint(0, 10, (cfg.batch_size, cfg.n_digits))
 
@@ -92,7 +92,7 @@ def maths_data_generator_core( cfg, batch_op ):
 
         batch[i, first_answer_index] = sign
         for j in range(cfg.n_digits+1):
-            batch[i, cfg.n_ctx()-j-1] = answer % 10
+            batch[i, cfg.n_ctx-j-1] = answer % 10
             answer = answer // 10
             if answer == 0:
                 break
@@ -117,7 +117,7 @@ def maths_data_generator( cfg ):
 def make_maths_questions_and_answers(cfg, operator, major_tag, minor_tag, q_matrix):
     max_len = len(q_matrix)
     real_len = 0
-    questions = torch.zeros((max_len, cfg.n_ctx())).to(torch.int64)
+    questions = torch.zeros((max_len, cfg.n_ctx)).to(torch.int64)
     limit = 10 ** cfg.n_digits
 
     for i in range(max_len):

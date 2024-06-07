@@ -85,7 +85,7 @@ def test_maths_questions_by_impact(cfg, acfg, questions, position : int, ablate 
     num_fails = 0
     for question_num in range(questions.shape[0]):
         q = questions[question_num]
-        assert q.shape[0] == cfg.n_ctx() # Check answer is embedded in question
+        assert q.shape[0] == cfg.n_ctx # Check answer is embedded in question
 
         the_loss_mean = utils.to_numpy(loss_fn(all_losses_raw[question_num]).mean())
 
@@ -167,12 +167,12 @@ def test_correctness_on_num_questions(cfg, acfg, num_questions=1000000):
     store_perc_mult = cfg.perc_mult
 
     def print_config():
-        print("%Add=", cfg.perc_add(), "%Sub=", cfg.perc_sub, "%Mult=", cfg.perc_mult, "File", cfg.file_config_prefix())
+        print("%Add=", cfg.perc_add, "%Sub=", cfg.perc_sub, "%Mult=", cfg.perc_mult, "File", cfg.file_config_prefix)
 
     print_config()
     print()
 
-    if cfg.perc_add() > 0:
+    if cfg.perc_add > 0:
         print("Addition:")
         cfg.perc_sub = 0
         cfg.perc_mult = 0
