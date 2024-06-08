@@ -56,7 +56,7 @@ def pale_color(color, factor=0.5):
 # Find the quanta result for the specified cell
 def find_quanta_result_by_row_col(the_row_name, the_position, quanta_results):
     for result in quanta_results:
-        if result.row_name() == the_row_name and result.position == the_position:
+        if result.row_name == the_row_name and result.position == the_position:
             return result
     return None
   
