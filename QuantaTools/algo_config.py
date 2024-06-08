@@ -33,7 +33,7 @@ class AlgoConfig(UsefulConfig):
         num_nodes = len(matching_nodes.nodes)
 
         if num_nodes > 0:
-            print("Clause valid:", matching_nodes.get_node_names(), " match", the_filters.describe())
+            print("Clause valid:", matching_nodes.node_names, " match", the_filters.describe())
             self.num_algo_valid_clauses += 1
             answer_position = matching_nodes.nodes[0].position
         elif mandatory:
@@ -60,11 +60,11 @@ class AlgoConfig(UsefulConfig):
 
     # Show the fraction of useful nodes that have an assigned algorithmic purpose
     def print_algo_purpose_results(self, algo_nodes):
-        num_heads = self.useful_nodes.num_heads()
-        num_neurons = self.useful_nodes.num_neurons()
+        num_heads = self.useful_nodes.num_heads
+        num_neurons = self.useful_nodes.num_neurons
 
-        num_heads_with_purpose = algo_nodes.num_heads()
-        num_neurons_with_purpose = algo_nodes.num_neurons()
+        num_heads_with_purpose = algo_nodes.num_heads
+        num_neurons_with_purpose = algo_nodes.num_neurons
 
         print()
         if num_heads>0:

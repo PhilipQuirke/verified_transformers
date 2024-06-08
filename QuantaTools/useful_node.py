@@ -56,8 +56,9 @@ class NodeLocation():
         return location_name(self.position,self.layer,self.is_head,self.num, short_position)
 
 
+    @property
     # Node row name e.g. "L2H3" or "L2M0"
-    def row_name(self):
+    def row_name(self) -> str:
         return row_location_name(self.layer,self.is_head,self.num)
 
 
@@ -189,24 +190,27 @@ class UsefulNodeList():
         self.nodes = []
 
   
+    @property
     # Return the node names as a comma-separated string
-    def get_node_names(self):
+    def node_names(self) -> str:
         answer = ""
         for node in self.nodes:
             answer += ( "" if answer == "" else ", " ) + node.name()
         return answer
 
   
+    @property
     # Number of nodes that are attention heads
-    def num_heads(self):
+    def num_heads(self) -> int:
         answer = 0
         for node in self.nodes:
             answer += 1 if node.is_head else 0
         return answer
 
 
+    @property
     # Number of nodes that are MLP neurons
-    def num_neurons(self):
+    def num_neurons(self) -> int:
         return len(self.nodes) - self.num_heads()
     
 

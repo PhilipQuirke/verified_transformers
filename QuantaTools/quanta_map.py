@@ -128,7 +128,7 @@ def calc_quanta_rows_cols( quanta_results ):
     distinct_positions = set()
 
     for result in quanta_results:
-        distinct_row_names.add(result.row_name())
+        distinct_row_names.add(result.row_name)
         distinct_positions.add(result.position)
 
     distinct_row_names = sorted(distinct_row_names)
