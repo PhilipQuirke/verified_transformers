@@ -141,11 +141,11 @@ def calc_quanta_rows_cols( quanta_results ):
 
      
 # Calculate (but do not draw) the quanta map with cell contents provided by get_node_details 
-def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, \
-                    the_nodes : UsefulNodeList, major_tag : str, minor_tag : str, get_node_details, \
-                    cell_fontsize : int = 10, \
-                    combine_identical_cells : bool = True, \
-                    show_perc_circles : bool = False, \
+def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, 
+                    the_nodes : UsefulNodeList, major_tag : str, minor_tag : str, get_node_details, 
+                    cell_fontsize : int = 10, 
+                    combine_identical_cells : bool = True, 
+                    show_perc_circles : bool = False, 
                     width_inches : int = -1, height_inches : int = -1 ):
 
     quanta_results, num_text_lines, max_word_len = calc_quanta_results(cfg, the_nodes, major_tag, minor_tag, get_node_details, num_shades)
@@ -233,13 +233,13 @@ def calc_quanta_map( cfg, standard_quanta : bool, num_shades : int, \
     ax1.xaxis.set_label_position('top')
     ax1.tick_params(axis='x', length=0)
     for label in ax1.get_xticklabels():
-        label.set_fontsize(9)
+        label.set_fontsize(cell_fontsize)
 
 
     # Add the extra row of labels (P0, P5, P8, ...) below the matrix
     for index in range(num_data_cols):
         label = horizontal_bottom_labels[index]
-        ax1.text(index + 0.5, - 0.02, label, ha='center', va='top', fontsize=9, transform=ax1.get_xaxis_transform())
+        ax1.text(index + 0.5, - 0.02, label, ha='center', va='top', fontsize=cell_fontsize, transform=ax1.get_xaxis_transform())
 
     # Adjust figure layout to accommodate the new row of labels
     plt.subplots_adjust(bottom=0.1)  # Adjust as needed based on your specific figure layout
@@ -326,13 +326,13 @@ def calc_quanta_map_numeric( cfg, standard_quanta : bool, num_shades : int, \
     ax1.xaxis.set_label_position('top')
     ax1.tick_params(axis='x', length=0)
     for label in ax1.get_xticklabels():
-        label.set_fontsize(9)
+        label.set_fontsize(cell_fontsize)
 
 
     # Add the extra row of labels (P0, P5, P8, ...) below the matrix
     for index in range(num_data_cols):
         label = horizontal_bottom_labels[index]
-        ax1.text(index + 0.5, - 0.02, label, ha='center', va='top', fontsize=9, transform=ax1.get_xaxis_transform())
+        ax1.text(index + 0.5, - 0.02, label, ha='center', va='top', fontsize=cell_fontsize, transform=ax1.get_xaxis_transform())
 
     # Adjust figure layout to accommodate the new row of labels
     plt.subplots_adjust(bottom=0.1)  # Adjust as needed based on your specific figure layout
