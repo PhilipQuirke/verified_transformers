@@ -47,7 +47,8 @@ def manual_node_pca(cfg, ax, position, layer, num, operation, answer_digit, plot
     major_tag = QType.MATH_ADD if operation == MathsToken.PLUS else QType.MATH_SUB # Does not handle NEG case
     cfg.add_useful_node_tag( node_location, major_tag.value, pca_op_tag(answer_digit, operation, True) )
 
-def manual_nodes_pca(cfg, operation, nodes, test_inputs=None):
+
+def manual_nodes_pca(cfg, operation, nodes, test_inputs=None, full_title='Pca Tr'):
     print("Manual PCA tags for", cfg.model_name, "with operation", token_to_char(cfg, operation))
 
     cols = 4
@@ -77,5 +78,5 @@ def manual_nodes_pca(cfg, operation, nodes, test_inputs=None):
     axs[rows-1, cols-1].axis('off') # Now, to hide the last subplot
 
     plt.tight_layout()
-    save_plt_to_file(cfg=cfg, full_title='Pca Tr')
+    save_plt_to_file(cfg=cfg, full_title=full_title)
     plt.show()
