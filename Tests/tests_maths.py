@@ -205,7 +205,16 @@ class TestMaths(unittest.TestCase):
         the_list.add_node_tag( the_locn, QType.MATH_NEG.value, 'N1234' )
 
         return cfg, the_list
-    
+ 
+
+    def test_useful_node_list_counts(self):
+        
+        cfg, the_list = self.get_useful_node_list()      
+        
+        assert(the_list.num_heads > 0)
+        assert(the_list.num_neurons > 0)
+        assert(the_list.node_names != "")
+        
 
     def test_useful_node_list_complexity(self):
         
