@@ -142,6 +142,8 @@ def search_and_tag(cfg, acfg,
     for the_impact_digit in range(cfg.num_answer_positions):
         search_and_tag_digit(cfg, acfg, 
             sub_task_functions, the_impact_digit, 
-            do_pair_search, allow_impact_mismatch, delete_existing_tags )
+            do_pair_search=do_pair_search, 
+            allow_impact_mismatch=allow_impact_mismatch, 
+            delete_existing_tags=delete_existing_tags )
 
     print(f"Filtering gave {acfg.num_filtered_nodes} candidate node(s). Ran {acfg.num_tests_run} intervention test(s). Added {acfg.num_tags_added} tag(s)")

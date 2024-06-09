@@ -216,6 +216,16 @@ class TestMaths(unittest.TestCase):
         assert(the_list.node_names != "")
         
 
+    def test_useful_node_list_get_node_by_tag(self):
+        
+        cfg, the_list = self.get_useful_node_list()      
+        
+        node = the_list.get_node_by_tag(QType.MATH_ADD.value, 'S012345' )
+        assert( node.name() == "P18L0H2" )
+        node = the_list.get_node_by_tag(QType.FAIL.value, '12' ) 
+        assert( node.name() == "P18L0H3" )
+
+
     def test_useful_node_list_complexity(self):
         
         cfg, the_list = self.get_useful_node_list()      

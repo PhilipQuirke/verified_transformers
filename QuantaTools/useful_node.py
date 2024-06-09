@@ -237,6 +237,15 @@ class UsefulNodeList():
         return None
 
 
+    # Get first node with specified tags. May return None.    
+    def get_node_by_tag( self, major_tag : str, minor_tag : str):
+        for node in self.nodes:
+            if node.contains_tag( major_tag, minor_tag ):
+                return node
+
+        return None
+    
+
     # Add the tag to the node location (creating a node if necessary). Returns number of tags added as 0 or 1
     def add_node_tag( self, nodelocation, major_tag : str, minor_tag : str ):
 
