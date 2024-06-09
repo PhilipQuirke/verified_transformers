@@ -6,11 +6,45 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 
+def plot_loss_lines_layout(cfg, fig, font_size, x):
+  
+    # Update x-axis ticks
+    x_ticks = x[0::100]  # Start from index 0 and pick every 100th element
+    x_ticks = x_ticks[1:] # Exclude the first tick (0)
+    fig.update_xaxes(
+        tickmode='array',
+        tickvals=x_ticks,
+        ticktext=[str(tick) for tick in x_ticks]
+    )
+      
+    if cfg.graph_file_suffix != "":
+        # fig.update_layout(margin=dict(l=10, r=10, t=10, b=10),width=1200,height=300)
+        # Update layout for legend positioning inside the graph
+        fig.update_layout(
+            margin=dict(l=10, r=10, t=10, b=10),
+            width=1200,height=300,
+            legend=dict(
+                x=0.92,  # Adjust this value to move the legend left or right
+                y=0.99,  # Adjust this value to move the legend up or down
+                traceorder="normal",
+                font=dict(
+                    family="sans-serif",
+                    size=font_size,
+                    color="black"
+                ),
+                bgcolor="White",  # Adjust background color for visibility
+                bordercolor="Black",
+                borderwidth=2
+            ))
+
+    fig.show(bbox_inches="tight")
+
+
 # Plot multiple graph with lines
 def plot_loss_lines(cfg, steps_to_graph : int, raw_lines_list, 
                     x=None, mode='lines', labels=None, xaxis='Training Steps', 
                     yaxis='Loss', title = '', log_y=False, 
-                    hover=None, all_steps=True, font_size=20, **kwargs):
+                    hovertext=None, all_steps=True, font_size=20, **kwargs):
 
     lines_list = raw_lines_list if all_steps==False else [row[:steps_to_graph] for row in raw_lines_list]
     the_prefix = '' if log_y==False else 'Log '
@@ -43,7 +77,8 @@ def plot_loss_lines(cfg, steps_to_graph : int, raw_lines_list,
             label = labels[c]
         else:
             label = c
-        fig.add_trace(go.Scatter(x=x, y=line, mode=mode, name=label, hovertext=hover, **kwargs))
+        print("go.Scatter", x, line, mode, label, hovertext)
+        fig.add_trace(go.Scatter(x=x, y=line, mode=mode, name=label, hovertext=hovertext, **kwargs))
 
     if log_y:
         fig.update_layout(yaxis_type="log")
@@ -59,35 +94,6 @@ def plot_loss_lines(cfg, steps_to_graph : int, raw_lines_list,
           yaxis=dict(range=[0, y_max])
       )
 
-      # Update x-axis ticks
-      x_ticks = x[0::100]  # Start from index 0 and pick every 100th element
-      x_ticks = x_ticks[1:] # Exclude the first tick (0)
-      fig.update_xaxes(
-          tickmode='array',
-          tickvals=x_ticks,
-          ticktext=[str(tick) for tick in x_ticks]
-      )
-
-    if cfg.graph_file_suffix != "":
-        # fig.update_layout(margin=dict(l=10, r=10, t=10, b=10),width=1200,height=300)
-        # Update layout for legend positioning inside the graph
-        fig.update_layout(
-            margin=dict(l=10, r=10, t=10, b=10),
-            width=1200,height=300,
-            legend=dict(
-                x=0.92,  # Adjust this value to move the legend left or right
-                y=0.99,  # Adjust this value to move the legend up or down
-                traceorder="normal",
-                font=dict(
-                    family="sans-serif",
-                    size=font_size,
-                    color="black"
-                ),
-                bgcolor="White",  # Adjust background color for visibility
-                bordercolor="Black",
-                borderwidth=2
-            ))
-
-    fig.show(bbox_inches="tight")
+    plot_loss_lines_layout(cfg, fig, font_size, x)
 
     return full_title, fig
