@@ -211,7 +211,7 @@ class UsefulNodeList():
     @property
     # Number of nodes that are MLP neurons
     def num_neurons(self) -> int:
-        return len(self.nodes) - self.num_heads()
+        return len(self.nodes) - self.num_heads
     
 
     # Print the node names and tags matching major_tag and minor_tag (if specified).
