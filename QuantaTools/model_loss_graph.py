@@ -6,7 +6,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 
-def plot_loss_lines_layout(cfg, fig, font_size, x):
+def plot_loss_lines_layout(cfg, fig, tick_font_size, x, width=1200, height=400):
   
     num_points = len(x)
     tick_interval = 100 if num_points <= 1501 else 1000 if num_points <= 10001 else 5000 
@@ -18,28 +18,26 @@ def plot_loss_lines_layout(cfg, fig, font_size, x):
         tickmode='array',
         tickvals=x_ticks,
         ticktext=[str(tick) for tick in x_ticks],
-        tickfont=dict(size=font_size)  # Set the font size for x-axis ticks        
+        tickfont=dict(size=tick_font_size)  # Set the font size for x-axis ticks        
     )
       
-    if cfg.graph_file_suffix != "":
-        # fig.update_layout(margin=dict(l=10, r=10, t=10, b=10),width=1200,height=300)
-        # Update layout for legend positioning inside the graph
-        fig.update_layout(
-            margin=dict(l=10, r=10, t=10, b=10),
-            width=1200,height=300,
-            legend=dict(
-                x=0.92,  # Adjust this value to move the legend left or right
-                y=0.99,  # Adjust this value to move the legend up or down
-                traceorder="normal",
-                font=dict(
-                    family="sans-serif",
-                    size=font_size,
-                    color="black"
-                ),
-                bgcolor="White",  # Adjust background color for visibility
-                bordercolor="Black",
-                borderwidth=2
-            ))
+    # Update layout for legend positioning inside the graph
+    fig.update_layout(
+        margin=dict(l=10, r=10, t=10, b=10),
+        width=width,height=height,
+        legend=dict(
+            x=0.92,  # Adjust this value to move the legend left or right
+            y=0.99,  # Adjust this value to move the legend up or down
+            traceorder="normal",
+            font=dict(
+                family="sans-serif",
+                size=tick_font_size,
+                color="black"
+            ),
+            bgcolor="White",  # Adjust background color for visibility
+            bordercolor="Black",
+            borderwidth=2
+        ))
 
     fig.show(bbox_inches="tight")
 
@@ -48,7 +46,9 @@ def plot_loss_lines_layout(cfg, fig, font_size, x):
 def plot_loss_lines(cfg, steps_to_graph : int, raw_lines_list, 
                     x=None, mode='lines', labels=None, xaxis='Training Steps', 
                     yaxis='Loss', title = '', log_y=False, 
-                    hovertext=None, all_steps=True, title_font_size=20, tick_font_size=12, **kwargs):
+                    hovertext=None, all_steps=True, title_font_size=20, tick_font_size=12, 
+                    width=1200, height=400,
+                    **kwargs):
 
     lines_list = raw_lines_list if all_steps==False else [row[:steps_to_graph] for row in raw_lines_list]
     the_prefix = '' if log_y==False else 'Log '
@@ -100,6 +100,6 @@ def plot_loss_lines(cfg, steps_to_graph : int, raw_lines_list,
           yaxis=dict(range=[0, y_max])
       )
 
-    plot_loss_lines_layout(cfg, fig, tick_font_size, x)
+    plot_loss_lines_layout(cfg, fig, tick_font_size=tick_font_size, x=x, width=width,height=height)
 
     return full_title, fig
