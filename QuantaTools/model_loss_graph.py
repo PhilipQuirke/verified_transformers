@@ -17,7 +17,8 @@ def plot_loss_lines_layout(cfg, fig, font_size, x):
     fig.update_xaxes(
         tickmode='array',
         tickvals=x_ticks,
-        ticktext=[str(tick) for tick in x_ticks]
+        ticktext=[str(tick) for tick in x_ticks],
+        tickfont=dict(size=font_size)  # Set the font size for x-axis ticks        
     )
       
     if cfg.graph_file_suffix != "":
@@ -47,7 +48,7 @@ def plot_loss_lines_layout(cfg, fig, font_size, x):
 def plot_loss_lines(cfg, steps_to_graph : int, raw_lines_list, 
                     x=None, mode='lines', labels=None, xaxis='Training Steps', 
                     yaxis='Loss', title = '', log_y=False, 
-                    hovertext=None, all_steps=True, font_size=20, **kwargs):
+                    hovertext=None, all_steps=True, title_font_size=20, tick_font_size=12, **kwargs):
 
     lines_list = raw_lines_list if all_steps==False else [row[:steps_to_graph] for row in raw_lines_list]
     the_prefix = '' if log_y==False else 'Log '
@@ -66,11 +67,11 @@ def plot_loss_lines(cfg, steps_to_graph : int, raw_lines_list,
 
     fig.update_xaxes(
         title=xaxis,
-        title_font={"size": font_size},       
+        title_font={"size": title_font_size},       
         showgrid=False)
     fig.update_yaxes(
         title=the_prefix + yaxis,
-        title_font={"size": font_size},       
+        title_font={"size": title_font_size},       
         showgrid=False)
 
     for c, line in enumerate(lines_list):
@@ -97,6 +98,6 @@ def plot_loss_lines(cfg, steps_to_graph : int, raw_lines_list,
           yaxis=dict(range=[0, y_max])
       )
 
-    plot_loss_lines_layout(cfg, fig, font_size, x)
+    plot_loss_lines_layout(cfg, fig, tick_font_size, x)
 
     return full_title, fig
