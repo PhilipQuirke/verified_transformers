@@ -46,7 +46,7 @@ def plot_loss_lines_layout(cfg, fig, tick_font_size, x, width=1200, height=400):
 def plot_loss_lines(cfg, steps_to_graph : int, raw_lines_list, 
                     x=None, mode='lines', labels=None, xaxis='Training Steps', 
                     yaxis='Loss', title = '', log_y=False, 
-                    hovertext=None, all_steps=True, title_font_size=20, tick_font_size=12, 
+                    all_steps=True, title_font_size=20, tick_font_size=12, 
                     width=1200, height=400,
                     **kwargs):
 
@@ -83,8 +83,7 @@ def plot_loss_lines(cfg, steps_to_graph : int, raw_lines_list,
             label = labels[c]
         else:
             label = c
-        #print("go.Scatter", x, line, mode, label, hovertext)
-        fig.add_trace(go.Scatter(x=x, y=line, mode=mode, name=label, hovertext=hovertext, **kwargs))
+        fig.add_trace(go.Scatter(x=x, y=line, mode=mode, name=label))
 
     if log_y:
         fig.update_layout(yaxis_type="log")
