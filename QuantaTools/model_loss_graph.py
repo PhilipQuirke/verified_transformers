@@ -8,8 +8,11 @@ import plotly.graph_objects as go
 
 def plot_loss_lines_layout(cfg, fig, font_size, x):
   
+    num_points = len(x)
+    tick_interval = 100 if num_points <= 1501 else 1000 if num_points <= 10001 else 5000 
+
     # Update x-axis ticks
-    x_ticks = x[0::100]  # Start from index 0 and pick every 100th element
+    x_ticks = x[0::tick_interval]  # Start from index 0 and pick every 100th element
     x_ticks = x_ticks[1:] # Exclude the first tick (0)
     fig.update_xaxes(
         tickmode='array',
