@@ -67,11 +67,13 @@ def plot_loss_lines(cfg, steps_to_graph : int, raw_lines_list,
 
     fig.update_xaxes(
         title=xaxis,
-        title_font={"size": title_font_size},       
+        title_font={"size": title_font_size},   
+        tickfont=dict(size=tick_font_size),       
         showgrid=False)
     fig.update_yaxes(
         title=the_prefix + yaxis,
         title_font={"size": title_font_size},       
+        tickfont=dict(size=tick_font_size),       
         showgrid=False)
 
     for c, line in enumerate(lines_list):
@@ -81,7 +83,7 @@ def plot_loss_lines(cfg, steps_to_graph : int, raw_lines_list,
             label = labels[c]
         else:
             label = c
-        print("go.Scatter", x, line, mode, label, hovertext)
+        #print("go.Scatter", x, line, mode, label, hovertext)
         fig.add_trace(go.Scatter(x=x, y=line, mode=mode, name=label, hovertext=hovertext, **kwargs))
 
     if log_y:
