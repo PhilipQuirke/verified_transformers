@@ -163,7 +163,7 @@ def test_maths_questions_and_add_useful_node_tags(cfg, acfg, questions, node_loc
             cfg.add_useful_node_tag( node_location, QType.MATH_NEG.value, MathsBehavior.NEG_COMPLEXITY_PREFIX.value + sort_unique_digits(neg_complexity_fails, False) )
 
 
-def test_correctness_on_num_questions(cfg, acfg, num_questions=1000000):
+def test_correctness_on_num_questions(cfg, acfg, num_questions=1000000, enrich_data=True):
     store_perc_sub = cfg.perc_sub
     store_perc_mult = cfg.perc_mult
 
@@ -177,13 +177,13 @@ def test_correctness_on_num_questions(cfg, acfg, num_questions=1000000):
         print("Addition:")
         cfg.perc_sub = 0
         cfg.perc_mult = 0
-        test_correctness_on_num_questions_core(cfg, acfg, num_questions=num_questions)
+        test_correctness_on_num_questions_core(cfg, acfg, num_questions=num_questions, enrich_data=enrich_data)
 
     if store_perc_sub > 0:
         print("Subtraction:")
         cfg.perc_sub = 100
         cfg.perc_mult = 0
-        test_correctness_on_num_questions_core(cfg, acfg, num_questions=num_questions)
+        test_correctness_on_num_questions_core(cfg, acfg, num_questions=num_questions, enrich_data=enrich_data)
         print()
 
     cfg.perc_sub = store_perc_sub
