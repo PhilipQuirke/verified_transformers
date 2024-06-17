@@ -190,13 +190,13 @@ def test_correctness_on_num_questions(cfg, acfg, num_questions=1000000):
     cfg.perc_mult = store_perc_mult
 
 
-def test_correctness_on_num_questions_core(cfg, acfg, num_questions=1000000):
+def test_correctness_on_num_questions_core(cfg, acfg, num_questions=1000000, enrich_data=True):
     old_seed = cfg.analysis_seed
 
     # Create a local data generator
     cfg.analysis_seed = 345621  # Randomly chosen
     assert( cfg.analysis_seed != cfg.training_seed ) # Must be ifferent from training
-    local_ds = maths_data_generator(cfg=cfg)  
+    local_ds = maths_data_generator(cfg=cfg, enrich_data=enrich_data)  
 
     the_successes = 0
     the_fails = 0

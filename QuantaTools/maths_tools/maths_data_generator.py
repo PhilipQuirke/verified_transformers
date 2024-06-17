@@ -15,7 +15,7 @@ from .maths_utilities import make_a_maths_question_and_answer
 # "Subtraction" batch entries are formated XXXXX-YYYYY=-ZZZZZZ e.g. 550030-800020=-0249990, 800020-550030=+0249990
 # "Multiplication" batch entries are formated 000XXX*000YYY=+ZZZZZZ e.g. 000345*000678=+233910
 # Enrichment is used to speed up training by adding more complex cases to the training data
-def maths_data_generator_core( cfg, batch_op, enrich=True ):
+def maths_data_generator_core( cfg, batch_op, enrich_data=True ):
 
     batch = torch.zeros((cfg.batch_size, cfg.n_ctx)).to(torch.int64)
     x = torch.randint(0, 10, (cfg.batch_size, cfg.n_digits))
@@ -29,7 +29,7 @@ def maths_data_generator_core( cfg, batch_op, enrich=True ):
             y[:, z] = 0
 
     # Enrich the question data on 60% of batches to speed up training
-    if enrich and ( batch_op == MathsToken.PLUS or batch_op == MathsToken.MINUS ) and (random.randint(1, 5) < 3):
+    if enrich_data and ( batch_op == MathsToken.PLUS or batch_op == MathsToken.MINUS ) and (random.randint(1, 5) < 3):
         # Flatten x and y to 1D tensors
         x_flat = x.view(-1)
         y_flat = y.view(-1)
@@ -102,14 +102,14 @@ def maths_data_generator_core( cfg, batch_op, enrich=True ):
 
 
 # Define "iterator" maths "questions" data generator function. Invoked using next().
-def maths_data_generator( cfg, enrich=True ):
+def maths_data_generator( cfg, enrich_data=True ):
     torch.manual_seed(cfg.analysis_seed)
     while True:
 
         batch_rand = random.randint(1, 100)
         batch_op = MathsToken.MULT if batch_rand <= cfg.perc_mult else MathsToken.MINUS if batch_rand <= cfg.perc_mult + cfg.perc_sub else MathsToken.PLUS
 
-        batch = maths_data_generator_core( cfg, batch_op, enrich )
+        batch = maths_data_generator_core( cfg, batch_op, enrich_data )
 
         yield batch.cuda()
     
