@@ -2,9 +2,10 @@ import torch
 from tqdm.notebook import tqdm
 import transformer_lens.utils as utils
 
-from QuantaTools import logits_to_tokens_loss, tokens_to_string, get_maths_question_complexity, NodeLocation, \
-    a_predict_questions, loss_fn, get_question_answer_impact, QType, sort_unique_digits, MathsBehavior, \
-    maths_data_generator
+from QuantaTools import ( logits_to_tokens_loss, tokens_to_string, get_maths_question_complexity, NodeLocation, 
+    a_predict_questions, loss_fn, get_question_answer_impact, QType, sort_unique_digits, MathsBehavior, 
+    maths_data_generator )
+
 
 def test_maths_questions_by_complexity(cfg, acfg, varied_questions):
     # Test maths question prediction accuracy on the sample questions provided.
@@ -194,7 +195,7 @@ def test_correctness_on_num_questions_core(cfg, acfg, num_questions=1000000):
 
     # Create a local data generator
     cfg.analysis_seed = 345621  # Randomly chosen
-    assert( cfg.analysis_seed != cfg.training_seed )
+    assert( cfg.analysis_seed != cfg.training_seed ) # Must be ifferent from training
     local_ds = maths_data_generator(cfg=cfg)  
 
     the_successes = 0
