@@ -21,6 +21,10 @@ class ModelConfig():
         self.d_mlp_multiplier : int = 4
         self.d_head : int = 170
         self.act_fn = 'relu'
+
+        # Training technique that adds 50% memory but speeds training by x10.
+        # Refer https://github.com/ironjr/grokfast/tree/main
+        self.grokfast = False
  
         # Batch size. Training often uses 64. Larger size used for speed during analysis e.g. 1M Qs
         self.batch_size : int = 512 
@@ -92,7 +96,7 @@ class ModelConfig():
         return self.d_mlp_multiplier * self.d_model
 
 
-    # Update n_digits, n_layers, n_heads, n_training_steps, training_seed from model_name
+    # Update n_digits, n_layers, n_heads, n_training_steps, training_seed, grokfast from model_name
     def parse_model_name(self):
 
         match = re.search(r"l(\d)_", self.model_name)
@@ -125,6 +129,8 @@ class ModelConfig():
         match = re.search(r"_s(\d\d\d\d\d\d)", self.model_name)
         if match:
             self.training_seed = int(match.group(1))
+
+        self.grokfast = ("_gf" in self.model_name)
 
 
    # Update n_digits, n_layers, n_heads, n_training_steps, training_seed from model_name
@@ -175,6 +181,7 @@ class ModelConfig():
             "d_mlp_multiplier": self.d_mlp_multiplier,
             "d_head": self.d_head,
             "act_fn": self.act_fn,
+            "grokfast": self.grokfast,
             "batch_size": self.batch_size,
             "n_training_steps": self.n_training_steps,
             "weight_decay": self.weight_decay,

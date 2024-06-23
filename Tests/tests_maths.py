@@ -128,8 +128,17 @@ class TestMaths(unittest.TestCase):
         self.assertEqual( cfg.insert_n_heads, 5)
         self.assertEqual( cfg.insert_n_training_steps, 40000)
         self.assertEqual( cfg.insert_training_seed, 572077)
+        self.assertEqual( cfg.grokfast, False)
 
-        
+
+    def test_parse_model_name_grokfast(self):
+        cfg = self.get_cfg()
+        cfg.parse_model_name("add_d7_l6_h5_t40K_s572077")
+        self.assertEqual( cfg.grokfast, False)
+        cfg.parse_model_name_grokfast("add_d7_l6_h5_t40K_gf_s572077")
+        self.assertEqual( cfg.grokfast, True)       
+
+
     # Intervention ablation test for addition "Use Sum 9" (SS) task
     def test_add_ss_test1(self):
         cfg = self.get_cfg()

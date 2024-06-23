@@ -48,7 +48,7 @@ class MathsConfig(AlgoConfig):
     @property
     # How many slices do we break the MLP layer up into?
     def mlp_slices(self) -> int:
-        return 1 # Paper 2 used this granualarity
+        return 1 # Paper 2 used this granularity
         # return self.n_heads * self.d_mlp_multiplier # Alternative for Paper 3?
   
 
@@ -81,7 +81,7 @@ class MathsConfig(AlgoConfig):
         self.initialize_maths_token_positions()  
 
 
-    # Parse the model name to extract the number of digits in question
+    # Parse the insert model name to extract the number of insert digits 
     def parse_insert_model_name(self, insert_model_name):
         super().parse_insert_model_name(insert_model_name)
         
@@ -90,7 +90,7 @@ class MathsConfig(AlgoConfig):
             match = re.search(r"d(\d\d)_", insert_model_name)
         if match:
             self.insert_n_digits = int(match.group(1))
-                
+            
 
     @property
     # Extend "l2_h3_t15K" with number of digits in question to give "_d5_l2_h3_t15K
