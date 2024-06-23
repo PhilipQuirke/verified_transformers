@@ -133,9 +133,13 @@ class TestMaths(unittest.TestCase):
 
     def test_parse_model_name_grokfast(self):
         cfg = self.get_cfg()
-        cfg.parse_model_name("add_d7_l6_h5_t40K_s572077")
+        
+        cfg.model_name = "ins1_mix_d10_l3_h5_t50K_s572091"        
+        cfg.parse_model_name()
         self.assertEqual( cfg.grokfast, False)
-        cfg.parse_model_name_grokfast("add_d7_l6_h5_t40K_gf_s572077")
+        
+        cfg.model_name = "ins1_mix_d10_l3_h5_t50K_gf_s572091"        
+        cfg.parse_model_name()
         self.assertEqual( cfg.grokfast, True)       
 
 
