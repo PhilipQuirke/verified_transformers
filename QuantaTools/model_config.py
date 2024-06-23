@@ -163,7 +163,8 @@ class ModelConfig():
     @property
     def long_config_description(self) -> str:
         train_str = str(self.n_training_steps//1000) 
-        return self.short_config_description + f'_t{train_str}K_s{self.training_seed}'
+        gf_str = "_gf" if self.grokfast else ""
+        return self.short_config_description + f'_t{train_str}K' + gf_str + f'_s{self.training_seed}'
 
 
     @property

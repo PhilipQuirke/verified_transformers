@@ -137,10 +137,12 @@ class TestMaths(unittest.TestCase):
         cfg.model_name = "ins1_mix_d10_l3_h5_t50K_s572091"        
         cfg.parse_model_name()
         self.assertEqual( cfg.grokfast, False)
+        self.assertEqual( cfg.file_config_prefix, cfg.model_name )      
         
         cfg.model_name = "ins1_mix_d10_l3_h5_t50K_gf_s572091"        
         cfg.parse_model_name()
         self.assertEqual( cfg.grokfast, True)       
+        self.assertEqual( cfg.file_config_prefix, cfg.model_name)      
 
 
     # Intervention ablation test for addition "Use Sum 9" (SS) task
