@@ -25,6 +25,8 @@ class ModelConfig():
         # Training technique that adds 50% memory but speeds training by x10.
         # Refer https://github.com/ironjr/grokfast/tree/main
         self.grokfast = False
+        self.grokfast_alpha = 0.98 # Momentum hyperparmeter of the EMA.
+        self.grokfast_lamb = 2.0 # Amplifying factor hyperparameter of the filter.   
  
         # Batch size. Training often uses 64. Larger size used for speed during analysis e.g. 1M Qs
         self.batch_size : int = 512 
@@ -183,6 +185,8 @@ class ModelConfig():
             "d_head": self.d_head,
             "act_fn": self.act_fn,
             "grokfast": self.grokfast,
+            "grokfast_alpha": self.grokfast_alpha,
+            "grokfast_lamb": self.grokfast_lamb,
             "batch_size": self.batch_size,
             "n_training_steps": self.n_training_steps,
             "weight_decay": self.weight_decay,
