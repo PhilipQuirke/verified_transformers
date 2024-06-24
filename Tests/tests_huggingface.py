@@ -31,13 +31,6 @@ class TestHuggingFace(unittest.TestCase):
         return files
 
 
-    # Test that we can load the training json file
-    def load_training_json(self, data):
-        cfg = MathsConfig()
-
-        load_training_json(cfg, data)
-
-
     def test_hugging_face_training_data(self):
         # URL of the repository
         repo_url = "https://huggingface.co/PhilipQuirke/VerifiedArithmetic/"
@@ -50,5 +43,6 @@ class TestHuggingFace(unittest.TestCase):
             file_url = f"https:/{file}"
             data = download_json(file_url)
     
-            # Run test function
-            self.load_training_json(data)
+            # Can we load the training json file?
+            cfg = MathsConfig()
+            load_training_json(cfg, data)
