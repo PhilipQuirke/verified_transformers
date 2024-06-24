@@ -69,8 +69,9 @@
     <Compile Include="QuantaTools\useful_node.py" />
     <Compile Include="QuantaTools\__init__.py" />
     <Compile Include="setup.py" />
+    <Compile Include="Tests\tests_huggingface.py" />
     <Compile Include="Tests\tests_suite.py" />
-    <Compile Include="Tests\tests_generic.py" />
+    <Compile Include="Tests\tests_useful.py" />
     <Compile Include="Tests\tests_maths.py">
       <SubType>Code</SubType>
     </Compile>
