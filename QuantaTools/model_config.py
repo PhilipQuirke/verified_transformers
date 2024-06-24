@@ -174,6 +174,7 @@ class ModelConfig():
         return '' if self.insert_mode == 0 else f'ins{self.insert_mode}_' 
     
 
+    # Return a dictionary of all the model configuration parameters
     def to_dict(self):
         return {
             "model_name": self.model_name,

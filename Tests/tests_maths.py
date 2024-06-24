@@ -34,6 +34,13 @@ class TestMaths(unittest.TestCase):
         cfg.perc_sub = 60
         cfg.use_cuda = False        
         set_maths_vocabulary(cfg)
+        
+        dict = cfg.to_dict()    
+        self.assertEqual( dict['n_layers'], 3)
+        self.assertEqual( dict['n_heads'], 4)
+        self.assertEqual( dict['perc_sub'], 60)
+        self.assertEqual( dict['n_digits'], 6)
+
         return cfg
 
 
@@ -61,7 +68,7 @@ class TestMaths(unittest.TestCase):
         self.assertEqual( sort_unique_digits("A1231231278321", False), "12378")
         self.assertEqual( sort_unique_digits("A1231231278321", True), "87321")
 
-
+        
     # During the construction of the test data, we check that the complexity of the question matches what the test data believes it is
     def test_make_maths_test_questions_and_answers(self):
         cfg = self.get_cfg()

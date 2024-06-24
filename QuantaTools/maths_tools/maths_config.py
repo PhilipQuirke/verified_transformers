@@ -123,3 +123,13 @@ class MathsConfig(AlgoConfig):
         return MathsConfig.repeat_digit_n(digit, self.n_digits)
 
 
+    # Return a dictionary of all the model configuration parameters
+    def to_dict(self):
+        base_dict = super().to_dict()
+        base_dict.update({
+            'perc_mult': self.perc_mult,
+            'perc_sub': self.perc_sub,
+            'perc_add': self.perc_add,
+            'n_digits': self.n_digits            
+        })
+        return base_dict
