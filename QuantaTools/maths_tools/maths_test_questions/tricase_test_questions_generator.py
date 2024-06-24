@@ -145,7 +145,6 @@ def make_tricase_questions(
     make_borrow will be overidden if the case_type and qtype require it, such as for
     tricase test_case=8 and qtype=Math_NEG
     """
-    print(f'Making {num_questions} questions for {test_digit} and {test_case}.')
     assert make_borrow in ["always", "never", "mixed"]
     assert make_carry in ["always", "never", "mixed"]
     questions = []
@@ -178,8 +177,6 @@ def make_tricase_questions(
         questions = pad_small_set_of_questions(
             cfg, sample_pairs_of_numbers=questions, target_number=num_questions, digit=test_digit
         )
-
-    print(f'Generated {len(questions)} questions for operation {operation}, which include:\n{questions[:3]}.')
 
     if qtype is not None:  # We have enforced qtype remains consistent with questions returned
         result = make_maths_questions_and_answers(cfg, operation, qtype, MathsBehavior.UNKNOWN, questions)
@@ -256,7 +253,7 @@ def make_maths_tricase_questions_customized(cfg, custom_triclass_config=CustomTr
                     all_questions = make_tricase_questions(
                         cfg, test_digit=answer_digit, test_case=test_case, operation=operator, qtype=qtype, num_questions=local_num_questions
                     )
-                    key = DigitOperatorQTypeTricase(answer_digit, operator, qtype, test_case)
+                    key = DigitOperatorQTypeTricase(answer_digit, maths_tokens_to_names[operator], qtype, test_case)
                     cfg.customized_tricase_questions_dict[key] = all_questions
 
             elif qtype == QType.MATH_NEG:
@@ -268,7 +265,7 @@ def make_maths_tricase_questions_customized(cfg, custom_triclass_config=CustomTr
                         cfg, test_digit=answer_digit, test_case=test_case, operation=operator, qtype=qtype,
                         num_questions=local_num_questions
                     )
-                    key = DigitOperatorQTypeTricase(answer_digit, operator, qtype, test_case)
+                    key = DigitOperatorQTypeTricase(answer_digit, maths_tokens_to_names[operator], qtype, test_case)
                     cfg.customized_tricase_questions_dict[key] = all_questions
 
 
@@ -280,7 +277,8 @@ def make_maths_tricase_questions_customized(cfg, custom_triclass_config=CustomTr
                         cfg, test_digit=answer_digit, test_case=test_case, operation=operator, qtype=qtype,
                         num_questions=local_num_questions
                     )
-                    print(f'Received back {len(all_questions)} for test case {test_case.name} and operator {operator}.')
+                    if verbose:
+                        print(f'Received back {len(all_questions)} for test case {test_case.name} and operator {operator}.')
                     key = DigitOperatorQTypeTricase(answer_digit, maths_tokens_to_names[operator], qtype, test_case)
                     cfg.customized_tricase_questions_dict[key] = all_questions
 
@@ -292,7 +290,7 @@ def make_maths_tricase_questions_customized(cfg, custom_triclass_config=CustomTr
             ]
             num_questions_created = sum(questions_created)
             assert num_questions_created == num_questions, (
-                f"Created {num_questions_created} for digit {answer_digit} "
+                f"Created {num_questions_created}  for digit {answer_digit} "
                 f"when requested with {num_questions} for {operator_qtype_number}")
 
     value_distribution = {key: len(values) for key, values in cfg.customized_tricase_questions_dict.items()}
