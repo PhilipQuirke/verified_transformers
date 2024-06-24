@@ -32,7 +32,8 @@ class TestMaths(unittest.TestCase):
         cfg = MathsConfig()
         cfg.n_digits = 6    
         cfg.perc_sub = 60
-        cfg.use_cuda = False        
+        cfg.use_cuda = False     
+        cfg.sanity_check()
         set_maths_vocabulary(cfg)
         return cfg
 
@@ -50,6 +51,8 @@ class TestMaths(unittest.TestCase):
         cfg = self.get_cfg()    
         data = cfg.to_dict()   
         cfg.init_from_json(data)
+        cfg.sanity_check()
+        
         self.assertEqual( cfg.n_layers, 3)
         self.assertEqual( cfg.n_heads, 4)
         self.assertEqual( cfg.perc_sub, 60)

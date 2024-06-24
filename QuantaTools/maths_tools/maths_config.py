@@ -140,7 +140,14 @@ class MathsConfig(AlgoConfig):
     # Set attributes from JSON data, using default values if attributes are missing
     def init_from_json(self, data):
         super().init_from_json(data)
-        self.perc_mult = data.get('perc_mult', 0)
-        self.perc_sub = data.get('perc_sub', 0)
-        self.n_digits = data.get('n_digits', 6)
+        self.perc_mult = data.get('perc_mult', self.perc_mult)
+        self.perc_sub = data.get('perc_sub', self.perc_sub)
+        self.n_digits = data.get('n_digits', self.n_digits)
+        
+
+    def sanity_check(self):
+        super().sanity_check()        
+        assert(self.perc_mult >= 0)
+        assert(self.perc_sub >= 0)
+        assert(self.n_digits > 0)
 
