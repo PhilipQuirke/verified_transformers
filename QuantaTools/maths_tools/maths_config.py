@@ -63,7 +63,7 @@ class MathsConfig(AlgoConfig):
     def an_to_position_name(self, n):
         return position_name(self.n_ctx - 1 - n)
     # Position of the operator (+, -, * or /)
-    def op_position_name(self) -> str:
+    def op_position_name(self):
         return position_name(self.n_digits)
 
 
@@ -129,10 +129,10 @@ class MathsConfig(AlgoConfig):
         base_dict.update({
             'perc_mult': self.perc_mult,
             'perc_sub': self.perc_sub,
-            'perc_add': self.perc_add,
+            'perc_add': self.perc_add, # Readonly
             'n_digits': self.n_digits,
-            'mlp_slices': self.mlp_slices,
-            'op_position_name': self.op_position_name
+            'mlp_slices': self.mlp_slices, # Readonly
+            'op_position_name': self.op_position_name() # Readonly
         })
         return base_dict
 

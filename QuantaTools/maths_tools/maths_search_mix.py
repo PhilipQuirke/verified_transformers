@@ -113,7 +113,7 @@ class opr_functions(SubTaskBaseMath):
         return FilterAnd(
             FilterHead(),
             FilterPosition(position_name(position)),
-            FilterAttention(cfg.op_position_name))
+            FilterAttention(cfg.op_position_name()))
 
     @staticmethod
     def test(cfg, acfg, impact_digit, strong):
