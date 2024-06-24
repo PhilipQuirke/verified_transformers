@@ -13,8 +13,8 @@ def load_training_json(cfg, data : dict):
     cfg.init_from_json(config_data)
 
     # Old json has this format    
-    avg_final_loss = data['AvgFinalLoss']
-    final_loss = data['FinalLoss']
+    avg_final_loss = data.get('AvgFinalLoss', 0)
+    final_loss = data.get('FinalLoss', 0)
     training_loss = data['TrainingLoss']
     
     if (( avg_final_loss != None ) and (avg_final_loss > 0.0)):

@@ -33,7 +33,7 @@ class TestHuggingFace(unittest.TestCase):
 
     def test_hugging_face_training_data(self):
         # URL of the repository
-        repo_url = "https://huggingface.co/PhilipQuirke/VerifiedArithmetic/"
+        repo_url = "https://huggingface.co/PhilipQuirke/VerifiedArithmetic/raw/main/"
 
         # Get list of train files
         train_files = self.get_training_json_files(repo_url)
@@ -46,3 +46,6 @@ class TestHuggingFace(unittest.TestCase):
             # Can we load the training json file?
             cfg = MathsConfig()
             load_training_json(cfg, data)
+            self.assertGreater( cfg.avg_final_loss, 0)
+            self.assertGreater( cfg.final_loss, 10000) # Should fail
+            
