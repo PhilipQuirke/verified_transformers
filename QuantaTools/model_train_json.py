@@ -1,11 +1,14 @@
 import json
 import requests
+from huggingface_hub import HfApi
+from huggingface_hub import hf_hub_download
 
 
-def download_json(url: str) -> dict:
-    response = requests.get(url)
-    response.raise_for_status()
-    return response.json()
+def download_huggingface_json(repo_id, filename):
+    file_path = hf_hub_download(repo_id=repo_id, filename=filename) 
+    with open(file_path, 'r') as file:
+        data = json.load(file)
+        return data
 
 
 def load_training_json(cfg, data : dict):
