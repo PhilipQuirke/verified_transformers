@@ -34,14 +34,26 @@ class TestMaths(unittest.TestCase):
         cfg.perc_sub = 60
         cfg.use_cuda = False        
         set_maths_vocabulary(cfg)
-        
-        dict = cfg.to_dict()    
-        self.assertEqual( dict['n_layers'], 3)
-        self.assertEqual( dict['n_heads'], 4)
-        self.assertEqual( dict['perc_sub'], 60)
-        self.assertEqual( dict['n_digits'], 6)
-
         return cfg
+
+
+    def test_to_dict(self):
+        cfg = self.get_cfg()    
+        data = cfg.to_dict()    
+        self.assertEqual( data['n_layers'], 3)
+        self.assertEqual( data['n_heads'], 4)
+        self.assertEqual( data['perc_sub'], 60)
+        self.assertEqual( data['n_digits'], 6)
+        
+
+    def test_init_from_json(self):
+        cfg = self.get_cfg()    
+        data = cfg.to_dict()   
+        cfg.init_from_json(data)
+        self.assertEqual( cfg.n_layers, 3)
+        self.assertEqual( cfg.n_heads, 4)
+        self.assertEqual( cfg.perc_sub, 60)
+        self.assertEqual( cfg.n_digits, 6)        
 
 
     def test_int_to_answer_str(self):

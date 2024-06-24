@@ -135,3 +135,12 @@ class MathsConfig(AlgoConfig):
             'op_position_name': self.op_position_name
         })
         return base_dict
+
+
+    # Set attributes from JSON data, using default values if attributes are missing
+    def init_from_json(self, data):
+        super().init_from_json(data)
+        self.perc_mult = data.get('perc_mult', None)
+        self.perc_sub = data.get('perc_sub', None)
+        self.n_digits = data.get('n_digits', None)
+

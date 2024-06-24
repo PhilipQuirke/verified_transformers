@@ -37,15 +37,19 @@ class ModelConfig():
         self.lr = 0.00008
 
         # Before training was this model initialised with another existing model?
-        self.insert_mode = 0 # 0=None 1=Init, 2=FreezeHeads 3=FreezeAll
+        self.insert_mode : int = 0 # 0=None 1=Init, 2=FreezeHeads 3=FreezeAll
         self.insert_late = False
-        self.insert_n_layers = 2
-        self.insert_n_heads = 3
-        self.insert_training_seed = 372001
-        self.insert_n_training_steps = 15000
+        self.insert_n_layers : int = 2
+        self.insert_n_heads : int = 3
+        self.insert_training_seed : int = 372001
+        self.insert_n_training_steps : int = 15000
         
-        # Random seeds
+        # Training data 
         self.training_seed : int = 372001
+        self.avg_final_loss = 0.0 # Over last 5 training steps
+        self.final_loss = 0.0
+
+        # Analysis seeds
         self.analysis_seed : int = 673023
 
         # Vocabulary: Map from each character to each token    
@@ -199,8 +203,38 @@ class ModelConfig():
             "insert_training_seed": self.insert_training_seed,
             "insert_n_training_steps": self.insert_n_training_steps,
             "training_seed": self.training_seed,
+            "avg_final_loss": self.avg_final_loss,
+            "final_loss": self.final_loss,    
             "analysis_seed": self.analysis_seed,
         }
 
-
+    
+    # Set attributes from JSON data, using default values if attributes are missing
+    def init_from_json(self, data):
+        self.model_name = data.get('model_name', "")
+        self.n_layers = data.get('n_layers', 3)
+        self.n_heads = data.get('n_heads', 4)
+        self.d_vocab = data.get('d_vocab', 15)
+        self.d_model = data.get('d_model', 510)
+        self.d_mlp_multiplier = data.get('d_mlp_multiplier', 4)
+        self.d_head = data.get('d_head', 170)
+        self.act_fn = data.get('act_fn', 'relu')
+        self.grokfast = data.get('grokfast', False)
+        self.grokfast_alpha = data.get('grokfast_alpha', 0.98)
+        self.grokfast_lamb = data.get('grokfast_lamb', 2.0)
+        self.batch_size = data.get('batch_size', 512)
+        self.n_training_steps = data.get('n_training_steps', 15000)
+        self.weight_decay = data.get('weight_decay', 0.1)
+        self.lr = data.get('lr', 0.00008)
+        self.insert_mode = data.get('insert_mode', 0)
+        self.insert_late = data.get('insert_late', False)
+        self.insert_n_layers = data.get('insert_n_layers', 2)
+        self.insert_n_heads = data.get('insert_n_heads', 3)
+        self.insert_training_seed = data.get('insert_training_seed', 372001)
+        self.insert_n_training_steps = data.get('insert_n_training_steps', 15000)
+        self.training_seed = data.get('training_seed', 372001)
+        self.avg_final_loss = data.get('avg_final_loss', 0.0)
+        self.final_loss = data.get('final_loss', 0.0)
+        self.analysis_seed = data.get('analysis_seed', 673023)
+    
   
