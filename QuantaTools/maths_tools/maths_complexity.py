@@ -26,6 +26,19 @@ class SimpleQuestionDescriptor:
         operator_string = maths_tokens_to_names.get(self.operator, self.operator)
         return f'(first_value={self.first_value}, second_value={self.second_value}, answer={self.answer}, operator={operator_string})'
 
+    def from_batched_tensor(cfg, question: torch.LongTensor):
+        '''
+        :param question:
+        :return:
+        '''
+
+
+    def from_single_tensor(cfg, question: torch.LongTensor):
+        '''
+        :param question:
+        :return:
+        '''
+
     @staticmethod
     def from_tensor(cfg, question: torch.LongTensor):
         first_value = int(tokens_to_unsigned_int(question, offset=0, digits=cfg.n_digits).item())
