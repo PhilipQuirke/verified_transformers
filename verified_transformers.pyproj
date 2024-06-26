@@ -77,6 +77,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include=".github\" />
     <Folder Include="QuantaTools\maths_tools\" />
     <Folder Include="QuantaTools\maths_tools\maths_test_questions\" />
     <Folder Include="QuantaTools\maths_tools\maths_test_questions\__pycache__\" />
@@ -84,6 +85,7 @@
     <Folder Include="QuantaTools" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include=".github\dependabot.yml" />
     <Content Include="QuantaTools\maths_tools\maths_test_questions\__pycache__\manual_test_questions_generator.cpython-311.pyc" />
     <Content Include="QuantaTools\maths_tools\maths_test_questions\__pycache__\test_questions_checker.cpython-311.pyc" />
     <Content Include="QuantaTools\maths_tools\maths_test_questions\__pycache__\tricase_test_questions_generator.cpython-311.pyc" />
