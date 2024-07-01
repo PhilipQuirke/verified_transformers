@@ -10,12 +10,12 @@ from .maths_complexity import get_maths_question_complexity
 from .maths_utilities import make_a_maths_question_and_answer
 
 
-# Generate an enriched data batch one maths operation
+# Generate an (optionally enriched) data batch for ONE maths operation selected from:
 # "Addition" batch entries are formated XXXXX+YYYYY=+ZZZZZZ e.g. 550030+800020=+1350050
 # "Subtraction" batch entries are formated XXXXX-YYYYY=-ZZZZZZ e.g. 550030-800020=-0249990, 800020-550030=+0249990
 # "Multiplication" batch entries are formated 000XXX*000YYY=+ZZZZZZ e.g. 000345*000678=+233910
 # Enrichment is used to speed up training by adding more complex cases to the training data
-def maths_data_generator_core( cfg, batch_op, enrich_data=True ):
+def maths_data_generator_single_core( cfg, batch_op, enrich_data=True ):
 
     batch = torch.zeros((cfg.batch_size, cfg.n_ctx)).to(torch.int64)
     x = torch.randint(0, 10, (cfg.batch_size, cfg.n_digits))
@@ -102,6 +102,7 @@ def maths_data_generator_core( cfg, batch_op, enrich_data=True ):
 
 
 # Define "iterator" maths "questions" data generator function. Invoked using next().
+# Generates an (optionally enriched) data batch for ONE maths operation.
 def maths_data_generator( cfg, enrich_data=True ):
     torch.manual_seed(cfg.analysis_seed)
     while True:
@@ -109,10 +110,72 @@ def maths_data_generator( cfg, enrich_data=True ):
         batch_rand = random.randint(1, 100)
         batch_op = MathsToken.MULT if batch_rand <= cfg.perc_mult else MathsToken.MINUS if batch_rand <= cfg.perc_mult + cfg.perc_sub else MathsToken.PLUS
 
-        batch = maths_data_generator_core( cfg, batch_op, enrich_data )
+        batch = maths_data_generator_single_core( cfg, batch_op, enrich_data )
 
         yield batch.cuda()
     
+
+# Generate a data batch for multiple maths operation.
+def maths_data_generator_mixed_core(cfg):
+
+    batch = torch.zeros((cfg.batch_size, cfg.n_ctx)).to(torch.int64)
+    x = torch.randint(0, 10, (cfg.batch_size, cfg.n_digits))
+    y = torch.randint(0, 10, (cfg.batch_size, cfg.n_digits))
+
+    # Generate a batch of random operation choices.
+    # Currently ignores specific perc_sub and perc_mult values.
+    if cfg.perc_mult > 0:
+        operation_choices = [random.choice([MathsToken.PLUS, MathsToken.MINUS, MathsToken.MULT]) for _ in range(cfg.batch_size)]
+    else:
+        operation_choices = [random.choice([MathsToken.PLUS, MathsToken.MINUS]) for _ in range(cfg.batch_size)]
+
+    first_answer_index = cfg.num_question_positions
+    
+    for i in range(cfg.batch_size):
+        batch_op = operation_choices[i]
+        batch[i, :cfg.n_digits] = x[i]
+        batch[i, cfg.n_digits] = batch_op
+        batch[i, 1 + cfg.n_digits:1 + cfg.n_digits * 2] = y[i]
+        batch[i, first_answer_index - 1] = MathsToken.EQUALS
+
+        x_values = x[i, 0]
+        y_values = y[i, 0]
+        for dn in range(1, cfg.n_digits):
+            x_values = x_values * 10 + x[i, dn]
+            y_values = y_values * 10 + y[i, dn]
+
+        if batch_op == MathsToken.MULT:
+            answer = x_values * y_values
+        elif batch_op == MathsToken.MINUS:
+            answer = x_values - y_values
+        else:
+            answer = x_values + y_values
+
+        sign = MathsToken.PLUS
+        if answer < 0:
+            sign = MathsToken.MINUS
+            answer = -answer
+
+        batch[i, first_answer_index] = sign
+        for j in range(cfg.n_digits + 1):
+            batch[i, cfg.n_ctx - j - 1] = answer % 10
+            answer = answer // 10
+            if answer == 0:
+                break
+
+    return batch
+
+
+# Define "iterator" maths "questions" data generator function. Invoked using next().
+# Generates a data batch for multiple maths operation.
+def maths_data_generator_mixed( cfg ):
+    torch.manual_seed(cfg.analysis_seed)
+    while True:
+
+        batch = maths_data_generator_mixed_core( cfg )
+
+        yield batch.cuda()
+        
 
 # Create a (matrix) batch of questions from a 2D matrix of ints
 def make_maths_questions_and_answers(cfg, operator, major_tag, minor_tag, q_matrix):
