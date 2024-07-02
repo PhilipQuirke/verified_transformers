@@ -12,7 +12,7 @@ from QuantaTools.quanta_map_attention import get_quanta_attention
 from QuantaTools.maths_tools.maths_config import MathsConfig
 from QuantaTools.maths_tools.maths_constants import MathsToken, MathsBehavior
 from QuantaTools.maths_tools.maths_utilities import set_maths_vocabulary, int_to_answer_str, tokens_to_unsigned_int
-from QuantaTools.maths_tools.maths_data_generator import maths_data_generator_single_core, make_maths_questions_and_answers, maths_data_generator_mixed_core
+from QuantaTools.maths_tools.maths_data_generator import maths_data_generator_addition, maths_data_generator_subtraction, maths_data_generator_multiplication, maths_data_generator_mixed, maths_data_generator_mixed_core, make_maths_questions_and_answers
 from QuantaTools.maths_tools.maths_test_questions import make_maths_s0_questions_and_answers, make_maths_s1_questions_and_answers, make_maths_s2_questions_and_answers, make_maths_s3_questions_and_answers, make_maths_s4_questions_and_answers, make_maths_s5_questions_and_answers
 from QuantaTools.maths_tools.maths_test_questions import make_maths_m0_questions_and_answers, make_maths_m1_questions_and_answers, make_maths_m2_questions_and_answers, make_maths_m3_questions_and_answers
 from QuantaTools.maths_tools.maths_test_questions import make_maths_n1_questions_and_answers, make_maths_n2_questions_and_answers, make_maths_n3_questions_and_answers, make_maths_n4_questions_and_answers
@@ -109,40 +109,47 @@ class TestMaths(unittest.TestCase):
         make_maths_n4_questions_and_answers(cfg)
     
         
-    def test_maths_data_generator_core(self):
+    def test_maths_data_generator_single(self):
         
         cfg = self.get_cfg()
-        cfg.perc_mult = 33
-        cfg.perc_sub = 33
+        cfg.perc_mult = 0
+        cfg.perc_sub = 0
         
         torch.manual_seed(cfg.analysis_seed)
-        questions = maths_data_generator_single_core(cfg, MathsToken.PLUS, True )
-        questions = maths_data_generator_single_core(cfg, MathsToken.MINUS, True)
-        questions = maths_data_generator_single_core(cfg, MathsToken.MULT, True )
-        questions = maths_data_generator_single_core(cfg, MathsToken.PLUS, False )
-        questions = maths_data_generator_single_core(cfg, MathsToken.MINUS, False )
-        questions = maths_data_generator_single_core(cfg, MathsToken.MULT, False )
+        questions = maths_data_generator_addition(cfg, False)
+        questions = maths_data_generator_addition(cfg, True )
+        questions = maths_data_generator_subtraction(cfg, False )
+        questions = maths_data_generator_subtraction(cfg, True )
+        questions = maths_data_generator_multiplication(cfg, False )
+        questions = maths_data_generator_multiplication(cfg, True )
 
   
     def test_maths_data_generator_mixed(self):
         
         cfg = self.get_cfg()
+        torch.manual_seed(cfg.analysis_seed)
 
         cfg.perc_mult = 33
         cfg.perc_sub = 33
-        torch.manual_seed(cfg.analysis_seed)
-        questions = maths_data_generator_mixed_core(cfg)
-        
+        questions = maths_data_generator_mixed_core(cfg, False)
+        questions = maths_data_generator_mixed_core(cfg, True)
+
+        #print( tokens_to_string(cfg, questions[0]) )
+        #print( tokens_to_string(cfg, questions[1]) )
+        #print( tokens_to_string(cfg, questions[2]) )
+        #print( tokens_to_string(cfg, questions[3]) )
+        #print( tokens_to_string(cfg, questions[4]) )
+              
         cfg.perc_mult = 0
         cfg.perc_sub = 50
-        torch.manual_seed(cfg.analysis_seed)
-        questions = maths_data_generator_mixed_core(cfg)
+        questions = maths_data_generator_mixed_core(cfg, False)
+        questions = maths_data_generator_mixed_core(cfg, True)
 
-        # print( tokens_to_string(cfg, questions[0]) )
-        # print( tokens_to_string(cfg, questions[1]) )
-        # print( tokens_to_string(cfg, questions[2]) )
-        # print( tokens_to_string(cfg, questions[3]) )
-        # print( tokens_to_string(cfg, questions[4]) )
+        #print( tokens_to_string(cfg, questions[0]) )
+        #print( tokens_to_string(cfg, questions[1]) )
+        #print( tokens_to_string(cfg, questions[2]) )
+        #print( tokens_to_string(cfg, questions[3]) )
+        #print( tokens_to_string(cfg, questions[4]) )
   
 
     def test_repeat_digit(self):

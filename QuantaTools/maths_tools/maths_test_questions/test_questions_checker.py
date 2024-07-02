@@ -210,7 +210,7 @@ def test_correctness_on_num_questions_core(cfg, acfg, num_questions=1000000, enr
         the_successes = the_successes + cfg.batch_size
 
         if epoch % 100 == 0:
-            print("Batch", epoch, "of", num_batches, "#Successes=", the_successes)
+            print("Batch", epoch, "of", num_batches, "#Successes=", the_successes, "#Fails=", the_fails)
 
     print("successes", the_successes, "num_fails", the_fails)
     if num_questions == 1000000:

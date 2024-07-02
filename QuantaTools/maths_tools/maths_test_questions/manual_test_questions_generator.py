@@ -3,7 +3,7 @@ import torch
 from QuantaTools.quanta_constants import QType
 
 from QuantaTools.maths_tools.maths_constants import MathsToken, MathsBehavior
-from QuantaTools.maths_tools.maths_data_generator import maths_data_generator_single_core, make_maths_questions_and_answers
+from QuantaTools.maths_tools.maths_data_generator import maths_data_generator_addition, maths_data_generator_subtraction, maths_data_generator_multiplication, maths_data_generator_mixed, make_maths_questions_and_answers
 
 
 # Move the data to the GPU (if any) for faster processing
@@ -368,7 +368,7 @@ def make_maths_test_questions_and_answers(cfg):
     # Create a (matrix) batch of manually-curated mathematics test questions
 
     # Start with a batch of random and manually-chosen questions
-    varied_questions = maths_data_generator_single_core(cfg, MathsToken.PLUS if cfg.perc_add > 0 else MathsToken.MINUS )
+    varied_questions = maths_data_generator_mixed(cfg)
 
     if cfg.perc_add > 0:
         varied_questions = torch.vstack((

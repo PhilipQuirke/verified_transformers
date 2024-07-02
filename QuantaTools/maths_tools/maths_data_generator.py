@@ -10,62 +10,18 @@ from .maths_complexity import get_maths_question_complexity
 from .maths_utilities import make_a_maths_question_and_answer
 
 
-# Generate an (optionally enriched) data batch for ONE maths operation selected from:
-# "Addition" batch entries are formated XXXXX+YYYYY=+ZZZZZZ e.g. 550030+800020=+1350050
-# "Subtraction" batch entries are formated XXXXX-YYYYY=-ZZZZZZ e.g. 550030-800020=-0249990, 800020-550030=+0249990
-# "Multiplication" batch entries are formated 000XXX*000YYY=+ZZZZZZ e.g. 000345*000678=+233910
-# Enrichment is used to speed up training by adding more complex cases to the training data
-def maths_data_generator_single_core( cfg, batch_op, enrich_data=True ):
-
+def maths_data_generator_start( cfg ):
     batch = torch.zeros((cfg.batch_size, cfg.n_ctx)).to(torch.int64)
     x = torch.randint(0, 10, (cfg.batch_size, cfg.n_digits))
     y = torch.randint(0, 10, (cfg.batch_size, cfg.n_digits))
-
-    if batch_op == MathsToken.MULT:
-        # Convert from NNNNNN*NNNNNN= to 000NNN*000NNN= so answer (product) is +0NNNNNN
-        num_zeros = cfg.n_digits // 2
-        for z in range(num_zeros):
-            x[:, z] = 0
-            y[:, z] = 0
-
-    # Enrich the question data on 60% of batches to speed up training
-    if enrich_data and ( batch_op == MathsToken.PLUS or batch_op == MathsToken.MINUS ) and (random.randint(1, 5) < 3):
-        # Flatten x and y to 1D tensors
-        x_flat = x.view(-1)
-        y_flat = y.view(-1)
-
-        if batch_op == MathsToken.PLUS :
-            # The UseSum9 task is compound and rare and so hard to learn.
-            # Increase the MakeSum9 case frequency
-            # UseSum9 also relies on MakeCarry1 (50%) from previous column.
-            num_elements_to_modify = int(0.40 * x.numel()) # 40%
-            indices_to_modify = torch.randperm(x_flat.numel())[:num_elements_to_modify]
-            if random.randint(1, 2) == 1:
-                x_flat[indices_to_modify] = 9 - y_flat[indices_to_modify]
-            else:
-                y_flat[indices_to_modify] = 9 - x_flat[indices_to_modify]
-        else:
-            if random.randint(1, 100) == 1:
-                # For rare cases like 099111-099111=+0000000 some models predict -0000000. Generate more of these cases
-                y_flat = x_flat.clone()
-
-            else:
-                # Empirically, the model seems to struggle with the sign calculation.
-                # Minus signs are rarer than positive signs.
-                # Generate more negative answers by increasing the y value
-                y_flat[y_flat < 9] += 1
-
-        # Reshape x and y back to its original shape
-        x = x_flat.view(x.shape)
-        y = y_flat.view(x.shape)
+    return (batch, x, y)
 
 
-    first_answer_index = cfg.num_question_positions
-
+def maths_data_generator_mid( cfg, x, batch_op, y, batch ):
     batch[:, :cfg.n_digits] = x
     batch[:, cfg.n_digits] = batch_op
     batch[:, 1+cfg.n_digits:1+cfg.n_digits*2] = y
-    batch[:, first_answer_index-1] = MathsToken.EQUALS
+    batch[:, cfg.num_question_positions-1] = MathsToken.EQUALS
 
     # Convert each row into a 5-digit number
     x_values = x[:, 0]
@@ -73,14 +29,11 @@ def maths_data_generator_single_core( cfg, batch_op, enrich_data=True ):
     for dn in range(1,cfg.n_digits):
         x_values = x_values * 10 + x[:, dn]
         y_values = y_values * 10 + y[:, dn]
+        
+    return (batch, x_values, y_values)        
 
-    # Elementwise operations to give the 1D tensor answers
-    if batch_op == MathsToken.MULT:
-        answers = x_values * y_values
-    elif batch_op == MathsToken.MINUS:
-        answers = x_values - y_values
-    else:
-        answers = x_values + y_values
+
+def maths_data_generator_end( cfg, answers, batch ):
 
     # Insert the answers into the batch
     for i in range(cfg.batch_size):
@@ -91,7 +44,7 @@ def maths_data_generator_single_core( cfg, batch_op, enrich_data=True ):
             sign = MathsToken.MINUS
             answer = - answer
 
-        batch[i, first_answer_index] = sign
+        batch[i, cfg.num_question_positions] = sign
         for j in range(cfg.n_digits+1):
             batch[i, cfg.n_ctx-j-1] = answer % 10
             answer = answer // 10
@@ -101,78 +54,140 @@ def maths_data_generator_single_core( cfg, batch_op, enrich_data=True ):
     return batch
 
 
+# Generate an (optionally enriched) data batch for 
+# "Addition" batch entries formated as XXXXX+YYYYY=+ZZZZZZ e.g. 550030+800020=+1350050
+def maths_data_generator_addition( cfg, enrich_data=True ):
+
+    (batch, x, y) = maths_data_generator_start( cfg )
+
+    # Enrich the question data on 60% of batches to speed up training
+    if enrich_data and (random.randint(1, 5) < 3):
+        # Flatten x and y to 1D tensors
+        x_flat = x.view(-1)
+        y_flat = y.view(-1)
+
+        # The UseSum9 task is compound and rare and so hard to learn.
+        # Increase the MakeSum9 case frequency
+        # UseSum9 also relies on MakeCarry1 (50%) from previous column.
+        num_elements_to_modify = int(0.40 * x.numel()) # 40%
+        indices_to_modify = torch.randperm(x_flat.numel())[:num_elements_to_modify]
+        if random.randint(1, 2) == 1:
+            x_flat[indices_to_modify] = 9 - y_flat[indices_to_modify]
+        else:
+            y_flat[indices_to_modify] = 9 - x_flat[indices_to_modify]
+
+        # Reshape x and y back to its original shape
+        x = x_flat.view(x.shape)
+        y = y_flat.view(x.shape)
+
+    (batch, x_values, y_values) = maths_data_generator_mid( cfg, x, MathsToken.PLUS, y, batch )
+ 
+    # Elementwise operations to give the 1D tensor answers
+    answers = x_values + y_values
+
+    return maths_data_generator_end( cfg, answers, batch )
+
+
+# Generate an (optionally enriched) data batch for  
+# "Subtraction" batch entries formated as XXXXX-YYYYY=-ZZZZZZ e.g. 550030-800020=-0249990, 800020-550030=+0249990
+def maths_data_generator_subtraction( cfg, enrich_data=True ):
+
+    (batch, x, y) = maths_data_generator_start( cfg )
+
+    # Enrich the question data on 60% of batches to speed up training
+    if enrich_data and (random.randint(1, 5) < 3):
+        # Flatten x and y to 1D tensors
+        x_flat = x.view(-1)
+        y_flat = y.view(-1)
+
+        if random.randint(1, 100) == 1:
+            # For rare cases like 099111-099111=+0000000 some models predict -0000000. Generate more of these cases
+            y_flat = x_flat.clone()
+
+        else:
+            # Empirically, the model seems to struggle with the sign calculation.
+            # Minus signs are rarer than positive signs.
+            # Generate more negative answers by increasing the y value
+            y_flat[y_flat < 9] += 1
+
+        # Reshape x and y back to its original shape
+        x = x_flat.view(x.shape)
+        y = y_flat.view(x.shape)
+
+    (batch, x_values, y_values) = maths_data_generator_mid( cfg, x, MathsToken.MINUS, y, batch )
+
+    # Elementwise operations to give the 1D tensor answers
+    answers = x_values - y_values
+
+    return maths_data_generator_end( cfg, answers, batch )
+
+
+# Generate an (optionally enriched) data batch for  
+# "Multiplication" batch entries formated as 000XXX*000YYY=+ZZZZZZ e.g. 000345*000678=+233910
+def maths_data_generator_multiplication( cfg, enrich_data=True ):
+
+    (batch, x, y) = maths_data_generator_start( cfg )
+
+    # Convert from NNNNNN*NNNNNN= to 000NNN*000NNN= so answer (product) is +0NNNNNN
+    num_zeros = cfg.n_digits // 2
+    for z in range(num_zeros):
+        x[:, z] = 0
+        y[:, z] = 0
+        
+    if enrich_data:
+        # No data enrichment yet, but could be added in the future
+        pass
+
+    (batch, x_values, y_values) = maths_data_generator_mid( cfg, x, MathsToken.MULT, y, batch )
+
+    # Elementwise operations to give the 1D tensor answers
+    answers = x_values * y_values
+
+    return maths_data_generator_end( cfg, answers, batch )
+
+
 # Define "iterator" maths "questions" data generator function. Invoked using next().
-# Generates an (optionally enriched) data batch for ONE maths operation.
+# Generates an (optionally enriched) data batch containing ONE maths operation.
 def maths_data_generator( cfg, enrich_data=True ):
     torch.manual_seed(cfg.analysis_seed)
     while True:
 
         batch_rand = random.randint(1, 100)
-        batch_op = MathsToken.MULT if batch_rand <= cfg.perc_mult else MathsToken.MINUS if batch_rand <= cfg.perc_mult + cfg.perc_sub else MathsToken.PLUS
-
-        batch = maths_data_generator_single_core( cfg, batch_op, enrich_data )
+        if batch_rand <= cfg.perc_mult:
+            batch = maths_data_generator_multiplication( cfg, enrich_data )
+        elif batch_rand <= cfg.perc_mult + cfg.perc_sub:
+            batch = maths_data_generator_subtraction( cfg, enrich_data )
+        else:
+            batch = maths_data_generator_addition( cfg, enrich_data )
 
         yield batch.cuda()
+        
+
+def maths_data_generator_mixed_core( cfg, enrich_data=True ):
     
-
-# Generate a data batch for multiple maths operation.
-def maths_data_generator_mixed_core(cfg):
-
-    batch = torch.zeros((cfg.batch_size, cfg.n_ctx)).to(torch.int64)
-    x = torch.randint(0, 10, (cfg.batch_size, cfg.n_digits))
-    y = torch.randint(0, 10, (cfg.batch_size, cfg.n_digits))
-
-    # Generate a batch of random operation choices.
-    # Currently ignores specific perc_sub and perc_mult values.
-    if cfg.perc_mult > 0:
-        operation_choices = [random.choice([MathsToken.PLUS, MathsToken.MINUS, MathsToken.MULT]) for _ in range(cfg.batch_size)]
+    if cfg.perc_add == 100:
+        return maths_data_generator_addition( cfg, enrich_data )
+    elif cfg.perc_sub == 100:
+        return maths_data_generator_subtraction( cfg, enrich_data )
+    elif cfg.perc_mult == 100:
+        return maths_data_generator_multiplication( cfg, enrich_data )
     else:
-        operation_choices = [random.choice([MathsToken.PLUS, MathsToken.MINUS]) for _ in range(cfg.batch_size)]
-
-    first_answer_index = cfg.num_question_positions
+        # Assume a mixture of add and sub for now
+        batch1 = maths_data_generator_addition( cfg, enrich_data )
+        batch2 = maths_data_generator_subtraction( cfg, enrich_data )
+       
+        # Return a mixed batch with cfg.sub_perc % of subtraction questions, rest addition
+        return torch.cat((batch1[:cfg.batch_size*cfg.perc_sub//100], batch2[:cfg.batch_size*(100-cfg.perc_sub)//100]), 0)
     
-    for i in range(cfg.batch_size):
-        batch_op = operation_choices[i]
-        batch[i, :cfg.n_digits] = x[i]
-        batch[i, cfg.n_digits] = batch_op
-        batch[i, 1 + cfg.n_digits:1 + cfg.n_digits * 2] = y[i]
-        batch[i, first_answer_index - 1] = MathsToken.EQUALS
-
-        x_values = x[i, 0]
-        y_values = y[i, 0]
-        for dn in range(1, cfg.n_digits):
-            x_values = x_values * 10 + x[i, dn]
-            y_values = y_values * 10 + y[i, dn]
-
-        if batch_op == MathsToken.MULT:
-            answer = x_values * y_values
-        elif batch_op == MathsToken.MINUS:
-            answer = x_values - y_values
-        else:
-            answer = x_values + y_values
-
-        sign = MathsToken.PLUS
-        if answer < 0:
-            sign = MathsToken.MINUS
-            answer = -answer
-
-        batch[i, first_answer_index] = sign
-        for j in range(cfg.n_digits + 1):
-            batch[i, cfg.n_ctx - j - 1] = answer % 10
-            answer = answer // 10
-            if answer == 0:
-                break
-
-    return batch
-
+    
 
 # Define "iterator" maths "questions" data generator function. Invoked using next().
 # Generates a data batch for multiple maths operation.
-def maths_data_generator_mixed( cfg ):
+def maths_data_generator_mixed( cfg, enrich_data=True ):
     torch.manual_seed(cfg.analysis_seed)
     while True:
 
-        batch = maths_data_generator_mixed_core( cfg )
+        batch = maths_data_generator_mixed_core( cfg, enrich_data )
 
         yield batch.cuda()
         
