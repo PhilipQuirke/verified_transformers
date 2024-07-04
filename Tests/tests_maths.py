@@ -107,7 +107,7 @@ class TestMaths(unittest.TestCase):
         make_maths_n2_questions_and_answers(cfg)
         make_maths_n3_questions_and_answers(cfg)
         make_maths_n4_questions_and_answers(cfg)
-    
+          
         
     def test_maths_data_generator_single(self):
         
@@ -122,7 +122,9 @@ class TestMaths(unittest.TestCase):
         questions = maths_data_generator_subtraction(cfg, True )
         questions = maths_data_generator_multiplication(cfg, False )
         questions = maths_data_generator_multiplication(cfg, True )
-
+        questions = maths_data_generator_mixed_core( cfg, False )
+        questions = maths_data_generator_mixed_core( cfg, True )
+        
   
     def test_maths_data_generator_mixed(self):
         
