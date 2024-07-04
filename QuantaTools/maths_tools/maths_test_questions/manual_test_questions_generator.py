@@ -3,7 +3,7 @@ import torch
 from QuantaTools.quanta_constants import QType
 
 from QuantaTools.maths_tools.maths_constants import MathsToken, MathsBehavior
-from QuantaTools.maths_tools.maths_data_generator import maths_data_generator_addition, maths_data_generator_subtraction, maths_data_generator_multiplication, maths_data_generator_mixed, make_maths_questions_and_answers
+from QuantaTools.maths_tools.maths_data_generator import maths_data_generator_addition, maths_data_generator_subtraction, maths_data_generator_multiplication, maths_data_generator_mixed, maths_data_generator_mixed_core, make_maths_questions_and_answers
 
 
 # Move the data to the GPU (if any) for faster processing
