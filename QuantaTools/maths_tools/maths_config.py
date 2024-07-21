@@ -71,6 +71,19 @@ class MathsConfig(AlgoConfig):
     def parse_model_name(self):
         super().parse_model_name()
         
+        if "sub_" in self.model_name :
+            # Subtraction model
+            self.perc_sub = 100
+            self.perc_mult = 0
+        elif "add_" in self.model_name :
+            # Addition model
+            self.perc_sub = 0
+            self.perc_mult = 0
+        elif "mul_" in self.model_name :
+            # Multiplication model
+            self.perc_sub = 0
+            self.perc_mult = 100
+
         match = re.search(r"d(\d)_", self.model_name)
         if not match:
             match = re.search(r"d(\d\d)_", self.model_name)
@@ -84,7 +97,7 @@ class MathsConfig(AlgoConfig):
     # Parse the insert model name to extract the number of insert digits 
     def parse_insert_model_name(self, insert_model_name):
         super().parse_insert_model_name(insert_model_name)
-        
+                    
         match = re.search(r"d(\d)_", insert_model_name)
         if not match:
             match = re.search(r"d(\d\d)_", insert_model_name)

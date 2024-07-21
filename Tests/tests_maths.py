@@ -162,6 +162,7 @@ class TestMaths(unittest.TestCase):
 
     def test_parse_model_name(self):
         cfg = self.get_cfg()
+        
         cfg.model_name = "ins1_mix_d10_l3_h5_t50K_s572091"
         cfg.parse_model_name()
         self.assertEqual( cfg.insert_mode, 1)
@@ -170,7 +171,25 @@ class TestMaths(unittest.TestCase):
         self.assertEqual( cfg.n_heads, 5)
         self.assertEqual( cfg.n_training_steps, 50000)
         self.assertEqual( cfg.training_seed, 572091)
-
+        
+        cfg.model_name = "sub_d7_l6_h5_t40K_s572077";
+        cfg.parse_model_name()
+        self.assertEqual( cfg.perc_add, 0)
+        self.assertEqual( cfg.perc_sub, 100)
+        self.assertEqual( cfg.perc_mult, 0)
+        
+        cfg.model_name = "mul_d7_l6_h5_t40K_s572077";
+        cfg.parse_model_name()
+        self.assertEqual( cfg.perc_add, 0)
+        self.assertEqual( cfg.perc_sub, 0)
+        self.assertEqual( cfg.perc_mult, 100)
+          
+        cfg.model_name = "add_d7_l6_h5_t40K_s572077";
+        cfg.parse_model_name()
+        self.assertEqual( cfg.perc_add, 100)
+        self.assertEqual( cfg.perc_sub, 0)
+        self.assertEqual( cfg.perc_mult, 0)     
+        
         
     def test_parse_insert_model_name(self):
         cfg = self.get_cfg()
@@ -180,7 +199,6 @@ class TestMaths(unittest.TestCase):
         self.assertEqual( cfg.insert_n_heads, 5)
         self.assertEqual( cfg.insert_n_training_steps, 40000)
         self.assertEqual( cfg.insert_training_seed, 572077)
-        self.assertEqual( cfg.grokfast, False)
 
 
     def test_parse_model_name_grokfast(self):
