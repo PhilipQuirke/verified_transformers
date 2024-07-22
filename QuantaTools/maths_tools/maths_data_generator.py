@@ -171,13 +171,26 @@ def maths_data_generator_mixed_core( cfg, enrich_data=True ):
         return maths_data_generator_subtraction( cfg, enrich_data )
     elif cfg.perc_mult == 100:
         return maths_data_generator_multiplication( cfg, enrich_data )
-    else:
-        # Assume a mixture of add and sub for now
+    elif cfg.perc_mult == 0:
+        # A mixture of add and sub
         batch1 = maths_data_generator_addition( cfg, enrich_data )
         batch2 = maths_data_generator_subtraction( cfg, enrich_data )
        
         # Return a mixed batch with cfg.sub_perc % of subtraction questions, rest addition
-        return torch.cat((batch1[:cfg.batch_size*cfg.perc_sub//100], batch2[:cfg.batch_size*(100-cfg.perc_sub)//100]), 0)
+        num_sub = cfg.batch_size*cfg.perc_sub//100
+        num_add = cfg.batch_size - num_sub
+        return torch.cat((batch1[:num_add], batch2[:num_sub]), 0)
+    else:
+        # A mixture of add, sub and mult
+        batch1 = maths_data_generator_addition( cfg, enrich_data )
+        batch2 = maths_data_generator_subtraction( cfg, enrich_data )
+        batch3 = maths_data_generator_multiplication( cfg, enrich_data )
+       
+        # Return a mixed batch 
+        num_sub = cfg.batch_size*cfg.perc_sub//100
+        num_mult = cfg.batch_size*cfg.perc_mult//100
+        num_add = cfg.batch_size - num_sub - num_mult       
+        return torch.cat((batch1[:num_add], batch2[:num_sub], batch3[:num_mult]), 0)
     
     
 
