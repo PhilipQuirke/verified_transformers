@@ -11,7 +11,7 @@ class MathsConfig(AlgoConfig):
     def __init__(self):
         super().__init__()
 
-        # Percent of questions that are multiplication, subtraction (rest are addition questions).
+        # Percent of questions that are multiplication, subtraction (rest are addition questions) in training batches
         self.perc_mult : int = 0 # e.g. 20
         self.perc_sub : int = 0 # e.g. 80 
 
@@ -83,6 +83,16 @@ class MathsConfig(AlgoConfig):
             # Multiplication model
             self.perc_sub = 0
             self.perc_mult = 100
+        elif "mix_" in self.model_name :
+            # Mixed (addition and subtraction) model. 
+            # Train on 66% sub and 33% add question batches
+            self.perc_sub = 66
+            self.perc_mult = 0
+        elif "mad_" in self.model_name :
+            # Multiplication, addition and subtraction model. 
+            # Train on 60% mult, 20% sub and 20% add question batches
+            self.perc_sub = 20
+            self.perc_mult = 60
 
         match = re.search(r"d(\d)_", self.model_name)
         if not match:
