@@ -189,6 +189,18 @@ class TestMaths(unittest.TestCase):
         self.assertEqual( cfg.perc_add, 100)
         self.assertEqual( cfg.perc_sub, 0)
         self.assertEqual( cfg.perc_mult, 0)     
+             
+        cfg.model_name = "ins1_mas_d6_l5_h4_t250K_gf_s371793";
+        cfg.parse_model_name()
+        self.assertEqual( cfg.insert_mode, 1)   
+        self.assertEqual( cfg.n_digits, 6)
+        self.assertEqual( cfg.n_layers, 5)
+        self.assertEqual( cfg.n_heads, 4)        
+        self.assertEqual( cfg.perc_add, 20)
+        self.assertEqual( cfg.perc_sub, 30)
+        self.assertEqual( cfg.perc_mult, 50)     
+        self.assertEqual( cfg.grokfast, True) 
+        self.assertEqual( cfg.n_training_steps, 250000)
         
         
     def test_parse_insert_model_name(self):

@@ -106,18 +106,24 @@ class ModelConfig():
     def parse_model_name(self):
 
         match = re.search(r"l(\d)_", self.model_name)
+        if not match:
+            match = re.search(r"l(\d\d)_", self.model_name)        
         if match:
             self.n_layers = int(match.group(1))
 
 
         match = re.search(r"h(\d)_", self.model_name)
+        if not match:
+            match = re.search(r"h(\d\d)_", self.model_name)            
         if match:
             self.n_heads = int(match.group(1))
 
 
-        match = re.search(r"t(\d\d)K", self.model_name)
+        match = re.search(r"t(\d)K", self.model_name)
         if not match:
-            match = re.search(r"t(\d)K", self.model_name)        
+            match = re.search(r"t(\d\d)K", self.model_name)        
+        if not match:
+            match = re.search(r"t(\d\d\d)K", self.model_name)        
         if match:
             self.n_training_steps = int(match.group(1)) * 1000
     
@@ -132,9 +138,11 @@ class ModelConfig():
         elif "ins4_" in self.model_name :
             self.insert_mode = 4 # Initialised with "nodes with identified subtasks" from existing model. Train & reset useful heads every 100 epochs
      
+
         match = re.search(r"_s(\d\d\d\d\d\d)", self.model_name)
         if match:
             self.training_seed = int(match.group(1))
+
 
         self.grokfast = ("_gf" in self.model_name)
 

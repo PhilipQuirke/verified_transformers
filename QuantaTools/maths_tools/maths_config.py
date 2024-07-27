@@ -71,28 +71,38 @@ class MathsConfig(AlgoConfig):
     def parse_model_name(self):
         super().parse_model_name()
         
+        
         if "sub_" in self.model_name :
             # Subtraction model
             self.perc_sub = 100
             self.perc_mult = 0
+            
         elif "add_" in self.model_name :
             # Addition model
             self.perc_sub = 0
             self.perc_mult = 0
+            
         elif "mul_" in self.model_name :
             # Multiplication model
             self.perc_sub = 0
             self.perc_mult = 100
+            
         elif "mix_" in self.model_name :
             # Mixed (addition and subtraction) model. 
-            # Train on 66% sub and 33% add question batches
+            # Train on 66% sub and 33% add question batches, as sub is harder to learn than add
             self.perc_sub = 66
             self.perc_mult = 0
-        elif "mad_" in self.model_name :
+            if self.model_name.startswith("ins") :
+                  # Mixed model initialised with an addition model (using insert mode 1, 2 or 3)
+                  self.perc_sub = 80 # Train on 80% subtraction and 20% addition question batches
+                  
+        elif "mas_" in self.model_name :
             # Multiplication, addition and subtraction model. 
-            # Train on 60% mult, 20% sub and 20% add question batches
-            self.perc_sub = 20
-            self.perc_mult = 60
+            # Train on 50% mult, 30% sub and 20% add question batches, as mult is harder to learn than sub which is harder than add.
+            # Use this split even if we are initialising with a mixed (addition and subtraction) model.
+            self.perc_sub = 30
+            self.perc_mult = 50
+
 
         match = re.search(r"d(\d)_", self.model_name)
         if not match:
@@ -100,6 +110,7 @@ class MathsConfig(AlgoConfig):
         if match:
             self.n_digits = int(match.group(1))
             
+
         # n_digits may have changed 
         self.initialize_maths_token_positions()  
 
