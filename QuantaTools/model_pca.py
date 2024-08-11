@@ -13,7 +13,7 @@ def pca_evr_0_percent(pca):
 
 
 # Analyze the clusters of the PCA outputs looking for existance of 2 or 3 clusters
-def analyze_pca_clusters(pca_outputs, true_labels, n_init=10)):
+def analyze_pca_clusters(pca_outputs, true_labels, n_init=10):
     
     # Standardize the PCA outputs
     scaler = StandardScaler()
