@@ -13,15 +13,15 @@ def pca_evr_0_percent(pca):
 
 
 # Analyze the clusters of the PCA outputs looking for existance of 2 or 3 clusters
-def analyze_pca_clusters(pca_outputs, true_labels):
+def analyze_pca_clusters(pca_outputs, true_labels, n_init=10)):
     
     # Standardize the PCA outputs
     scaler = StandardScaler()
     pca_outputs_scaled = scaler.fit_transform(pca_outputs)
 
     # Try clustering with 2 and 3 clusters
-    kmeans_2 = KMeans(n_clusters=2, random_state=42)
-    kmeans_3 = KMeans(n_clusters=3, random_state=42)
+    kmeans_2 = KMeans(n_clusters=2, n_init=n_init, random_state=42)
+    kmeans_3 = KMeans(n_clusters=3, n_init=n_init, random_state=42)
 
     labels_2 = kmeans_2.fit_predict(pca_outputs_scaled)
     labels_3 = kmeans_3.fit_predict(pca_outputs_scaled)
