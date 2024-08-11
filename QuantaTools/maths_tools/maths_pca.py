@@ -39,14 +39,13 @@ def manual_node_pca(cfg, ax, position, layer, num, operation, answer_digit, plot
     title, error_message = _build_title_and_error_message(
         cfg=cfg, node_location=node_location, operation=operation, answer_digit=answer_digit
     )
-    pca, pca_attn_outputs, title = calc_pca_for_an(
+    pca, pca_attn_outputs, title, cluster_results = calc_pca_for_an(
         cfg=cfg, node_location=node_location, test_inputs=test_inputs, title=title, error_message=error_message
     )
     plotting_function(ax, pca_attn_outputs, title)
 
     major_tag = QType.MATH_ADD if operation == MathsToken.PLUS else QType.MATH_SUB # Does not handle NEG case
     cfg.add_useful_node_tag( node_location, major_tag.value, pca_op_tag(answer_digit, operation, True) )
-
 
 def manual_nodes_pca(cfg, operation, nodes, test_inputs=None, full_title='Pca Tr'):
     print("Manual PCA tags for", cfg.model_name, "with operation", token_to_char(cfg, operation))
