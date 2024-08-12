@@ -92,7 +92,7 @@ def calc_pca_for_an(cfg, node_location, test_inputs, title, error_message):
         full_title = title + ', EVR[0]=' + str(pca_evr_0_percent((pca))) + '%'
         
         # Create true_labels assuming input is 3 types of questions
-        n_questions = len(test_inputs) / 3
+        n_questions = len(test_inputs) // 3
         true_labels = np.array([0]*n_questions + [1]*n_questions + [2]*n_questions)  # 0 for Type A, 1 for Type B, 2 for Type C
         # Analyze output testing for existance of 2 or 3 clusters
         cluster_results = analyze_pca_clusters(pca_attn_outputs, true_labels)

@@ -21,9 +21,11 @@ def plot_pca_for_an(ax, pca_attn_outputs, title, num_questions=TRICASE_QUESTIONS
     if title != "" :
         ax.set_title(title)
 
+
 def pca_op_tag(the_digit, operation, strong):
     minor_tag_prefix = MathsBehavior.ADD_PCA_TAG if operation == MathsToken.PLUS else MathsBehavior.SUB_PCA_TAG
     return answer_name(the_digit)  + "." + minor_tag_prefix.value + ( "" if strong else ".Weak")
+
 
 def _build_title_and_error_message(cfg, node_location, operation, answer_digit):
     title = node_location.name() + ', A' + str(answer_digit)
@@ -31,10 +33,9 @@ def _build_title_and_error_message(cfg, node_location, operation, answer_digit):
                      token_to_char(cfg, operation) + " " + answer_name(answer_digit))
     return title, error_message
 
-# Use a different plotting function if you need.
-def manual_node_pca(cfg, ax, position, layer, num, operation, answer_digit, plotting_function=plot_pca_for_an, test_inputs=None):
+
+def manual_node_pca(cfg, ax, position, layer, num, operation, answer_digit, test_inputs):
     node_location = NodeLocation(position, layer, True, num)
-    test_inputs = test_inputs or cfg.tricase_questions_dict[(answer_digit, operation)]
 
     title, error_message = _build_title_and_error_message(
         cfg=cfg, node_location=node_location, operation=operation, answer_digit=answer_digit
@@ -42,12 +43,20 @@ def manual_node_pca(cfg, ax, position, layer, num, operation, answer_digit, plot
     pca, pca_attn_outputs, title, cluster_results = calc_pca_for_an(
         cfg=cfg, node_location=node_location, test_inputs=test_inputs, title=title, error_message=error_message
     )
-    plotting_function(ax, pca_attn_outputs, title)
+    
+    if pca_attn_outputs is None:
+        return
+
+    plot_pca_for_an(ax, pca_attn_outputs, title)
 
     major_tag = QType.MATH_ADD if operation == MathsToken.PLUS else QType.MATH_SUB # Does not handle NEG case
     cfg.add_useful_node_tag( node_location, major_tag.value, pca_op_tag(answer_digit, operation, True) )
 
-def manual_nodes_pca(cfg, operation, nodes, test_inputs=None, full_title='Pca Tr'):
+
+def manual_nodes_pca(cfg, operation, nodes, test_inputs, full_title):
+    if test_inputs == None:
+        return
+    
     print("Manual PCA tags for", cfg.model_name, "with operation", token_to_char(cfg, operation))
 
     cols = 4
@@ -61,7 +70,7 @@ def manual_nodes_pca(cfg, operation, nodes, test_inputs=None, full_title='Pca Tr
     for node in nodes:
         manual_node_pca(cfg=cfg, ax=axs[index // cols, index % cols], position=node[0],
                         layer=node[1], num=node[2], operation=operation, answer_digit=node[3],
-                        plotting_function=plot_pca_for_an, test_inputs=test_inputs)
+                        test_inputs=test_inputs)
         index += 1
 
     # Remove any graphs we dont need (except last one)
