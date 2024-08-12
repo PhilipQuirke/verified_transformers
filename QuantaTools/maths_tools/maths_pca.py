@@ -34,8 +34,9 @@ def _build_title_and_error_message(cfg, node_location, operation, answer_digit):
     return title, error_message
 
 
-def manual_node_pca(cfg, ax, position, layer, num, operation, answer_digit, test_inputs):
+def manual_node_pca(cfg, ax, position, layer, num, operation, answer_digit):
     node_location = NodeLocation(position, layer, True, num)
+    test_inputs = cfg.tricase_questions_dict[(answer_digit, operation)]
 
     title, error_message = _build_title_and_error_message(
         cfg=cfg, node_location=node_location, operation=operation, answer_digit=answer_digit
@@ -53,11 +54,10 @@ def manual_node_pca(cfg, ax, position, layer, num, operation, answer_digit, test
     cfg.add_useful_node_tag( node_location, major_tag.value, pca_op_tag(answer_digit, operation, True) )
 
 
-def manual_nodes_pca(cfg, operation, nodes, test_inputs, full_title):
-    if test_inputs == None:
-        return
+def manual_nodes_pca(cfg, operation, nodes):
     
     print("Manual PCA tags for", cfg.model_name, "with operation", token_to_char(cfg, operation))
+    title = cfg.model_name + "_PCA_" + token_to_char(cfg, operation)
 
     cols = 4
     rows = 1 + (len(nodes)+1) // cols
@@ -69,8 +69,7 @@ def manual_nodes_pca(cfg, operation, nodes, test_inputs, full_title):
     index = 0
     for node in nodes:
         manual_node_pca(cfg=cfg, ax=axs[index // cols, index % cols], position=node[0],
-                        layer=node[1], num=node[2], operation=operation, answer_digit=node[3],
-                        test_inputs=test_inputs)
+                        layer=node[1], num=node[2], operation=operation, answer_digit=node[3])
         index += 1
 
     # Remove any graphs we dont need (except last one)
@@ -86,5 +85,5 @@ def manual_nodes_pca(cfg, operation, nodes, test_inputs, full_title):
     axs[rows-1, cols-1].axis('off') # Now, to hide the last subplot
 
     plt.tight_layout()
-    save_plt_to_file(cfg=cfg, full_title=full_title)
+    save_plt_to_file(cfg=cfg, full_title=title)
     plt.show()
