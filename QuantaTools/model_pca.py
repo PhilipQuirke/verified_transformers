@@ -4,6 +4,7 @@ from sklearn.decomposition import PCA
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score, calinski_harabasz_score
 from sklearn.preprocessing import StandardScaler
+from .maths_test_questions.tricase_test_questions_generator import TOTAL_TRICASE_QUESTIONS
 
 
 # Calculate the percentage of the first Principal Component Analysis
@@ -100,5 +101,5 @@ def calc_pca_for_an(cfg, node_location, test_inputs, title, error_message):
     
     except Exception as e:
         print(error_message, e)
-        return None, None, None
+        return None, None, None, None
     
