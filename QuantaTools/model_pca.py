@@ -110,6 +110,8 @@ def calc_pca_for_an(cfg, node_location, test_inputs, title, error_message):
             silhouette_score = silhouette_scores['3_clusters']
             calinski_harabasz_score = calinski_harabasz_scores['3_clusters']
             label_agreement_score = label_agreement_scores['3_clusters']
+        if best_cluster == 'Inconclusive':
+            best_cluster = '??'
         full_title = format( f"{title} {evr_perc}/{best_cluster}/{calinski_harabasz_score:.0f}/{label_agreement_score:.2f}" )             
 
         return pca, pca_attn_outputs, full_title, cluster_results
