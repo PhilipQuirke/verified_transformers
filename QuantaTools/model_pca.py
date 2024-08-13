@@ -13,7 +13,7 @@ def pca_evr_0_percent(pca):
 
 
 # Analyze the clusters of the PCA outputs looking for existance of 2 or 3 clusters
-def analyze_pca_clusters(pca_outputs, true_labels, n_init=10):
+def analyze_pca_clusters_v1(pca_outputs, true_labels, n_init=10):
     
     # Standardize the PCA outputs
     scaler = StandardScaler()
@@ -63,6 +63,83 @@ def analyze_pca_clusters(pca_outputs, true_labels, n_init=10):
         "silhouette_scores": {"2_clusters": silhouette_2, "3_clusters": silhouette_3},
         "calinski_harabasz_scores": {"2_clusters": calinski_2, "3_clusters": calinski_3},
         "label_agreement_scores": {"2_clusters": agreement_2, "3_clusters": agreement_3}
+    }
+
+
+def analyze_pca_clusters(pca_outputs, true_labels, n_init=10):
+    scaler = StandardScaler()
+    pca_outputs_scaled = scaler.fit_transform(pca_outputs)
+
+    kmeans_2 = KMeans(n_clusters=2, n_init=n_init, random_state=42)
+    kmeans_3 = KMeans(n_clusters=3, n_init=n_init, random_state=42)
+
+    labels_2 = kmeans_2.fit_predict(pca_outputs_scaled)
+    labels_3 = kmeans_3.fit_predict(pca_outputs_scaled)
+
+    silhouette_2 = silhouette_score(pca_outputs_scaled, labels_2)
+    silhouette_3 = silhouette_score(pca_outputs_scaled, labels_3)
+
+    calinski_2 = calinski_harabasz_score(pca_outputs_scaled, labels_2)
+    calinski_3 = calinski_harabasz_score(pca_outputs_scaled, labels_3)
+
+    def cluster_label_agreement(cluster_labels, true_labels):
+        unique_clusters = np.unique(cluster_labels)
+        agreement_scores = []
+        for cluster in unique_clusters:
+            cluster_mask = (cluster_labels == cluster)
+            cluster_true_labels = true_labels[cluster_mask]
+            most_common_label = np.argmax(np.bincount(cluster_true_labels))
+            agreement_score = np.mean(cluster_true_labels == most_common_label)
+            agreement_scores.append(agreement_score)
+        return np.mean(agreement_scores)
+
+    agreement_2 = cluster_label_agreement(labels_2, true_labels)
+    agreement_3 = cluster_label_agreement(labels_3, true_labels)
+
+    # Calculate score differences and relative improvements
+    silhouette_diff = silhouette_3 - silhouette_2
+    calinski_rel_improvement = (calinski_3 - calinski_2) / calinski_2
+    agreement_diff = agreement_3 - agreement_2
+
+    # Define thresholds for significant improvements
+    silhouette_threshold = 0.1
+    calinski_threshold = 0.2  # 20% improvement
+    agreement_threshold = 0.1
+
+    # Count how many metrics favor 3 clusters
+    favor_3_clusters = sum([
+        silhouette_diff > silhouette_threshold,
+        calinski_rel_improvement > calinski_threshold,
+        agreement_diff > agreement_threshold
+    ])
+
+    # Determine the best number of clusters
+    if favor_3_clusters >= 2:  # If at least 2 out of 3 metrics favor 3 clusters
+        best_clusters = 3
+    elif favor_3_clusters == 0:  # If no metrics favor 3 clusters
+        best_clusters = 2
+    else:
+        best_clusters = "Inconclusive"
+
+    return {
+        "best_clusters": best_clusters,
+        "silhouette_scores": {
+            "2_clusters": round(silhouette_2, 3), 
+            "3_clusters": round(silhouette_3, 3)
+        },
+        "calinski_harabasz_scores": {
+            "2_clusters": round(calinski_2, 3), 
+            "3_clusters": round(calinski_3, 3)
+        },
+        "label_agreement_scores": {
+            "2_clusters": round(agreement_2, 3), 
+            "3_clusters": round(agreement_3, 3)
+        },
+        "score_differences": {
+            "silhouette_diff": round(silhouette_diff, 3),
+            "calinski_rel_improvement": round(calinski_rel_improvement, 3),
+            "agreement_diff": round(agreement_diff, 3)
+        }
     }
 
 
