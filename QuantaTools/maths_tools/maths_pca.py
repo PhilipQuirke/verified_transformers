@@ -54,30 +54,27 @@ def manual_node_pca(cfg, ax, position, layer, num, operation, answer_digit):
     cfg.add_useful_node_tag( node_location, major_tag.value, pca_op_tag(answer_digit, operation, True) )
 
 
-def manual_nodes_pca(cfg, operation, nodes):
-    
-    print("Manual PCA tags for", cfg.model_name, "with operation", token_to_char(cfg, operation))
-    title = cfg.model_name + "_PCA_" + token_to_char(cfg, operation)
 
+def plot_nodes_pca_start(nodes):
+    
     cols = 4
     rows = 1 + (len(nodes)+1) // cols
 
     fig, axs = plt.subplots(rows, cols)
     fig.set_figheight(rows*2 + 1)
     fig.set_figwidth(10)
+    
+    return cols, rows, fig, axs
 
-    index = 0
-    for node in nodes:
-        manual_node_pca(cfg=cfg, ax=axs[index // cols, index % cols], position=node[0],
-                        layer=node[1], num=node[2], operation=operation, answer_digit=node[3])
-        index += 1
+
+def plot_nodes_pca_end(cols, rows, axs, cfg, title, index):
 
     # Remove any graphs we dont need (except last one)
     while index < rows * cols - 1:
         ax = axs[index // cols, index % cols]
         ax.remove()
         index += 1
-
+        
     # Replace last graph with the legend
     lines_labels = [axs[0,0].get_legend_handles_labels()]
     lines, labels = [sum(lol, []) for lol in zip(*lines_labels)]
@@ -86,4 +83,21 @@ def manual_nodes_pca(cfg, operation, nodes):
 
     plt.tight_layout()
     save_plt_to_file(cfg=cfg, full_title=title)
-    plt.show()
+    plt.show()    
+
+
+def manual_nodes_pca(cfg, operation, nodes):
+    
+    print("Manual PCA tags for", cfg.model_name, "with operation", token_to_char(cfg, operation))
+    title = cfg.model_name + "_PCA_" + token_to_char(cfg, operation)
+
+    cols, rows, fig, axs = plot_nodes_pca_start(nodes)
+
+    index = 0
+    for node in nodes:
+        manual_node_pca(cfg=cfg, ax=axs[index // cols, index % cols], position=node[0],
+                        layer=node[1], num=node[2], operation=operation, answer_digit=node[3])
+        index += 1
+
+    plot_nodes_pca_end(cols, rows, axs, cfg, title, index)
+
