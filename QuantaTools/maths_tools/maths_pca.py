@@ -57,29 +57,29 @@ def manual_node_pca(cfg, ax, position, layer, num, operation, answer_digit):
 
 def plot_nodes_pca_start(nodes):
     
-    cols = 4
-    rows = 1 + (len(nodes)+2) // cols
+    n_cols = 4
+    n_rows = 1 + (len(nodes)+1) // n_cols
 
-    fig, axs = plt.subplots(rows, cols)
-    fig.set_figheight(rows*2 + 1)
+    fig, axs = plt.subplots(n_rows, n_cols)
+    fig.set_figheight(n_rows*2 + 1)
     fig.set_figwidth(10)
     
-    return cols, rows, fig, axs
+    return n_cols, n_rows, fig, axs
 
 
-def plot_nodes_pca_end(cols, rows, axs, cfg, title, index):
+def plot_nodes_pca_end(n_cols, n_rows, axs, cfg, title, index):
 
     # Remove any graphs we dont need (except last one)
-    while index < rows * cols - 1:
-        ax = axs[index // cols, index % cols]
+    while index < n_rows * n_cols - 1:
+        ax = axs[index // n_cols, index % n_cols]
         ax.remove()
         index += 1
         
     # Replace last graph with the legend
     lines_labels = [axs[0,0].get_legend_handles_labels()]
     lines, labels = [sum(lol, []) for lol in zip(*lines_labels)]
-    axs[rows-1, cols-1].legend(lines, labels)
-    axs[rows-1, cols-1].axis('off') # Now, to hide the last subplot
+    axs[n_rows-1, n_cols-1].legend(lines, labels)
+    axs[n_rows-1, n_cols-1].axis('off') # Now, to hide the last subplot
 
     plt.tight_layout()
     save_plt_to_file(cfg=cfg, full_title=title)
@@ -92,13 +92,13 @@ def manual_nodes_pca(cfg, operation, nodes):
     print("Manual PCA tags for", cfg.model_name, "with operation", token_to_char(cfg, operation))
     title = cfg.model_name + "_PCA_" + token_to_char(cfg, operation)
 
-    cols, rows, fig, axs = plot_nodes_pca_start(nodes)
+    n_cols, n_rows, fig, axs = plot_nodes_pca_start(nodes)
 
     index = 0
     for node in nodes:
-        manual_node_pca(cfg=cfg, ax=axs[index // cols, index % cols], position=node[0],
+        manual_node_pca(cfg=cfg, ax=axs[index // n_cols, index % n_cols], position=node[0],
                         layer=node[1], num=node[2], operation=operation, answer_digit=node[3])
         index += 1
 
-    plot_nodes_pca_end(cols, rows, axs, cfg, title, index)
+    plot_nodes_pca_end(n_cols, n_rows, axs, cfg, title, index)
 
