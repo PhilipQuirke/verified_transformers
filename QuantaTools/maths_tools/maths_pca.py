@@ -41,7 +41,7 @@ def manual_node_pca(cfg, ax, position, layer, num, operation, answer_digit):
     title, error_message = _build_title_and_error_message(
         cfg=cfg, node_location=node_location, operation=operation, answer_digit=answer_digit
     )
-    pca, pca_attn_outputs, title, cluster_results = calc_pca_for_an(
+    pca, pca_attn_outputs, title, _ = calc_pca_for_an(
         cfg=cfg, node_location=node_location, test_inputs=test_inputs, title=title, error_message=error_message
     )
     
