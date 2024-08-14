@@ -87,15 +87,16 @@ def calc_pca_for_an(cfg, node_location, test_inputs, title, error_message):
         # Analyze output testing for existance of 2 or 3 clusters
         cluster_results = analyze_pca_clusters(pca_attn_outputs, true_labels)
 
-        # Set full_title to "P10L0H1, A3, 78/0.43/62/0.42" 
         evr_perc = pca_evr_0_percent(pca)
         silhouette_scores = cluster_results['silhouette_scores']
         calinski_harabasz_scores = cluster_results['calinski_harabasz_scores']
         label_agreement_scores = cluster_results['label_agreement_scores']
-        silhouette_score = max( silhouette_scores['2_clusters'], silhouette_scores['3_clusters'] )
+        silhouette_score = max( silhouette_scores['2_clusters'], silhouette_scores['3_clusters'] ) * 100
         calinski_harabasz_score = max( calinski_harabasz_scores['2_clusters'], calinski_harabasz_scores['3_clusters'])
-        label_agreement_score = max( label_agreement_scores['2_clusters'], label_agreement_scores['3_clusters'])
-        full_title = format( f"{title} {evr_perc}/{silhouette_score:.2f}/{calinski_harabasz_score:.0f}/{label_agreement_score:.2f}" )             
+        label_agreement_score = max( label_agreement_scores['2_clusters'], label_agreement_scores['3_clusters']) * 100
+
+        # Set full_title to "P10L0H1, A3 78/43/62/42" 
+        full_title = format( f"{title} {evr_perc}/{silhouette_score:.0f}/{calinski_harabasz_score:.0f}/{label_agreement_score:.0f}" )             
 
         return pca, pca_attn_outputs, full_title, cluster_results
     

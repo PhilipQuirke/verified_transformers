@@ -28,7 +28,7 @@ def pca_op_tag(the_digit, operation, strong):
 
 
 def _build_title_and_error_message(cfg, node_location, operation, answer_digit):
-    title = node_location.name() + ', A' + str(answer_digit)
+    title = node_location.name() + ' A' + str(answer_digit)
     error_message = ("calc_pca_for_an Failed:" + node_location.name() + " " +
                      token_to_char(cfg, operation) + " " + answer_name(answer_digit))
     return title, error_message
