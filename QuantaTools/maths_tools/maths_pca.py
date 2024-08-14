@@ -58,7 +58,7 @@ def manual_node_pca(cfg, ax, position, layer, num, operation, answer_digit):
 def plot_nodes_pca_start(nodes):
     
     cols = 4
-    rows = 1 + (len(nodes)+1) // cols
+    rows = 1 + (len(nodes)+2) // cols
 
     fig, axs = plt.subplots(rows, cols)
     fig.set_figheight(rows*2 + 1)
