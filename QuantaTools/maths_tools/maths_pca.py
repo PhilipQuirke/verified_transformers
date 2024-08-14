@@ -22,9 +22,9 @@ def plot_pca_for_an(ax, pca_attn_outputs, title, num_questions=TRICASE_QUESTIONS
         ax.set_title(title)
 
 
-def pca_op_tag(the_digit, operation, strong):
+def pca_op_tag(the_digit, operation):
     minor_tag_prefix = MathsBehavior.ADD_PCA_TAG if operation == MathsToken.PLUS else MathsBehavior.SUB_PCA_TAG
-    return answer_name(the_digit)  + "." + minor_tag_prefix.value + ( "" if strong else ".Weak")
+    return answer_name(the_digit)  + "." + minor_tag_prefix.value
 
 
 def _build_title_and_error_message(cfg, node_location, operation, answer_digit):
@@ -51,7 +51,7 @@ def manual_node_pca(cfg, ax, position, layer, num, operation, answer_digit):
     plot_pca_for_an(ax, pca_attn_outputs, title)
 
     major_tag = QType.MATH_ADD if operation == MathsToken.PLUS else QType.MATH_SUB # Does not handle NEG case
-    cfg.add_useful_node_tag( node_location, major_tag.value, pca_op_tag(answer_digit, operation, True) )
+    cfg.add_useful_node_tag( node_location, major_tag.value, pca_op_tag(answer_digit, operation) )
 
 
 
@@ -86,6 +86,7 @@ def plot_nodes_pca_end(cols, rows, axs, cfg, title, index):
     plt.show()    
 
 
+# Plot the PCA diagram for a list of manually provided nodes
 def manual_nodes_pca(cfg, operation, nodes):
     
     print("Manual PCA tags for", cfg.model_name, "with operation", token_to_char(cfg, operation))

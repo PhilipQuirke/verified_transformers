@@ -49,10 +49,10 @@ The library can be extended with non-generic tags - that is tags specific to a p
 The list of useful nodes and the facts gathered about them (e.g. percentage failure, answer impact, attention) are saved to a JSON file:
 
 ```P0L0H3 ['Fail:3', 'Impact:A7', 'MathSub:M0', 'Attn:P0=100']
-P6L0H0 ['Fail:3', 'Impact:A43210', 'MathSub:M123', 'Attn:P1=74', 'Attn:P6=22', 'Attn:P4=2', 'Attn:P2=1', 'PCA:A0.PA.Weak', 'PCA:A1.PA.Weak', 'PCA:A4.PA.Weak', 'PCA:A5.PA.Weak']
-P9L0H0 ['Fail:4', 'Impact:A765', 'MathAdd:S1234', 'MathSub:M3', 'Attn:P8=50', 'Attn:P1=49', 'PCA:A3.PA.Weak', 'PCA:A5.PA.Weak', 'PCA:A0.PS.Weak', 'PCA:A3.PS.Weak', 'PCA:A5.PS.Weak']
-P9L0H1 ['Fail:1', 'Impact:A654', 'MathAdd:S124', 'Attn:P8=52', 'Attn:P1=46', 'PCA:A0.PA.Weak', 'PCA:A1.PA.Weak', 'PCA:A2.PA.Weak', 'PCA:A3.PA.Weak', 'PCA:A0.PS.Weak', 'PCA:A1.PS.Weak', 'PCA:A2.PS.Weak', 'PCA:A3.PS.Weak']
-P9L0H3 ['Fail:0', 'Impact:A7', 'MathSub:NG', 'Attn:P6=84', 'Attn:P9=6', 'Attn:P8=3', 'Attn:P7=2', 'PCA:A3.PA.Weak', 'PCA:A4.PA.Weak', 'PCA:A5.PA.Weak']
+P6L0H0 ['Fail:3', 'Impact:A43210', 'MathSub:M123', 'Attn:P1=74', 'Attn:P6=22', 'Attn:P4=2', 'Attn:P2=1', 'PCA:A0.PA', 'PCA:A1.PA', 'PCA:A4.PA', 'PCA:A5.PA']
+P9L0H0 ['Fail:4', 'Impact:A765', 'MathAdd:S1234', 'MathSub:M3', 'Attn:P8=50', 'Attn:P1=49', 'PCA:A3.PA', 'PCA:A5.PA', 'PCA:A0.PS.Weak', 'PCA:A3.PS.Weak', 'PCA:A5.PS.Weak']
+P9L0H1 ['Fail:1', 'Impact:A654', 'MathAdd:S124', 'Attn:P8=52', 'Attn:P1=46', 'PCA:A0.PA', 'PCA:A1.PA', 'PCA:A2.PA', 'PCA:A3.PA', 'PCA:A0.PS.Weak', 'PCA:A1.PS.Weak', 'PCA:A2.PS.Weak', 'PCA:A3.PS.Weak']
+P9L0H3 ['Fail:0', 'Impact:A7', 'MathSub:NG', 'Attn:P6=84', 'Attn:P9=6', 'Attn:P8=3', 'Attn:P7=2', 'PCA:A3.PA', 'PCA:A4.PA', 'PCA:A5.PA']
 P9L0M0 ['Fail:11', 'Impact:A765', 'MathAdd:S12345', 'MathSub:M123']
 ```
 
