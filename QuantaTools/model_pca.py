@@ -51,9 +51,9 @@ def analyze_pca_clusters(pca_outputs, true_labels, n_init=10):
     agreement_3 = cluster_label_agreement(labels_3, true_labels)
 
     return {
-        "silhouette_scores": {"2_clusters": silhouette_2, "3_clusters": silhouette_3},
+        "silhouette_scores": {"2_clusters": silhouette_2 * 100, "3_clusters": silhouette_3 * 100},
         "calinski_harabasz_scores": {"2_clusters": calinski_2, "3_clusters": calinski_3},
-        "label_agreement_scores": {"2_clusters": agreement_2, "3_clusters": agreement_3}
+        "label_agreement_scores": {"2_clusters": agreement_2 * 100, "3_clusters": agreement_3 * 100}
     }
 
 
@@ -91,11 +91,11 @@ def calc_pca_for_an(cfg, node_location, test_inputs, title, error_message):
         silhouette_scores = cluster_results['silhouette_scores']
         calinski_harabasz_scores = cluster_results['calinski_harabasz_scores']
         label_agreement_scores = cluster_results['label_agreement_scores']
-        silhouette_score = max( silhouette_scores['2_clusters'], silhouette_scores['3_clusters'] ) * 100
+        silhouette_score = max( silhouette_scores['2_clusters'], silhouette_scores['3_clusters'] ) 
         calinski_harabasz_score = max( calinski_harabasz_scores['2_clusters'], calinski_harabasz_scores['3_clusters'])
-        label_agreement_score = max( label_agreement_scores['2_clusters'], label_agreement_scores['3_clusters']) * 100
+        label_agreement_score = max( label_agreement_scores['2_clusters'], label_agreement_scores['3_clusters']) 
 
-        # Set full_title to "P10L0H1, A3 78/43/62/42" 
+        # Full_title is "P10L0H1 A3 78/43/62/42" = NodeLocation AnswerDigit EVR[0]/MaxSilhouetteScore/MaxCalinskiHarabaszScore/MaxLabelAgreementScore
         full_title = format( f"{title} {evr_perc}/{silhouette_score:.0f}/{calinski_harabasz_score:.0f}/{label_agreement_score:.0f}" )             
 
         return pca, pca_attn_outputs, full_title, cluster_results
