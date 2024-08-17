@@ -8,7 +8,8 @@ def logits_to_tokens_loss(cfg, logits, tokens):
     n_answer_digits = cfg.num_answer_positions
 
     # The addition answer digit token probabilities
-    ans_logits = logits[:, -(n_answer_digits+1):-1]
+    # The "-1" below is needed because each answer digit calculations occurs one token before the that answer digit's token is revealed.
+    ans_logits = logits[:, (-n_answer_digits-1):-1]
 
     # Convert raw score (logits) vector into a probability distribution.
     # Emphasizes the largest scores and suppress the smaller ones, to make them more distinguishable.
@@ -17,7 +18,7 @@ def logits_to_tokens_loss(cfg, logits, tokens):
     max_prob_tokens = torch.argmax(ans_probs, dim=-1)
 
     # The addition answer digit tokens
-    ans_tokens = tokens[:, -(n_answer_digits):]
+    ans_tokens = tokens[:, (-n_answer_digits):]
 
     # Extract values from the ans_probs tensor, based on indices from the ans_tokens tensor
     ans_loss = torch.gather(ans_probs, -1, ans_tokens[:, :, None])[..., 0]

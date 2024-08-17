@@ -1,8 +1,10 @@
 import torch
 import numpy as np
+import warnings
 from sklearn.decomposition import PCA
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score, calinski_harabasz_score
+from sklearn.exceptions import ConvergenceWarning
 from sklearn.preprocessing import StandardScaler
 
 
@@ -19,19 +21,22 @@ def analyze_pca_clusters(pca_outputs, true_labels, n_init=10):
     scaler = StandardScaler()
     pca_outputs_scaled = scaler.fit_transform(pca_outputs)
 
-    # Try clustering with 2 and 3 clusters
-    kmeans_2 = KMeans(n_clusters=2, n_init=n_init, random_state=42)
-    kmeans_3 = KMeans(n_clusters=3, n_init=n_init, random_state=42)
+    with warnings.catch_warnings():
+        warnings.filterwarnings("ignore", category=ConvergenceWarning)
 
-    labels_2 = kmeans_2.fit_predict(pca_outputs_scaled)
-    labels_3 = kmeans_3.fit_predict(pca_outputs_scaled)
+        # Try clustering with 2 and 3 clusters
+        kmeans_2 = KMeans(n_clusters=2, n_init=n_init, random_state=42)
+        kmeans_3 = KMeans(n_clusters=3, n_init=n_init, random_state=42)
 
-    # Evaluate clustering quality
-    silhouette_2 = silhouette_score(pca_outputs_scaled, labels_2)
-    silhouette_3 = silhouette_score(pca_outputs_scaled, labels_3)
+        labels_2 = kmeans_2.fit_predict(pca_outputs_scaled)
+        labels_3 = kmeans_3.fit_predict(pca_outputs_scaled)
 
-    calinski_2 = calinski_harabasz_score(pca_outputs_scaled, labels_2)
-    calinski_3 = calinski_harabasz_score(pca_outputs_scaled, labels_3)
+        # Evaluate clustering quality
+        silhouette_2 = silhouette_score(pca_outputs_scaled, labels_2)
+        silhouette_3 = silhouette_score(pca_outputs_scaled, labels_3)
+
+        calinski_2 = calinski_harabasz_score(pca_outputs_scaled, labels_2)
+        calinski_3 = calinski_harabasz_score(pca_outputs_scaled, labels_3)
 
     # Compare clustering results with true labels
     def cluster_label_agreement(cluster_labels, true_labels):

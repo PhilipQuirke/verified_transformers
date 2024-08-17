@@ -69,18 +69,20 @@ def plot_nodes_pca_start(nodes):
 
 def plot_nodes_pca_end(n_cols, n_rows, axs, cfg, title, index):
 
-    # Remove any graphs we dont need (except last one)
-    while index < n_rows * n_cols - 1:
+    # Do we have room to add the legend as a plot area?
+    if index + 1 < n_rows * n_cols:
+        index += 1
+        lines_labels = [axs[0,0].get_legend_handles_labels()]
+        lines, labels = [sum(lol, []) for lol in zip(*lines_labels)]
+        axs[index // n_cols, index % n_cols].legend(lines, labels)
+        axs[index // n_cols, index % n_cols].axis('off') # Now, to hide the last subplot
+
+    # Remove any graphs we dont need
+    while index + 1 < n_rows * n_cols:
+        index += 1
         ax = axs[index // n_cols, index % n_cols]
         ax.remove()
-        index += 1
         
-    # Replace last graph with the legend
-    lines_labels = [axs[0,0].get_legend_handles_labels()]
-    lines, labels = [sum(lol, []) for lol in zip(*lines_labels)]
-    axs[n_rows-1, n_cols-1].legend(lines, labels)
-    axs[n_rows-1, n_cols-1].axis('off') # Now, to hide the last subplot
-
     plt.tight_layout()
     save_plt_to_file(cfg=cfg, full_title=title)
     plt.show()    
