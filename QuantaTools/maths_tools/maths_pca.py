@@ -54,16 +54,20 @@ def manual_node_pca(cfg, ax, position : int, layer : int, num : int, operation :
 
 
 
-def plot_nodes_pca_start(nodes):
+def plot_nodes_pca_start(num_nodes, n_cols):
     
-    n_cols = 4
-    n_rows = 1 + (len(nodes)+1) // n_cols
+    n_rows = 1 + num_nodes // n_cols
 
     fig, axs = plt.subplots(n_rows, n_cols)
     fig.set_figheight(n_rows*2 + 1)
     fig.set_figwidth(10)
     
     return n_cols, n_rows, fig, axs
+
+
+def plot_nodes_pca_start(nodes):
+   
+    return plot_nodes_pca_start(len(nodes) + 1, 4)
 
 
 def plot_nodes_pca_end(n_cols : int, n_rows : int, axs, cfg, title, index):
