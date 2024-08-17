@@ -47,10 +47,12 @@ from .maths_tools.maths_utilities import (set_maths_vocabulary, set_maths_questi
     tokens_to_unsigned_int, tokens_to_answer, insert_question_number, make_a_maths_question_and_answer)
 from .maths_tools.maths_complexity import (get_maths_question_complexity, get_maths_min_complexity, 
     calc_maths_quanta_for_position_nodes, get_maths_operation_complexity, get_maths_nodes_operation_coverage)
-from .maths_tools.maths_data_generator import maths_data_generator_addition, maths_data_generator_subtraction, maths_data_generator_multiplication, maths_data_generator_mixed, maths_data_generator_mixed_core, maths_data_generator, make_maths_questions_and_answers
+from .maths_tools.maths_data_generator import (maths_data_generator_addition, maths_data_generator_subtraction, 
+    maths_data_generator_multiplication, maths_data_generator_mixed, maths_data_generator_mixed_core, 
+    maths_data_generator, make_maths_questions_and_answers)
 from .maths_tools.maths_test_questions import make_maths_test_questions_and_answers
 from .maths_tools.maths_test_questions.test_questions_checker import (test_maths_questions_by_complexity, 
-    test_maths_questions_by_impact, test_maths_questions_and_add_useful_node_tags, test_correctness_on_num_questions)
+    test_maths_questions_by_impact, test_maths_questions_and_add_useful_node_tags, test_correctness_on_num_questions )
 from .maths_tools import make_maths_tricase_questions, make_maths_tricase_questions_customized
 from .maths_tools.maths_search_mix import (SubTaskBaseMath,
     run_intervention_core, run_strong_intervention, run_weak_intervention, 
@@ -59,5 +61,6 @@ from .maths_tools.maths_search_add import (
     add_ss_functions, add_sc_functions, add_sa_functions, add_st_functions )
 from .maths_tools.maths_search_sub import (
     sub_mt_functions, sub_gt_functions, sub_md_functions, sub_mb_functions, neg_nd_functions, neg_nb_functions )
-from .maths_tools.maths_pca import manual_nodes_pca, manual_node_pca, plot_nodes_pca_start, plot_nodes_pca_start_core, plot_nodes_pca_end
+from .maths_tools.maths_pca import (
+    manual_nodes_pca, manual_node_pca, plot_nodes_pca_start, plot_nodes_pca_start_core, plot_nodes_pca_end )
 
