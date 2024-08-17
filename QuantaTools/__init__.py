@@ -59,5 +59,5 @@ from .maths_tools.maths_search_add import (
     add_ss_functions, add_sc_functions, add_sa_functions, add_st_functions )
 from .maths_tools.maths_search_sub import (
     sub_mt_functions, sub_gt_functions, sub_md_functions, sub_mb_functions, neg_nd_functions, neg_nb_functions )
-from .maths_tools.maths_pca import manual_nodes_pca, manual_node_pca, plot_nodes_pca_start, plot_nodes_pca_end
+from .maths_tools.maths_pca import manual_nodes_pca, manual_node_pca, plot_nodes_pca_start, plot_nodes_pca_start_core, plot_nodes_pca_end
 
