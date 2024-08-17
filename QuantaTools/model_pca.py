@@ -109,6 +109,6 @@ def calc_pca_for_an(cfg, node_location : NodeLocation, test_inputs, title, error
         return pca, pca_attn_outputs, full_title, cluster_results
     
     except Exception as e:
-        print(error_message, e)
+        #print(error_message, e)
         return None, None, "", None
     
