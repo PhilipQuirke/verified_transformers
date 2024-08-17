@@ -27,7 +27,7 @@ def pca_op_tag(the_digit, operation : MathsToken):
     return answer_name(the_digit)  + "." + minor_tag_prefix.value
 
 
-def _build_title_and_error_message(cfg, node_location, operation, answer_digit):
+def _build_title_and_error_message(cfg, node_location : NodeLocation, operation, answer_digit : int):
     title = node_location.name() + ' ' + answer_name(answer_digit)
     error_message = "calc_pca_for_an Failed: " + title + " Op=" + token_to_char(cfg, operation) + ". "
     return title, error_message
@@ -54,7 +54,7 @@ def manual_node_pca(cfg, ax, position : int, layer : int, num : int, operation :
 
 
 
-def plot_nodes_pca_start(n_cols, n_rows):
+def plot_nodes_pca_start_core(n_cols : int, n_rows : int):
 
     fig, axs = plt.subplots(n_rows, n_cols)
     fig.set_figheight(n_rows*2 + 1)
@@ -68,10 +68,10 @@ def plot_nodes_pca_start(nodes):
     n_cols = 4
     n_rows = 1 + (len(nodes) + 1 // n_cols)
     
-    return plot_nodes_pca_start(n_cols, n_rows)
+    return plot_nodes_pca_start_core(n_cols, n_rows)
 
 
-def plot_nodes_pca_end(n_cols : int, n_rows : int, axs, cfg, title, index):
+def plot_nodes_pca_end(n_cols : int, n_rows : int, axs, cfg, title, index : int):
 
     # Do we have room to add the legend as a plot area?
     if index < n_rows * n_cols:
