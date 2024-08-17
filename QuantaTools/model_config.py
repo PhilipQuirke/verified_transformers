@@ -2,6 +2,8 @@ import re
 
 from .useful_node import answer_name
 
+from transformer_lens import HookedTransformerConfig
+
 
 # Base configuration class related to a Transformer model shape, training and analysis
 class ModelConfig():
@@ -263,4 +265,21 @@ class ModelConfig():
         assert(self.final_loss >= 0)
         assert(self.analysis_seed > 0)
 
-        
+      
+    def get_HookedTransformerConfig(self):      
+        # Structure is documented at https://neelnanda-io.github.io/TransformerLens/transformer_lens.html#transformer_lens.HookedTransformerConfig.HookedTransformerConfig
+        return HookedTransformerConfig(
+            n_layers = self.n_layers,
+            n_heads = self.n_heads,
+            d_model = self.d_model,
+            d_head = self.d_head,
+            d_mlp = self.d_mlp,
+            act_fn = self.act_fn,
+            normalization_type = 'LN',
+            d_vocab = self.d_vocab,
+            d_vocab_out = self.d_vocab,
+            n_ctx = self.n_ctx,
+            init_weights = True,
+            device = "cuda",
+            seed = self.training_seed,
+        )

@@ -22,19 +22,18 @@ def plot_pca_for_an(ax, pca_attn_outputs, title, num_questions=TRICASE_QUESTIONS
         ax.set_title(title)
 
 
-def pca_op_tag(the_digit, operation):
+def pca_op_tag(the_digit, operation : MathsToken):
     minor_tag_prefix = MathsBehavior.ADD_PCA_TAG if operation == MathsToken.PLUS else MathsBehavior.SUB_PCA_TAG
     return answer_name(the_digit)  + "." + minor_tag_prefix.value
 
 
 def _build_title_and_error_message(cfg, node_location, operation, answer_digit):
-    title = node_location.name() + ' A' + str(answer_digit)
-    error_message = ("calc_pca_for_an Failed:" + node_location.name() + " " +
-                     token_to_char(cfg, operation) + " " + answer_name(answer_digit))
+    title = node_location.name() + ' ' + answer_name(answer_digit)
+    error_message = "calc_pca_for_an Failed: " + title + " Op=" + token_to_char(cfg, operation) + ". "
     return title, error_message
 
 
-def manual_node_pca(cfg, ax, position, layer, num, operation, answer_digit):
+def manual_node_pca(cfg, ax, position : int, layer : int, num : int, operation : MathsToken, answer_digit : int):
     node_location = NodeLocation(position, layer, True, num)
     test_inputs = cfg.tricase_questions_dict[(answer_digit, operation)]
 
@@ -67,11 +66,10 @@ def plot_nodes_pca_start(nodes):
     return n_cols, n_rows, fig, axs
 
 
-def plot_nodes_pca_end(n_cols, n_rows, axs, cfg, title, index):
+def plot_nodes_pca_end(n_cols : int, n_rows : int, axs, cfg, title, index):
 
     # Do we have room to add the legend as a plot area?
-    if index + 1 < n_rows * n_cols:
-        index += 1
+    if index < n_rows * n_cols:
         lines_labels = [axs[0,0].get_legend_handles_labels()]
         lines, labels = [sum(lol, []) for lol in zip(*lines_labels)]
         axs[index // n_cols, index % n_cols].legend(lines, labels)
@@ -89,7 +87,7 @@ def plot_nodes_pca_end(n_cols, n_rows, axs, cfg, title, index):
 
 
 # Plot the PCA diagram for a list of manually provided nodes
-def manual_nodes_pca(cfg, operation, nodes):
+def manual_nodes_pca(cfg, operation : MathsToken, nodes):
     
     print("Manual PCA tags for", cfg.model_name, "with operation", token_to_char(cfg, operation))
     title = cfg.model_name + "_PCA_" + token_to_char(cfg, operation)

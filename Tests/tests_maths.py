@@ -1,6 +1,9 @@
 import torch
 import unittest
 
+from transformer_lens import HookedTransformer
+from transformer_lens.utils import download_file_from_hf
+
 from QuantaTools.model_token_to_char import token_to_char, tokens_to_string
 
 from QuantaTools.useful_node import NodeLocation, UsefulNode, UsefulNodeList
@@ -9,6 +12,9 @@ from QuantaTools.quanta_constants import QType, MATH_ADD_SHADES, MATH_SUB_SHADES
 from QuantaTools.quanta_map_impact import sort_unique_digits, get_quanta_impact
 from QuantaTools.quanta_map_attention import get_quanta_attention
 
+from QuantaTools.model_pca import calc_pca_for_an 
+
+from QuantaTools.maths_tools import make_maths_tricase_questions
 from QuantaTools.maths_tools.maths_config import MathsConfig
 from QuantaTools.maths_tools.maths_constants import MathsToken, MathsBehavior
 from QuantaTools.maths_tools.maths_utilities import set_maths_vocabulary, int_to_answer_str, tokens_to_unsigned_int
@@ -485,3 +491,24 @@ class TestMaths(unittest.TestCase):
         tag = neg_nb_functions.tag(2)
         filters = neg_nb_functions.prereqs(cfg, 14, 2)    
 
+        
+    # Test the PCS functionality
+    def test_pca(self):
+            
+        cfg, _ = self.get_useful_node_list() 
+        the_locn = NodeLocation(6,0,True,1)
+        
+        make_maths_tricase_questions(cfg)
+        test_inputs = cfg.tricase_questions_dict[(3, MathsToken.PLUS)]
+    
+        ht_cfg = cfg.get_HookedTransformerConfig()
+        ht_cfg.device = torch.device("cpu")
+        cfg.main_model = HookedTransformer(ht_cfg)
+
+        main_repo_name="PhilipQuirke/VerifiedArithmetic"
+        main_fname_pth="ins1_mix_d6_l2_h3_t40K_s572091.pth"
+        # cfg.main_model.load_state_dict(download_file_from_hf(repo_name=main_repo_name, file_name=main_fname_pth, force_is_torch=True))
+        # cfg.main_model.eval()
+
+        # Calculate one Principal Component Analysis on test_inputs.
+        # calc_pca_for_an(cfg, the_locn, test_inputs, "test_pca", "error_message")

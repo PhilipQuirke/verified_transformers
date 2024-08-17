@@ -4,7 +4,7 @@ from typing import List
 
 
 # Convert int 14 to "P14"
-def position_name(position):
+def position_name(position : int):
     return "P" + str(position)
 
 
@@ -14,13 +14,13 @@ def position_name_to_int(s):
 
 
 # Return "L1H2" or "L1M0"
-def row_location_name(layer, is_head, num):
+def row_location_name(layer : int, is_head : bool, num : int):
     return "L" + str(layer) + (("H" + str(num)) if is_head else "MLP")   # Paper 2
     # return "L" + str(layer) + ("H" if is_head else "M") + str(num)  # Paper 3
 
 
 # Return "P19L1H2" or "P19L1M0"
-def location_name(position, layer, is_head, num, short_position = True):
+def location_name(position : int, layer : int, is_head : bool, num : int, short_position = True):
     pos_str = str(position) 
     if not short_position and len(pos_str)<2:
         pos_str = "0" + pos_str    
@@ -29,7 +29,7 @@ def location_name(position, layer, is_head, num, short_position = True):
 
 
 # Convert 3 to "A3"
-def answer_name(n):
+def answer_name(n : int):
     return "A" + str(n)
 
 

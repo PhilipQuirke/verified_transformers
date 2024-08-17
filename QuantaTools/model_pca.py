@@ -1,6 +1,7 @@
 import torch
 import numpy as np
 import warnings
+from QuantaTools.useful_node import NodeLocation
 from sklearn.decomposition import PCA
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score, calinski_harabasz_score
@@ -64,13 +65,13 @@ def analyze_pca_clusters(pca_outputs, true_labels, n_init=10):
 
 # Calculate one Principal Component Analysis on test_inputs.
 # Assume test_inputs is a list of questions of three types. 
-def calc_pca_for_an(cfg, node_location, test_inputs, title, error_message):
+def calc_pca_for_an(cfg, node_location : NodeLocation, test_inputs, title, error_message):
     assert node_location.is_head is True
 
     try:
         _, the_cache = cfg.main_model.run_with_cache(test_inputs)
 
-        # Gather attention patterns for all the (randomly chosen) questions
+        # Gather attention patterns for all the questions
         attention_outputs = []
         for i in range(len(test_inputs)):
 
@@ -87,6 +88,8 @@ def calc_pca_for_an(cfg, node_location, test_inputs, title, error_message):
        
         # Create true_labels assuming input is 3 types of questions
         n_questions = len(test_inputs) // 3
+        assert n_questions > 5
+        assert n_questions * 3 == len(test_inputs)
         true_labels = np.array([0]*n_questions + [1]*n_questions + [2]*n_questions)  # 0 for Type A, 1 for Type B, 2 for Type C
 
         # Analyze output testing for existance of 2 or 3 clusters
