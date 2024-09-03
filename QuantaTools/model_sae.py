@@ -4,6 +4,7 @@ import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
 import transformer_lens.utils as utils
 
+
 class AdaptiveSparseAutoencoder(nn.Module):
     def __init__(self, encoding_dim, sparsity_weight=1e-5):
         super().__init__()
