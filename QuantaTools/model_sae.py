@@ -4,14 +4,21 @@ import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
 import transformer_lens.utils as utils
 
-class SparseAutoencoder(nn.Module):
-    def __init__(self, input_dim, encoding_dim, sparsity_weight=1e-5):
+class AdaptiveSparseAutoencoder(nn.Module):
+    def __init__(self, encoding_dim, sparsity_weight=1e-5):
         super().__init__()
-        self.encoder = nn.Linear(input_dim, encoding_dim)
-        self.decoder = nn.Linear(encoding_dim, input_dim)
+        self.encoding_dim = encoding_dim
         self.sparsity_weight = sparsity_weight
+        self.encoder = None
+        self.decoder = None
+    
+    def initialize(self, input_dim):
+        self.encoder = nn.Linear(input_dim, self.encoding_dim).cuda()
+        self.decoder = nn.Linear(self.encoding_dim, input_dim).cuda()
     
     def forward(self, x):
+        if self.encoder is None or self.decoder is None:
+            self.initialize(x.shape[-1])
         encoded = self.encoder(x)
         decoded = self.decoder(encoded)
         return encoded, decoded
@@ -22,7 +29,7 @@ class SparseAutoencoder(nn.Module):
         return mse_loss + self.sparsity_weight * sparsity_loss
 
 def train_sae(sae, activation_generator, batch_size=64, num_epochs=100, learning_rate=1e-3):
-    optimizer = optim.Adam(sae.parameters(), lr=learning_rate)
+    optimizer = None
     
     for epoch in range(num_epochs):
         total_loss = 0
@@ -33,6 +40,10 @@ def train_sae(sae, activation_generator, batch_size=64, num_epochs=100, learning
             
             for batch in dataloader:
                 x = batch[0].cuda()  # Move to GPU
+                if optimizer is None:
+                    sae(x)  # This will initialize the encoder and decoder if not already done
+                    optimizer = optim.Adam(sae.parameters(), lr=learning_rate)
+                
                 optimizer.zero_grad()
                 encoded, decoded = sae(x)
                 loss = sae.loss(x, encoded, decoded)
@@ -45,31 +56,8 @@ def train_sae(sae, activation_generator, batch_size=64, num_epochs=100, learning
             print(f"Epoch [{epoch+1}/{num_epochs}], Avg Loss: {total_loss/num_batches:.4f}")
 
 def analyze_mlp_with_sae(cfg, dataloader, layer_num=0, encoding_dim=32, chunk_size=100):
-    # Get a sample batch to determine input dimension
-    sample_batch = next(iter(dataloader))
-    
-    def sample_hook(act, hook):
-        return act  # Simply return the activation
-
-    with torch.no_grad():
-        sample_activation = cfg.main_model.run_with_hooks(
-            sample_batch, 
-            fwd_hooks=[(utils.get_act_name('post', layer_num), sample_hook)]
-        )
-    
-    # Print the shape of the sample activation for debugging
-    print(f"Sample activation shape: {sample_activation.shape}")
-    
-    # Determine the input dimension
-    if len(sample_activation.shape) == 3:
-        input_dim = sample_activation.shape[-1]
-    else:
-        raise ValueError(f"Unexpected activation shape: {sample_activation.shape}")
-    
-    print(f"Input dimension: {input_dim}")
-    
     # Create SAE
-    sae = SparseAutoencoder(input_dim, encoding_dim).cuda()
+    sae = AdaptiveSparseAutoencoder(encoding_dim).cuda()
     
     # Create a generator for activations
     def extract_mlp_activations_in_chunks(model, dataloader, layer_num, chunk_size=100):
@@ -77,9 +65,9 @@ def analyze_mlp_with_sae(cfg, dataloader, layer_num=0, encoding_dim=32, chunk_si
         hook_name = utils.get_act_name('post', layer_num)
         
         def hook_fn(act, hook):
-            # Reshape the activation if necessary
+            # Flatten the activation if it's 3-dimensional
             if len(act.shape) == 3:
-                act = act.view(-1, act.shape[-1])
+                act = act.reshape(-1, act.shape[-1])
             activations.append(act.detach().cpu())  # Move to CPU immediately
         
         model.add_hook(hook_name, hook_fn)
