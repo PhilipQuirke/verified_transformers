@@ -54,8 +54,6 @@ def train_sae(sae, activation_generator, batch_size=64, num_epochs=100, learning
             print(f"Epoch [{epoch+1}/{num_epochs}], Avg Loss: {total_loss/num_batches:.4f}")
 
 def analyze_mlp_with_sae(cfg, dataloader, layer_num=0, encoding_dim=32, chunk_size=100):
-    sae = AdaptiveSparseAutoencoder(encoding_dim).cuda()
-    
     def extract_mlp_activations_in_chunks(model, dataloader, layer_num, chunk_size=100):
         activations = []
         hook_name = utils.get_act_name('post', layer_num)
@@ -82,6 +80,17 @@ def analyze_mlp_with_sae(cfg, dataloader, layer_num=0, encoding_dim=32, chunk_si
 
     activation_generator = extract_mlp_activations_in_chunks(cfg.main_model, dataloader, layer_num, chunk_size)
     
-    train_sae(sae, activation_generator)
+    # Initialize the SAE with the correct input dimension
+    first_batch = next(activation_generator)
+    input_dim = first_batch.shape[-1]
+    sae = AdaptiveSparseAutoencoder(encoding_dim).cuda()
+    sae.initialize(input_dim)
+    
+    # Create a new generator that includes the first batch
+    def new_generator():
+        yield first_batch
+        yield from extract_mlp_activations_in_chunks(cfg.main_model, dataloader, layer_num, chunk_size)
+    
+    train_sae(sae, new_generator())
     
     return sae
