@@ -29,7 +29,7 @@ class AdaptiveSparseAutoencoder(nn.Module):
         return mse_loss + self.sparsity_weight * sparsity_loss
 
 def train_sae(sae, activation_generator, batch_size=64, num_epochs=100, learning_rate=1e-3):
-    optimizer = None
+    optimizer = optim.Adam(sae.parameters(), lr=learning_rate)
     
     for epoch in range(num_epochs):
         total_loss = 0
@@ -39,12 +39,8 @@ def train_sae(sae, activation_generator, batch_size=64, num_epochs=100, learning
             dataloader = DataLoader(TensorDataset(activations), batch_size=batch_size, shuffle=True)
             
             for batch in dataloader:
-                x = batch[0].cuda()  # Move to GPU
-                x = x.detach().requires_grad_(True)  # Detach from previous graph and enable gradient computation
-                
-                if optimizer is None:
-                    sae(x)  # This will initialize the encoder and decoder if not already done
-                    optimizer = optim.Adam(sae.parameters(), lr=learning_rate)
+                x = batch[0].cuda()
+                x.requires_grad_(True)
                 
                 optimizer.zero_grad()
                 encoded, decoded = sae(x)
@@ -58,38 +54,34 @@ def train_sae(sae, activation_generator, batch_size=64, num_epochs=100, learning
             print(f"Epoch [{epoch+1}/{num_epochs}], Avg Loss: {total_loss/num_batches:.4f}")
 
 def analyze_mlp_with_sae(cfg, dataloader, layer_num=0, encoding_dim=32, chunk_size=100):
-    # Create SAE
     sae = AdaptiveSparseAutoencoder(encoding_dim).cuda()
     
-    # Create a generator for activations
     def extract_mlp_activations_in_chunks(model, dataloader, layer_num, chunk_size=100):
         activations = []
         hook_name = utils.get_act_name('post', layer_num)
         
         def hook_fn(act, hook):
-            # Flatten the activation if it's 3-dimensional
             if len(act.shape) == 3:
                 act = act.reshape(-1, act.shape[-1])
-            activations.append(act.detach().cpu())  # Detach and move to CPU
+            activations.append(act.detach().cpu())
         
         model.add_hook(hook_name, hook_fn)
         
         try:
-            with torch.no_grad():  # We don't need gradients for extraction
-                for i, batch in enumerate(dataloader):
-                    _ = model(batch[0])  # Assuming the first element of the batch is the input
-                    if (i+1) % chunk_size == 0:
-                        yield torch.cat(activations, dim=0)
-                        activations = []  # Clear the list to free memory
+            for i, batch in enumerate(dataloader):
+                inputs = batch[0] if isinstance(batch, (list, tuple)) else batch
+                _ = model(inputs)
+                if (i+1) % chunk_size == 0:
+                    yield torch.cat(activations, dim=0)
+                    activations = []
         finally:
             model.reset_hooks()
         
-        if activations:  # Yield any remaining activations
+        if activations:
             yield torch.cat(activations, dim=0)
 
     activation_generator = extract_mlp_activations_in_chunks(cfg.main_model, dataloader, layer_num, chunk_size)
     
-    # Train SAE
     train_sae(sae, activation_generator)
     
     return sae
