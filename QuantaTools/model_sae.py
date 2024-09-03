@@ -4,7 +4,6 @@ import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
 import transformer_lens.utils as utils
 
-
 class AdaptiveSparseAutoencoder(nn.Module):
     def __init__(self, encoding_dim, sparsity_weight=1e-5):
         super().__init__()
@@ -41,6 +40,8 @@ def train_sae(sae, activation_generator, batch_size=64, num_epochs=100, learning
             
             for batch in dataloader:
                 x = batch[0].cuda()  # Move to GPU
+                x.requires_grad_(True)  # Enable gradient computation
+                
                 if optimizer is None:
                     sae(x)  # This will initialize the encoder and decoder if not already done
                     optimizer = optim.Adam(sae.parameters(), lr=learning_rate)
@@ -69,17 +70,16 @@ def analyze_mlp_with_sae(cfg, dataloader, layer_num=0, encoding_dim=32, chunk_si
             # Flatten the activation if it's 3-dimensional
             if len(act.shape) == 3:
                 act = act.reshape(-1, act.shape[-1])
-            activations.append(act.detach().cpu())  # Move to CPU immediately
+            activations.append(act.clone())  # Use clone() instead of detach()
         
         model.add_hook(hook_name, hook_fn)
         
         try:
-            with torch.no_grad():
-                for i, batch in enumerate(dataloader):
-                    _ = model(batch)
-                    if (i+1) % chunk_size == 0:
-                        yield torch.cat(activations, dim=0)
-                        activations = []  # Clear the list to free memory
+            for i, batch in enumerate(dataloader):
+                _ = model(batch)
+                if (i+1) % chunk_size == 0:
+                    yield torch.cat(activations, dim=0)
+                    activations = []  # Clear the list to free memory
         finally:
             model.reset_hooks()
         
