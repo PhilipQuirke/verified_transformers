@@ -1,8 +1,8 @@
 import random
 import torch
+from torch.utils.data import IterableDataset, DataLoader
 
 from QuantaTools.model_token_to_char import tokens_to_string
-
 from QuantaTools.quanta_constants import QType
 
 from .maths_constants import MathsBehavior, MathsToken
@@ -232,3 +232,21 @@ def make_maths_questions_and_answers(cfg, operator, major_tag, minor_tag, q_matr
                 real_len += 1
 
     return questions[:real_len]
+
+
+class MixedMathsDataset(IterableDataset):
+    def __init__(self, cfg, num_samples, enrich_data=True):
+        self.cfg = cfg
+        self.num_samples = num_samples
+        self.enrich_data = enrich_data
+
+    def __iter__(self):
+        for _ in range(self.num_samples):
+            batch = maths_data_generator_mixed_core(self.cfg, self.enrich_data)
+            for item in batch:
+                yield item
+
+
+def get_mixed_maths_dataloader(cfg, num_samples=10000, enrich_data=True):
+    dataset = MixedMathsDataset(cfg, num_samples, enrich_data)
+    return DataLoader(dataset, batch_size=cfg.batch_size, num_workers=0)

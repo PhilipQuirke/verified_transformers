@@ -492,7 +492,7 @@ class TestMaths(unittest.TestCase):
         filters = neg_nb_functions.prereqs(cfg, 14, 2)    
 
         
-    # Test the PCS functionality
+    # Test the PCA functionality
     def test_pca(self):
             
         cfg, _ = self.get_useful_node_list() 
