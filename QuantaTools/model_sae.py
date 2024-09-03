@@ -2,27 +2,33 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
+import transformer_lens.utils as utils
 
 
-def extract_mlp_activations_from_model(model, dataloader, layer_num):
+# Extract MLP activations
+def extract_mlp_activations(model, dataloader, layer_num):
     activations = []
     
-    def hook_fn(module, input, output):
-        activations.append(output.detach())
+    def hook_fn(act, hook):
+        activations.append(act.detach())
+    
+    # Get the correct hook name
+    hook_name = utils.get_act_name('post', layer_num)
     
     # Register the hook
-    hook = model.blocks[layer_num].mlp.hook_mlp_out.register_forward_hook(hook_fn)
+    hook = model.add_hook(hook_name, hook_fn)
     
     with torch.no_grad():
         for batch in dataloader:
             _ = model(batch)
     
     # Remove the hook
-    hook.remove()
+    model.remove_hook(hook_name)
     
     return torch.cat(activations, dim=0)
 
 
+# Implement the SAE
 class SparseAutoencoder(nn.Module):
     def __init__(self, input_dim, encoding_dim, sparsity_weight=1e-5):
         super().__init__()
@@ -41,6 +47,7 @@ class SparseAutoencoder(nn.Module):
         return mse_loss + self.sparsity_weight * sparsity_loss
 
 
+# Train the SAE 
 def train_sae(sae, activations, batch_size=64, num_epochs=100, learning_rate=1e-3):
     optimizer = optim.Adam(sae.parameters(), lr=learning_rate)
     dataloader = DataLoader(TensorDataset(activations), batch_size=batch_size, shuffle=True)
@@ -60,15 +67,14 @@ def train_sae(sae, activations, batch_size=64, num_epochs=100, learning_rate=1e-
             print(f"Epoch [{epoch+1}/{num_epochs}], Loss: {total_loss/len(dataloader):.4f}")
 
 
-# Create and train a SAE for the specified layer of the model.         
 def analyze_mlp_with_sae(cfg, dataloader, layer_num=0, encoding_dim=64):
-    
     # Extract MLP activations
-    mlp_activations = extract_mlp_activations_from_model(cfg.main_model, dataloader, layer_num)
+    mlp_activations = extract_mlp_activations(cfg.main_model, dataloader, layer_num)
     
     # Create and train SAE
     input_dim = mlp_activations.shape[1]
     sae = SparseAutoencoder(input_dim, encoding_dim)
     train_sae(sae, mlp_activations)
     
-    return sae
+    return sae, mlp_activations
+
