@@ -40,7 +40,7 @@ def train_sae(sae, activation_generator, batch_size=64, num_epochs=100, learning
             
             for batch in dataloader:
                 x = batch[0].cuda()  # Move to GPU
-                x.requires_grad_(True)  # Enable gradient computation
+                x = x.detach().requires_grad_(True)  # Detach from previous graph and enable gradient computation
                 
                 if optimizer is None:
                     sae(x)  # This will initialize the encoder and decoder if not already done
@@ -49,7 +49,7 @@ def train_sae(sae, activation_generator, batch_size=64, num_epochs=100, learning
                 optimizer.zero_grad()
                 encoded, decoded = sae(x)
                 loss = sae.loss(x, encoded, decoded)
-                loss.backward()
+                loss.backward(retain_graph=True)  # Retain the graph for multiple backward passes
                 optimizer.step()
                 total_loss += loss.item()
                 num_batches += 1
@@ -70,16 +70,17 @@ def analyze_mlp_with_sae(cfg, dataloader, layer_num=0, encoding_dim=32, chunk_si
             # Flatten the activation if it's 3-dimensional
             if len(act.shape) == 3:
                 act = act.reshape(-1, act.shape[-1])
-            activations.append(act.clone())  # Use clone() instead of detach()
+            activations.append(act.detach().cpu())  # Detach and move to CPU
         
         model.add_hook(hook_name, hook_fn)
         
         try:
-            for i, batch in enumerate(dataloader):
-                _ = model(batch)
-                if (i+1) % chunk_size == 0:
-                    yield torch.cat(activations, dim=0)
-                    activations = []  # Clear the list to free memory
+            with torch.no_grad():  # We don't need gradients for extraction
+                for i, batch in enumerate(dataloader):
+                    _ = model(batch)
+                    if (i+1) % chunk_size == 0:
+                        yield torch.cat(activations, dim=0)
+                        activations = []  # Clear the list to free memory
         finally:
             model.reset_hooks()
         
