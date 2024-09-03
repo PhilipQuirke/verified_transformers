@@ -16,14 +16,15 @@ def extract_mlp_activations(model, dataloader, layer_num):
     hook_name = utils.get_act_name('post', layer_num)
     
     # Register the hook
-    hook = model.add_hook(hook_name, hook_fn)
+    model.add_hook(hook_name, hook_fn)
     
-    with torch.no_grad():
-        for batch in dataloader:
-            _ = model(batch)
-    
-    # Remove the hook
-    model.remove_hook(hook_name)
+    try:
+        with torch.no_grad():
+            for batch in dataloader:
+                _ = model(batch)
+    finally:
+        # Remove the hook using the correct method
+        model.remove_all_hooks()
     
     return torch.cat(activations, dim=0)
 
