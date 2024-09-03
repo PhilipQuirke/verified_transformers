@@ -51,6 +51,7 @@
     <Compile Include="QuantaTools\maths_tools\maths_utilities.py" />
     <Compile Include="QuantaTools\maths_tools\maths_constants.py" />
     <Compile Include="QuantaTools\model_config.py" />
+    <Compile Include="QuantaTools\model_sae_graph.py" />
     <Compile Include="QuantaTools\model_train.py">
       <SubType>Code</SubType>
     </Compile>

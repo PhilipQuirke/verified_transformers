@@ -2,9 +2,10 @@
 from .model_config import ModelConfig
 from .model_token_to_char import token_to_char, tokens_to_string
 from .model_train import logits_to_tokens_loss, loss_fn, get_training_optimizer_and_scheduler
-from .model_loss_graph import plot_loss_lines, plot_loss_lines_layout
 from .model_train_json import download_huggingface_json, load_training_json
-from .model_sae import extract_mlp_activations_in_chunks, SparseAutoencoder, train_sae, analyze_mlp_with_sae
+from .model_loss_graph import plot_loss_lines, plot_loss_lines_layout
+from .model_sae import SparseAutoencoder, train_sae, analyze_mlp_with_sae
+from .model_sae_graph import generate_encodings, visualize_encodings, analyze_and_visualize_sae
 
 
 # useful_*.py: Contains data on the useful token positions and useful nodes (attention heads and MLP neurons) that the model uses in predictions

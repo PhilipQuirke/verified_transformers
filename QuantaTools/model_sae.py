@@ -3,30 +3,6 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
 import transformer_lens.utils as utils
-
-
-# Extract MLP activations
-def extract_mlp_activations_in_chunks(model, dataloader, layer_num, chunk_size=1000):
-    activations = []
-    hook_name = utils.get_act_name('post', layer_num)
-    
-    def hook_fn(act, hook):
-        activations.append(act.detach().cpu())  # Move to CPU immediately
-    
-    model.add_hook(hook_name, hook_fn)
-    
-    try:
-        with torch.no_grad():
-            for i, batch in enumerate(dataloader):
-                _ = model(batch)
-                if (i+1) % chunk_size == 0:
-                    yield torch.cat(activations, dim=0)
-                    activations = []  # Clear the list to free memory
-    finally:
-        model.reset_hooks()
-    
-    if activations:  # Yield any remaining activations
-        yield torch.cat(activations, dim=0)
         
 
 # Implement the SAE
@@ -74,12 +50,17 @@ def train_sae(sae, activation_generator, batch_size=64, num_epochs=100, learning
 
 
 def analyze_mlp_with_sae(cfg, dataloader, layer_num=0, encoding_dim=32, chunk_size=1000):
+
     # Get a sample batch to determine input dimension
     sample_batch = next(iter(dataloader))
+    
+    def sample_hook(act, hook):
+        return act  # Simply return the activation
+
     with torch.no_grad():
         sample_activation = cfg.main_model.run_with_hooks(
             sample_batch, 
-            fwd_hooks=[(utils.get_act_name('post', layer_num), lambda x, _: x)]
+            fwd_hooks=[(utils.get_act_name('post', layer_num), sample_hook)]
         )
     input_dim = sample_activation.shape[-1]
     
@@ -87,10 +68,31 @@ def analyze_mlp_with_sae(cfg, dataloader, layer_num=0, encoding_dim=32, chunk_si
     sae = SparseAutoencoder(input_dim, encoding_dim).cuda()
     
     # Create a generator for activations
+    def extract_mlp_activations_in_chunks(model, dataloader, layer_num, chunk_size=1000):
+        activations = []
+        hook_name = utils.get_act_name('post', layer_num)
+        
+        def hook_fn(act, hook):
+            activations.append(act.detach().cpu())  # Move to CPU immediately
+        
+        model.add_hook(hook_name, hook_fn)
+        
+        try:
+            with torch.no_grad():
+                for i, batch in enumerate(dataloader):
+                    _ = model(batch)
+                    if (i+1) % chunk_size == 0:
+                        yield torch.cat(activations, dim=0)
+                        activations = []  # Clear the list to free memory
+        finally:
+            model.reset_hooks()
+        
+        if activations:  # Yield any remaining activations
+            yield torch.cat(activations, dim=0)
+
     activation_generator = extract_mlp_activations_in_chunks(cfg.main_model, dataloader, layer_num, chunk_size)
     
     # Train SAE
     train_sae(sae, activation_generator)
     
     return sae
-
