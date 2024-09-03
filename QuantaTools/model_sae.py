@@ -49,7 +49,7 @@ def train_sae(sae, activation_generator, batch_size=64, num_epochs=100, learning
                 optimizer.zero_grad()
                 encoded, decoded = sae(x)
                 loss = sae.loss(x, encoded, decoded)
-                loss.backward(retain_graph=True)  # Retain the graph for multiple backward passes
+                loss.backward()
                 optimizer.step()
                 total_loss += loss.item()
                 num_batches += 1
@@ -77,7 +77,7 @@ def analyze_mlp_with_sae(cfg, dataloader, layer_num=0, encoding_dim=32, chunk_si
         try:
             with torch.no_grad():  # We don't need gradients for extraction
                 for i, batch in enumerate(dataloader):
-                    _ = model(batch)
+                    _ = model(batch[0])  # Assuming the first element of the batch is the input
                     if (i+1) % chunk_size == 0:
                         yield torch.cat(activations, dim=0)
                         activations = []  # Clear the list to free memory
