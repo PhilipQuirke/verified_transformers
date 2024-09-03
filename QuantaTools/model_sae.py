@@ -3,9 +3,7 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
 import transformer_lens.utils as utils
-        
 
-# Implement the SAE
 class SparseAutoencoder(nn.Module):
     def __init__(self, input_dim, encoding_dim, sparsity_weight=1e-5):
         super().__init__()
@@ -22,9 +20,7 @@ class SparseAutoencoder(nn.Module):
         mse_loss = nn.MSELoss()(decoded, x)
         sparsity_loss = torch.mean(torch.abs(encoded))
         return mse_loss + self.sparsity_weight * sparsity_loss
-    
 
-# Train the SAE 
 def train_sae(sae, activation_generator, batch_size=64, num_epochs=100, learning_rate=1e-3):
     optimizer = optim.Adam(sae.parameters(), lr=learning_rate)
     
@@ -48,9 +44,7 @@ def train_sae(sae, activation_generator, batch_size=64, num_epochs=100, learning
         if (epoch + 1) % 10 == 0:
             print(f"Epoch [{epoch+1}/{num_epochs}], Avg Loss: {total_loss/num_batches:.4f}")
 
-
-def analyze_mlp_with_sae(cfg, dataloader, layer_num=0, encoding_dim=32, chunk_size=1000):
-
+def analyze_mlp_with_sae(cfg, dataloader, layer_num=0, encoding_dim=32, chunk_size=100):
     # Get a sample batch to determine input dimension
     sample_batch = next(iter(dataloader))
     
@@ -62,17 +56,30 @@ def analyze_mlp_with_sae(cfg, dataloader, layer_num=0, encoding_dim=32, chunk_si
             sample_batch, 
             fwd_hooks=[(utils.get_act_name('post', layer_num), sample_hook)]
         )
-    input_dim = sample_activation.shape[-1]
+    
+    # Print the shape of the sample activation for debugging
+    print(f"Sample activation shape: {sample_activation.shape}")
+    
+    # Determine the input dimension
+    if len(sample_activation.shape) == 3:
+        input_dim = sample_activation.shape[-1]
+    else:
+        raise ValueError(f"Unexpected activation shape: {sample_activation.shape}")
+    
+    print(f"Input dimension: {input_dim}")
     
     # Create SAE
     sae = SparseAutoencoder(input_dim, encoding_dim).cuda()
     
     # Create a generator for activations
-    def extract_mlp_activations_in_chunks(model, dataloader, layer_num, chunk_size=1000):
+    def extract_mlp_activations_in_chunks(model, dataloader, layer_num, chunk_size=100):
         activations = []
         hook_name = utils.get_act_name('post', layer_num)
         
         def hook_fn(act, hook):
+            # Reshape the activation if necessary
+            if len(act.shape) == 3:
+                act = act.view(-1, act.shape[-1])
             activations.append(act.detach().cpu())  # Move to CPU immediately
         
         model.add_hook(hook_name, hook_fn)
