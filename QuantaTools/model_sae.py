@@ -30,32 +30,31 @@ class AdaptiveSparseAutoencoder(nn.Module):
         return mse_loss + self.sparsity_weight * sparsity_loss
     
 
-def train_sae(sae, activation_generator, num_epochs=100, learning_rate=1e-3):
+def train_sae_epoch(sae, activation_generator, epoch, learning_rate):
     optimizer = optim.Adam(sae.parameters(), lr=learning_rate)
     
-    for epoch in range(num_epochs):
-        total_loss = 0
-        num_batches = 0
+    total_loss = 0
+    num_batches = 0
+    
+    for activations in activation_generator:
+        x = activations.cuda()
+        x.requires_grad_(True)
         
-        for activations in activation_generator:
-            x = activations.cuda()
-            x.requires_grad_(True)
-            
-            optimizer.zero_grad()
-            encoded, decoded = sae(x)
-            loss = sae.loss(x, encoded, decoded)
-            loss.backward()
-            optimizer.step()
-            total_loss += loss.item()
-            num_batches += 1
-        
-        if num_batches > 0:
-            print(f"Epoch [{epoch+1}/{num_epochs}], Avg Loss: {total_loss/num_batches:.4f}")
-        else:
-            print(f"Epoch [{epoch+1}/{num_epochs}], Loss: {total_loss:.4f}")
+        optimizer.zero_grad()
+        encoded, decoded = sae(x)
+        loss = sae.loss(x, encoded, decoded)
+        loss.backward()
+        optimizer.step()
+        total_loss += loss.item()
+        num_batches += 1
+    
+    if num_batches > 0:
+        print(f"Epoch [{epoch+1}], Avg Loss: {total_loss/num_batches:.4f}, Batches: {num_batches}")
 
 
-def analyze_mlp_with_sae(cfg, dataloader, layer_num=0, encoding_dim=32):
+def analyze_mlp_with_sae(cfg, dataloader, layer_num=0, encoding_dim=128, num_epochs=10, learning_rate=1e-3):
+    
+
     def generate_mlp_activations(main_model, dataloader, layer_num):
         hook_name = utils.get_act_name('post', layer_num)
         activations = [] 
@@ -74,15 +73,17 @@ def analyze_mlp_with_sae(cfg, dataloader, layer_num=0, encoding_dim=32):
         finally:
             main_model.reset_hooks()
 
+
     activation_generator = generate_mlp_activations(cfg.main_model, dataloader, layer_num)
-    
     sample_batch = next(activation_generator)
     input_dim = sample_batch.shape[-1]
     print("Input Dim", input_dim, "Encoding Dim", encoding_dim)
-    print("Activation batch shape", sample_batch.shape, "Sample:", sample_batch[0])
+    #print("Activation batch shape", sample_batch.shape, "Sample:", sample_batch[0])
 
     sae = AdaptiveSparseAutoencoder(encoding_dim, input_dim).cuda()
 
-    train_sae(sae, activation_generator)
+    for epoch in range(num_epochs):
+        activation_generator = generate_mlp_activations(cfg.main_model, dataloader, layer_num)
+        train_sae_epoch(sae, activation_generator, epoch, learning_rate)
     
     return sae

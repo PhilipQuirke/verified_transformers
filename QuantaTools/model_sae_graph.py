@@ -27,7 +27,7 @@ def generate_encodings(model, sae, dataloader, layer_num, max_samples=10000):
                 if sample_count >= max_samples:
                     break
     finally:
-        model.remove_all_hooks()
+        model.reset_hooks()
 
     return torch.cat(encodings, dim=0)[:max_samples]
 

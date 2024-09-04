@@ -259,6 +259,7 @@ class MixedMathsDataset(IterableDataset):
     def __len__(self):
         return self.num_batches * self.cfg.batch_size
 
+
 def get_mixed_maths_dataloader(cfg, num_batches=100, enrich_data=True):
     dataset = MixedMathsDataset(cfg, num_batches, enrich_data)
-    return DataLoader(dataset, batch_size=None, num_workers=0)    
+    return DataLoader(dataset, batch_size=None, num_workers=0)
