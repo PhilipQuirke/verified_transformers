@@ -7,33 +7,40 @@ import itertools
 
 
 class AdaptiveSparseAutoencoder(nn.Module):
-    def __init__(self, encoding_dim, input_dim, sparsity_weight=1e-5):
-        super().__init__()
-
-        # Number of neurons in the hidden layer of the autoencoder. Represents the compressed representation of the input data.
-        self.encoding_dim = encoding_dim
-        self.input_dim = input_dim  
-        self.sparsity_weight = sparsity_weight
-        self.encoder = nn.Linear(input_dim, self.encoding_dim).cuda()
-        self.decoder = nn.Linear(self.encoding_dim, input_dim).cuda()
-    
-    def forward(self, x):
-        if self.encoder is None or self.decoder is None:
-            self.initialize(x.shape[-1])
-        encoded = self.encoder(x)
-        decoded = self.decoder(encoded)
-        return encoded, decoded
-    
-    def loss(self, x, encoded, decoded):
-        mse_loss = nn.MSELoss()(decoded, x)
-        sparsity_loss = torch.mean(torch.abs(encoded))
-        return mse_loss + self.sparsity_weight * sparsity_loss
+       def __init__(self, encoding_dim, input_dim, sparsity_target=0.05, sparsity_weight=1e-3):
+           super().__init__()
+           self.encoding_dim = encoding_dim
+           self.input_dim = input_dim
+           self.sparsity_target = sparsity_target
+           self.sparsity_weight = sparsity_weight
+           self.encoder = nn.Sequential(
+               nn.Linear(input_dim, self.encoding_dim),
+               nn.ReLU()
+           ).cuda()
+           self.decoder = nn.Linear(self.encoding_dim, input_dim).cuda()
+       
+       def forward(self, x):
+           encoded = self.encoder(x)
+           decoded = self.decoder(encoded)
+           return encoded, decoded
+       
+       def loss(self, x, encoded, decoded):
+           mse_loss = nn.MSELoss()(decoded, x)
+           
+           # KL divergence for sparsity
+           avg_activation = torch.mean(encoded, dim=0)
+           kl_div = self.sparsity_target * torch.log(self.sparsity_target / avg_activation) + \
+                    (1 - self.sparsity_target) * torch.log((1 - self.sparsity_target) / (1 - avg_activation))
+           sparsity_penalty = torch.sum(kl_div)
+           
+           return mse_loss + self.sparsity_weight * sparsity_penalty
     
 
 def train_sae_epoch(sae, activation_generator, epoch, learning_rate):
     optimizer = optim.Adam(sae.parameters(), lr=learning_rate)
     
     total_loss = 0
+    total_sparsity = 0    
     num_batches = 0
     
     for activations in activation_generator:
@@ -45,16 +52,18 @@ def train_sae_epoch(sae, activation_generator, epoch, learning_rate):
         loss = sae.loss(x, encoded, decoded)
         loss.backward()
         optimizer.step()
+
         total_loss += loss.item()
+        total_sparsity += (encoded == 0).float().mean().item()        
         num_batches += 1
     
     if num_batches > 0:
-        print(f"Epoch [{epoch+1}], Avg Loss: {total_loss/num_batches:.4f}, Batches: {num_batches}")
+        avg_loss = total_loss / num_batches
+        avg_sparsity = total_sparsity / num_batches
+        print(f"Epoch: {epoch+1}, Avg Loss: {avg_loss:.4f}, Avg Sparsity: {avg_sparsity:.2%}")
 
 
-def analyze_mlp_with_sae(cfg, dataloader, layer_num=0, encoding_dim=128, num_epochs=10, learning_rate=1e-3):
-    
-
+def analyze_mlp_with_sae(cfg, dataloader, layer_num=0, encoding_dim=128, num_epochs=10, learning_rate=1e-3, sparsity_target=0.05, sparsity_weight=1e-3):
     def generate_mlp_activations(main_model, dataloader, layer_num):
         hook_name = utils.get_act_name('post', layer_num)
         activations = [] 
@@ -73,14 +82,12 @@ def analyze_mlp_with_sae(cfg, dataloader, layer_num=0, encoding_dim=128, num_epo
         finally:
             main_model.reset_hooks()
 
-
     activation_generator = generate_mlp_activations(cfg.main_model, dataloader, layer_num)
     sample_batch = next(activation_generator)
     input_dim = sample_batch.shape[-1]
     print("Input Dim", input_dim, "Encoding Dim", encoding_dim)
-    #print("Activation batch shape", sample_batch.shape, "Sample:", sample_batch[0])
 
-    sae = AdaptiveSparseAutoencoder(encoding_dim, input_dim).cuda()
+    sae = AdaptiveSparseAutoencoder(encoding_dim, input_dim, sparsity_target, sparsity_weight).cuda()
 
     for epoch in range(num_epochs):
         activation_generator = generate_mlp_activations(cfg.main_model, dataloader, layer_num)
