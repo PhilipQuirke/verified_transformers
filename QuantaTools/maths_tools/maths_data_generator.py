@@ -235,18 +235,30 @@ def make_maths_questions_and_answers(cfg, operator, major_tag, minor_tag, q_matr
 
 
 class MixedMathsDataset(IterableDataset):
-    def __init__(self, cfg, num_samples, enrich_data=True):
+    def __init__(self, cfg, num_batches, enrich_data=True):
         self.cfg = cfg
-        self.num_samples = num_samples
+        self.num_batches = num_batches
         self.enrich_data = enrich_data
+        self.reset()
+
+    def reset(self):
+        self.current_batch = 0
 
     def __iter__(self):
-        for _ in range(self.num_samples):
-            batch = maths_data_generator_mixed_core(self.cfg, self.enrich_data)
-            for item in batch:
-                yield item
+        return self
 
+    def __next__(self):
+        if self.current_batch >= self.num_batches:
+            self.reset()
+            raise StopIteration
+        
+        batch = maths_data_generator_mixed_core(self.cfg, self.enrich_data)
+        self.current_batch += 1
+        return batch   
 
-def get_mixed_maths_dataloader(cfg, num_samples=10000, enrich_data=True):
-    dataset = MixedMathsDataset(cfg, num_samples, enrich_data)
-    return DataLoader(dataset, batch_size=cfg.batch_size, num_workers=0)
+    def __len__(self):
+        return self.num_batches * self.cfg.batch_size
+
+def get_mixed_maths_dataloader(cfg, num_batches=100, enrich_data=True):
+    dataset = MixedMathsDataset(cfg, num_batches, enrich_data)
+    return DataLoader(dataset, batch_size=None, num_workers=0)    
