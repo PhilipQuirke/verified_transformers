@@ -5,7 +5,7 @@ from .model_train import logits_to_tokens_loss, loss_fn, get_training_optimizer_
 from .model_train_json import download_huggingface_json, load_training_json
 from .model_loss_graph import plot_loss_lines, plot_loss_lines_layout
 from .model_sae import AdaptiveSparseAutoencoder, analyze_mlp_with_sae
-from .model_sae_graph import generate_encodings, visualize_encodings, analyze_and_visualize_sae
+from .model_sae_graph import analyze_and_visualize_sae
 
 
 # useful_*.py: Contains data on the useful token positions and useful nodes (attention heads and MLP neurons) that the model uses in predictions
