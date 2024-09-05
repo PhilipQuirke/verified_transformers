@@ -13,7 +13,7 @@ from QuantaTools.model_sae import AdaptiveSparseAutoencoder, save_sae_to_hugging
 
 def train_sae_epoch(sae, activation_generator, epoch, learning_rate, max_grad_norm=1.0):
     optimizer = optim.Adam(sae.parameters(), lr=learning_rate)
-    scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=2, verbose=True)
+    #scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=2, verbose=True)
   
     total_loss = 0
     total_sparsity = 0    
@@ -31,8 +31,8 @@ def train_sae_epoch(sae, activation_generator, epoch, learning_rate, max_grad_no
             loss.backward()
             
             # Gradient clipping
-            #torch.nn.utils.clip_grad_norm_(sae.parameters(), max_grad_norm)
-            torch.nn.utils.clip_grad_norm_(sae.parameters(), max_norm=1.0)
+            torch.nn.utils.clip_grad_norm_(sae.parameters(), max_grad_norm)
+            #torch.nn.utils.clip_grad_norm_(sae.parameters(), max_norm=1.0)
             
             optimizer.step()
 
@@ -42,6 +42,9 @@ def train_sae_epoch(sae, activation_generator, epoch, learning_rate, max_grad_no
         else:
             print(f"Skipping batch due to non-finite loss: {loss.item()}")
     
+    # After each epoch:
+    #scheduler.step(avg_loss)
+
     if num_batches > 0:
         avg_loss = total_loss / num_batches
         avg_sparsity = total_sparsity / num_batches
