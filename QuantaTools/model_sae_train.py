@@ -147,13 +147,15 @@ def analyze_mlp_with_sae(
     return sae, best_avg_loss, best_avg_sparsity
 
 
-def optimize_sae_hyperparameters(cfg, dataloader, layer_num=0, num_epochs=10):
+def optimize_sae_hyperparameters(cfg, dataloader, layer_num=0):
     # Define the hyperparameter grid
     param_grid = {
-        'encoding_dim': [64, 128, 256, 512],
+        'encoding_dim': [32, 64, 128, 256, 512],
         'learning_rate': [1e-4, 1e-3, 1e-2],
-        'sparsity_target': [0.01, 0.05, 0.1],
-        'sparsity_weight': [1e-4, 1e-3, 1e-2]
+        'sparsity_target': [0.001, 0.005, 0.01, 0.05],
+        'sparsity_weight': [1e-3, 1e-2, 1e-1, 1.0],
+        'num_epochs': [10],
+        'patience': [2]
     }
 
     # Generate all combinations of hyperparameters
@@ -170,7 +172,7 @@ def optimize_sae_hyperparameters(cfg, dataloader, layer_num=0, num_epochs=10):
             dataloader, 
             layer_num=layer_num, 
             encoding_dim=params['encoding_dim'],
-            num_epochs=num_epochs,
+            num_epochs=params['num_epochs'],
             learning_rate=params['learning_rate'],
             sparsity_target=params['sparsity_target'],
             sparsity_weight=params['sparsity_weight']
@@ -179,7 +181,7 @@ def optimize_sae_hyperparameters(cfg, dataloader, layer_num=0, num_epochs=10):
         # Calculate a score that balances loss and sparsity
         # You can adjust the weights of loss and sparsity in this score calculation
         if torch.isfinite(torch.tensor(avg_loss)):
-            score = avg_loss - np.log(avg_sparsity)  # Example scoring function
+            score = avg_loss + 10 * (avg_sparsity - params['sparsity_target'])**2
         else:
             score = float('inf')
 
