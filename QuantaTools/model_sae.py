@@ -87,7 +87,7 @@ def train_sae_epoch(sae, activation_generator, epoch, learning_rate, max_grad_no
     
     return avg_loss, avg_sparsity
 
-def analyze_mlp_with_sae(cfg, dataloader, layer_num=0, encoding_dim=128, num_epochs=10, learning_rate=1e-3, sparsity_target=0.05, sparsity_weight=1e-3):
+def analyze_mlp_with_sae(cfg, dataloader, layer_num=0, encoding_dim=128, num_epochs=10, learning_rate=1e-3, sparsity_target=0.05, sparsity_weight=1e-3, early_stopping_threshold=1e-4, patience=2):
     def generate_mlp_activations(main_model, dataloader, layer_num):
         hook_name = utils.get_act_name('post', layer_num)
         activations = [] 
@@ -113,16 +113,38 @@ def analyze_mlp_with_sae(cfg, dataloader, layer_num=0, encoding_dim=128, num_epo
 
     sae = AdaptiveSparseAutoencoder(encoding_dim, input_dim, sparsity_target, sparsity_weight).cuda()
 
-    final_avg_loss = float('inf')
-    final_avg_sparsity = 0
+    prev_avg_loss = float('inf')
+    prev_avg_sparsity = 0
+    best_avg_loss = float('inf')
+    best_avg_sparsity = 0
+    no_improvement_count = 0
+
     for epoch in range(num_epochs):
         activation_generator = generate_mlp_activations(cfg.main_model, dataloader, layer_num)
         avg_loss, avg_sparsity = train_sae_epoch(sae, activation_generator, epoch, learning_rate)
+        
         if torch.isfinite(torch.tensor(avg_loss)):
-            final_avg_loss = avg_loss
-            final_avg_sparsity = avg_sparsity
+            loss_change = abs(avg_loss - prev_avg_loss)
+            sparsity_change = abs(avg_sparsity - prev_avg_sparsity)
+            
+            if loss_change < early_stopping_threshold and sparsity_change < early_stopping_threshold:
+                no_improvement_count += 1
+                if no_improvement_count >= patience:
+                    print(f"Early stopping at epoch {epoch+1} due to no significant improvement.")
+                    break
+            else:
+                no_improvement_count = 0
+            
+            if avg_loss < best_avg_loss:
+                best_avg_loss = avg_loss
+                best_avg_sparsity = avg_sparsity
+            
+            prev_avg_loss = avg_loss
+            prev_avg_sparsity = avg_sparsity
+        else:
+            print(f"Skipping epoch {epoch+1} due to non-finite loss.")
     
-    return sae, final_avg_loss, final_avg_sparsity
+    return sae, best_avg_loss, best_avg_sparsity
 
 
 def optimize_sae_hyperparameters(cfg, dataloader, layer_num=0, num_epochs=10):
