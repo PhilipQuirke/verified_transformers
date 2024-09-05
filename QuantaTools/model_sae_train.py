@@ -150,7 +150,7 @@ def analyze_mlp_with_sae(
 def optimize_sae_hyperparameters(cfg, dataloader, layer_num=0):
     # Define the hyperparameter grid
     param_grid = {
-        'encoding_dim': [32, 64, 128, 256, 512],
+        'encoding_dim': [64], #[32, 64, 128, 256, 512],
         'learning_rate': [1e-4, 1e-3, 1e-2],
         'sparsity_target': [0.001, 0.005, 0.01, 0.05],
         'sparsity_weight': [1e-3, 1e-2, 1e-1, 1.0],
