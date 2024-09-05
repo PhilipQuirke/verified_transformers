@@ -14,8 +14,12 @@ def safe_log(x, eps=1e-8):
 
 
 def safe_kl_div(p, q, eps=1e-8):
+    p = torch.as_tensor(p)
+    q = torch.as_tensor(q)
+    
     p = torch.clamp(p, eps, 1-eps)
     q = torch.clamp(q, eps, 1-eps)
+    
     return p * (torch.log(p) - torch.log(q)) + (1-p) * (torch.log(1-p) - torch.log(1-q))
 
 
@@ -42,16 +46,23 @@ class AdaptiveSparseAutoencoder(nn.Module):
         
         # KL divergence for sparsity
         avg_activation = torch.mean(encoded, dim=0)
-        kl_div = safe_kl_div(self.sparsity_target, avg_activation)       
+        kl_div = safe_kl_div(self.sparsity_target, avg_activation)
         sparsity_penalty = torch.sum(kl_div)
+        
+        # Clip sparsity penalty to avoid exploding gradients
+        sparsity_penalty = torch.clamp(sparsity_penalty, max=1e3)
         
         total_loss = mse_loss + self.sparsity_weight * sparsity_penalty
         
         if not torch.isfinite(total_loss):
-            print(f"Warning: Infinite loss detected. MSE: {mse_loss.item()}, Sparsity Penalty: {sparsity_penalty.item()}")
+            print(f"Warning: Non-finite loss detected.")
+            print(f"MSE: {mse_loss.item()}")
+            print(f"Sparsity Penalty: {sparsity_penalty.item()}")
+            print(f"Avg Activation stats: min={avg_activation.min().item()}, max={avg_activation.max().item()}, mean={avg_activation.mean().item()}")
+            print(f"Encoded stats: min={encoded.min().item()}, max={encoded.max().item()}, mean={encoded.mean().item()}")
             total_loss = torch.clamp(total_loss, max=1e6)  # Clamp to a large but finite value
         
-        return total_loss
+        return total_loss, mse_loss.item(), sparsity_penalty.item()
 
 
 class SparseAutoencoderConfig(PretrainedConfig):

@@ -13,11 +13,15 @@ from QuantaTools.model_sae import AdaptiveSparseAutoencoder, save_sae_to_hugging
 
 def train_sae_epoch(sae, activation_generator, epoch, learning_rate, max_grad_norm=1.0):
     optimizer = optim.Adam(sae.parameters(), lr=learning_rate)
-    #scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=2, verbose=True)
   
     total_loss = 0
+    total_mse = 0
+    total_sparsity_penalty = 0
     total_sparsity = 0    
     num_batches = 0
+    
+    # Initialize a tensor to keep track of which neurons have been active
+    neuron_activity = torch.zeros(sae.encoding_dim).cuda()
     
     for activations in activation_generator:
         x = activations.cuda()
@@ -25,30 +29,40 @@ def train_sae_epoch(sae, activation_generator, epoch, learning_rate, max_grad_no
         
         optimizer.zero_grad()
         encoded, decoded = sae(x)
-        loss = sae.loss(x, encoded, decoded)
+        loss, mse, sparsity_penalty = sae.loss(x, encoded, decoded)
         
         if torch.isfinite(loss):
             loss.backward()
             
             # Gradient clipping
             torch.nn.utils.clip_grad_norm_(sae.parameters(), max_grad_norm)
-            #torch.nn.utils.clip_grad_norm_(sae.parameters(), max_norm=1.0)
             
             optimizer.step()
 
             total_loss += loss.item()
-            total_sparsity += (encoded == 0).float().mean().item()        
+            total_mse += mse
+            total_sparsity_penalty += sparsity_penalty
+            batch_sparsity = (encoded != 0).float().mean().item()
+            total_sparsity += batch_sparsity
+            
+            neuron_activity = torch.logical_or(neuron_activity, torch.any(encoded != 0, dim=0))
+            
             num_batches += 1
         else:
             print(f"Skipping batch due to non-finite loss: {loss.item()}")
     
-    # After each epoch:
-    #scheduler.step(avg_loss)
-
     if num_batches > 0:
         avg_loss = total_loss / num_batches
+        avg_mse = total_mse / num_batches
+        avg_sparsity_penalty = total_sparsity_penalty / num_batches
         avg_sparsity = total_sparsity / num_batches
-        print(f"Epoch: {epoch+1}, Avg Loss: {avg_loss:.4f}, Avg Sparsity: {avg_sparsity:.2%}")
+        
+        # Count the final number of active neurons
+        final_active_neurons = torch.sum(neuron_activity).item()
+        
+        print(f"Epoch: {epoch+1}, Avg Loss: {avg_loss:.4f}, Avg MSE: {avg_mse:.4f}, "
+              f"Avg Sparsity Penalty: {avg_sparsity_penalty:.4f}, Avg Sparsity: {avg_sparsity:.2%}, "
+              f"Final Active Neurons: {final_active_neurons}/{sae.encoding_dim} ({final_active_neurons/sae.encoding_dim:.2%})")
     else:
         print(f"Epoch: {epoch+1}, No valid batches processed")
         avg_loss = float('inf')
