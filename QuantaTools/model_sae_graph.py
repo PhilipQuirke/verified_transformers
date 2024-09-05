@@ -5,6 +5,8 @@ from sklearn.manifold import TSNE
 from torch.utils.data import DataLoader, TensorDataset
 import transformer_lens.utils as utils
 
+from QuantaTools.model_sae import AdaptiveSparseAutoencoder 
+
 
 def generate_encodings(model, sae, dataloader, layer_num, max_samples=10000):
     encodings = []
@@ -32,6 +34,7 @@ def generate_encodings(model, sae, dataloader, layer_num, max_samples=10000):
     encodings = torch.cat(encodings, dim=0)[:max_samples]
     print(f"Generated encodings shape: {encodings.shape}")
     return encodings
+
 
 def visualize_encodings_by_position(encodings, perplexity=30, n_iter=250):
     num_positions = encodings.shape[1]
@@ -85,6 +88,7 @@ def visualize_encodings_by_position(encodings, perplexity=30, n_iter=250):
         plt.xlabel("Encoding Dimension")
         plt.ylabel("Average Absolute Activation")
         plt.show()
+
 
 def visualize_sae_features_by_position(sae, top_n=5, figsize=(20, 4)):
     decoder_weights = sae.decoder.weight.data.cpu().numpy()
