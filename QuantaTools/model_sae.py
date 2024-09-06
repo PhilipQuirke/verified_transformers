@@ -24,12 +24,13 @@ def safe_kl_div(p, q, eps=1e-8):
 
 
 class AdaptiveSparseAutoencoder(nn.Module):
-    def __init__(self, encoding_dim, input_dim, sparsity_target=0.05, sparsity_weight=1e-3):
+    def __init__(self, encoding_dim, input_dim, sparsity_target=0.05, sparsity_weight=1e-3, l1_weight=1e-5):
         super().__init__()
         self.encoding_dim = encoding_dim
         self.input_dim = input_dim
         self.sparsity_target = sparsity_target
         self.sparsity_weight = sparsity_weight
+        self.l1_weight = l1_weight  # L1 regularization weight to promote sparsity
         self.encoder = nn.Sequential(
             nn.Linear(input_dim, self.encoding_dim),
             nn.ReLU()
@@ -49,20 +50,24 @@ class AdaptiveSparseAutoencoder(nn.Module):
         kl_div = safe_kl_div(self.sparsity_target, avg_activation)
         sparsity_penalty = torch.sum(kl_div)
         
+        # L1 regularization on activations
+        l1_penalty = torch.mean(torch.abs(encoded))
+        
         # Clip sparsity penalty to avoid exploding gradients
         sparsity_penalty = torch.clamp(sparsity_penalty, max=1e3)
         
-        total_loss = mse_loss + self.sparsity_weight * sparsity_penalty
+        total_loss = mse_loss + self.sparsity_weight * sparsity_penalty + self.l1_weight * l1_penalty
         
         if not torch.isfinite(total_loss):
             print(f"Warning: Non-finite loss detected.")
             print(f"MSE: {mse_loss.item()}")
             print(f"Sparsity Penalty: {sparsity_penalty.item()}")
+            print(f"L1 Penalty: {l1_penalty.item()}")
             print(f"Avg Activation stats: min={avg_activation.min().item()}, max={avg_activation.max().item()}, mean={avg_activation.mean().item()}")
             print(f"Encoded stats: min={encoded.min().item()}, max={encoded.max().item()}, mean={encoded.mean().item()}")
             total_loss = torch.clamp(total_loss, max=1e6)  # Clamp to a large but finite value
         
-        return total_loss, mse_loss.item(), sparsity_penalty.item()
+        return total_loss, mse_loss.item(), sparsity_penalty.item(), l1_penalty.item()
 
 
 class SparseAutoencoderConfig(PretrainedConfig):

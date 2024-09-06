@@ -105,7 +105,6 @@ def visualize_sae_features_by_position(sae, top_n=5, figsize=(20, 4)):
     features_per_position = input_dim // num_positions
 
     print(f"Assuming {num_positions} positions with {features_per_position} features per position")
-    print(f"Total input dimension: {input_dim}, Encoding dimension: {encoding_dim}")
 
     try:
         reshaped_weights = decoder_weights.reshape(num_positions, features_per_position, encoding_dim)
