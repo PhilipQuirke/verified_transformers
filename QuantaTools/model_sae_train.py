@@ -51,6 +51,9 @@ def train_sae_epoch(sae, activation_generator, epoch, learning_rate, max_grad_no
         else:
             print(f"Skipping batch due to non-finite loss: {loss.item()}")
     
+    avg_loss = 1
+    avg_sparsity = 0
+    
     if epoch+1 % 2 == 0 and epoch+1 >= 8:
         if num_batches > 0:
             avg_loss = total_loss / num_batches
@@ -67,8 +70,6 @@ def train_sae_epoch(sae, activation_generator, epoch, learning_rate, max_grad_no
                   f"Active Neurons: {final_active_neurons}/{sae.encoding_dim} ({final_active_neurons/sae.encoding_dim:.2%})")
         else:
             print(f"Epoch: {epoch+1}, No valid batches processed")
-            avg_loss = float('inf')
-            avg_sparsity = 0
     
     return avg_loss, avg_sparsity
 
