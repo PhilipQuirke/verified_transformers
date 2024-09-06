@@ -51,7 +51,7 @@ def train_sae_epoch(sae, activation_generator, epoch, learning_rate, max_grad_no
         else:
             print(f"Skipping batch due to non-finite loss: {loss.item()}")
     
-    if epoch+1 % 2 == 0:
+    if epoch+1 % 2 == 0 and epoch+1 >= 8:
         if num_batches > 0:
             avg_loss = total_loss / num_batches
             avg_mse = total_mse / num_batches
