@@ -51,27 +51,18 @@ def train_sae_epoch(sae, activation_generator, epoch, learning_rate, max_grad_no
         else:
             print(f"Skipping batch due to non-finite loss: {loss.item()}")
     
-    avg_loss = 1
-    avg_sparsity = 0
+   
+    if num_batches > 0:
+        avg_loss = total_loss / num_batches
+        avg_mse = total_mse / num_batches
+        avg_sparsity_penalty = total_sparsity_penalty / num_batches
+        avg_l1_penalty = total_l1_penalty / num_batches
+        avg_sparsity = total_sparsity / num_batches       
+        final_active_neurons = torch.sum(neuron_activity).item()
+
+        return avg_loss, avg_mse, avg_sparsity_penalty, avg_l1_penalty, avg_sparsity, final_active_neurons
     
-    if epoch+1 % 2 == 0 and epoch+1 >= 8:
-        if num_batches > 0:
-            avg_loss = total_loss / num_batches
-            avg_mse = total_mse / num_batches
-            avg_sparsity_penalty = total_sparsity_penalty / num_batches
-            avg_l1_penalty = total_l1_penalty / num_batches
-            avg_sparsity = total_sparsity / num_batches
-        
-            final_active_neurons = torch.sum(neuron_activity).item()
-        
-            print(f"Epoch: {epoch+1}, Loss: {avg_loss:.4f}, MSE: {avg_mse:.4f}, "
-                  f"Sparsity Penalty: {avg_sparsity_penalty:.4f}, L1 Penalty: {avg_l1_penalty:.4f}, "
-                  f"Sparsity: {avg_sparsity:.2%}, "
-                  f"Active Neurons: {final_active_neurons}/{sae.encoding_dim} ({final_active_neurons/sae.encoding_dim:.2%})")
-        else:
-            print(f"Epoch: {epoch+1}, No valid batches processed")
-    
-    return avg_loss, avg_sparsity
+    return total_loss, total_mse, 1, 1, 1, 100
 
 
 def analyze_mlp_with_sae(
@@ -106,6 +97,13 @@ def analyze_mlp_with_sae(
         finally:
             main_model.reset_hooks()
 
+    def print_results(sae, epoch, avg_loss, avg_mse, avg_sparsity_penalty, avg_l1_penalty, avg_sparsity, final_active_neurons):
+        print(f"Epoch: {epoch+1}, Loss: {avg_loss:.4f}, MSE: {avg_mse:.4f}, "
+            f"Sparsity Penalty: {avg_sparsity_penalty:.4f}, L1 Penalty: {avg_l1_penalty:.4f}, "
+            f"Sparsity: {avg_sparsity:.2%}, "
+            f"Active Neurons: {final_active_neurons}/{sae.encoding_dim} ({final_active_neurons/sae.encoding_dim:.2%})")
+            
+
     activation_generator = generate_mlp_activations(cfg.main_model, dataloader, layer_num)
     sample_batch = next(activation_generator)
     input_dim = sample_batch.shape[-1]
@@ -120,7 +118,7 @@ def analyze_mlp_with_sae(
 
     for epoch in range(num_epochs):
         activation_generator = generate_mlp_activations(cfg.main_model, dataloader, layer_num)
-        avg_loss, avg_sparsity = train_sae_epoch(sae, activation_generator, epoch, learning_rate)
+        avg_loss, avg_mse, avg_sparsity_penalty, avg_l1_penalty, avg_sparsity, final_active_neurons = train_sae_epoch(sae, activation_generator, epoch, learning_rate)
         
         if torch.isfinite(torch.tensor(avg_loss)):
             loss_change = abs(avg_loss - prev_avg_loss)
@@ -130,6 +128,7 @@ def analyze_mlp_with_sae(
                 no_improvement_count += 1
                 if no_improvement_count >= patience:
                     print(f"Early stopping at epoch {epoch+1} due to no significant improvement.")
+                    print_results(sae, epoch, avg_loss, avg_mse, avg_sparsity_penalty, avg_l1_penalty, avg_sparsity, final_active_neurons)
                     break
             else:
                 no_improvement_count = 0
@@ -142,8 +141,10 @@ def analyze_mlp_with_sae(
             prev_avg_sparsity = avg_sparsity
         else:
             print(f"Skipping epoch {epoch+1} due to non-finite loss.")
-    
-
+   
+        if epoch % 5 == 0 or epoch == num_epochs-1:
+            print_results(sae, epoch, avg_loss, avg_mse, avg_sparsity_penalty, avg_l1_penalty, avg_sparsity, final_active_neurons)
+            
     if save_directory is not None:
         save_sae_to_huggingface(sae, save_directory)
         
