@@ -45,6 +45,7 @@ def train_sae_epoch(sae, activation_generator, epoch, learning_rate, max_grad_no
             batch_sparsity = (encoded != 0).float().mean().item()
             total_sparsity += batch_sparsity
             
+            # Summarise which neurons have been active on at least one question in the batch
             neuron_activity = torch.logical_or(neuron_activity, torch.any(encoded != 0, dim=0))
             
             num_batches += 1
@@ -58,9 +59,9 @@ def train_sae_epoch(sae, activation_generator, epoch, learning_rate, max_grad_no
         avg_sparsity_penalty = total_sparsity_penalty / num_batches
         avg_l1_penalty = total_l1_penalty / num_batches
         avg_sparsity = total_sparsity / num_batches       
-        final_active_neurons = torch.sum(neuron_activity).item()
+        neurons_used = torch.sum(neuron_activity).item()
 
-        return avg_loss, avg_mse, avg_sparsity_penalty, avg_l1_penalty, avg_sparsity, final_active_neurons
+        return avg_loss, avg_mse, avg_sparsity_penalty, avg_l1_penalty, avg_sparsity, neurons_used
     
     return total_loss, total_mse, 1, 1, 1, 100
 
@@ -70,12 +71,12 @@ def analyze_mlp_with_sae(
         dataloader, 
         layer_num=0, 
         encoding_dim=512, 
-        num_epochs=10, 
         learning_rate=1e-3, 
         sparsity_target=0.05, 
         sparsity_weight=1e-3, 
         l1_weight=1e-4,        
         early_stopping_threshold=1e-4, 
+        num_epochs=10, 
         patience=2, 
         save_directory=None):
     
@@ -97,11 +98,12 @@ def analyze_mlp_with_sae(
         finally:
             main_model.reset_hooks()
 
-    def print_results(sae, epoch, avg_loss, avg_mse, avg_sparsity_penalty, avg_l1_penalty, avg_sparsity, final_active_neurons):
+    def print_results(sae, epoch, avg_loss, avg_mse, avg_sparsity_penalty, avg_l1_penalty, avg_sparsity, neurons_used):
         print(f"Epoch: {epoch+1}, Loss: {avg_loss:.4f}, MSE: {avg_mse:.4f}, "
-            f"Sparsity Penalty: {avg_sparsity_penalty:.4f}, L1 Penalty: {avg_l1_penalty:.4f}, "
-            f"Sparsity: {avg_sparsity:.2%}, "
-            f"Active Neurons: {final_active_neurons}/{sae.encoding_dim} ({final_active_neurons/sae.encoding_dim:.2%})")
+            f"Sparsity Penalty: {avg_sparsity_penalty:.4f}, "
+            f"L1 Penalty: {avg_l1_penalty:.4f}, "
+            f"Sparsity: {avg_sparsity:.2%}, "  # Measure of activation frequency
+            f"Neurons used: {neurons_used}/{sae.encoding_dim} ({neurons_used/sae.encoding_dim:.2%})") # Fraction of neurons used on at least one question
             
 
     activation_generator = generate_mlp_activations(cfg.main_model, dataloader, layer_num)
@@ -114,11 +116,12 @@ def analyze_mlp_with_sae(
     prev_avg_sparsity = 0
     best_avg_loss = float('inf')
     best_avg_sparsity = 0
+    neurons_used = 0
     no_improvement_count = 0
 
     for epoch in range(num_epochs):
         activation_generator = generate_mlp_activations(cfg.main_model, dataloader, layer_num)
-        avg_loss, avg_mse, avg_sparsity_penalty, avg_l1_penalty, avg_sparsity, final_active_neurons = train_sae_epoch(sae, activation_generator, epoch, learning_rate)
+        avg_loss, avg_mse, avg_sparsity_penalty, avg_l1_penalty, avg_sparsity, neurons_used = train_sae_epoch(sae, activation_generator, epoch, learning_rate)
         
         if torch.isfinite(torch.tensor(avg_loss)):
             loss_change = abs(avg_loss - prev_avg_loss)
@@ -128,7 +131,7 @@ def analyze_mlp_with_sae(
                 no_improvement_count += 1
                 if no_improvement_count >= patience:
                     print(f"Early stopping at epoch {epoch+1} due to no significant improvement.")
-                    print_results(sae, epoch, avg_loss, avg_mse, avg_sparsity_penalty, avg_l1_penalty, avg_sparsity, final_active_neurons)
+                    print_results(sae, epoch, avg_loss, avg_mse, avg_sparsity_penalty, avg_l1_penalty, avg_sparsity, neurons_used)
                     break
             else:
                 no_improvement_count = 0
@@ -143,12 +146,12 @@ def analyze_mlp_with_sae(
             print(f"Skipping epoch {epoch+1} due to non-finite loss.")
    
         if epoch % 5 == 0 or epoch == num_epochs-1:
-            print_results(sae, epoch, avg_loss, avg_mse, avg_sparsity_penalty, avg_l1_penalty, avg_sparsity, final_active_neurons)
+            print_results(sae, epoch, avg_loss, avg_mse, avg_sparsity_penalty, avg_l1_penalty, avg_sparsity, neurons_used)
             
     if save_directory is not None:
         save_sae_to_huggingface(sae, save_directory)
         
-    return sae, best_avg_loss, best_avg_sparsity
+    return sae, best_avg_loss, best_avg_sparsity, neurons_used
 
 
 # Want an SAE with:
@@ -173,25 +176,30 @@ def optimize_sae_hyperparameters(cfg, dataloader, layer_num=0):
     best_score = float('inf')
     best_params = None
     best_sae = None
+    best_active_neurons = 0
 
     for params in grid:
+        print()
         print(f"Testing parameters: {params}")
-        sae, avg_loss, avg_sparsity = analyze_mlp_with_sae(
+        sae, avg_loss, avg_sparsity, neurons_used = analyze_mlp_with_sae(
             cfg, 
             dataloader, 
             layer_num=layer_num, 
             encoding_dim=params['encoding_dim'],
-            num_epochs=params['num_epochs'],
             learning_rate=params['learning_rate'],
             sparsity_target=params['sparsity_target'],
             sparsity_weight=params['sparsity_weight'],
             l1_weight=params['l1_weight'],
+            num_epochs=params['num_epochs'],
+            patience=params['patience'],
         )
 
         # Calculate a score that balances loss and sparsity
-        # You can adjust the weights of loss and sparsity in this score calculation
         if torch.isfinite(torch.tensor(avg_loss)):
-            score = avg_loss + 10 * (avg_sparsity - params['sparsity_target'])**2
+            fraction_neurons_active = 1.0 * neurons_used / sae.encoding_dim
+            score = ( avg_loss * 50 + # Penalty for high loss. Loss is can be ~0.02 hence the scaling factor.
+                    avg_sparsity + # Sparsity is based on the number of active neurons. Penalize a high value. In range [0, 1]
+                    fraction_neurons_active ) # Penalize a high number of active neurons. In range [0, 1]
         else:
             score = float('inf')
 
@@ -199,11 +207,10 @@ def optimize_sae_hyperparameters(cfg, dataloader, layer_num=0):
             best_score = score
             best_params = params
             best_sae = sae
-            print(f"Interim best parameters: {best_params}")
-            print(f"Interim best score: {best_score}")
+            best_active_neurons = neurons_used
+            print(f"Interim best: Score: {best_score}, Neurons: {best_active_neurons}, Params {best_params}")
     
-    print(f"Final best parameters: {best_params}")
-    print(f"Final best score: {best_score}")
+    print(f"Final best: Score: {best_score}, Neurons: {best_active_neurons}, Params {best_params}")
 
-    return best_sae, best_params, best_score
+    return best_sae, best_score, best_active_neurons, best_params
 
