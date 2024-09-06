@@ -83,6 +83,7 @@ def analyze_mlp_with_sae(
         learning_rate=1e-3, 
         sparsity_target=0.05, 
         sparsity_weight=1e-3, 
+        l1_weight=1e-4,        
         early_stopping_threshold=1e-4, 
         patience=2, 
         save_directory=None):
@@ -109,7 +110,7 @@ def analyze_mlp_with_sae(
     sample_batch = next(activation_generator)
     input_dim = sample_batch.shape[-1]
 
-    sae = AdaptiveSparseAutoencoder(encoding_dim, input_dim, sparsity_target, sparsity_weight).cuda()
+    sae = AdaptiveSparseAutoencoder(encoding_dim, input_dim, sparsity_target, sparsity_weight, l1_weight).cuda()
 
     prev_avg_loss = float('inf')
     prev_avg_sparsity = 0
