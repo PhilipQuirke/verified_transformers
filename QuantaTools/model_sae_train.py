@@ -157,18 +157,19 @@ def analyze_mlp_with_sae(
 # Want an SAE with:
 # - Low Avg Loss and Avg MSE (good reconstruction)
 # - Lower number of Final Active Neurons (more sparse representation)
-def optimize_sae_hyperparameters(cfg, dataloader, layer_num=0):
+def optimize_sae_hyperparameters(cfg, dataloader, layer_num=0, param_grid=None):
     
     # Define the hyperparameter grid
-    param_grid = {
-        'encoding_dim': [64], #[32, 64, 128, 256, 512],
-        'learning_rate': [1e-4, 1e-3], # [1e-4, 1e-3, 1e-2],
-        'sparsity_target': [0.05, 0.1], # [0.001, 0.005, 0.01, 0.05, 0.1],
-        'sparsity_weight': [0.1], #[1e-3, 1e-2, 1e-1, 1.0],
-        'l1_weight': [1e-5, 1e-4],  # [1e-6, 1e-5, 1e-4, 1e-3],       
-        'num_epochs': [20],
-        'patience': [2]
-    }
+    if param_grid is None:
+        param_grid = {
+            'encoding_dim': [64], #[32, 64, 128, 256, 512],
+            'learning_rate': [1e-4, 1e-3], # [1e-4, 1e-3, 1e-2],
+            'sparsity_target': [0.05, 0.1], # [0.001, 0.005, 0.01, 0.05, 0.1],
+            'sparsity_weight': [0.1], #[1e-3, 1e-2, 1e-1, 1.0],
+            'l1_weight': [1e-5, 1e-4],  # [1e-6, 1e-5, 1e-4, 1e-3],       
+            'num_epochs': [20],
+            'patience': [2]
+        }
 
     # Generate all combinations of hyperparameters
     grid = ParameterGrid(param_grid)
