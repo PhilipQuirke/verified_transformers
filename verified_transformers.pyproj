@@ -11,7 +11,7 @@
     <OutputPath>.</OutputPath>
     <ProjectTypeGuids>{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
-    <InterpreterId />
+    <InterpreterId>Global|VisualStudio|3.11.3</InterpreterId>
     <TestFramework>pytest</TestFramework>
     <UnitTestPattern>test*.py</UnitTestPattern>
     <UnitTestRootDirectory>.</UnitTestRootDirectory>
@@ -93,6 +93,9 @@
     <Content Include="QuantaTools\maths_tools\maths_test_questions\__pycache__\test_questions_checker.cpython-311.pyc" />
     <Content Include="QuantaTools\maths_tools\maths_test_questions\__pycache__\tricase_test_questions_generator.cpython-311.pyc" />
     <Content Include="QuantaTools\maths_tools\maths_test_questions\__pycache__\__init__.cpython-311.pyc" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterpreterReference Include="Global|VisualStudio|3.11.3" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
 </Project>
