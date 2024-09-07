@@ -147,11 +147,19 @@ def analyze_mlp_with_sae(
    
         if epoch % 5 == 0 or epoch == num_epochs-1:
             print_results(sae, epoch, avg_loss, avg_mse, avg_sparsity_penalty, avg_l1_penalty, avg_sparsity, neurons_used)
+    
+        # Calculate a score that balances loss, sparsity and interpretability
+        score = float('inf')         
+        if torch.isfinite(torch.tensor(avg_loss)):
+            fraction_neurons_active = 1.0 * neurons_used / sae.encoding_dim
+            score = ( best_avg_loss * 50 + # Penalty for high loss. Loss is can be ~0.02 hence the scaling factor.
+                    best_avg_sparsity + # Sparsity is based on the number of active neurons. Penalize a high value. In range [0, 1]
+                    fraction_neurons_active ) # Penalize a high number of active neurons. In range [0, 1]
             
     if save_directory is not None:
         save_sae_to_huggingface(sae, save_directory)
         
-    return sae, best_avg_loss, best_avg_sparsity, neurons_used
+    return sae, score, best_avg_loss, best_avg_sparsity, neurons_used
 
 
 # Want an SAE with:
@@ -176,12 +184,12 @@ def optimize_sae_hyperparameters(cfg, dataloader, layer_num=0):
     best_score = float('inf')
     best_params = None
     best_sae = None
-    best_active_neurons = 0
+    best_neurons_used = 0
 
     for params in grid:
         print()
         print(f"Testing parameters: {params}")
-        sae, avg_loss, avg_sparsity, neurons_used = analyze_mlp_with_sae(
+        sae, score, avg_loss, avg_sparsity, neurons_used = analyze_mlp_with_sae(
             cfg, 
             dataloader, 
             layer_num=layer_num, 
@@ -194,23 +202,14 @@ def optimize_sae_hyperparameters(cfg, dataloader, layer_num=0):
             patience=params['patience'],
         )
 
-        # Calculate a score that balances loss and sparsity
-        if torch.isfinite(torch.tensor(avg_loss)):
-            fraction_neurons_active = 1.0 * neurons_used / sae.encoding_dim
-            score = ( avg_loss * 50 + # Penalty for high loss. Loss is can be ~0.02 hence the scaling factor.
-                    avg_sparsity + # Sparsity is based on the number of active neurons. Penalize a high value. In range [0, 1]
-                    fraction_neurons_active ) # Penalize a high number of active neurons. In range [0, 1]
-        else:
-            score = float('inf')
-
         if score < best_score:
             best_score = score
             best_params = params
             best_sae = sae
-            best_active_neurons = neurons_used
-            print(f"Interim best: Score: {best_score}, Neurons: {best_active_neurons}, Params {best_params}")
+            best_neurons_used = neurons_used
+            print(f"Interim best: Score: {best_score}, Neurons: {best_neurons_used}, Params {best_params}")
     
-    print(f"Final best: Score: {best_score}, Neurons: {best_active_neurons}, Params {best_params}")
+    print(f"Final best: Score: {best_score}, Neurons: {best_neurons_used}, Params {best_params}")
 
-    return best_sae, best_score, best_active_neurons, best_params
+    return best_sae, best_score, best_neurons_used, best_params
 
