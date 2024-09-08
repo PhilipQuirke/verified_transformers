@@ -152,7 +152,7 @@ def analyze_mlp_with_sae(
         score = float('inf')         
         if torch.isfinite(torch.tensor(avg_loss)):
             fraction_neurons_active = 1.0 * neurons_used / sae.encoding_dim
-            score = ( best_avg_loss * 50 + # Penalty for high loss. Loss is can be ~0.02 hence the scaling factor.
+            score = ( best_avg_loss * 100 + # Penalty for high loss. Loss is can be ~0.02 hence the scaling factor.
                     best_avg_sparsity + # Sparsity is based on the number of active neurons. Penalize a high value. In range [0, 1]
                     fraction_neurons_active ) # Penalize a high number of active neurons. In range [0, 1]
             
