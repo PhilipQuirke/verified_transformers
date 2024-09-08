@@ -98,8 +98,18 @@ def analyze_mlp_with_sae(
         finally:
             main_model.reset_hooks()
 
+    # Calculate a score that balances loss, sparsity and interpretability
+    def get_score(sae, avg_loss, avg_sparsity, neurons_used):        
+        if torch.isfinite(torch.tensor(avg_loss)):
+            fraction_neurons_active = 1.0 * neurons_used / sae.encoding_dim
+            return ( avg_loss * 100 + # Penalty for high loss. Loss is can be ~0.02 hence the scaling factor.
+                    avg_sparsity + # Sparsity is based on the number of active neurons. Penalize a high value. In range [0, 1]
+                    fraction_neurons_active ) # Penalize a high number of active neurons. In range [0, 1]
+        return float('inf')   
+
     def print_results(sae, epoch, avg_loss, avg_mse, avg_sparsity_penalty, avg_l1_penalty, avg_sparsity, neurons_used):
-        print(f"Epoch: {epoch+1}, Loss: {avg_loss:.4f}, MSE: {avg_mse:.4f}, "
+        print(f"Epoch: {epoch+1}, Score: {get_score(sae, avg_loss, avg_sparsity, neurons_used):.4f}, "
+            f"Loss: {avg_loss:.4f}, MSE: {avg_mse:.4f}, "
             f"Sparsity Penalty: {avg_sparsity_penalty:.4f}, "
             f"L1 Penalty: {avg_l1_penalty:.4f}, "
             f"Sparsity: {avg_sparsity:.2%}, "  # Measure of activation frequency
@@ -149,12 +159,7 @@ def analyze_mlp_with_sae(
             print_results(sae, epoch, avg_loss, avg_mse, avg_sparsity_penalty, avg_l1_penalty, avg_sparsity, neurons_used)
     
         # Calculate a score that balances loss, sparsity and interpretability
-        score = float('inf')         
-        if torch.isfinite(torch.tensor(avg_loss)):
-            fraction_neurons_active = 1.0 * neurons_used / sae.encoding_dim
-            score = ( best_avg_loss * 100 + # Penalty for high loss. Loss is can be ~0.02 hence the scaling factor.
-                    best_avg_sparsity + # Sparsity is based on the number of active neurons. Penalize a high value. In range [0, 1]
-                    fraction_neurons_active ) # Penalize a high number of active neurons. In range [0, 1]
+        score = get_score(sae, avg_loss, avg_sparsity, neurons_used)     
             
     if save_directory is not None:
         save_sae_to_huggingface(sae, save_directory)
