@@ -1,3 +1,5 @@
+import os
+import json
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -170,7 +172,7 @@ def analyze_mlp_with_sae(
 # Want an SAE with:
 # - Low Avg Loss and Avg MSE (good reconstruction)
 # - Lower number of Final Active Neurons (more sparse representation)
-def optimize_sae_hyperparameters(cfg, dataloader, layer_num=0, param_grid=None):
+def optimize_sae_hyperparameters(cfg, dataloader, layer_num=0, param_grid=None, save_folder=None):
     
     # Define the hyperparameter grid
     if param_grid is None:
@@ -192,6 +194,7 @@ def optimize_sae_hyperparameters(cfg, dataloader, layer_num=0, param_grid=None):
     best_sae = None
     best_neurons_used = 0
 
+    experiment_num = 0
     for params in grid:
         print()
         print(f"Testing parameters: {params}")
@@ -208,14 +211,36 @@ def optimize_sae_hyperparameters(cfg, dataloader, layer_num=0, param_grid=None):
             patience=params['patience'],
         )
 
+        if save_folder is not None:
+            # Save the trained SAE
+            model_path = os.path.join(save_folder, f"sae{experiment_num}_model.pth")
+            torch.save(best_sae.state_dict(), model_path)
+
+            # Save the params
+            json_path = os.path.join(save_folder, f"sae{experiment_num}_params.json")
+            with open(json_path, 'w') as f:
+                json.dump(best_params, f, indent=4)
+
         if score < best_score:
             best_score = score
             best_params = params
             best_sae = sae
             best_neurons_used = neurons_used
-            print(f"Interim best: Score: {best_score}, Neurons: {best_neurons_used}, Params {best_params}")
+            print(f"Interim best: Score: {best_score:.4f}, Neurons: {best_neurons_used}, Params {best_params}")
+
+        experiment_num += 1
     
-    print(f"Final best: Score: {best_score}, Neurons: {best_neurons_used}, Params {best_params}")
+    print(f"Final best: Score: {best_score:.4f}, Neurons: {best_neurons_used}, Params {best_params}")
+
+    if save_folder is not None:
+        # Save the trained SAE
+        model_path = os.path.join(save_folder, f"sae_best_model.pth")
+        torch.save(best_sae.state_dict(), model_path)
+
+        # Save the params
+        json_path = os.path.join(save_folder, "sae_best_params.json")
+        with open(json_path, 'w') as f:
+            json.dump(best_params, f, indent=4)
 
     return best_sae, best_score, best_neurons_used, best_params
 

@@ -1,0 +1,4 @@
+[tool.ruff]
+# Add your configuration options here
+# For example, to enable specific rules:
+select = ["E", "F", "W"]

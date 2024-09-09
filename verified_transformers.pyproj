@@ -72,6 +72,7 @@
     <Compile Include="QuantaTools\useful_node.py" />
     <Compile Include="QuantaTools\__init__.py" />
     <Compile Include="setup.py" />
+    <Compile Include="Tests\tests_sae.py" />
     <Compile Include="Tests\tests_huggingface.py" />
     <Compile Include="Tests\tests_suite.py" />
     <Compile Include="Tests\tests_useful.py" />
@@ -89,6 +90,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include=".github\dependabot.yml" />
+    <Content Include="pyproject.toml" />
     <Content Include="QuantaTools\maths_tools\maths_test_questions\__pycache__\manual_test_questions_generator.cpython-311.pyc" />
     <Content Include="QuantaTools\maths_tools\maths_test_questions\__pycache__\test_questions_checker.cpython-311.pyc" />
     <Content Include="QuantaTools\maths_tools\maths_test_questions\__pycache__\tricase_test_questions_generator.cpython-311.pyc" />
