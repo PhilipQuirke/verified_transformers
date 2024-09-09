@@ -14,7 +14,7 @@ from QuantaTools.model_sae_train import analyze_mlp_with_sae, optimize_sae_hyper
 
 class TestSae(unittest.TestCase):
 
-    def load_model(self):
+    def load_model(self, num_batches):
 
         cfg = MathsConfig()
         cfg.model_name = "ins1_mix_d6_l3_h4_t40K_s372001" 
@@ -37,16 +37,17 @@ class TestSae(unittest.TestCase):
             cfg.main_model.load_state_dict(state_dict)
             cfg.main_model.eval()
 
-        dataloader = get_mixed_maths_dataloader(cfg, num_batches=1000, enrich_data=True)
+        dataloader = get_mixed_maths_dataloader(cfg, num_batches=num_batches, enrich_data=True)
         #print("Data set size", len(dataloader.dataset))  
 
         return cfg, dataloader
 
 
+    # Test that the code runs on a small data set
     def test_sae_single(self):
-        cfg, dataloader = self.load_model()
+        cfg, dataloader = self.load_model(num_batches=10)
 
-        sae, score, loss, sparsity, neurons_used = analyze_mlp_with_sae(cfg, dataloader, layer_num=0, encoding_dim=64, learning_rate=0.001, sparsity_target=0.05, sparsity_weight=0.1, num_epochs=10)
+        sae, score, loss, sparsity, neurons_used = analyze_mlp_with_sae(cfg, dataloader, layer_num=0, encoding_dim=64, learning_rate=0.001, sparsity_target=0.05, sparsity_weight=0.1, num_epochs=2)
         print( f"Score: {score:.4f}, Loss {loss:.4f}, Sparsity {sparsity:.4f}, Neurons Used: {neurons_used}.")
 
 
@@ -57,7 +58,7 @@ class TestSae(unittest.TestCase):
     def test_sae_sweep(self, full : bool = False):
 
         if full:
-            cfg, dataloader = self.load_model()
+            cfg, dataloader = self.load_model(num_batches=100)
 
             param_grid = {
                 'encoding_dim': [32, 64, 128, 256, 512],

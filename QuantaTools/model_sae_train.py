@@ -171,7 +171,8 @@ def analyze_mlp_with_sae(
 
 # Want an SAE with:
 # - Low Avg Loss and Avg MSE (good reconstruction)
-# - Lower number of Final Active Neurons (more sparse representation)
+# - Lower sparsity (fewer neurons firing per prediction)
+# - Lower number of Final Active Neurons (easier interpretability)
 def optimize_sae_hyperparameters(cfg, dataloader, layer_num=0, param_grid=None, save_folder=None):
     
     # Define the hyperparameter grid
