@@ -238,7 +238,7 @@ def optimize_sae_hyperparameters(cfg, dataloader, layer_num=0, param_grid=None, 
             torch.save(this_sae.state_dict(), model_path)
             save_json( f"sae{experiment_num}_params.json", this_json)
 
-        if best_sae is None or score < best_json.results.score:
+        if best_json is None or score < best_json["score"]:
             best_json = this_json
             best_sae = this_sae
             print(f"Better: Score: {score:.4f}, Neurons: {neurons_used}, Params {params}")

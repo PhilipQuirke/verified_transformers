@@ -54,7 +54,7 @@ class TestSae(unittest.TestCase):
     # pytest -v -s -k "test_sae_sweep[full]"
     # pytest -v -s -k "test_sae_sweep[quick]"
     @pytest.mark.parametrize("full", [pytest.param(False, id="quick"), pytest.param(True, id="full")])
-    def test_sae_sweep(self, full : bool = False):
+    def test_sae_sweep(self, full : bool = True):
 
         if full:
             # This takes > 1 hour to run
