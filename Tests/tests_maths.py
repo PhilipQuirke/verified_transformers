@@ -505,10 +505,11 @@ class TestMaths(unittest.TestCase):
         ht_cfg.device = torch.device("cpu")
         cfg.main_model = HookedTransformer(ht_cfg)
 
-        main_repo_name="PhilipQuirke/VerifiedArithmetic"
-        main_fname_pth="ins1_mix_d6_l2_h3_t40K_s572091.pth"
-        # cfg.main_model.load_state_dict(download_file_from_hf(repo_name=main_repo_name, file_name=main_fname_pth, force_is_torch=True))
-        # cfg.main_model.eval()
+        local_model_path = r"C:\Users\phili\source\repos\VerifiedArithmetic\ins1_mix_d6_l3_h4_t40K_s372001.pth"
+        state_dict = torch.load(local_model_path, weights_only=True)
+
+        cfg.main_model.load_state_dict(state_dict)
+        cfg.main_model.eval()
 
         # Calculate one Principal Component Analysis on test_inputs.
-        # calc_pca_for_an(cfg, the_locn, test_inputs, "test_pca", "error_message")
+        calc_pca_for_an(cfg, the_locn, test_inputs, "test_pca", "error_message")

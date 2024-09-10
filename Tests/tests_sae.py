@@ -38,7 +38,6 @@ class TestSae(unittest.TestCase):
             cfg.main_model.eval()
 
         dataloader = get_mixed_maths_dataloader(cfg, num_batches=num_batches, enrich_data=True)
-        #print("Data set size", len(dataloader.dataset))  
 
         return cfg, dataloader
 
@@ -58,10 +57,10 @@ class TestSae(unittest.TestCase):
     def test_sae_sweep(self, full : bool = False):
 
         if full:
-            cfg, dataloader = self.load_model(num_batches=100)
-
+            # This takes > 1 hour to run
+            num_batches = 100
             param_grid = {
-                'encoding_dim': [32, 64, 128, 256, 512],
+                 'encoding_dim': [32, 64, 128, 256, 512],
                 'learning_rate': [1e-4, 1e-3, 1e-2],
                 'sparsity_target': [0.01, 0.05, 0.1, 0.25],
                 'sparsity_weight': [1e-2, 1e-1, 1.0],
@@ -69,13 +68,25 @@ class TestSae(unittest.TestCase):
                 'num_epochs': [10],
                 'patience': [2]
             }
+        else:
+            # This takes ~1 minute to run
+            num_batches = 10
+            param_grid = {
+                'encoding_dim': [64],
+                'learning_rate': [1e-4],
+                'sparsity_target': [ 0.1],
+                'sparsity_weight': [1e-2],
+                'l1_weight': [1e-2], 
+                'num_epochs': [10],
+                'patience': [2]
+            }
 
-            num_experiments = 1
-            for param_values in param_grid.values():
-                num_experiments *= len(param_values)
+        cfg, dataloader = self.load_model(num_batches=num_batches)
 
-            print(f"Number of configurations to test: {num_experiments}")
+        num_experiments = 1
+        for param_values in param_grid.values():
+            num_experiments *= len(param_values)
+        print(f"Number of configurations to test: {num_experiments}")
 
-            # This takes > 1 hour to run
-            save_folder = "D:\\AI\\TRAINSAE\\"
-            sae, score, neurons_used, params = optimize_sae_hyperparameters(cfg, dataloader, layer_num=0, param_grid=param_grid, save_folder=save_folder)
+        save_folder = "D:\\AI\\UnitTestSae\\"
+        sae, score, neurons_used, params = optimize_sae_hyperparameters(cfg, dataloader, layer_num=0, param_grid=param_grid, save_folder=save_folder)
