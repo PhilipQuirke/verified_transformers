@@ -175,8 +175,6 @@ def analyze_mlp_with_sae(
 # - Lower sparsity (fewer neurons firing per prediction)
 # - Lower number of Final Active Neurons (easier interpretability)
 def optimize_sae_hyperparameters(cfg, dataloader, layer_num=0, param_grid=None, save_folder=None):
-    
-    # Define the hyperparameter grid
     if param_grid is None:
         param_grid = {
             'encoding_dim': [32, 64, 128, 256, 512],
@@ -188,9 +186,6 @@ def optimize_sae_hyperparameters(cfg, dataloader, layer_num=0, param_grid=None, 
             'patience': [2]
         }
 
-
-
-    # Save the params and results
     def save_json(file_name, data_to_save):
         json_path = os.path.join(save_folder, file_name)
         try:
@@ -201,55 +196,63 @@ def optimize_sae_hyperparameters(cfg, dataloader, layer_num=0, param_grid=None, 
         except json.JSONDecodeError as e:
             print(f"An error occurred while encoding JSON: {e}")
 
+    def load_json(file_name):
+        json_path = os.path.join(save_folder, file_name)
+        try:
+            with open(json_path, 'r') as f:
+                return json.load(f)
+        except FileNotFoundError:
+            return None
+        except json.JSONDecodeError as e:
+            print(f"An error occurred while decoding JSON: {e}")
+            return None
 
-
-    # Generate all combinations of hyperparameters
     grid = ParameterGrid(param_grid)
 
-    best_sae = None
     best_json = None
 
     experiment_num = 0
     for params in grid:
-        print()
-        print(f"Testing parameters: {params}")
-        this_sae, score, avg_loss, avg_sparsity, neurons_used = analyze_mlp_with_sae(
-            cfg, 
-            dataloader, 
-            layer_num=layer_num, 
-            encoding_dim=params['encoding_dim'],
-            learning_rate=params['learning_rate'],
-            sparsity_target=params['sparsity_target'],
-            sparsity_weight=params['sparsity_weight'],
-            l1_weight=params['l1_weight'],
-            num_epochs=params['num_epochs'],
-            patience=params['patience'],
-        )
+        
+        # Check if this experiment has already been run
+        this_json = load_json(f"sae{experiment_num}_params.json")
+        if this_json is not None:
+            print(f"\nLoading experiment: {experiment_num}. Score: {this_json['score']:.4f}, Neurons: {this_json['neurons_used']}, Params {params}")
 
-        this_json = {
-            "parameters": params,
-            "score": score,
-            "neurons_used": neurons_used
-        }
+        else:
+            print(f"\nRunning Experiment: {experiment_num} Params: {params}")
+            this_sae, score, avg_loss, avg_sparsity, neurons_used = analyze_mlp_with_sae(
+                cfg, 
+                dataloader, 
+                layer_num=layer_num, 
+                encoding_dim=params['encoding_dim'],
+                learning_rate=params['learning_rate'],
+                sparsity_target=params['sparsity_target'],
+                sparsity_weight=params['sparsity_weight'],
+                l1_weight=params['l1_weight'],
+                num_epochs=params['num_epochs'],
+                patience=params['patience'],
+            )
 
-        if save_folder is not None:
-            # Save the trained SAE, params and results
-            model_path = os.path.join(save_folder, f"sae{experiment_num}_model.pth")
-            torch.save(this_sae.state_dict(), model_path)
-            save_json( f"sae{experiment_num}_params.json", this_json)
+            this_json = {
+                "parameters": params,
+                "score": score,
+                "neurons_used": neurons_used
+            }
 
-        if best_json is None or score < best_json["score"]:
+            if save_folder is not None:
+                model_path = os.path.join(save_folder, f"sae{experiment_num}_model.pth")
+                torch.save(this_sae.state_dict(), model_path)
+                save_json(f"sae{experiment_num}_params.json", this_json)
+
+        if best_json is None or this_json["score"] < best_json["score"]:
             best_json = this_json
-            best_sae = this_sae
-            print(f"Better: Score: {score:.4f}, Neurons: {neurons_used}, Params {params}")
+            print(f"Better: Score: {this_json['score']:.4f}, Neurons: {this_json['neurons_used']}, Params {params}")
 
         experiment_num += 1
 
     if save_folder is not None:
-        # Save the best trained SAE, params and results
         model_path = os.path.join(save_folder, f"sae_best_model.pth")
-        torch.save(best_sae.state_dict(), model_path)
-        save_json( "sae_best_params.json", best_json)
+        save_json("sae_best_params.json", best_json)
 
-    return best_sae, best_json["score"], best_json["neurons_used"], best_json["parameters"]
-
+    return best_json["score"], best_json["neurons_used"], best_json["parameters"]

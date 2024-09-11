@@ -55,12 +55,10 @@ class TestSae(unittest.TestCase):
     # pytest -v -s -k "test_sae_sweep[quick]"
     @pytest.mark.parametrize("full", [pytest.param(False, id="quick"), pytest.param(True, id="full")])
     def test_sae_sweep(self, full : bool = True):
-
         if full:
-            # This takes > 1 hour to run
             num_batches = 100
             param_grid = {
-                 'encoding_dim': [32, 64, 128, 256, 512],
+                'encoding_dim': [32, 64, 128, 256, 512],
                 'learning_rate': [1e-4, 1e-3, 1e-2],
                 'sparsity_target': [0.01, 0.05, 0.1, 0.25],
                 'sparsity_weight': [1e-2, 1e-1, 1.0],
@@ -69,12 +67,11 @@ class TestSae(unittest.TestCase):
                 'patience': [2]
             }
         else:
-            # This takes ~1 minute to run
             num_batches = 10
             param_grid = {
                 'encoding_dim': [64],
                 'learning_rate': [1e-4],
-                'sparsity_target': [ 0.1],
+                'sparsity_target': [0.1],
                 'sparsity_weight': [1e-2],
                 'l1_weight': [1e-2], 
                 'num_epochs': [10],
@@ -89,4 +86,9 @@ class TestSae(unittest.TestCase):
         print(f"Number of configurations to test: {num_experiments}")
 
         save_folder = "D:\\AI\\UnitTestSae\\"
-        sae, score, neurons_used, params = optimize_sae_hyperparameters(cfg, dataloader, layer_num=0, param_grid=param_grid, save_folder=save_folder)
+        score, neurons_used, params = optimize_sae_hyperparameters(cfg, dataloader, layer_num=0, param_grid=param_grid, save_folder=save_folder)
+
+        print(f"\nBest configuration:")
+        print(f"Score: {score:.4f}")
+        print(f"Neurons used: {neurons_used}")
+        print(f"Parameters: {params}")
