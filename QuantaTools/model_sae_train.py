@@ -217,7 +217,7 @@ def optimize_sae_hyperparameters(cfg, dataloader, layer_num=0, param_grid=None, 
         # Check if this experiment has already been run
         this_json = load_json(f"sae{experiment_num}_params.json")
         if this_json is not None:
-            print(f"\nLoading experiment: {experiment_num}. Score: {this_json['score']:.4f}, Neurons: {this_json['neurons_used']}, Params {params}")
+            print(f"\nLoading experiment: {experiment_num}. Score: {this_json['score']:.4f}, Neurons used: {this_json['neurons_used']}, Params {params}")
 
         else:
             print(f"\nRunning Experiment: {experiment_num} Params: {params}")
@@ -237,6 +237,8 @@ def optimize_sae_hyperparameters(cfg, dataloader, layer_num=0, param_grid=None, 
             this_json = {
                 "parameters": params,
                 "score": score,
+                "avg_loss": avg_loss, 
+                "avg_sparsity": avg_sparsity,
                 "neurons_used": neurons_used
             }
 
@@ -246,8 +248,14 @@ def optimize_sae_hyperparameters(cfg, dataloader, layer_num=0, param_grid=None, 
                 save_json(f"sae{experiment_num}_params.json", this_json)
 
         if best_json is None or this_json["score"] < best_json["score"]:
+            this_loss = 1000 if this_json.get('avg_loss') is None else this_json['avg_loss']
+            this_sparsity = 100 if this_json.get('avg_sparsity') is None else this_json['avg_sparsity']
+            print(f"Better: Score: {this_json['score']:.4f}, "
+                  f"Loss: {this_loss:.4f} "
+                  f"Sparsity: {this_sparsity:.4f}, "
+                  f"Neurons: {this_json['neurons_used']}, "
+                  f"Params: {params}")
             best_json = this_json
-            print(f"Better: Score: {this_json['score']:.4f}, Neurons: {this_json['neurons_used']}, Params {params}")
 
         experiment_num += 1
 
