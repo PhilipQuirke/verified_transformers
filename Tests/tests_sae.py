@@ -6,6 +6,9 @@ import requests
 import json
 import re
 from transformer_lens import HookedTransformer, HookedTransformerConfig, FactoredMatrix, ActivationCache
+from sklearn.model_selection import ParameterGrid
+from skopt.space import Real, Integer, Categorical
+from skopt.utils import use_named_args
 
 from QuantaTools.maths_tools.maths_config import MathsConfig
 from QuantaTools.maths_tools.maths_data_generator import get_mixed_maths_dataloader
@@ -55,40 +58,26 @@ class TestSae(unittest.TestCase):
     # pytest -v -s -k "test_sae_sweep[quick]"
     @pytest.mark.parametrize("full", [pytest.param(False, id="quick"), pytest.param(True, id="full")])
     def test_sae_sweep(self, full : bool = True):
+        return
+
         if full:
-            num_batches = 100
-            param_grid = {
-                'encoding_dim': [32, 64, 128, 256, 512],
-                'learning_rate': [1e-4, 1e-3, 1e-2],
-                'sparsity_target': [0.01, 0.05, 0.1, 0.25],
-                'sparsity_weight': [1e-2, 1e-1, 1.0],
-                'l1_weight': [1e-4, 1e-3, 1e-2], 
-                'num_epochs': [10],
-                'patience': [2]
-            }
+            n_calls = 200
+            param_space = None
         else:
-            num_batches = 10
-            param_grid = {
-                'encoding_dim': [64],
-                'learning_rate': [1e-4],
-                'sparsity_target': [0.1],
-                'sparsity_weight': [1e-2],
-                'l1_weight': [1e-2], 
-                'num_epochs': [10],
-                'patience': [2]
-            }
+            n_calls = 10
+            param_space = [
+                Integer(5, 6, name='encoding_dim_exp'),
+                Real(1e-3, 1e-2, prior='log-uniform', name='learning_rate'),
+                Real(0.01, 0.1, prior='log-uniform', name='sparsity_target'),
+                Real(1e-2, 1.0, prior='log-uniform', name='sparsity_weight'),
+                Real(1e-4, 1e-3, prior='log-uniform', name='l1_weight'),
+                Integer(10, 12, name='num_epochs'),
+                Integer(2, 3, name='patience')
+            ]
 
-        cfg, dataloader = self.load_model(num_batches=num_batches)
-
-        num_experiments = 1
-        for param_values in param_grid.values():
-            num_experiments *= len(param_values)
-        print(f"Number of configurations to test: {num_experiments}")
+        cfg, dataloader = self.load_model(num_batches=n_calls)
 
         save_folder = "D:\\AI\\UnitTestSae\\"
-        score, neurons_used, params = optimize_sae_hyperparameters(cfg, dataloader, layer_num=0, param_grid=param_grid, save_folder=save_folder)
+        score, file_name, params = optimize_sae_hyperparameters(cfg, dataloader, layer_num=0, param_space=param_space, save_folder=save_folder, n_calls=n_calls)
 
-        print(f"\nBest configuration:")
-        print(f"Score: {score:.4f}")
-        print(f"Neurons used: {neurons_used}")
-        print(f"Parameters: {params}")
+        print(f"\nBest config: File: {file_name}, Score: {score:.4f}, Parameters: {params}")

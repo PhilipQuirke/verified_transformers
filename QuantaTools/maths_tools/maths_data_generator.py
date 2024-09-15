@@ -149,7 +149,6 @@ def maths_data_generator_multiplication( cfg, enrich_data=True ):
 # Define "iterator" maths "questions" data generator function. Invoked using next().
 # Generates an (optionally enriched) data batch containing ONE maths operation.
 def maths_data_generator( cfg, enrich_data=True ):
-    torch.manual_seed(cfg.analysis_seed)
     while True:
 
         batch_rand = random.randint(1, 100)
@@ -197,7 +196,6 @@ def maths_data_generator_mixed_core( cfg, enrich_data=True ):
 # Define "iterator" maths "questions" data generator function. Invoked using next().
 # Generates a data batch for multiple maths operation.
 def maths_data_generator_mixed( cfg, enrich_data=True ):
-    torch.manual_seed(cfg.analysis_seed)
     while True:
 
         batch = maths_data_generator_mixed_core( cfg, enrich_data )

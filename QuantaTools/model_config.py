@@ -1,4 +1,6 @@
+import numpy as np
 import re
+import torch as th
 
 from .useful_node import answer_name
 
@@ -64,7 +66,7 @@ class ModelConfig():
   
         self.initialize_token_positions( 12, 7, True ) # Random values (based on 5 digit addition)
     
-        # Should we use the GPU (if any) to speed up processing?
+        # Should we use the GPU (if available) to speed up processing?
         self.use_cuda = True
 
         # Format to save graphs to CoLab temp files. 
@@ -104,6 +106,13 @@ class ModelConfig():
         return self.d_mlp_multiplier * self.d_model
 
 
+    def set_seed(self, seed):
+        np.random.seed(seed)
+        th.manual_seed(seed)
+        if th.cuda.is_available():
+            th.cuda.manual_seed_all(seed)
+
+
     # Update n_digits, n_layers, n_heads, n_training_steps, training_seed, grokfast from model_name
     def parse_model_name(self):
 
@@ -139,12 +148,10 @@ class ModelConfig():
             self.insert_mode = 3 # Initialised with existing model. Trained & reset useful heads & MLPs every 100 epochs
         elif "ins4_" in self.model_name :
             self.insert_mode = 4 # Initialised with "nodes with identified subtasks" from existing model. Train & reset useful heads every 100 epochs
-     
 
         match = re.search(r"_s(\d\d\d\d\d\d)", self.model_name)
         if match:
             self.training_seed = int(match.group(1))
-
 
         self.grokfast = ("_gf" in self.model_name)
 

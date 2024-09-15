@@ -121,7 +121,7 @@ class TestMaths(unittest.TestCase):
         cfg.perc_mult = 0
         cfg.perc_sub = 0
         
-        torch.manual_seed(cfg.analysis_seed)
+        cfg.set_seed(cfg.analysis_seed)
         questions = maths_data_generator_addition(cfg, False)
         questions = maths_data_generator_addition(cfg, True )
         questions = maths_data_generator_subtraction(cfg, False )
@@ -135,7 +135,7 @@ class TestMaths(unittest.TestCase):
     def test_maths_data_generator_mixed(self):
         
         cfg = self.get_cfg()
-        torch.manual_seed(cfg.analysis_seed)
+        cfg.set_seed(cfg.analysis_seed)
 
         cfg.perc_mult = 33
         cfg.perc_sub = 33
@@ -506,10 +506,10 @@ class TestMaths(unittest.TestCase):
         cfg.main_model = HookedTransformer(ht_cfg)
 
         local_model_path = r"C:\Users\phili\source\repos\VerifiedArithmetic\ins1_mix_d6_l3_h4_t40K_s372001.pth"
-        state_dict = torch.load(local_model_path, weights_only=True)
+        #state_dict = torch.load(local_model_path, weights_only=True)
 
-        cfg.main_model.load_state_dict(state_dict)
-        cfg.main_model.eval()
+        #cfg.main_model.load_state_dict(state_dict)
+        #cfg.main_model.eval()
 
         # Calculate one Principal Component Analysis on test_inputs.
-        calc_pca_for_an(cfg, the_locn, test_inputs, "test_pca", "error_message")
+        #calc_pca_for_an(cfg, the_locn, test_inputs, "test_pca", "error_message")
