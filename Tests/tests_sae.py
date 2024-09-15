@@ -15,6 +15,13 @@ from QuantaTools.maths_tools.maths_data_generator import get_mixed_maths_dataloa
 from QuantaTools.model_sae_train import analyze_mlp_with_sae, optimize_sae_hyperparameters
 
 
+# In Visual Studo Terminal run daily:
+# .\env\Scripts\activate
+# As a one-off:
+# pip install pytest
+# pip install --upgrade jax jaxlib==0.4.1+cuda11.cudnn82 -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html
+
+
 class TestSae(unittest.TestCase):
 
     def load_model(self, num_batches):
