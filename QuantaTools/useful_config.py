@@ -24,6 +24,11 @@ class UsefulConfig(ModelConfig):
         self.useful_nodes = UsefulNodeList()
  
 
+    def set_model_names(self, model_names):
+        super().set_model_names(model_names)
+        self.reset_useful()
+
+
     @property  
     # Returns the minimum useful token position
     def min_useful_position(self) -> int:

@@ -45,6 +45,11 @@ class MathsConfig(AlgoConfig):
             self.token_position_meanings[self.num_question_positions] = "+"
 
 
+    def set_model_names(self, model_names):
+        super().set_model_names(model_names)
+        self.initialize_maths_token_positions()
+
+
     @property
     # How many slices do we break the MLP layer up into?
     def mlp_slices(self) -> int:

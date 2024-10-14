@@ -11,9 +11,16 @@ class AlgoConfig(UsefulConfig):
         super().__init__()
         self.reset_algo()
 
+
     def reset_algo(self):
         self.num_algo_valid_clauses = 0
         self.num_algo_invalid_clauses = 0
+
+
+    def set_model_names(self, model_names):
+        super().set_model_names(model_names)
+        self.reset_algo()
+
 
     def start_algorithm_test(self, acfg):
         self.reset_algo()

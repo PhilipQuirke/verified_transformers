@@ -219,7 +219,7 @@ class TestMaths(unittest.TestCase):
         self.assertEqual( cfg.insert_n_training_steps, 40000)
         self.assertEqual( cfg.insert_training_seed, 572077)
 
-    def test_parse_model_names(self):
+    def test_set_model_names(self):
         cfg = self.get_cfg()
         cfg.set_model_names( "ins1_mas_d6_l5_h4_t250K_gf_s371793,add_d7_l6_h5_t40K_s572077"); 
 
