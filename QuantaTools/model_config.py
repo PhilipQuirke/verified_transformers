@@ -156,26 +156,40 @@ class ModelConfig():
         self.grokfast = ("_gf" in self.model_name)
 
 
-   # Update n_digits, n_layers, n_heads, n_training_steps, training_seed from model_name
-    def parse_insert_model_name(self, insert_model_name):
+    # Update insert_n_digits, insert_n_layers, insert_n_heads, insert_n_training_steps, insert_training_seed from insert_model_name
+    def parse_insert_model_name(self):
 
-        match = re.search(r"l(\d)_", insert_model_name)
+        match = re.search(r"l(\d)_", self.insert_model_name)
         if match:
             self.insert_n_layers = int(match.group(1))
 
-        match = re.search(r"h(\d)_", insert_model_name)
+        match = re.search(r"h(\d)_", self.insert_model_name)
         if match:
             self.insert_n_heads = int(match.group(1))
 
-        match = re.search(r"t(\d\d)K", insert_model_name)
+        match = re.search(r"t(\d\d)K", self.insert_model_name)
         if not match:
-            match = re.search(r"t(\d)K", insert_model_name)       
+            match = re.search(r"t(\d)K", self.insert_model_name)       
         if match:
             self.insert_n_training_steps = int(match.group(1)) * 1000
     
-        match = re.search(r"_s(\d\d\d\d\d\d)", insert_model_name)
+        match = re.search(r"_s(\d\d\d\d\d\d)", self.insert_model_name)
         if match:
             self.insert_training_seed = int(match.group(1))
+
+
+    # Set and parse model names
+    def set_model_names(self, model_names):
+
+        # Break the comma delimited model_names string into an array of strings
+        model_names = model_names.split(',')
+        self.model_name = model_names[0]
+        self.parse_model_name()
+
+        # If the array has more than one element, set the insert model name'
+        if len(model_names) > 1:
+            self.insert_model_name = model_names[1]
+            self.parse_insert_model_name()
 
 
     @property

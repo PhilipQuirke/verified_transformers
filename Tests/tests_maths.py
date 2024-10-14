@@ -211,13 +211,33 @@ class TestMaths(unittest.TestCase):
         
     def test_parse_insert_model_name(self):
         cfg = self.get_cfg()
-        cfg.parse_insert_model_name("add_d7_l6_h5_t40K_s572077")
+        cfg.insert_model_name = "add_d7_l6_h5_t40K_s572077"
+        cfg.parse_insert_model_name()
         self.assertEqual( cfg.insert_n_digits, 7)
         self.assertEqual( cfg.insert_n_layers, 6)
         self.assertEqual( cfg.insert_n_heads, 5)
         self.assertEqual( cfg.insert_n_training_steps, 40000)
         self.assertEqual( cfg.insert_training_seed, 572077)
 
+    def test_parse_model_names(self):
+        cfg = self.get_cfg()
+        cfg.set_model_names( "ins1_mas_d6_l5_h4_t250K_gf_s371793,add_d7_l6_h5_t40K_s572077"); 
+
+        self.assertEqual( cfg.insert_mode, 1)   
+        self.assertEqual( cfg.n_digits, 6)
+        self.assertEqual( cfg.n_layers, 5)
+        self.assertEqual( cfg.n_heads, 4)        
+        self.assertEqual( cfg.perc_add, 20)
+        self.assertEqual( cfg.perc_sub, 30)
+        self.assertEqual( cfg.perc_mult, 50)     
+        self.assertEqual( cfg.grokfast, True) 
+        self.assertEqual( cfg.n_training_steps, 250000)
+
+        self.assertEqual( cfg.insert_n_digits, 7)
+        self.assertEqual( cfg.insert_n_layers, 6)
+        self.assertEqual( cfg.insert_n_heads, 5)
+        self.assertEqual( cfg.insert_n_training_steps, 40000)
+        self.assertEqual( cfg.insert_training_seed, 572077)
 
     def test_parse_model_name_grokfast(self):
         cfg = self.get_cfg()

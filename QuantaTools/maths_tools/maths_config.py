@@ -116,12 +116,12 @@ class MathsConfig(AlgoConfig):
 
 
     # Parse the insert model name to extract the number of insert digits 
-    def parse_insert_model_name(self, insert_model_name):
-        super().parse_insert_model_name(insert_model_name)
+    def parse_insert_model_name(self):
+        super().parse_insert_model_name()
                     
-        match = re.search(r"d(\d)_", insert_model_name)
+        match = re.search(r"d(\d)_", self.insert_model_name)
         if not match:
-            match = re.search(r"d(\d\d)_", insert_model_name)
+            match = re.search(r"d(\d\d)_", self.insert_model_name)
         if match:
             self.insert_n_digits = int(match.group(1))
             
